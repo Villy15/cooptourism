@@ -20,9 +20,39 @@ class _LoginPageState extends State<LoginPage> {
   // Sign user in
 
   void signIn() async {
-    FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: emailTextController.text,
-      password: passwordTextController.text,
+
+    showDialog(
+      context: context, 
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      )
+    );
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailTextController.text,
+        password: passwordTextController.text,
+      );
+
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+    } on FirebaseAuthException catch (e) {
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+      // 
+      displayMessage(e.code);
+    }
+
+  }
+
+  void displayMessage(String message) {
+    showDialog(
+      context: context, 
+      builder: (context) => AlertDialog(
+        title: Text(message),
+      )
     );
   }
 

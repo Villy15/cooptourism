@@ -1,5 +1,6 @@
 import 'package:cooptourism/components/button.dart';
 import 'package:cooptourism/components/text_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 
@@ -16,6 +17,47 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
   final confirmPasswordTextController = TextEditingController();
+
+  void signUp() async {
+    showDialog(
+        context: context,
+        builder: (context) => const Center(
+              child: CircularProgressIndicator(),
+    ));
+
+    // Make sure passwords match
+
+    if (passwordTextController.text != confirmPasswordTextController.text) {
+      Navigator.pop(context);
+      displayMessage("Passwords do not match");
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailTextController.text,
+        password: passwordTextController.text,
+      );
+
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+    } on FirebaseAuthException catch (e) {
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+      displayMessage(e.code);
+    }
+  }
+
+  void displayMessage(String message) {
+    showDialog(
+      context: context, 
+      builder: (context) => AlertDialog(
+        title: Text(message),
+      )
+    );
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -83,7 +125,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
 
                   MyTextField(
-                        controller: passwordTextController,
+                        controller: confirmPasswordTextController,
                         hintText: "Confirm Password",
                         obscureText: true
                       ),
@@ -93,7 +135,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   
                   // login button 
                   MyButton(
-                    onTap: () {},
+                    onTap: signUp,
                     text: "Register",
                   ),
             
