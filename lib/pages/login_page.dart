@@ -1,5 +1,6 @@
 import 'package:cooptourism/components/button.dart';
 import 'package:cooptourism/components/text_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 
@@ -15,6 +16,15 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
+
+  // Sign user in
+
+  void signIn() async {
+    FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: emailTextController.text,
+      password: passwordTextController.text,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                   
                   // login button 
                   MyButton(
-                    onTap: () {},
+                    onTap: signIn,
                     text: "Login",
                   ),
             
@@ -92,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                   
                   // Forgot password
                   GestureDetector(
-                    onTap: () {},
+                    // onTap: ,
                     child: Text(
                       "Forgot Password?",
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(

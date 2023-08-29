@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "90023157053",
+    "project_id": "capro-84e68",
+    "storage_bucket": "capro-84e68.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:90023157053:android:4e0ad1b1d9dcbda06ff954",
+        "android_client_info": {
+          "package_name": "com.example.cooptourism"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "90023157053-i7ae6ii7iea1g1790re9f2nnb407smfp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBynx_3lJuxnJOCddBE3MRAJIbW9vJcUgE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "90023157053-i7ae6ii7iea1g1790re9f2nnb407smfp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
