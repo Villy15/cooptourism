@@ -29,42 +29,33 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [          
                   
-                  
-            
+                
                   // New here? register now
                    Row(
                     children: [
                       Text(
                         "Login",
-                        style: TextStyle(
-                          fontSize: 48,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Inter",
-                          color: Colors.grey[700],
-                        ),
+                        style: Theme.of(context).textTheme.bodyLarge,
                       ),
                     ],
                   ),
             
                   Row(
                     children: [
-                       Text(
+                        Text(
                         "New here? ",
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                        ),
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                       GestureDetector(
                         onTap: widget.onTap,
                         child: Text(
                           "Register now!",
-                          style: TextStyle(
-                            color: Colors.grey[700],
-                            fontWeight: FontWeight.bold,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             decoration: TextDecoration.underline,
-                          ),
+                            fontWeight: FontWeight.bold,
                         ),
                       ),
+                      )
                     ],
                   ),
             
@@ -104,10 +95,9 @@ class _LoginPageState extends State<LoginPage> {
                     onTap: () {},
                     child: Text(
                       "Forgot Password?",
-                      style: TextStyle(
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.bold,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         decoration: TextDecoration.underline,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -120,18 +110,15 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                        Text(
                         "To register as a cooperative, ",
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                        ),
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                       GestureDetector(
                         // onTap: widget.onTap,
                         child: Text(
                           "click here",
-                          style: TextStyle(
-                            color: Colors.grey[700],
-                            fontWeight: FontWeight.bold,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),

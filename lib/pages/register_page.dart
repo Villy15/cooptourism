@@ -30,42 +30,32 @@ class _RegisterPageState extends State<RegisterPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [          
                   
-                  
-            
                   // New here? register now
                    Row(
                     children: [
                       Text(
                         "Register",
-                        style: TextStyle(
-                          fontSize: 48,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Inter",
-                          color: Colors.grey[700],
-                        ),
+                        style: Theme.of(context).textTheme.bodyLarge,
                       ),
                     ],
                   ),
             
                   Row(
                     children: [
-                       Text(
-                        "Already have an account? ",
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                        ),
+                        Text(
+                        "Already have an account?  ",
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                       GestureDetector(
                         onTap: widget.onTap,
                         child: Text(
-                          "Login Here",
-                          style: TextStyle(
-                            color: Colors.grey[700],
-                            fontWeight: FontWeight.bold,
+                          "Login here!",
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             decoration: TextDecoration.underline,
-                          ),
+                            fontWeight: FontWeight.bold,
                         ),
                       ),
+                      )
                     ],
                   ),
             
@@ -118,18 +108,15 @@ class _RegisterPageState extends State<RegisterPage> {
                     children: [
                        Text(
                         "To register as a cooperative, ",
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                        ),
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                       GestureDetector(
                         // onTap: widget.onTap,
                         child: Text(
                           "click here",
-                          style: TextStyle(
-                            color: Colors.grey[700],
-                            fontWeight: FontWeight.bold,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),

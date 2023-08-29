@@ -23,11 +23,9 @@ class _MyButtonState extends State<MyButton> {
       child: Center(
         child: Text(
           widget.text,
-          style: const TextStyle(
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          )
+          ),
         ),
       )
     );

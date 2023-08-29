@@ -13,23 +13,39 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // Font Family
-        fontFamily: "Inter",
-        primaryColor: Colors.blue[900],
+        // Define the default brightness and colors.
+        brightness: Brightness.dark,
+        primaryColor: Colors.lightBlue[800],
+
+        // Define the default font family.
+        fontFamily: 'Inter',
 
         // Text Themes
-        textTheme:  const TextTheme(
+        textTheme: TextTheme(
+          // BODY LARGE
           bodyLarge: TextStyle(
-            fontSize: 18,
+            fontSize: 48,
             fontWeight: FontWeight.bold,
+            color: Colors.grey[700],
           ),
+
+          // BODY MEDIUM
           bodyMedium: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w400,
+            color: Colors.grey[700],
+          ),
+
+          // BODY SMALL
+          bodySmall: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w400,
+            color: Colors.grey[700],
           ),
+          
         ),
-
       ),
+
       home: const LoginOrRegister(),
     );
   }
