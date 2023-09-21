@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).primaryColor,
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -149,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                        Text(
-                        "To register as a cooperative, ",
+                        "Sign up here, ",
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       GestureDetector(
