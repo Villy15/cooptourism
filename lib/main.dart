@@ -23,7 +23,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         // Define the default brightness and colors.
         brightness: Brightness.dark,
-        primaryColor: Colors.lightBlue[800],
+        primaryColor: Colors.white,
+        secondaryHeaderColor: Colors.black,
 
         // Define the default font family.
         fontFamily: 'Inter',
@@ -50,7 +51,13 @@ class MyApp extends StatelessWidget {
             fontWeight: FontWeight.w400,
             color: Colors.grey[700],
           ),
-          
+
+          headlineMedium: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+
         ),
       ),
 
