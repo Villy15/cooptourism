@@ -42,6 +42,10 @@ class _RegisterPageState extends State<RegisterPage> {
       if (context.mounted) {
         Navigator.pop(context);
       }
+
+      // Add to firestore database w/ UID
+      
+
     } on FirebaseAuthException catch (e) {
       if (context.mounted) {
         Navigator.pop(context);
