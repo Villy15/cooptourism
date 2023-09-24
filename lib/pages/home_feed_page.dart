@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-class MarketPage extends StatefulWidget {
-  const MarketPage({super.key});
+class HomeFeedPage extends StatefulWidget {
+  const HomeFeedPage({super.key});
 
   @override
-  State<MarketPage> createState() => _MarketPageState();
+  State<HomeFeedPage> createState() => _HomeFeedPageState();
 }
 
-class _MarketPageState extends State<MarketPage> {
+class _HomeFeedPageState extends State<HomeFeedPage> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
       backgroundColor: Colors.white,
       body: Center(
         child: Text(
-          "Market",
+          "Home",
           style: Theme.of(context).textTheme.bodyLarge,
         ),
       ),
