@@ -43,7 +43,7 @@ ThemeData lightTheme = ThemeData(
     bodyLarge: TextStyle(
       fontSize: large,
       fontWeight: FontWeight.bold,
-      color: secondaryColor
+      color: primaryColor
     ),
 
     // Medium

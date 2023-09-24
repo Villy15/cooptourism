@@ -44,6 +44,15 @@ class _HomePageState extends State<HomePage> {
         extendBody: true,
         appBar: AppBar(
           title: Text(_appBarTitles[_selectedIndex]),
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.logout,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: signOut,
+            ),
+          ],
         ),
         body: _tabs[_selectedIndex],
         bottomNavigationBar: Container(
