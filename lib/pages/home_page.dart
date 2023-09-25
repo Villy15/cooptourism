@@ -1,6 +1,7 @@
+import 'package:cooptourism/animations/slide_transition.dart';
+import 'package:cooptourism/widgets/gnav_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
 
 import 'home_feed_page.dart';
 import 'coops_page.dart';
@@ -8,14 +9,16 @@ import 'market_page.dart';
 import 'menu_page.dart';
 import 'profile_page.dart';
 
+import 'add_post.dart';
+
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   final List<String> _appBarTitles = [
@@ -25,95 +28,88 @@ class _HomePageState extends State<HomePage> {
     'Profile',
     'Menu',
   ];
-  // MANAGER
+
   final List<Widget> _tabs = const [
-    HomeFeedPage(), //this has to be homepage. lets figure out the error first
+    HomeFeedPage(),
     CoopsPage(),
     MarketPage(),
     ProfilePage(),
     MenuPage(),
   ];
 
-  void signOut() async {
-    FirebaseAuth.instance.signOut();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        extendBody: true,
-        appBar: AppBar(
-          title: Text(_appBarTitles[_selectedIndex]),
-          actions: [
-            IconButton(
-              icon: Icon(
-                Icons.logout,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              onPressed: signOut,
+      extendBody: true,
+      appBar: AppBar(
+        title: Text(_appBarTitles[_selectedIndex]),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.logout,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            onPressed: signOut,
+          ),
+        ],
+      ),
+      body: _tabs[_selectedIndex],
+      floatingActionButton: shouldShowFloatingActionButton()
+          ? FloatingActionButton(
+              onPressed: () {
+                showAddPostPage(context);
+              },
+              child: const Icon(Icons.add),
+            )
+          : null,
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.background,
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 20,
+              color: Colors.black.withOpacity(.1),
             ),
           ],
         ),
-        body: _tabs[_selectedIndex],
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
-            boxShadow: [
-              BoxShadow(
-                blurRadius: 20,
-                color: Colors.black.withOpacity(.1),
-              )
-            ],
-          ),
-          child: SafeArea(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
-              child: GNav(
-                tabMargin:
-                    const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                backgroundColor: Theme.of(context).colorScheme.background,
-                color: Theme.of(context).colorScheme.primary,
-                activeColor: Theme.of(context).colorScheme.primary,
-                tabBorderRadius: 50,
-                tabActiveBorder: Border.all(
-                    color: Theme.of(context).colorScheme.primary, width: 1),
-                // curve: Curves.easeOutExpo,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                gap: 15,
-                tabs: const [
-                  
-                  GButton(
-                    icon: Icons.home_outlined,
-                    text: 'Home',
-                  ),
-                  GButton(
-                    icon: Icons.groups_outlined,
-                    text: 'Coops',
-                  ),
-                  GButton(
-                    icon: Icons.store_mall_directory_outlined,
-                    text: 'Market',
-                  ),
-                  GButton(
-                    icon: Icons.person_outline_sharp,
-                    text: 'Profile',
-                  ),
-                  GButton(
-                    icon: Icons.settings_accessibility,
-                    text: 'Menu',
-                  ),
-                ],
-                selectedIndex: _selectedIndex,
-                onTabChange: (index) {
-                  setState(() {
-                    _selectedIndex = index;
-                  });
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+            child: GNavHomeWidget(
+              selectedIndex: _selectedIndex,
+              onTabChange: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
               },
-              ),
             ),
           ),
-        ));
+        ),
+      ),
+    );
+  }
+
+  void signOut() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
+  void showAddPostPage(BuildContext context) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return const AddPostPage();
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransitionAnimation(
+            animation: animation,
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+
+  bool shouldShowFloatingActionButton() {
+    return _selectedIndex == 0 || _selectedIndex == 2;
   }
 }
