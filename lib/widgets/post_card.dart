@@ -1,10 +1,39 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class PostCard extends StatelessWidget {
-  final String title;
+  final String author;
   final String content;
+  final int likes;
+  final int dislikes;
+  final List<dynamic> comments;
+  final Timestamp timestamp;
 
-  const PostCard({required Key key, required this.title, required this.content}) : super(key: key);
+  const PostCard({
+    required Key key,
+    required this.author,
+    required this.content,
+    required this.likes,
+    required this.dislikes,
+    required this.comments,
+    required this.timestamp,
+  }) : super(key: key);
+
+  String getTimeDifference() {
+    final now = Timestamp.now().toDate();
+    final postTime = timestamp.toDate();
+    final difference = now.difference(postTime);
+
+    if (difference.inMinutes < 60) {
+      return '| ${difference.inMinutes}m ago';
+    } else if (difference.inHours < 24) {
+      return '| ${difference.inHours}h ago';
+    } else {
+      final formatter = DateFormat.yMd().add_jm();
+      return  "| ${formatter.format(postTime)}";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +48,7 @@ class PostCard extends StatelessWidget {
                 Icon(Icons.account_circle, color: Theme.of(context).colorScheme.primary, size: 40),
                 const SizedBox(width: 8),
                 Text(
-                  'Name',
+                  author,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.w500,
@@ -27,7 +56,7 @@ class PostCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '| 1m',
+                  getTimeDifference(),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.w400,
@@ -39,6 +68,15 @@ class PostCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
+            Text(
+              content,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w400,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 8),
             const Placeholder(
               fallbackHeight: 200,
             ),
@@ -48,7 +86,7 @@ class PostCard extends StatelessWidget {
                 Icon(Icons.thumb_up_alt_outlined, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '60',
+                  likes.toString(),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.w400,
@@ -59,7 +97,7 @@ class PostCard extends StatelessWidget {
                 Icon(Icons.thumb_down_alt_outlined, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '2',
+                  dislikes.toString(),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.w400,
@@ -70,7 +108,7 @@ class PostCard extends StatelessWidget {
                 Icon(Icons.comment_outlined, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '5',
+                  comments.length.toString(),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.w400,

@@ -1,38 +1,19 @@
 import 'package:flutter/material.dart';
-
 import 'package:cooptourism/widgets/post_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeFeedPage extends StatefulWidget {
-  const HomeFeedPage({Key key = const ValueKey('home_feed_page')}) : super(key: key);
+  const HomeFeedPage({Key? key}) : super(key: key);
 
   @override
-  State<HomeFeedPage> createState() => _HomeFeedPageState();
+  HomeFeedPageState createState() => HomeFeedPageState();
 }
 
-class _HomeFeedPageState extends State<HomeFeedPage> {
-  final List<String> _postTitles = [
-    'Post 1',
-    'Post 2',
-    'Post 3',
-    'Post 4',
-    'Post 5',
-  ];
-
-  final List<String> _postContents = [
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-    'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-  ];
-
-  final List<String> _tabTitles = [
-    'News',
-    'Communities',
-    'Cooperatives',
-  ];
-
+class HomeFeedPageState extends State<HomeFeedPage> {
+  final List<String> _tabTitles = ['News', 'Communities', 'Cooperatives'];
   int _selectedIndex = 0;
+
+  final Stream<QuerySnapshot> _posts = FirebaseFirestore.instance.collection('posts').snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -45,15 +26,11 @@ class _HomeFeedPageState extends State<HomeFeedPage> {
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: _tabTitles.length,
-              itemBuilder: (BuildContext context, int index) {
+              itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedIndex = index;
-                      });
-                    },
+                    onTap: () => setState(() => _selectedIndex = index),
                     child: Container(
                       decoration: BoxDecoration(
                         color: _selectedIndex == index
@@ -62,17 +39,14 @@ class _HomeFeedPageState extends State<HomeFeedPage> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 28.0, vertical: 10.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 10.0),
                         child: Text(
                           _tabTitles[index],
                           style: TextStyle(
                             color: _selectedIndex == index
                                 ? Theme.of(context).colorScheme.background
                                 : Theme.of(context).colorScheme.primary,
-                            fontWeight: _selectedIndex == index
-                                ? FontWeight.bold
-                                : FontWeight.w400,
+                            fontWeight: _selectedIndex == index ? FontWeight.bold : FontWeight.w400,
                             fontSize: 16,
                           ),
                         ),
@@ -84,13 +58,34 @@ class _HomeFeedPageState extends State<HomeFeedPage> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: _postTitles.length,
-              itemBuilder: (BuildContext context, int index) {
-                return PostCard(
-                  key: ValueKey(_postTitles[index]),
-                  title: _postTitles[index],
-                  content: _postContents[index],
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _posts,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                }
+
+                final posts = snapshot.data!.docs;
+
+                return ListView.builder(
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) {
+                    final post = posts[index].data() as Map<String, dynamic>;
+
+                    return PostCard(
+                      key: ValueKey(posts[index].id),
+                      author: post['author'] ?? '',
+                      content: post['content'] ?? '',
+                      likes: post['likes'] ?? 0,
+                      dislikes: post['dislikes'] ?? 0,
+                      comments: post['comments'] ?? [],
+                      timestamp: post['timestamp'] ?? Timestamp.now(),
+                    );
+                  },
                 );
               },
             ),
