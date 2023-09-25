@@ -13,7 +13,6 @@ class _CoopsPageState extends State<CoopsPage> {
   final storageRef = FirebaseStorage.instance.ref();
   final Stream<QuerySnapshot> _cooperatives =
       FirebaseFirestore.instance.collection('cooperatives').snapshots();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +56,7 @@ class _CoopsPageState extends State<CoopsPage> {
                                   topLeft: Radius.circular(16.0),
                                   topRight: Radius.circular(16.0)),
                                 child: Image.network(
-                                    "${storageRef.child("${cooperatives[index]['logo']}")}",
+                                    "${storageRef.child("${cooperatives[index].get('logo')}").getDownloadURL()}",
                                     height: 170,
                                     width: double.infinity,
                                     fit: BoxFit.cover,
