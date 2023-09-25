@@ -58,7 +58,7 @@ class _CoopsPageState extends State<CoopsPage> {
                         ),
                         child: FutureBuilder<String>(
                           future: storageRef
-                              .child("iwahori.png")
+                              .child("${cooperatives[index].get('logo')}")
                               .getDownloadURL(), // Await here
                           builder: (context, urlSnapshot) {
                             if (urlSnapshot.connectionState == ConnectionState.waiting) {
