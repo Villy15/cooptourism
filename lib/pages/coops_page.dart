@@ -45,7 +45,7 @@ class _CoopsPageState extends State<CoopsPage> {
                   margin: const EdgeInsets.symmetric(vertical: 10),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).secondaryHeaderColor,
+                    color: Theme.of(context).colorScheme.background,
                     borderRadius: BorderRadius.circular(20),
                     border:
                         Border.all(width: 1.0, style: BorderStyle.solid),
