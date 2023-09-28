@@ -27,14 +27,57 @@ class AddPostPageState extends State<AddPostPage> {
   }
 
   void _submitForm() async {
-    
+    final user = FirebaseAuth.instance.currentUser;
+    final author = user?.displayName ?? 'Anonymous';
+    final content = _contentController.text.trim();
+    final timestamp = Timestamp.now();
+
+    if (content.isNotEmpty) {
+      try {
+        await FirebaseFirestore.instance.collection('posts').add({
+          'author': author,
+          'content': content,
+          'likes': 0,
+          'dislikes': 0,
+          'comments': [],
+          'timestamp': timestamp,
+        });
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Post added successfully!'),
+            ),
+          );
+
+          FocusScope.of(context).unfocus();
+          Navigator.of(context).pop();
+
+        }
+
+        // Navigate back to the home feed page
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to add post!'),
+            ),
+          );
+        }
+
+      } finally {
+        // Clear the text field
+        _contentController.clear();
+        // Request focus again
+        _contentFocusNode.requestFocus();
+        // Close the keyboard
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).colorScheme.primary;
-    // final user = FirebaseAuth.instance.currentUser;
-    // final author = user?.displayName ?? 'Anonymous';
 
     return Scaffold(
       appBar: AppBar(
@@ -59,11 +102,12 @@ class AddPostPageState extends State<AddPostPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-           Row(
+            Row(
               children: [
-                Icon(Icons.account_circle, size: 40, color: Theme.of(context).colorScheme.primary),
+                Icon(Icons.account_circle,
+                    size: 40, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
-                 Text(
+                Text(
                   'Adrian Villanueva',
                   style: TextStyle(
                     fontSize: 18,
@@ -81,7 +125,8 @@ class AddPostPageState extends State<AddPostPage> {
                 border: InputBorder.none,
               ),
               maxLines: null,
-              style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary),
+              style: TextStyle(
+                  fontSize: 18, color: Theme.of(context).colorScheme.primary),
               // Add color to text background
               cursorColor: primaryColor,
               focusNode: _contentFocusNode,

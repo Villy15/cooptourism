@@ -1,5 +1,5 @@
-import 'package:cooptourism/pages/login_page.dart';
-import 'package:cooptourism/pages/register_page.dart';
+import 'package:cooptourism/auth/login_page.dart';
+import 'package:cooptourism/auth/register_page.dart';
 import 'package:flutter/material.dart';
 
 

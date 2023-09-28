@@ -24,7 +24,7 @@ class GNavHomeWidget extends StatelessWidget {
         width: 1,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-      gap: 15,
+      gap: 7.5,
       tabs: const [
         GButton(
           icon: Icons.home_outlined,
