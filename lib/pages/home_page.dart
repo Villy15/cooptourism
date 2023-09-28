@@ -1,93 +1,115 @@
+import 'package:cooptourism/animations/slide_transition.dart';
+import 'package:cooptourism/widgets/gnav_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
+
+import 'home_feed_page.dart';
+import 'coops_page.dart';
+import 'market_page.dart';
+import 'menu_page.dart';
+import 'profile_page.dart';
+
+import 'add_post.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  void signOut() async {
-    FirebaseAuth.instance.signOut();
-  }
+class HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  final List<String> _appBarTitles = [
+    'Home',
+    'Coops',
+    'Market',
+    'Profile',
+    'Menu',
+  ];
+
+  final List<Widget> _tabs = const [
+    HomeFeedPage(),
+    CoopsPage(),
+    MarketPage(),
+    ProfilePage(),
+    MenuPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).primaryColor,
-          title: Text(
-            "Home",
-            style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
+      extendBody: true,
+      appBar: AppBar(
+        title: Text(_appBarTitles[_selectedIndex]),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.logout,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            onPressed: signOut,
           ),
-          iconTheme:
-              IconThemeData(color: Theme.of(context).secondaryHeaderColor),
-        ),
-        bottomNavigationBar: GNav(
-          backgroundColor: Theme.of(context).primaryColor,
-          color: Theme.of(context).secondaryHeaderColor,
-          activeColor: Theme.of(context).secondaryHeaderColor,
-          // tabBackgroundColor: ,
-          // tabActiveBorder: ,
-          padding: const EdgeInsets.all(16),
-          gap: 15,
-          tabs: const [
-            GButton(icon: Icons.home, text: 'Home',),
-            GButton(icon: Icons.groups_outlined, text: 'Cooperatives'),
-            GButton(icon: Icons.search, text: 'Search'),
-            GButton(icon: Icons.settings, text: 'Settings')
+        ],
+      ),
+      body: _tabs[_selectedIndex],
+      floatingActionButton: shouldShowFloatingActionButton()
+          ? FloatingActionButton(
+              onPressed: () {
+                showAddPostPage(context);
+              },
+              child: const Icon(Icons.add),
+            )
+          : null,
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.background,
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 20,
+              color: Colors.black.withOpacity(.1),
+            ),
           ],
         ),
-        // drawer: Container(
-        //   width: 250,
-        //   child: Drawer(
-        //       backgroundColor: Theme.of(context).primaryColor,
-        //       child: Column(
-        //         children: <Widget>[
-        //           ListView(shrinkWrap: true, children: [
-        //             DrawerHeader(
-        //                 child: Center(
-        //               child: Text("Turistanginamo",
-        //                   style: Theme.of(context).textTheme.headlineMedium),
-        //             )),
-        //             ListTile(
-        //               leading: const Icon(Icons.home),
-        //               iconColor: Theme.of(context).secondaryHeaderColor,
-        //               title: Text(
-        //                 "Home",
-        //                 style: Theme.of(context).textTheme.headlineMedium,
-        //               ),
-        //               onTap: () {},
-        //             ),
-        //             ListTile(
-        //               leading: const Icon(Icons.groups_outlined),
-        //                                     iconColor: Theme.of(context).secondaryHeaderColor,
-        //               title: Text(
-        //                 "Cooperatives",
-        //                 style: Theme.of(context).textTheme.headlineMedium,
-        //               ),
-        //               onTap: () {},
-        //             ),
-        //           ]),
-        //           Expanded(
-        //               child: Align(
-        //             alignment: FractionalOffset.bottomLeft,
-        //             child: ListTile(
-        //               leading: const Icon(Icons.logout),
-        //                                     iconColor: Theme.of(context).secondaryHeaderColor,
-        //               title: Text(
-        //                 "Logout",
-        //                 style: Theme.of(context).textTheme.headlineMedium,
-        //               ),
-        //               onTap: signOut,
-        //             ),
-        //           ))
-        //         ],
-        //       )),
-        );
-        // ));
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+            child: GNavHomeWidget(
+              selectedIndex: _selectedIndex,
+              onTabChange: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void signOut() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
+  void showAddPostPage(BuildContext context) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return const AddPostPage();
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransitionAnimation(
+            animation: animation,
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+
+  bool shouldShowFloatingActionButton() {
+    return _selectedIndex == 0 || _selectedIndex == 2;
   }
 }
