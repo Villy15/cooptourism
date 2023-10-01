@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/widgets/list_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:go_router/go_router.dart';
 
 class CoopsPage extends StatefulWidget {
   const CoopsPage({super.key});
@@ -35,7 +36,8 @@ class _CoopsPageState extends State<CoopsPage> {
                   }
                   final cooperatives = snapshot.data!.docs;
                   return GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       childAspectRatio: 3 / 2,
                       crossAxisSpacing: 20,
@@ -53,63 +55,72 @@ class _CoopsPageState extends State<CoopsPage> {
                           border:
                               Border.all(width: 1.0, style: BorderStyle.solid),
                         ),
-                        child: Column(
-                          children: [
-                            ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(16.0),
-                                topRight: Radius.circular(16.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            var coopId = cooperatives[index];
+                            return context.go('/$coopId');
+                          },
+                          child: Column(
+                            children: [
+                              ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(16.0),
+                                  topRight: Radius.circular(16.0),
+                                ),
+                                child: FutureBuilder<String>(
+                                  future: storageRef
+                                      .child(
+                                          "${cooperatives[index].get('logo')}")
+                                      .getDownloadURL(), // Await here
+                                  builder: (context, urlSnapshot) {
+                                    if (urlSnapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const CircularProgressIndicator();
+                                    }
+
+                                    if (urlSnapshot.hasError) {
+                                      return Text(
+                                          'Error: ${urlSnapshot.error}');
+                                    }
+
+                                    final imageUrl = urlSnapshot.data;
+
+                                    return Image.network(
+                                      imageUrl!,
+                                      height: 107,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                ),
                               ),
-                              child: FutureBuilder<String>(
-                                future: storageRef
-                                    .child("${cooperatives[index].get('logo')}")
-                                    .getDownloadURL(), // Await here
-                                builder: (context, urlSnapshot) {
-                                  if (urlSnapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const CircularProgressIndicator();
-                                  }
-          
-                                  if (urlSnapshot.hasError) {
-                                    return Text('Error: ${urlSnapshot.error}');
-                                  }
-          
-                                  final imageUrl = urlSnapshot.data;
-          
-                                  return Image.network(
-                                    imageUrl!,
-                                    height: 107,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  );
-                                },
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "${cooperatives[index].get('name')}",
-                                      style: const TextStyle(fontSize: 15),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-                                      softWrap: true,
-                                    ),
-                                    const SizedBox(
-                                      height: 8.0,
-                                    ),
-                                    Text(
-                                      "${cooperatives[index].get('province')}",
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                    const SizedBox(
-                                      height: 8.0,
-                                    ),
-                                  ]),
-                            )
-                          ],
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${cooperatives[index].get('name')}",
+                                        style: const TextStyle(fontSize: 15),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                        softWrap: true,
+                                      ),
+                                      const SizedBox(
+                                        height: 8.0,
+                                      ),
+                                      Text(
+                                        "${cooperatives[index].get('province')}",
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                      const SizedBox(
+                                        height: 8.0,
+                                      ),
+                                    ]),
+                              )
+                            ],
+                          ),
                         ),
                       );
                     },
