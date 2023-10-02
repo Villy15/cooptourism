@@ -155,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       GestureDetector(
-                        // onTap: widget.onTap,
+                        onTap: widget.onTap,
                         child: Text(
                           "click here",
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(

@@ -43,7 +43,7 @@ class _CoopsPageState extends State<CoopsPage> {
                       childAspectRatio: 3 / 2,
                       crossAxisSpacing: 20,
                       mainAxisSpacing: 20,
-                      mainAxisExtent: 210,
+                      mainAxisExtent: 220,
                     ),
                     itemCount: cooperatives.length,
                     itemBuilder: (_, index) {

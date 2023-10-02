@@ -1,15 +1,15 @@
-import 'package:cooptourism/animations/slide_transition.dart';
+// import 'package:cooptourism/animations/slide_transition.dart';
 import 'package:cooptourism/pages/profile/about.dart';
 import 'package:cooptourism/pages/profile/comments.dart';
 import 'package:cooptourism/pages/profile/home.dart';
 import 'package:cooptourism/pages/profile/posts.dart';
-import 'package:cooptourism/widgets/gnav_home.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:cooptourism/widgets/gnav_home.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:cooptourism/theme/dark_theme.dart';
-import 'package:cooptourism/theme/light_theme.dart';
+// import 'package:cooptourism/theme/dark_theme.dart';
+// import 'package:cooptourism/theme/light_theme.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -99,7 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         child: Column(
                           children: [
-                            Column(
+                            const Column(
                               children: [
                                 Icon(Icons.star_rounded)
                               ],
@@ -133,7 +133,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               fontSize: 20, fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(height: 15),
-                    Container(
+                    SizedBox(
                         height: 120,
                         child: ListView.separated(
                           scrollDirection: Axis.horizontal,
