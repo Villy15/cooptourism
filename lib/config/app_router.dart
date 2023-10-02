@@ -1,6 +1,7 @@
 import 'package:cooptourism/auth/auth.dart';
 import 'package:cooptourism/pages/coops_page.dart';
 import 'package:cooptourism/pages/home_feed_page.dart';
+import 'package:cooptourism/pages/home_page.dart';
 import 'package:cooptourism/pages/market_page.dart';
 import 'package:cooptourism/pages/menu_page.dart';
 import 'package:cooptourism/pages/profile_page.dart';
@@ -22,7 +23,7 @@ final GoRouter router = GoRouter(routes: <GoRoute>[
         GoRoute(
             path: 'coops_page',
             builder: (BuildContext context, GoRouterState state) {
-              return const CoopsPage();
+              return const AuthPage();
             },
             routes: [
               GoRoute(

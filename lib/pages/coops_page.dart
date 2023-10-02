@@ -71,7 +71,7 @@ class _CoopsPageState extends State<CoopsPage> {
                                 child: FutureBuilder<String>(
                                   future: storageRef 
                                       .child(
-                                          "${cooperatives[index].id}/logo/${cooperatives[index].get('logo')}")
+                                          "${cooperatives[index].id}/images/${cooperatives[index].get('logo')}")
                                       .getDownloadURL(), // Await here
                                   builder: (context, urlSnapshot) {
                                     if (urlSnapshot.connectionState ==

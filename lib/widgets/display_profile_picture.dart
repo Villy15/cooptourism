@@ -2,8 +2,8 @@ import 'package:cooptourism/pages/selected_coop_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
-class DisplayLogo extends StatelessWidget {
-  const DisplayLogo({
+class DisplayProfilePicture extends StatelessWidget {
+  const DisplayProfilePicture({
     super.key,
     required this.storageRef,
     required this.widget,
@@ -17,9 +17,10 @@ class DisplayLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
+      borderRadius: BorderRadius.circular(50.0),
       child: FutureBuilder<String>(
         future: storageRef
-            .child("${widget.coopId}/images/${data['logo']}")
+            .child("${widget.coopId}/images/${data['profilePicture']}")
             .getDownloadURL(), // Await here
         builder: (context, urlSnapshot) {
           if (urlSnapshot.connectionState ==
@@ -35,8 +36,8 @@ class DisplayLogo extends StatelessWidget {
 
           return Image.network(
             imageUrl!,
-            height: 107,
-            width: double.infinity,
+            height: 50,
+            width: 50,
             fit: BoxFit.cover,
           );
         },
