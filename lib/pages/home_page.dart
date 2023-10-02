@@ -1,5 +1,5 @@
 import 'package:cooptourism/animations/slide_transition.dart';
-import 'package:cooptourism/widgets/gnav_home.dart';
+import 'package:cooptourism/widgets/bottom_nav_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -75,7 +75,7 @@ class HomePageState extends State<HomePage> {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
-            child: GNavHomeWidget(
+            child: BottomNavHomeWidget(
               selectedIndex: _selectedIndex,
               onTabChange: (index) {
                 setState(() {

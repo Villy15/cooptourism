@@ -15,6 +15,7 @@ class _CoopsPageState extends State<CoopsPage> {
   final storageRef = FirebaseStorage.instance.ref();
   final Stream<QuerySnapshot> _cooperatives =
       FirebaseFirestore.instance.collection('cooperatives').snapshots();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +58,7 @@ class _CoopsPageState extends State<CoopsPage> {
                         ),
                         child: GestureDetector(
                           onTap: () {
-                            var coopId = cooperatives[index];
+                            var coopId = cooperatives[index].id;
                             return context.go('/$coopId');
                           },
                           child: Column(
@@ -68,9 +69,9 @@ class _CoopsPageState extends State<CoopsPage> {
                                   topRight: Radius.circular(16.0),
                                 ),
                                 child: FutureBuilder<String>(
-                                  future: storageRef
+                                  future: storageRef 
                                       .child(
-                                          "${cooperatives[index].get('logo')}")
+                                          "${cooperatives[index].id}/logo/${cooperatives[index].get('logo')}")
                                       .getDownloadURL(), // Await here
                                   builder: (context, urlSnapshot) {
                                     if (urlSnapshot.connectionState ==
