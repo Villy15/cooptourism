@@ -1,5 +1,4 @@
-import 'package:cooptourism/auth/auth.dart';
-// import 'package:cooptourism/pages/home_page.dart';
+import 'package:cooptourism/config/app_router.dart';
 import 'package:cooptourism/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -22,11 +21,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
       darkTheme: darkTheme,
-      home: const AuthPage(),
+      routerConfig: router,
+      // home: const AuthPage(),
     );
   }
 }
