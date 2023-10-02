@@ -59,7 +59,7 @@ class _CoopsPageState extends State<CoopsPage> {
                         child: GestureDetector(
                           onTap: () {
                             var coopId = cooperatives[index].id;
-                            return context.go('/$coopId');
+                            return context.go('/coops_page/$coopId');
                           },
                           child: Column(
                             children: [
