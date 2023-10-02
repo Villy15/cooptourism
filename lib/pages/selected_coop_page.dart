@@ -15,6 +15,8 @@ class SelectedCoopPage extends StatefulWidget {
 class _SelectedCoopPageState extends State<SelectedCoopPage> {
   @override
   Widget build(BuildContext context) {
+      final _formKey = GlobalKey<FormState>();
+
     final storageRef = FirebaseStorage.instance.ref();
     final cooperativesStream = FirebaseFirestore.instance
         .collection('cooperatives')
@@ -66,7 +68,55 @@ class _SelectedCoopPageState extends State<SelectedCoopPage> {
                     ),
                   ),
                   OutlinedButton(
-                    onPressed: () => {},
+                    onPressed: () async {
+                      await showDialog<void>(context: context,
+                      builder: (context) => AlertDialog(
+                        content: Stack(
+                          clipBehavior: Clip.none,
+                          children: <Widget>[
+                            Positioned(
+                              right: -40,
+                              top: -40,
+                              child: InkResponse(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const CircleAvatar(
+                                  backgroundColor: Colors.red,
+                                  child: Icon(Icons.close),
+                                ),
+                              ),
+                            ),
+                            Form(
+                              key: _formKey,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: TextFormField(),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: TextFormField(),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: ElevatedButton(
+                                      child: const Text('Submitß'),
+                                      onPressed: () {
+                                        if (_formKey.currentState!.validate()) {
+                                          _formKey.currentState!.save();
+                                        }
+                                      },
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        )));
+                    },
                     child: const Text("Join"),
                   )
                 ],
