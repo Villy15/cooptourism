@@ -43,7 +43,7 @@ class _CoopsPageState extends State<CoopsPage> {
                       childAspectRatio: 3 / 2,
                       crossAxisSpacing: 20,
                       mainAxisSpacing: 20,
-                      mainAxisExtent: 210,
+                      mainAxisExtent: 220,
                     ),
                     itemCount: cooperatives.length,
                     itemBuilder: (_, index) {
@@ -59,7 +59,7 @@ class _CoopsPageState extends State<CoopsPage> {
                         child: GestureDetector(
                           onTap: () {
                             var coopId = cooperatives[index].id;
-                            return context.go('/$coopId');
+                            return context.go('/coops_page/$coopId');
                           },
                           child: Column(
                             children: [
@@ -71,7 +71,7 @@ class _CoopsPageState extends State<CoopsPage> {
                                 child: FutureBuilder<String>(
                                   future: storageRef 
                                       .child(
-                                          "${cooperatives[index].id}/logo/${cooperatives[index].get('logo')}")
+                                          "${cooperatives[index].id}/images/${cooperatives[index].get('logo')}")
                                       .getDownloadURL(), // Await here
                                   builder: (context, urlSnapshot) {
                                     if (urlSnapshot.connectionState ==

@@ -157,7 +157,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       GestureDetector(
-                        // onTap: widget.onTap,
+                        onTap: widget.onTap,
                         child: Text(
                           "click here",
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
