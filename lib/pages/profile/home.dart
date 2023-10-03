@@ -10,8 +10,6 @@ class ProfileHome extends StatefulWidget {
 class _ProfileHomeState extends State<ProfileHome> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).primaryColor
-    );
+    return Container(child: Text("ugh"));
   }
 }
