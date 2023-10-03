@@ -3,6 +3,7 @@ import 'package:cooptourism/pages/profile/about.dart';
 import 'package:cooptourism/pages/profile/comments.dart';
 import 'package:cooptourism/pages/profile/home.dart';
 import 'package:cooptourism/pages/profile/posts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:cooptourism/widgets/gnav_home.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -95,7 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         child: Column(
                           children: [
-                            Column(
+                            const Column(
                               children: [
                                 Icon(Icons.star_rounded)
                               ],
