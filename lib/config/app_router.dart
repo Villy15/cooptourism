@@ -10,8 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 // Import auth pages
-import 'package:cooptourism/auth/login_page.dart';
-import 'package:cooptourism/auth/register_page.dart';
+// import 'package:cooptourism/auth/login_page.dart';
+// import 'package:cooptourism/auth/register_page.dart';
 
 final GoRouter router = GoRouter(routes: <GoRoute>[
   GoRoute(

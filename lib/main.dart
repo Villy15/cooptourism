@@ -1,6 +1,5 @@
 import 'package:cooptourism/config/app_router.dart';
 import 'package:cooptourism/firebase_options.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -30,7 +29,6 @@ class MyApp extends StatelessWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       routerConfig: router,
-      // home: const AuthPage(),
     );
   }
 }
