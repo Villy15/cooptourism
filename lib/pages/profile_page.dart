@@ -1,8 +1,8 @@
 // import 'package:cooptourism/animations/slide_transition.dart';
-import 'package:cooptourism/pages/profile/about.dart';
-import 'package:cooptourism/pages/profile/comments.dart';
-import 'package:cooptourism/pages/profile/home.dart';
-import 'package:cooptourism/pages/profile/posts.dart';
+// import 'package:cooptourism/pages/profile/about.dart';
+// import 'package:cooptourism/pages/profile/comments.dart';
+// import 'package:cooptourism/pages/profile/home.dart';
+// import 'package:cooptourism/pages/profile/posts.dart';
 // import 'package:cooptourism/widgets/gnav_home.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -32,12 +32,12 @@ class _ProfilePageState extends State<ProfilePage> {
     'Help'
   ];
 
-  final List<Widget> _tabs = const [
-    ProfileHome(),
-    ProfileAbout(),
-    ProfilePosts(),
-    ProfileComments()
-  ];
+  // final List<Widget> _tabs = const [
+  //   ProfileHome(),
+  //   ProfileAbout(),
+  //   ProfilePosts(),
+  //   ProfileComments()
+  // ];
 
   final List<String> _recommended = [
     // test for UI purposes only

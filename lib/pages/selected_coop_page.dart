@@ -15,7 +15,7 @@ class SelectedCoopPage extends StatefulWidget {
 class _SelectedCoopPageState extends State<SelectedCoopPage> {
   @override
   Widget build(BuildContext context) {
-      final _formKey = GlobalKey<FormState>();
+      final formKey = GlobalKey<FormState>();
 
     final storageRef = FirebaseStorage.instance.ref();
     final cooperativesStream = FirebaseFirestore.instance
@@ -88,7 +88,7 @@ class _SelectedCoopPageState extends State<SelectedCoopPage> {
                               ),
                             ),
                             Form(
-                              key: _formKey,
+                              key: formKey,
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
@@ -105,8 +105,8 @@ class _SelectedCoopPageState extends State<SelectedCoopPage> {
                                     child: ElevatedButton(
                                       child: const Text('Submitß'),
                                       onPressed: () {
-                                        if (_formKey.currentState!.validate()) {
-                                          _formKey.currentState!.save();
+                                        if (formKey.currentState!.validate()) {
+                                          formKey.currentState!.save();
                                         }
                                       },
                                     ),

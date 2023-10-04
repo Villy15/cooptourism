@@ -1,7 +1,7 @@
 import 'package:cooptourism/auth/auth.dart';
-import 'package:cooptourism/pages/coops_page.dart';
-import 'package:cooptourism/pages/home_feed_page.dart';
-import 'package:cooptourism/pages/home_page.dart';
+// import 'package:cooptourism/pages/coops_page.dart';
+// import 'package:cooptourism/pages/home_feed_page.dart';
+// import 'package:cooptourism/pages/home_page.dart';
 import 'package:cooptourism/pages/market_page.dart';
 import 'package:cooptourism/pages/menu_page.dart';
 import 'package:cooptourism/pages/profile_page.dart';
