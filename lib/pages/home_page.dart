@@ -69,6 +69,7 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(_appBarTitles[_selectedIndex]), //! MAKE THIS DYNAMIC TO ROLE
         actions: [

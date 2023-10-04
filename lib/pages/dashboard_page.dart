@@ -11,108 +11,85 @@ class _DashboardPageState extends State<DashboardPage> {
   final List<String> _tabTitles = ['Goals', 'Members'];
   int _selectedIndex = 0;
 
+  final List<String> _dashboardTitles = [
+    'Monthly Sales',
+    'Monthly Expenses',
+    'Monthly Profit',
+    'Monthly Loss',
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-        body: Column(
-      children: [
-        // Lists Filter
-        SizedBox(
-          height: 40,
-          child: listViewFilter(),
-        ),
-
-        // Sales Dashboard
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-          child: Container(
-            height: 200,
-            width: 400,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondary,
-              borderRadius: BorderRadius.circular(20.0),
+    return  Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: ListView(
+          scrollDirection: Axis.vertical,
+          children: [
+            // Lists Filter
+            SizedBox(
+              height: 40,
+              child: listViewFilter(),
             ),
-            // Circular border
-            child: const Padding(
-              padding: EdgeInsets.all(16.0),
-              child:
-                  Text('Sales', style: TextStyle(fontWeight: FontWeight.bold)),
+
+            // Sales Dashboard
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
+              child: Container(
+                height: 200,
+                width: 400,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.secondary,
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                // Circular border
+                child: const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text('Sales',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              ),
             ),
-          ),
+
+            GridView.builder(
+              shrinkWrap: true,
+              itemCount: _dashboardTitles.length,
+              // Make this unscrollable
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                mainAxisExtent: 300,
+                childAspectRatio: 1,
+              ),
+              itemBuilder: (context, index) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondary,
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  // Circular border
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        for (final word in _dashboardTitles[index].split(' '))
+                          Text(
+                            word,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(height: 20),
+          ],
         ),
-
-        // Sales Dashboard
-        SizedBox (
-          height: 400,
-          child: GridView.count (
-            crossAxisCount: 2,
-            children: [
-              Container(
-                height: 200,
-                width: 155,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                // Circular border
-                child: const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child:
-                      Text('Sales', style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-              ),
-        
-              Container(
-                height: 200,
-                width: 155,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                // Circular border
-                child: const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child:
-                      Text('Sales', style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-              ),
-
-              Container(
-                height: 200,
-                width: 155,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                // Circular border
-                child: const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child:
-                      Text('Sales', style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-              ),
-
-              Container(
-                height: 200,
-                width: 155,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                // Circular border
-                child: const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child:
-                      Text('Sales', style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-              ),
-            ],
-          ),
-        ),
-
-      ],
-    ));
+    );
   }
 
   ListView listViewFilter() {
