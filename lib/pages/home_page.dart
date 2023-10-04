@@ -2,6 +2,7 @@ import 'package:cooptourism/animations/slide_transition.dart';
 import 'package:cooptourism/widgets/bottom_nav_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 // import 'package:go_router/go_router.dart';
 
 import 'home_feed_page.dart';
@@ -19,7 +20,8 @@ import 'add_post.dart';
 // MANAGER
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final Widget child;
+  const HomePage({Key? key, required this.child}) : super(key: key);
 
   @override
   HomePageState createState() => HomePageState();
@@ -36,12 +38,13 @@ class HomePageState extends State<HomePage> {
     'Menu',
   ];
 
-  final List<Widget> _tabs = const [
-    HomeFeedPage(),
-    CoopsPage(),
-    MarketPage(),
-    ProfilePage(),
-    MenuPage(),
+  final List<String> _tabs = const [
+    "/",
+    "/coops_page",
+    "/market_page",
+    "/profile_page",
+    "/menu_page",
+
   ];
 
   
@@ -68,7 +71,7 @@ class HomePageState extends State<HomePage> {
       extendBody: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(_appBarTitlesManager[_selectedIndex]), //! MAKE THIS DYNAMIC TO ROLE
+        title: Text(_appBarTitles[_selectedIndex]), //! MAKE THIS DYNAMIC TO ROLE
         actions: [
           IconButton(
             icon: Icon(
@@ -79,7 +82,7 @@ class HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: _tabsManager[_selectedIndex], //! MAKE THIS DYNAMIC TO ROLE
+      body: widget.child, //! MAKE THIS DYNAMIC TO ROLE
       floatingActionButton: shouldShowFloatingActionButton()
           ? FloatingActionButton(
               onPressed: () {
@@ -106,9 +109,10 @@ class HomePageState extends State<HomePage> {
               onTabChange: (index) {
                 setState(() {
                   _selectedIndex = index;
+                  context.go(_tabs[_selectedIndex]);
                 });
               },
-              role: "Manager", // Replace with not hardcoded role // Member, Customer
+              role: "Member", // Replace with not hardcoded role // Member, Customer
             ),
           ),
         ),
