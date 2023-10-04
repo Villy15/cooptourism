@@ -36,7 +36,12 @@ class AuthPage extends StatelessWidget {
     try {
       await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
         'email': user.email,
-        // Add any additional fields you want to store for the user
+        'first_name': "Adrian",
+        'last_name': "Villanueva",
+        'status': 'active',
+        'user_accomplishment': "Tour Driver",
+        'user_rating': 'Great',
+        'user_trust': 'Trust',
       });
     } catch (e) {
       print('Error adding user to Firestore: $e');

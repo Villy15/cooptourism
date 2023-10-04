@@ -14,6 +14,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // for website only not mobile
   // FirebaseAuth.instance.setPersistence(Persistence.NONE);
 
   runApp(const MyApp());

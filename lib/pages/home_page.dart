@@ -10,7 +10,13 @@ import 'market_page.dart';
 import 'menu_page.dart';
 import 'profile_page.dart';
 
+import 'dashboard_page.dart';
+import 'members_page.dart';
+import 'reports_page.dart';
+
 import 'add_post.dart';
+
+// MANAGER
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -38,12 +44,30 @@ class HomePageState extends State<HomePage> {
     MenuPage(),
   ];
 
+  
+  final List<String> _appBarTitlesManager = [
+    'Home',
+    'Dashboard',
+    'Members',
+    'Reports',
+    'Menu',
+  ];
+
+  final List<Widget> _tabsManager = const [
+    HomeFeedPage(),
+    DashboardPage(),
+    MembersPage(),
+    ReportsPage(),
+    MenuPage(),
+  ];
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        title: Text(_appBarTitles[_selectedIndex]),
+        title: Text(_appBarTitlesManager[_selectedIndex]), //! MAKE THIS DYNAMIC TO ROLE
         actions: [
           IconButton(
             icon: Icon(
@@ -54,7 +78,7 @@ class HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: _tabs[_selectedIndex],
+      body: _tabsManager[_selectedIndex], //! MAKE THIS DYNAMIC TO ROLE
       floatingActionButton: shouldShowFloatingActionButton()
           ? FloatingActionButton(
               onPressed: () {
@@ -83,6 +107,7 @@ class HomePageState extends State<HomePage> {
                   _selectedIndex = index;
                 });
               },
+              role: "Manager", // Replace with not hardcoded role // Member, Customer
             ),
           ),
         ),
