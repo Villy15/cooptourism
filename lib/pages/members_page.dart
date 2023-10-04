@@ -10,10 +10,75 @@ class MembersPage extends StatefulWidget {
 class _MembersPageState extends State<MembersPage> {
   final List<String> _tabTitles = ['Members', 'Features'];
   int _selectedIndex = 0;
+  
+  final List<String> _members = [
+    'John Doe',
+    'Jane Doe',
+    'John Smith',
+    'Jane Smith',
+    'John Doe',
+    'John Doe',
+    'Jane Doe',
+    'John Smith',
+    'Jane Smith',
+    'John Doe',
+    'John Doe',
+    'Jane Doe',
+    'John Smith',
+    'Jane Smith',
+    'John Doe',
+    'John Doe',
+    'Jane Doe',
+    'John Smith',
+    'Jane Smith',
+    'John Doe',
+    'John Doe',
+    'Jane Doe',
+    'John Smith',
+    'Jane Smith',
+    'John Doe',
+    'John Doe',
+    'Jane Doe',
+    'John Smith',
+    'Jane Smith',
+    'John Doe',
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return SingleChildScrollView (
+      child: Column (
+        children: [
+          SizedBox(
+            height: 40,
+            child: listViewFilter(),
+          ),
+    
+          const SizedBox(height: 10),
+          searchFilter(context),
+    
+          ListView.builder (
+            shrinkWrap: true,
+            itemCount: _members.length,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: Icon(
+                  Icons.person,
+                  color: Theme.of(context).colorScheme.primary,
+  
+                  ),
+                title: Text(
+                  _members[index],
+                    style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary),
+                  ),
+              );
+            },
+          )
+          
+        ],
+      ),
+    );
   }
 
   ListView listViewFilter() {
@@ -52,6 +117,41 @@ class _MembersPageState extends State<MembersPage> {
           ),
         );
       },
+    );
+  }
+
+  Row searchFilter(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Search',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          child: ElevatedButton.icon(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            icon: const Icon(Icons.filter_list),
+            label: const Text('Filter'),
+          ),
+        ),
+      ],
     );
   }
 }

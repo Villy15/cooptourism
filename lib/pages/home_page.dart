@@ -6,10 +6,7 @@ import 'package:go_router/go_router.dart';
 // import 'package:go_router/go_router.dart';
 
 import 'home_feed_page.dart';
-import 'coops_page.dart';
-import 'market_page.dart';
 import 'menu_page.dart';
-import 'profile_page.dart';
 
 import 'dashboard_page.dart';
 import 'members_page.dart';
@@ -44,10 +41,8 @@ class HomePageState extends State<HomePage> {
     "/market_page",
     "/profile_page",
     "/menu_page",
-
   ];
 
-  
   final List<String> _appBarTitlesManager = [
     'Home',
     'Dashboard',
@@ -56,14 +51,13 @@ class HomePageState extends State<HomePage> {
     'Menu',
   ];
 
-  final List<Widget> _tabsManager = const [
-    HomeFeedPage(),
-    DashboardPage(),
-    MembersPage(),
-    ReportsPage(),
-    MenuPage(),
+  final List<String> _tabsManager = const [
+    "/",
+    "/dashboard_page",
+    "/members_page",
+    "/reports_page",
+    "/menu_page",
   ];
-
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +65,8 @@ class HomePageState extends State<HomePage> {
       extendBody: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(_appBarTitles[_selectedIndex]), //! MAKE THIS DYNAMIC TO ROLE
+        title: Text(
+            _appBarTitlesManager[_selectedIndex]), //! MAKE THIS DYNAMIC TO ROLE
         actions: [
           IconButton(
             icon: Icon(
@@ -109,10 +104,11 @@ class HomePageState extends State<HomePage> {
               onTabChange: (index) {
                 setState(() {
                   _selectedIndex = index;
-                  context.go(_tabs[_selectedIndex]);
+                  context.go(_tabsManager[_selectedIndex]);
                 });
               },
-              role: "Member", // Replace with not hardcoded role // Member, Customer
+              role:
+                  "Manager", // Replace with not hardcoded role // Member, Customer
             ),
           ),
         ),
