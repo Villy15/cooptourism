@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/rendering.dart';
+import 'package:go_router/go_router.dart';
 
 // import 'package:go_router/go_router.dart';
 
-class BottomNavHomeWidget extends StatelessWidget {
+class BottomNavHomeWidget extends StatefulWidget {
   final int selectedIndex;
   final Function(int) onTabChange;
   final String role;
@@ -18,14 +20,20 @@ class BottomNavHomeWidget extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<BottomNavHomeWidget> createState() => _BottomNavHomeWidgetState();
+}
+
+class _BottomNavHomeWidgetState extends State<BottomNavHomeWidget> {
+  int currentIndex = 0;
+  @override
   Widget build(BuildContext context) {
     // Changes the bottom navigation bar items based on the user's role
     List<BottomNavigationBarItem> items;
-    if (role == 'Manager') {
+    if (widget.role == 'Manager') {
       items = _getManagerItems();
-    } else if (role == 'Member') {
+    } else if (widget.role == 'Member') {
       items = _getMemberItems();
-    } else if (role == 'Customer') {
+    } else if (widget.role == 'Customer') {
       items = _getCustomerItems();
     } else {
       items = _getMemberItems();
@@ -47,8 +55,8 @@ class BottomNavHomeWidget extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.background,
       // selectedFontSize: 12,
       items: items,
-      currentIndex: selectedIndex,
-      onTap: onTabChange,
+      currentIndex: widget.selectedIndex,
+      onTap: widget.onTabChange,
     );
   }
 

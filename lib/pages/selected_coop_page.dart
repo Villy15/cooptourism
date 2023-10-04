@@ -15,7 +15,7 @@ class SelectedCoopPage extends StatefulWidget {
 class _SelectedCoopPageState extends State<SelectedCoopPage> {
   @override
   Widget build(BuildContext context) {
-      final formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
 
     final storageRef = FirebaseStorage.instance.ref();
     final cooperativesStream = FirebaseFirestore.instance

@@ -4,9 +4,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AuthPage extends StatelessWidget {
-  const AuthPage({Key? key}) : super(key: key);
 
+class AuthPage extends StatefulWidget {
+  final Widget child;
+  const AuthPage({Key? key, required this.child}) : super(key: key);
+  @override
+  State<AuthPage> createState() => _AuthPageState();
+}
+
+class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,8 +28,7 @@ class AuthPage extends StatelessWidget {
           if (snapshot.hasData) {
             // User is authenticated, add to Firestore
             addUserToFirestore(snapshot.data!);
-
-            return const HomePage();
+            return HomePage(child: widget.child);
           } else {
             return const LoginOrRegister();
           }
@@ -31,6 +36,7 @@ class AuthPage extends StatelessWidget {
       ),
     );
   }
+}
 
   Future<void> addUserToFirestore(User user) async {
     try {
@@ -47,4 +53,3 @@ class AuthPage extends StatelessWidget {
       print('Error adding user to Firestore: $e');
     }
   }
-}
