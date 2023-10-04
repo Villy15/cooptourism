@@ -23,7 +23,8 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin {
+class _ProfilePageState extends State<ProfilePage>
+    with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
 
   final List<String> _titles = [
@@ -97,12 +98,15 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               children: [
                 _profileHeading(
                     context,
-                    userData['first_name'],
-                    userData['last_name'],
-                    userData['user_trust'],
-                    userData['user_rating']),
+                    userData['first_name'] ?? 'First Name',
+                    userData['last_name'] ?? 'Last Name',
+                    userData['user_trust']?.toString() ?? '0',
+                    userData['user_rating']?.toString() ?? '0'),
+            
                 const SizedBox(height: 15),
                 tabsView(),
+
+                // THIS CAUSES THE ERROR
                 Expanded(
                   child: TabBarView(
                     controller: _tabController,
@@ -111,142 +115,141 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                   ),
                 const SizedBox(height: 30),
                 // TEMPORARY FOR HOME PAGE
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 15.0),
-                      child: Text('Featured',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                    ),
-                    const SizedBox(height: 15),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: Container(
-                          height: 80,
-                          width: 350,
-                          decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary,
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Column(
-                            children: [
-                              const Column(
-                                children: [
-                                  Icon(Icons.star_rounded, color: Colors.white)
-                                ],
-                              ),
-                              Text(userData['status'],
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary)),
-                              Text(userData['user_accomplishment'],
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary))
-                            ],
-                          )),
-                    )
-                  ],
-                ),
+                featuredSection(context, userData),
+            
                 const SizedBox(height: 30),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 15.0),
-                      child: Text('Recommended for you',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                    ),
-                    const SizedBox(height: 15),
-                    SizedBox(
-                        height: 120,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: _recommended.length,
-                          padding: const EdgeInsets.only(left: 15, right: 15),
-                          separatorBuilder: ((context, index) =>
-                              const SizedBox(width: 15)),
-                          itemBuilder: (context, index) {
-                            return Container(
-                                width: 120,
-                                decoration: BoxDecoration(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    borderRadius: BorderRadius.circular(15)),
-                                child: Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(_recommended[index],
-                                          style: const TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w400)),
-                                    ),
-                                    if (index == 0)
-                                      const Icon(Icons.tag_faces_rounded,
-                                          color: Colors.white)
-                                    else if (index == 1)
-                                      const Icon(Icons.handshake,
-                                          color: Colors.white)
-                                    else if (index == 2)
-                                      const Icon(Icons.privacy_tip,
-                                          color: Colors.white)
-                                  ],
-                                ));
-                          },
-                        )),
-                  ],
-                )
+            
+                recommendedSection(),
+
+                const SizedBox(height: 100),
               ],
             );
           }),
     );
   }
 
-  Widget tabsView() {
-  return TabBar(
-    controller: _tabController,
-    isScrollable: true, // this makes the tab bar scrollable
-    indicatorColor: Colors.transparent,
-    onTap: (index) {
-      setState(() {
-        _selectedIndex = index;
-      });
-    },
-    tabs: _titles.map((title) {
-      return Tab(
-        child: Container(
-          width: 100,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(25),
-            color: _selectedIndex == _titles.indexOf(title)
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.secondary,
-          ),
-          child: Align(
-            alignment: Alignment.center,
-            child: Text(title,
-                style: TextStyle(
-                  color: _selectedIndex == _titles.indexOf(title)
-                      ? Theme.of(context).colorScheme.background
-                      : Theme.of(context).colorScheme.primary,
-                  fontWeight: _selectedIndex == _titles.indexOf(title)
-                      ? FontWeight.bold
-                      : FontWeight.w400,
-                  fontSize: 16,
-                )),
-          ),
+  Column featuredSection(BuildContext context, Map<String, dynamic> userData) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(left: 15.0),
+          child: Text('Featured',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         ),
-      );
-    }).toList(),
-  );
-}
+        const SizedBox(height: 15),
+        Padding(
+          padding: const EdgeInsets.only(left: 20.0),
+          child: Container(
+              height: 80,
+              width: 350,
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(12)),
+              child: Column(
+                children: [
+                  const Column(
+                    children: [Icon(Icons.star_rounded, color: Colors.white)],
+                  ),
+                  Text(userData['status'] ?? 'Status',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary)),
+                  Text(userData['user_accomplishment'] ?? 'Accomplishment',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary))
+                ],
+              )),
+        )
+      ],
+    );
+  }
 
+  Column recommendedSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(left: 15.0),
+          child: Text('Recommended for you',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        ),
+        const SizedBox(height: 15),
+        SizedBox(
+            height: 120,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: _recommended.length,
+              padding: const EdgeInsets.only(left: 15, right: 15),
+              separatorBuilder: ((context, index) => const SizedBox(width: 15)),
+              itemBuilder: (context, index) {
+                return Container(
+                    width: 120,
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius: BorderRadius.circular(15)),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(_recommended[index],
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w400)),
+                        ),
+                        if (index == 0)
+                          const Icon(Icons.tag_faces_rounded,
+                              color: Colors.white)
+                        else if (index == 1)
+                          const Icon(Icons.handshake, color: Colors.white)
+                        else if (index == 2)
+                          const Icon(Icons.privacy_tip, color: Colors.white)
+                      ],
+                    ));
+              },
+            )),
+      ],
+    );
+  }
+
+  Widget tabsView() {
+    return TabBar(
+      controller: _tabController,
+      isScrollable: true, // this makes the tab bar scrollable
+      indicatorColor: Colors.transparent,
+      onTap: (index) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      },
+      tabs: _titles.map((title) {
+        return Tab(
+          child: Container(
+            width: 100,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(25),
+              color: _selectedIndex == _titles.indexOf(title)
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.secondary,
+            ),
+            child: Align(
+              alignment: Alignment.center,
+              child: Text(title,
+                  style: TextStyle(
+                    color: _selectedIndex == _titles.indexOf(title)
+                        ? Theme.of(context).colorScheme.background
+                        : Theme.of(context).colorScheme.primary,
+                    fontWeight: _selectedIndex == _titles.indexOf(title)
+                        ? FontWeight.bold
+                        : FontWeight.w400,
+                    fontSize: 16,
+                  )),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
 
   SizedBox _titleHeadings() {
     return SizedBox(

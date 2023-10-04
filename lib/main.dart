@@ -14,7 +14,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  FirebaseAuth.instance.setPersistence(Persistence.NONE);
+  // FirebaseAuth.instance.setPersistence(Persistence.NONE);
 
   runApp(const MyApp());
 }

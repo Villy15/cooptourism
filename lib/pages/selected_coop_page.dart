@@ -129,7 +129,7 @@ class _SelectedCoopPageState extends State<SelectedCoopPage> {
             ],
           );
                }        
-        return Text('Loading');
+        return const Text('Loading');
         } 
       ),
     );
