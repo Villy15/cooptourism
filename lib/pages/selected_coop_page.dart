@@ -27,7 +27,8 @@ class _SelectedCoopPageState extends State<SelectedCoopPage> {
         future: cooperativesStream.get(),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          Map<String, dynamic> data =
+               if (snapshot.connectionState == ConnectionState.done) {
+                Map<String, dynamic> data =
               snapshot.data?.data() as Map<String, dynamic>;
           return Column(
             children: [
@@ -102,6 +103,10 @@ class _SelectedCoopPageState extends State<SelectedCoopPage> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(8),
+                                    child: TextFormField(),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8),
                                     child: ElevatedButton(
                                       child: const Text('Submitß'),
                                       onPressed: () {
@@ -123,7 +128,9 @@ class _SelectedCoopPageState extends State<SelectedCoopPage> {
               )
             ],
           );
-        },
+               }        
+        return Text('Loading');
+        } 
       ),
     );
   }

@@ -1,8 +1,11 @@
 // import 'package:cooptourism/animations/slide_transition.dart';
-// import 'package:cooptourism/pages/profile/about.dart';
-// import 'package:cooptourism/pages/profile/comments.dart';
-// import 'package:cooptourism/pages/profile/home.dart';
-// import 'package:cooptourism/pages/profile/posts.dart';
+import 'package:cooptourism/pages/profile/about.dart';
+import 'package:cooptourism/pages/profile/coaching.dart';
+import 'package:cooptourism/pages/profile/comments.dart';
+import 'package:cooptourism/pages/profile/help.dart';
+import 'package:cooptourism/pages/profile/home.dart';
+import 'package:cooptourism/pages/profile/posts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:cooptourism/widgets/gnav_home.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +23,7 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
 
   final List<String> _titles = [
@@ -32,12 +35,14 @@ class _ProfilePageState extends State<ProfilePage> {
     'Help'
   ];
 
-  // final List<Widget> _tabs = const [
-  //   ProfileHome(),
-  //   ProfileAbout(),
-  //   ProfilePosts(),
-  //   ProfileComments()
-  // ];
+  final List<Widget> _tabs = const [
+    ProfileHome(),
+    ProfileAbout(),
+    ProfilePosts(),
+    ProfileComments(),
+    ProfileCoaching(),
+    ProfileHelp(),
+  ];
 
   final List<String> _recommended = [
     // test for UI purposes only
@@ -45,7 +50,26 @@ class _ProfilePageState extends State<ProfilePage> {
     'Need help fixing your trust?',
     'Keep your account secure!',
   ];
+  User? user;
+  late TabController _tabController;
 
+  @override
+  void initState() {
+    super.initState();
+    user = FirebaseAuth.instance.currentUser;
+
+    _tabController = TabController(
+      length: _titles.length,
+      initialIndex: _selectedIndex,
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,13 +78,15 @@ class _ProfilePageState extends State<ProfilePage> {
       body: StreamBuilder(
           stream: _firestore
               .collection('users')
-              .doc(
-                  'Z3GS6I6QZV0nfbgVBzTv') // temporary document ID for the mean time
+              .doc(user?.uid) // temporary document ID for the mean time
               .snapshots(),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const CircularProgressIndicator();
+            if (mounted) {
+              if (!snapshot.hasData) {
+                return const CircularProgressIndicator();
+              }
             }
+
             if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             }
@@ -70,9 +96,19 @@ class _ProfilePageState extends State<ProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _profileHeading(
-                    context, userData['first_name'], userData['last_name']),
+                    context,
+                    userData['first_name'],
+                    userData['last_name'],
+                    userData['user_trust'],
+                    userData['user_rating']),
                 const SizedBox(height: 15),
-                _titleHeadings(),
+                tabsView(),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: _tabs,
+                  )
+                  ),
                 const SizedBox(height: 30),
                 // TEMPORARY FOR HOME PAGE
                 Column(
@@ -80,45 +116,38 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     const Padding(
                       padding: EdgeInsets.only(left: 15.0),
-                      child: Text(
-                        'Featured',
-                        style: TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold
-                        )
-                      ),
+                      child: Text('Featured',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(height: 15),
                     Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: Container(
-                        height: 80,
-                        width: 350,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
-                          borderRadius: BorderRadius.circular(12) 
-                        ),
-                        child: Column(
-                          children: [
-                            const Column(
-                              children: [
-                                Icon(Icons.star_rounded)
-                              ],
-                            ),
-                            Text(
-                              'Certified',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary
-                              )
-                            ),
-                            Text(
-                              'Student Passer',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary
-                              )
-                            )
-                          ],
-                        )
-                      ),
+                          height: 80,
+                          width: 350,
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primary,
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Column(
+                            children: [
+                              const Column(
+                                children: [
+                                  Icon(Icons.star_rounded, color: Colors.white)
+                                ],
+                              ),
+                              Text(userData['status'],
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary)),
+                              Text(userData['user_accomplishment'],
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary))
+                            ],
+                          )),
                     )
                   ],
                 ),
@@ -138,43 +167,39 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: ListView.separated(
                           scrollDirection: Axis.horizontal,
                           itemCount: _recommended.length,
-                          padding: const EdgeInsets.only(
-                            left: 15,
-                            right: 15
-                          ),
-                          separatorBuilder: ((context, index) => const SizedBox(width: 15)),
+                          padding: const EdgeInsets.only(left: 15, right: 15),
+                          separatorBuilder: ((context, index) =>
+                              const SizedBox(width: 15)),
                           itemBuilder: (context, index) {
                             return Container(
-                              width: 120,
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
-                                borderRadius: BorderRadius.circular(15)
-                              ), 
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      _recommended[index],
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w400
-                                      )
+                                width: 120,
+                                decoration: BoxDecoration(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    borderRadius: BorderRadius.circular(15)),
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(_recommended[index],
+                                          style: const TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w400)),
                                     ),
-                                  ),
-                                  if (index == 0) 
-                                    const Icon(Icons.tag_faces_rounded)
-                                  else if (index == 1)
-                                    const Icon(Icons.handshake)
-                                  else if (index == 2)
-                                    const Icon(Icons.privacy_tip)
-                                ],
-                              )   
-                            );
+                                    if (index == 0)
+                                      const Icon(Icons.tag_faces_rounded,
+                                          color: Colors.white)
+                                    else if (index == 1)
+                                      const Icon(Icons.handshake,
+                                          color: Colors.white)
+                                    else if (index == 2)
+                                      const Icon(Icons.privacy_tip,
+                                          color: Colors.white)
+                                  ],
+                                ));
                           },
-                        )
-                      ),
+                        )),
                   ],
                 )
               ],
@@ -182,6 +207,46 @@ class _ProfilePageState extends State<ProfilePage> {
           }),
     );
   }
+
+  Widget tabsView() {
+  return TabBar(
+    controller: _tabController,
+    isScrollable: true, // this makes the tab bar scrollable
+    indicatorColor: Colors.transparent,
+    onTap: (index) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    },
+    tabs: _titles.map((title) {
+      return Tab(
+        child: Container(
+          width: 100,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(25),
+            color: _selectedIndex == _titles.indexOf(title)
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.secondary,
+          ),
+          child: Align(
+            alignment: Alignment.center,
+            child: Text(title,
+                style: TextStyle(
+                  color: _selectedIndex == _titles.indexOf(title)
+                      ? Theme.of(context).colorScheme.background
+                      : Theme.of(context).colorScheme.primary,
+                  fontWeight: _selectedIndex == _titles.indexOf(title)
+                      ? FontWeight.bold
+                      : FontWeight.w400,
+                  fontSize: 16,
+                )),
+          ),
+        ),
+      );
+    }).toList(),
+  );
+}
+
 
   SizedBox _titleHeadings() {
     return SizedBox(
@@ -220,8 +285,8 @@ class _ProfilePageState extends State<ProfilePage> {
             }));
   }
 
-  Container _profileHeading(
-      BuildContext context, String firstName, String lastName) {
+  Container _profileHeading(BuildContext context, String firstName,
+      String lastName, String userTrust, String userRating) {
     return Container(
       height: 130,
       color: Theme.of(context).colorScheme.primary,
@@ -259,19 +324,20 @@ class _ProfilePageState extends State<ProfilePage> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: Colors.white),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
                         children: [
-                          Padding(
+                          const Padding(
                               padding: EdgeInsets.only(left: 8.0),
                               child: Icon(Icons.stars_sharp,
                                   color: Color(0xff68707E), size: 20)),
                           Padding(
-                              padding: EdgeInsets.only(top: 1.0, left: 3.0),
-                              child: Text('Trust',
-                                  style: TextStyle(
+                              padding:
+                                  const EdgeInsets.only(top: 1.0, left: 3.0),
+                              child: Text(userTrust,
+                                  style: const TextStyle(
                                       color: Color(0xff68707E),
                                       fontSize: 10,
                                       fontWeight: FontWeight.w500)))
@@ -280,13 +346,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       Row(
                         children: [
                           Padding(
-                              padding: EdgeInsets.only(top: 1.0, right: 3.0),
-                              child: Text('Good',
-                                  style: TextStyle(
+                              padding:
+                                  const EdgeInsets.only(top: 1.0, right: 3.0),
+                              child: Text(userRating,
+                                  style: const TextStyle(
                                       color: Color(0xff68707E),
                                       fontSize: 10,
                                       fontWeight: FontWeight.w500))),
-                          Padding(
+                          const Padding(
                               padding: EdgeInsets.only(right: 8.0),
                               child: Icon(Icons.add_reaction_rounded,
                                   color: Color(0xff68707E), size: 20))

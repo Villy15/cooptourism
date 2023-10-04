@@ -77,7 +77,7 @@ class HomePageState extends State<HomePage> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
             child: BottomNavHomeWidget(
-              selectedIndex: _selectedIndex,              
+              selectedIndex: _selectedIndex,
               onTabChange: (index) {
                 setState(() {
                   _selectedIndex = index;
@@ -91,7 +91,9 @@ class HomePageState extends State<HomePage> {
   }
 
   void signOut() async {
-    await FirebaseAuth.instance.signOut();
+    if (mounted) {
+      await FirebaseAuth.instance.signOut();
+    }
   }
 
   void showAddPostPage(BuildContext context) {
