@@ -2,18 +2,23 @@ import 'package:cooptourism/animations/slide_transition.dart';
 import 'package:cooptourism/widgets/bottom_nav_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 // import 'package:go_router/go_router.dart';
 
 import 'home_feed_page.dart';
-import 'coops_page.dart';
-import 'market_page.dart';
 import 'menu_page.dart';
-import 'profile_page.dart';
+
+import 'dashboard_page.dart';
+import 'members_page.dart';
+import 'reports_page.dart';
 
 import 'add_post.dart';
 
+// MANAGER
+
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final Widget child;
+  const HomePage({Key? key, required this.child}) : super(key: key);
 
   @override
   HomePageState createState() => HomePageState();
@@ -30,20 +35,38 @@ class HomePageState extends State<HomePage> {
     'Menu',
   ];
 
-  final List<Widget> _tabs = const [
-    HomeFeedPage(),
-    CoopsPage(),
-    MarketPage(),
-    ProfilePage(),
-    MenuPage(),
+  final List<String> _tabs = const [
+    "/",
+    "/coops_page",
+    "/market_page",
+    "/profile_page",
+    "/menu_page",
+  ];
+
+  final List<String> _appBarTitlesManager = [
+    'Home',
+    'Dashboard',
+    'Members',
+    'Reports',
+    'Menu',
+  ];
+
+  final List<String> _tabsManager = const [
+    "/",
+    "/dashboard_page",
+    "/members_page",
+    "/reports_page",
+    "/menu_page",
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(_appBarTitles[_selectedIndex]),
+        title: Text(
+            _appBarTitlesManager[_selectedIndex]), //! MAKE THIS DYNAMIC TO ROLE
         actions: [
           IconButton(
             icon: Icon(
@@ -54,7 +77,7 @@ class HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: _tabs[_selectedIndex],
+      body: widget.child, //! MAKE THIS DYNAMIC TO ROLE
       floatingActionButton: shouldShowFloatingActionButton()
           ? FloatingActionButton(
               onPressed: () {
@@ -81,8 +104,11 @@ class HomePageState extends State<HomePage> {
               onTabChange: (index) {
                 setState(() {
                   _selectedIndex = index;
+                  context.go(_tabsManager[_selectedIndex]);
                 });
               },
+              role:
+                  "Manager", // Replace with not hardcoded role // Member, Customer
             ),
           ),
         ),
