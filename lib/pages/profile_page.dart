@@ -36,15 +36,6 @@ class _ProfilePageState extends State<ProfilePage>
     'Help'
   ];
 
-  final List<Widget> _tabs = const [
-    ProfileHome(),
-    ProfileAbout(),
-    ProfilePosts(),
-    ProfileComments(),
-    ProfileCoaching(),
-    ProfileHelp(),
-  ];
-
   final List<String> _recommended = [
     // test for UI purposes only
     'Take Action to improve your trust!',
@@ -92,37 +83,40 @@ class _ProfilePageState extends State<ProfilePage>
               return Text('Error: ${snapshot.error}');
             }
             var userData = snapshot.data?.data() as Map<String, dynamic>;
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _profileHeading(
-                    context,
-                    userData['first_name'] ?? 'First Name',
-                    userData['last_name'] ?? 'Last Name',
-                    userData['user_trust']?.toString() ?? '0',
-                    userData['user_rating']?.toString() ?? '0'),
-            
-                const SizedBox(height: 15),
-                tabsView(),
-
-                // THIS CAUSES THE ERROR
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: _tabs,
-                  )
+            final List<Widget> _tabs = [
+                ProfileHome(userData: userData),
+                ProfileAbout(userData: userData),
+                ProfilePosts(),
+                ProfileComments(),
+                ProfileCoaching(),
+                ProfileHelp(),
+            ];
+            return NestedScrollView(
+              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+                return <Widget>[
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        _profileHeading(
+                          context,
+                          userData['first_name'] ?? 'First Name',
+                          userData['last_name'] ?? 'Last Name',
+                          userData['user_trust']?.toString() ?? '0',
+                          userData['user_rating']?.toString() ?? '0'
+                        ),
+                        const SizedBox(height: 15),
+                        tabsView(),
+                        const SizedBox(height: 30),
+                      ],
+                    ),
                   ),
-                const SizedBox(height: 30),
-                // TEMPORARY FOR HOME PAGE
-                featuredSection(context, userData),
-            
-                const SizedBox(height: 30),
-            
-                recommendedSection(),
-
-                const SizedBox(height: 100),
-              ],
+                ];
+              },
+              body: TabBarView(
+                controller: _tabController,
+                physics: const NeverScrollableScrollPhysics(),
+                children: _tabs,
+              ),
             );
           }),
     );
@@ -213,41 +207,45 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
   Widget tabsView() {
-    return TabBar(
-      controller: _tabController,
-      isScrollable: true, // this makes the tab bar scrollable
-      indicatorColor: Colors.transparent,
-      onTap: (index) {
-        setState(() {
-          _selectedIndex = index;
-        });
-      },
-      tabs: _titles.map((title) {
-        return Tab(
-          child: Container(
-            width: 100,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(25),
-              color: _selectedIndex == _titles.indexOf(title)
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.secondary,
-            ),
-            child: Align(
-              alignment: Alignment.center,
-              child: Text(title,
-                  style: TextStyle(
-                    color: _selectedIndex == _titles.indexOf(title)
-                        ? Theme.of(context).colorScheme.background
-                        : Theme.of(context).colorScheme.primary,
-                    fontWeight: _selectedIndex == _titles.indexOf(title)
-                        ? FontWeight.bold
-                        : FontWeight.w400,
-                    fontSize: 16,
-                  )),
-            ),
-          ),
-        );
-      }).toList(),
+    return Column(
+      children: [
+        TabBar(
+          controller: _tabController,
+          isScrollable: true, // this makes the tab bar scrollable
+          indicatorColor: Colors.transparent,
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          tabs: _titles.map((title) {
+            return Tab(
+              child: Container(
+                width: 100,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25),
+                  color: _selectedIndex == _titles.indexOf(title)
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.secondary,
+                ),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(title,
+                      style: TextStyle(
+                        color: _selectedIndex == _titles.indexOf(title)
+                            ? Theme.of(context).colorScheme.background
+                            : Theme.of(context).colorScheme.primary,
+                        fontWeight: _selectedIndex == _titles.indexOf(title)
+                            ? FontWeight.bold
+                            : FontWeight.w400,
+                        fontSize: 16,
+                      )),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 
