@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:cooptourism/auth/auth.dart';
-import 'package:cooptourism/pages/coops_page.dart';
-import 'package:cooptourism/pages/home_feed_page.dart';
-import 'package:cooptourism/pages/home_page.dart';
-import 'package:cooptourism/pages/market_page.dart';
+import 'package:cooptourism/pages/auth/auth.dart';
+import 'package:cooptourism/pages/cooperatives/coops_page.dart';
+import 'package:cooptourism/pages/home_feed/home_feed_page.dart';
+// import 'package:cooptourism/pages/home_page.dart';
+import 'package:cooptourism/pages/market/market_page.dart';
 import 'package:cooptourism/pages/menu_page.dart';
-import 'package:cooptourism/pages/profile_page.dart';
-import 'package:cooptourism/pages/selected_coop_page.dart';
+import 'package:cooptourism/pages/profile/profile_page.dart';
+import 'package:cooptourism/pages/cooperatives/selected_coop_page.dart';
 
-import 'package:cooptourism/pages/dashboard_page.dart';
-import 'package:cooptourism/pages/reports_page.dart';
-import 'package:cooptourism/pages/members_page.dart';
+import 'package:cooptourism/pages/manager/dashboard_page.dart';
+import 'package:cooptourism/pages/manager/reports_page.dart';
+import 'package:cooptourism/pages/manager/members_page.dart';
 
 
 

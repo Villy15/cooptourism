@@ -1,18 +1,11 @@
-import 'package:cooptourism/animations/slide_transition.dart';
+import 'package:cooptourism/util/animations/slide_transition.dart';
 import 'package:cooptourism/widgets/bottom_nav_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 // import 'package:go_router/go_router.dart';
 
-import 'home_feed_page.dart';
-import 'menu_page.dart';
-
-import 'dashboard_page.dart';
-import 'members_page.dart';
-import 'reports_page.dart';
-
-import 'add_post.dart';
+import 'home_feed/add_post.dart';
 
 // MANAGER
 
@@ -26,6 +19,8 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+
+  // Get user role from Firebase
 
   final List<String> _appBarTitles = [
     'Home',

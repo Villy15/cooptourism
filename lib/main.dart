@@ -1,10 +1,10 @@
 import 'package:cooptourism/config/app_router.dart';
-import 'package:cooptourism/firebase_options.dart';
+import 'package:cooptourism/util/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'package:cooptourism/theme/dark_theme.dart';
-import 'package:cooptourism/theme/light_theme.dart';
+import 'package:cooptourism/config/theme/dark_theme.dart';
+import 'package:cooptourism/config/theme/light_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
