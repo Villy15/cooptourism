@@ -104,11 +104,11 @@ class HomePageState extends State<HomePage> {
               onTabChange: (index) {
                 setState(() {
                   _selectedIndex = index;
-                  context.go(_tabsManager[_selectedIndex]);
+                  context.go(_tabs[_selectedIndex]);
                 });
               },
               role:
-                  "Manager", // Replace with not hardcoded role // Member, Customer
+                  "Member", // Replace with not hardcoded role // Member, Customer
             ),
           ),
         ),

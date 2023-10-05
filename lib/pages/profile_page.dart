@@ -121,89 +121,6 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     );
   }
 
-  Column featuredSection(BuildContext context, Map<String, dynamic> userData) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 15.0),
-          child: Text('Featured',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        ),
-        const SizedBox(height: 15),
-        Padding(
-          padding: const EdgeInsets.only(left: 20.0),
-          child: Container(
-              height: 80,
-              width: 350,
-              decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: BorderRadius.circular(12)),
-              child: Column(
-                children: [
-                  const Column(
-                    children: [Icon(Icons.star_rounded, color: Colors.white)],
-                  ),
-                  Text(userData['status'] ?? 'Status',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary)),
-                  Text(userData['user_accomplishment'] ?? 'Accomplishment',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary))
-                ],
-              )),
-        )
-      ],
-    );
-  }
-
-  Column recommendedSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 15.0),
-          child: Text('Recommended for you',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        ),
-        const SizedBox(height: 15),
-        SizedBox(
-            height: 120,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: _recommended.length,
-              padding: const EdgeInsets.only(left: 15, right: 15),
-              separatorBuilder: ((context, index) => const SizedBox(width: 15)),
-              itemBuilder: (context, index) {
-                return Container(
-                    width: 120,
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(_recommended[index],
-                              style: const TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w400)),
-                        ),
-                        if (index == 0)
-                          const Icon(Icons.tag_faces_rounded,
-                              color: Colors.white)
-                        else if (index == 1)
-                          const Icon(Icons.handshake, color: Colors.white)
-                        else if (index == 2)
-                          const Icon(Icons.privacy_tip, color: Colors.white)
-                      ],
-                    ));
-              },
-            )),
-      ],
-    );
-  }
 
   Widget tabsView() {
     return Column(
@@ -246,43 +163,6 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
         ),
       ],
     );
-  }
-
-  SizedBox _titleHeadings() {
-    return SizedBox(
-        height: 40,
-        child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: _titles.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: GestureDetector(
-                      onTap: () => setState(() {
-                            _selectedIndex = index;
-                          }),
-                      child: Container(
-                          decoration: BoxDecoration(
-                              color: _selectedIndex == index
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).colorScheme.secondary,
-                              borderRadius: BorderRadius.circular(20)),
-                          child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 28.0, vertical: 10.0),
-                              child: Text(_titles[index],
-                                  style: TextStyle(
-                                    color: _selectedIndex == index
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .background
-                                        : Theme.of(context).colorScheme.primary,
-                                    fontWeight: _selectedIndex == index
-                                        ? FontWeight.bold
-                                        : FontWeight.w400,
-                                    fontSize: 16,
-                                  ))))));
-            }));
   }
 
   Container _profileHeading(BuildContext context, String firstName,
