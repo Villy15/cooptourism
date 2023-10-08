@@ -1,6 +1,7 @@
+import 'package:cooptourism/data/models/post.dart';
+import 'package:cooptourism/data/repositories/post_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:cooptourism/widgets/post_card.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeFeedPage extends StatefulWidget {
   const HomeFeedPage({Key? key}) : super(key: key);
@@ -13,8 +14,16 @@ class HomeFeedPageState extends State<HomeFeedPage> {
   final List<String> _tabTitles = ['News', 'Communities', 'Cooperatives'];
   int _selectedIndex = 0;
 
-  final Stream<QuerySnapshot> _posts =
-      FirebaseFirestore.instance.collection('posts').snapshots();
+
+  late PostRepository _postRepository = PostRepository();
+  late Stream<List<PostModel>> _posts;
+
+  @override
+  void initState() {
+    super.initState();
+    _postRepository = PostRepository();
+    _posts = _postRepository.getAllPosts();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +34,7 @@ class HomeFeedPageState extends State<HomeFeedPage> {
           child: listViewFilter(),
         ),
         Expanded(
-          child: StreamBuilder<QuerySnapshot>(
+          child: StreamBuilder<List<PostModel>>(
             stream: _posts,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
@@ -36,7 +45,7 @@ class HomeFeedPageState extends State<HomeFeedPage> {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              final posts = snapshot.data!.docs;
+              final posts = snapshot.data!;
 
               return listViewPosts(posts);
             },
@@ -46,20 +55,20 @@ class HomeFeedPageState extends State<HomeFeedPage> {
     );
   }
 
-  ListView listViewPosts(List<QueryDocumentSnapshot<Object?>> posts) {
+  ListView listViewPosts(List<PostModel> posts) {
     return ListView.builder(
       itemCount: posts.length,
       itemBuilder: (context, index) {
-        final post = posts[index].data() as Map<String, dynamic>;
+        final post = posts[index];
 
         return PostCard(
-          key: ValueKey(posts[index].id),
-          author: post['author'] ?? '',
-          content: post['content'] ?? '',
-          likes: post['likes'] ?? 0,
-          dislikes: post['dislikes'] ?? 0,
-          comments: post['comments'] ?? [],
-          timestamp: post['timestamp'] ?? Timestamp.now(),
+          key: ValueKey(post.uid),
+          author: post.author,
+          content: post.content,
+          likes: post.likes,
+          dislikes: post.dislikes,
+          comments: post.comments,
+          timestamp: post.timestamp,
         );
       },
     );

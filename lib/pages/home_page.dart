@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:cooptourism/data/models/user.dart';
+import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/util/animations/slide_transition.dart';
 import 'package:cooptourism/widgets/bottom_nav_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,40 +23,81 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  final user = FirebaseAuth.instance.currentUser;
+  final UserRepository _userRepository = UserRepository();
 
-  // Get user role from Firebase
+  // Current user
+  UserModel? _user;
 
-  final List<String> _appBarTitles = [
-    'Home',
-    'Coops',
-    'Market',
-    'Profile',
-    'Menu',
-  ];
+  @override
+  void initState() {
+    super.initState();
 
-  final List<String> _tabs = const [
-    "/",
-    "/coops_page",
-    "/market_page",
-    "/profile_page",
-    "/menu_page",
-  ];
+    _userRepository.getUserByUid(user!.uid).then((value) {
+      setState(() {
+        _user = value;
+        debugPrint("User: ${jsonEncode(_user?.toJson())}");
+      });
+    });
+  }
 
-  final List<String> _appBarTitlesManager = [
-    'Home',
-    'Dashboard',
-    'Members',
-    'Reports',
-    'Menu',
-  ];
+  List<String> _tabsTitleByRole(String role) {
+    switch (role) {
+      case "Manager":
+        return [
+          'Home',
+          'Dashboard',
+          'Members',
+          'Reports',
+          'Menu',
+        ];
+      case "Member":
+        return [
+          'Home',
+          'Coops',
+          'Market',
+          'Profile',
+          'Menu',
+        ];
+      default: // Customer
+        return [
+          'Home',
+          'Coops',
+          'Market',
+          'Profile',
+          'Menu',
+        ];
+    }
+  }
 
-  final List<String> _tabsManager = const [
-    "/",
-    "/dashboard_page",
-    "/members_page",
-    "/reports_page",
-    "/menu_page",
-  ];
+  List<String> _tabsByRole(String role) {
+    switch (role) {
+      case "Manager":
+        return [
+          "/",
+          "/dashboard_page",
+          "/members_page",
+          "/reports_page",
+          "/menu_page"
+        ];
+      case "Member":
+        return [
+          "/",
+          "/coops_page",
+          "/market_page",
+          "/profile_page",
+          "/menu_page"
+        ];
+      default: // Customer
+        return [
+          "/",
+          "/coops_page",
+          "/market_page",
+          "/profile_page",
+          "/menu_page"
+        ];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,8 +105,8 @@ class HomePageState extends State<HomePage> {
       extendBody: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
-            _appBarTitlesManager[_selectedIndex]), //! MAKE THIS DYNAMIC TO ROLE
+        title: Text(_tabsTitleByRole(_user?.role ?? "Member")[
+            _selectedIndex]), //! MAKE THIS DYNAMIC TO ROLE
         actions: [
           IconButton(
             icon: Icon(
@@ -99,10 +144,11 @@ class HomePageState extends State<HomePage> {
               onTabChange: (index) {
                 setState(() {
                   _selectedIndex = index;
-                  context.go(_tabs[_selectedIndex]);
+                  context
+                      .go(_tabsByRole(_user?.role ?? "Member")[_selectedIndex]);
                 });
               },
-              role:
+              role: _user?.role ??
                   "Member", // Replace with not hardcoded role // Member, Customer
             ),
           ),
