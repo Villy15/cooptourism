@@ -2,6 +2,7 @@ import 'package:cooptourism/widgets/button.dart';
 import 'package:cooptourism/widgets/text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -17,34 +18,16 @@ class _LoginPageState extends State<LoginPage> {
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
 
-  // Sign user in
-
   void signIn() async {
-
-    showDialog(
-      context: context, 
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
-      )
-    );
-
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailTextController.text,
         password: passwordTextController.text,
       );
 
-      if (context.mounted) {
-        Navigator.pop(context);
-      }
     } on FirebaseAuthException catch (e) {
-      if (context.mounted) {
-        Navigator.pop(context);
-      }
-      // 
       displayMessage(e.code);
     }
-
   }
 
   void displayMessage(String message) {
@@ -87,7 +70,9 @@ class _LoginPageState extends State<LoginPage> {
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       GestureDetector(
-                        onTap: widget.onTap,
+                        onTap: () => {
+                           context.go("/register"),
+                        },
                         child: Text(
                           "Register now!",
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(

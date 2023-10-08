@@ -1,28 +1,29 @@
 import 'dart:convert';
 
+import 'package:cooptourism/config/route/go_router.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/util/animations/slide_transition.dart';
 import 'package:cooptourism/widgets/bottom_nav_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-// import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'home_feed/add_post.dart';
 
 // MANAGER
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   final Widget child;
-  const HomePage({Key? key, required this.child}) : super(key: key);
+  final String appTitle;
+  const HomePage({Key? key, required this.child, required this.appTitle}) : super(key: key);
 
   @override
-  HomePageState createState() => HomePageState();
+  ConsumerState<HomePage> createState() => HomePageState();
 }
 
-class HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+class HomePageState extends ConsumerState<HomePage> {
+  final int _selectedIndex = 0;
   final user = FirebaseAuth.instance.currentUser;
   final UserRepository _userRepository = UserRepository();
 
@@ -41,72 +42,19 @@ class HomePageState extends State<HomePage> {
     });
   }
 
-  List<String> _tabsTitleByRole(String role) {
-    switch (role) {
-      case "Manager":
-        return [
-          'Home',
-          'Dashboard',
-          'Members',
-          'Reports',
-          'Menu',
-        ];
-      case "Member":
-        return [
-          'Home',
-          'Coops',
-          'Market',
-          'Profile',
-          'Menu',
-        ];
-      default: // Customer
-        return [
-          'Home',
-          'Coops',
-          'Market',
-          'Profile',
-          'Menu',
-        ];
-    }
-  }
-
-  List<String> _tabsByRole(String role) {
-    switch (role) {
-      case "Manager":
-        return [
-          "/",
-          "/dashboard_page",
-          "/members_page",
-          "/reports_page",
-          "/menu_page"
-        ];
-      case "Member":
-        return [
-          "/",
-          "/coops_page",
-          "/market_page",
-          "/profile_page",
-          "/menu_page"
-        ];
-      default: // Customer
-        return [
-          "/",
-          "/coops_page",
-          "/market_page",
-          "/profile_page",
-          "/menu_page"
-        ];
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
+    final router = ref.watch(goRouterProvider);
+
+    debugPrint('Widget: $widget');
+    
     return Scaffold(
       extendBody: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(_tabsTitleByRole(_user?.role ?? "Member")[
-            _selectedIndex]), //! MAKE THIS DYNAMIC TO ROLE
+        // appBar title based on the current page route name
+        title: Text(widget.appTitle),
         actions: [
           IconButton(
             icon: Icon(
@@ -117,7 +65,7 @@ class HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: widget.child, //! MAKE THIS DYNAMIC TO ROLE
+      body: widget.child, 
       floatingActionButton: shouldShowFloatingActionButton()
           ? FloatingActionButton(
               onPressed: () {
@@ -136,21 +84,10 @@ class HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        child: SafeArea(
+        child: const SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
-            child: BottomNavHomeWidget(
-              selectedIndex: _selectedIndex,
-              onTabChange: (index) {
-                setState(() {
-                  _selectedIndex = index;
-                  context
-                      .go(_tabsByRole(_user?.role ?? "Member")[_selectedIndex]);
-                });
-              },
-              role: _user?.role ??
-                  "Member", // Replace with not hardcoded role // Member, Customer
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+            child: BottomNavHomeWidget(),
           ),
         ),
       ),
