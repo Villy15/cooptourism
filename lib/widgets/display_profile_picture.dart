@@ -12,7 +12,7 @@ class DisplayProfilePicture extends StatelessWidget {
 
   final Reference storageRef;
   final SelectedCoopPage widget;
-  final Map<String, dynamic> data;
+  final String? data;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class DisplayProfilePicture extends StatelessWidget {
       borderRadius: BorderRadius.circular(50.0),
       child: FutureBuilder<String>(
         future: storageRef
-            .child("${widget.coopId}/images/${data['profilePicture']}")
+            .child("${widget.coopId}/images/$data")
             .getDownloadURL(), // Await here
         builder: (context, urlSnapshot) {
           if (urlSnapshot.connectionState ==

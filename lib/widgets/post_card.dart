@@ -1,9 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooptourism/data/repositories/cooperative_repository.dart';
+import 'package:cooptourism/widgets/display_profile_picture.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class PostCard extends StatelessWidget {
   final String author;
+  final String? authorId;
+  final String? authorType;
   final String content;
   final int likes;
   final int dislikes;
@@ -13,6 +18,8 @@ class PostCard extends StatelessWidget {
   const PostCard({
     required Key key,
     required this.author,
+    this.authorId,
+    this.authorType,
     required this.content,
     required this.likes,
     required this.dislikes,
@@ -26,17 +33,22 @@ class PostCard extends StatelessWidget {
     final difference = now.difference(postTime);
 
     if (difference.inMinutes < 60) {
-      return '| ${difference.inMinutes}m ago';
+      return '${difference.inMinutes}m ago';
     } else if (difference.inHours < 24) {
-      return '| ${difference.inHours}h ago'; 
+      return '${difference.inHours}h ago'; 
     } else {
       final formatter = DateFormat.yMd().add_jm();
-      return  "| ${formatter.format(postTime)}";
+      return  formatter.format(postTime);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+  final storageRef = FirebaseStorage.instance.ref();
+  final cooperativeRepository = CooperativesRepository();
+  final cooperativeProfilePicture = cooperativeRepository.getProfilePicture();
+
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Card(
@@ -45,9 +57,17 @@ class PostCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.account_circle, color: Theme.of(context).colorScheme.primary, size: 40),
+                FutureBuilder(
+                future: cooperativesStream.get(),
+                builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+               if (snapshot.connectionState == ConnectionState.done) {
+                Map<String, dynamic> data =
+              snapshot.data?.data() as Map<String, dynamic>;
+                DisplayProfilePicture(storageRef: storageRef, widget: widget, data: data),
+                ),
                 const SizedBox(width: 8),
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       author,

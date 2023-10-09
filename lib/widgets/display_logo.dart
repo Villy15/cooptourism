@@ -12,14 +12,14 @@ class DisplayLogo extends StatelessWidget {
 
   final Reference storageRef;
   final SelectedCoopPage widget;
-  final Map<String, dynamic> data;
+  final String? data;
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       child: FutureBuilder<String>(
         future: storageRef
-            .child("${widget.coopId}/images/${data['logo']}")
+            .child("${widget.coopId}/images/$data")
             .getDownloadURL(), // Await here
         builder: (context, urlSnapshot) {
           if (urlSnapshot.connectionState ==
