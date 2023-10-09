@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -115,6 +116,13 @@ class _MenuPageState extends State<MenuPage> {
           margin: const EdgeInsets.symmetric(vertical: 10),
           child: InkWell (
             onTap: () {
+              setState(() {
+                color = Theme.of(context).colorScheme.primary;
+              });
+
+              // context.go('/');
+            },
+            onLongPress: () {
               setState(() {
                 color = Theme.of(context).colorScheme.primary;
               });
