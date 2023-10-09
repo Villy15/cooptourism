@@ -1,55 +1,31 @@
-import 'package:cooptourism/components/button.dart';
-import 'package:cooptourism/components/text_field.dart';
+import 'package:cooptourism/widgets/button.dart';
+import 'package:cooptourism/widgets/text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 
-class RegisterPage extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   final Function()? onTap;
 
-  const RegisterPage({super.key, this.onTap});
+  const LoginPage({super.key, this.onTap});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _LoginPageState extends State<LoginPage> {
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
-  final confirmPasswordTextController = TextEditingController();
 
-  void signUp() async {
-    showDialog(
-        context: context,
-        builder: (context) => const Center(
-              child: CircularProgressIndicator(),
-    ));
-
-    // Make sure passwords match
-
-    if (passwordTextController.text != confirmPasswordTextController.text) {
-      Navigator.pop(context);
-      displayMessage("Passwords do not match");
-      return;
-    }
-
+  void signIn() async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailTextController.text,
         password: passwordTextController.text,
       );
 
-      if (context.mounted) {
-        Navigator.pop(context);
-      }
-
-      // Add to firestore database w/ UID
-      
-
     } on FirebaseAuthException catch (e) {
-      if (context.mounted) {
-        Navigator.pop(context);
-      }
       displayMessage(e.code);
     }
   }
@@ -62,11 +38,11 @@ class _RegisterPageState extends State<RegisterPage> {
       )
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -76,11 +52,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [          
                   
+                
                   // New here? register now
                    Row(
                     children: [
                       Text(
-                        "Register",
+                        "Login",
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                     ],
@@ -89,13 +66,15 @@ class _RegisterPageState extends State<RegisterPage> {
                   Row(
                     children: [
                         Text(
-                        "Already have an account?  ",
+                        "New here? ",
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       GestureDetector(
-                        onTap: widget.onTap,
+                        onTap: () => {
+                           context.go("/register"),
+                        },
                         child: Text(
-                          "Login here!",
+                          "Register now!",
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             decoration: TextDecoration.underline,
                             fontWeight: FontWeight.bold,
@@ -125,26 +104,30 @@ class _RegisterPageState extends State<RegisterPage> {
                         obscureText: true
                       ),
 
-                  const SizedBox(height: 10),
 
-
-                  MyTextField(
-                        controller: confirmPasswordTextController,
-                        hintText: "Confirm Password",
-                        obscureText: true
-                      ),
             
                   const SizedBox(height: 10),
             
                   
                   // login button 
                   MyButton(
-                    onTap: signUp,
-                    text: "Register",
+                    onTap: signIn,
+                    text: "Login",
                   ),
             
                   const SizedBox(height: 20),
-                
+                  
+                  // Forgot password
+                  GestureDetector(
+                    // onTap: ,
+                    child: Text(
+                      "Forgot Password?",
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        decoration: TextDecoration.underline,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                   
                   const SizedBox(height: 50),
             
@@ -153,7 +136,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                        Text(
-                        "To register as a cooperative, ",
+                        "Sign up here, ",
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       GestureDetector(

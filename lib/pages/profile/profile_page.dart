@@ -35,12 +35,12 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     'Help'
   ];
 
-  final List<String> _recommended = [
-    // test for UI purposes only
-    'Take Action to improve your trust!',
-    'Need help fixing your trust?',
-    'Keep your account secure!',
-  ];
+  // final List<String> _recommended = [
+  //   // test for UI purposes only
+  //   'Take Action to improve your trust!',
+  //   'Need help fixing your trust?',
+  //   'Keep your account secure!',
+  // ];
   User? user;
   late TabController _tabController;
 
@@ -82,13 +82,13 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               return Text('Error: ${snapshot.error}');
             }
             var userData = snapshot.data?.data() as Map<String, dynamic>;
-            final List<Widget> _tabs = [
+            final List<Widget> tabs = [
                 ProfileHome(userData: userData),
                 ProfileAbout(userData: userData),
-                ProfilePosts(),
-                ProfileComments(),
-                ProfileCoaching(),
-                ProfileHelp(),
+                const ProfilePosts(),
+                const ProfileComments(),
+                const ProfileCoaching(),
+                const ProfileHelp(),
             ];
             return NestedScrollView(
               headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -114,7 +114,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               body: TabBarView(
                 controller: _tabController,
                 physics: const NeverScrollableScrollPhysics(),
-                children: _tabs,
+                children: tabs,
               ),
             );
           }),

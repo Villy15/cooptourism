@@ -1,4 +1,4 @@
-import 'package:cooptourism/pages/selected_coop_page.dart';
+import 'package:cooptourism/pages/cooperatives/selected_coop_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 

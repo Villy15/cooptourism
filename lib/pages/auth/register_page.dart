@@ -1,35 +1,40 @@
-import 'package:cooptourism/components/button.dart';
-import 'package:cooptourism/components/text_field.dart';
+import 'package:cooptourism/widgets/button.dart';
+import 'package:cooptourism/widgets/text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   final Function()? onTap;
 
-  const LoginPage({super.key, this.onTap});
+  const RegisterPage({super.key, this.onTap});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
+  final confirmPasswordTextController = TextEditingController();
 
-  // Sign user in
-
-  void signIn() async {
-
+  void signUp() async {
     showDialog(
-      context: context, 
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
-      )
-    );
+        context: context,
+        builder: (context) => const Center(
+              child: CircularProgressIndicator(),
+    ));
+
+    // Make sure passwords match
+
+    if (passwordTextController.text != confirmPasswordTextController.text) {
+      Navigator.pop(context);
+      displayMessage("Passwords do not match");
+      return;
+    }
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailTextController.text,
         password: passwordTextController.text,
       );
@@ -37,14 +42,16 @@ class _LoginPageState extends State<LoginPage> {
       if (context.mounted) {
         Navigator.pop(context);
       }
+
+      // Add to firestore database w/ UID
+      
+
     } on FirebaseAuthException catch (e) {
       if (context.mounted) {
         Navigator.pop(context);
       }
-      // 
       displayMessage(e.code);
     }
-
   }
 
   void displayMessage(String message) {
@@ -55,11 +62,11 @@ class _LoginPageState extends State<LoginPage> {
       )
     );
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -69,12 +76,11 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [          
                   
-                
                   // New here? register now
                    Row(
                     children: [
                       Text(
-                        "Login",
+                        "Register",
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                     ],
@@ -83,13 +89,13 @@ class _LoginPageState extends State<LoginPage> {
                   Row(
                     children: [
                         Text(
-                        "New here? ",
+                        "Already have an account?  ",
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       GestureDetector(
                         onTap: widget.onTap,
                         child: Text(
-                          "Register now!",
+                          "Login here!",
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             decoration: TextDecoration.underline,
                             fontWeight: FontWeight.bold,
@@ -119,30 +125,26 @@ class _LoginPageState extends State<LoginPage> {
                         obscureText: true
                       ),
 
+                  const SizedBox(height: 10),
 
+
+                  MyTextField(
+                        controller: confirmPasswordTextController,
+                        hintText: "Confirm Password",
+                        obscureText: true
+                      ),
             
                   const SizedBox(height: 10),
             
                   
                   // login button 
                   MyButton(
-                    onTap: signIn,
-                    text: "Login",
+                    onTap: signUp,
+                    text: "Register",
                   ),
             
                   const SizedBox(height: 20),
-                  
-                  // Forgot password
-                  GestureDetector(
-                    // onTap: ,
-                    child: Text(
-                      "Forgot Password?",
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        decoration: TextDecoration.underline,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                
                   
                   const SizedBox(height: 50),
             
@@ -151,7 +153,7 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                        Text(
-                        "Sign up here, ",
+                        "To register as a cooperative, ",
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       GestureDetector(

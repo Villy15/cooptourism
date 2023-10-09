@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooptourism/data/models/post.dart';
+import 'package:cooptourism/data/repositories/post_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +14,7 @@ class AddPostPage extends StatefulWidget {
 class AddPostPageState extends State<AddPostPage> {
   final _contentController = TextEditingController();
   final _contentFocusNode = FocusNode();
+  final _postRepository = PostRepository();
 
   @override
   void dispose() {
@@ -34,15 +37,17 @@ class AddPostPageState extends State<AddPostPage> {
 
     if (content.isNotEmpty) {
       try {
-        await FirebaseFirestore.instance.collection('posts').add({
-          'author': author,
-          'content': content,
-          'likes': 0,
-          'dislikes': 0,
-          'comments': [],
-          'timestamp': timestamp,
-        });
+        final post = PostModel(
+          author: author,
+          content: content,
+          likes: 0,
+          dislikes: 0,
+          comments: [],
+          timestamp: timestamp,
+        );
 
+        await _postRepository.addPost(post);
+        
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
