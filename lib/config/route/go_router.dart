@@ -2,6 +2,7 @@ import 'package:cooptourism/config/auth.dart';
 import 'package:cooptourism/pages/auth/login_page.dart';
 import 'package:cooptourism/pages/auth/register_page.dart';
 import 'package:cooptourism/pages/cooperatives/coops_page.dart';
+import 'package:cooptourism/pages/cooperatives/selected_coop_page.dart';
 import 'package:cooptourism/pages/error/error_page.dart';
 import 'package:cooptourism/pages/home_feed/home_feed_page.dart';
 import 'package:cooptourism/pages/home_page.dart';
@@ -65,11 +66,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
             // MEMBER ROUTES
             GoRoute(
-                path: "/coops_page",
-                name: "Coops",
-                pageBuilder: (context, state) {
-                  return NoTransitionPage(child: CoopsPage(key: state.pageKey));
-                }),
+              path: "/coops_page",
+              name: "Coops",
+              pageBuilder: (context, state) {
+                return NoTransitionPage(child: CoopsPage(key: state.pageKey));
+              },
+              routes: [
+                GoRoute(
+                    path: ':coopId',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return SelectedCoopPage(
+                        coopId: state.pathParameters["coopId"]!,
+                      );
+                    }),
+              ],
+            ),
             GoRoute(
                 path: "/market_page",
                 name: "Market",
