@@ -26,12 +26,12 @@ class PostCard extends StatelessWidget {
     final difference = now.difference(postTime);
 
     if (difference.inMinutes < 60) {
-      return '| ${difference.inMinutes}m ago';
+      return '${difference.inMinutes}m ago';
     } else if (difference.inHours < 24) {
-      return '| ${difference.inHours}h ago'; 
+      return '${difference.inHours}h ago'; 
     } else {
       final formatter = DateFormat.yMd().add_jm();
-      return  "| ${formatter.format(postTime)}";
+      return  formatter.format(postTime);
     }
   }
 
@@ -47,21 +47,18 @@ class PostCard extends StatelessWidget {
               children: [
                 Icon(Icons.account_circle, color: Theme.of(context).colorScheme.primary, size: 40),
                 const SizedBox(width: 8),
-                Text(
-                  author,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  getTimeDifference(),
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      author,
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    Text(
+                      getTimeDifference(),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
                 ),
                 const Spacer(),
                 Icon(Icons.more_horiz, color: Theme.of(context).colorScheme.primary, size: 26),
@@ -70,11 +67,7 @@ class PostCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               content,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w400,
-                fontSize: 16,
-              ),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 8),
             const Placeholder(

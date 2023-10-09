@@ -22,8 +22,7 @@ class _SelectedCoopPageState extends State<SelectedCoopPage> {
         .collection('cooperatives')
         .doc(widget.coopId);
 
-    return Scaffold(
-      body: FutureBuilder(
+    return FutureBuilder(
         future: cooperativesStream.get(),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -131,7 +130,6 @@ class _SelectedCoopPageState extends State<SelectedCoopPage> {
                }        
         return const Text('Loading');
         } 
-      ),
-    );
+      );
   }
 }
