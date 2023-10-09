@@ -100,6 +100,7 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   GridView gridSquares(BuildContext context) {
+    Color color = Theme.of(context).colorScheme.secondary;
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -112,30 +113,39 @@ class _MenuPageState extends State<MenuPage> {
       itemBuilder: (_, index) {
         return Container(
           margin: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondary,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-                width: 1.5,
-                style: BorderStyle.solid,
-                color: Theme.of(context).colorScheme.secondary),
-          ),
-          child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(_gridItems[index]['logo'],
-                    size: 42, color: Theme.of(context).colorScheme.primary),
-                Text(
-                  _gridItems[index]['name'],
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w400,
-                  ),
+          child: InkWell (
+            onTap: () {
+              setState(() {
+                color = Theme.of(context).colorScheme.primary;
+              });
+            },
+            child: Ink (
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                    width: 1.5,
+                    style: BorderStyle.solid,
+                    color: Theme.of(context).colorScheme.secondary),
+              ),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(_gridItems[index]['logo'],
+                        size: 42, color: Theme.of(context).colorScheme.primary),
+                    Text(
+                      _gridItems[index]['name'],
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         );
