@@ -6,54 +6,51 @@ class UserRepository {
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('users');
 
+      // Get all users from Firestore
+  Stream<List<UserModel>> getAllUsers() {
+    return usersCollection.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return UserModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // Add a user to Firestore
-  Future<void> addUserToFirestore(UserModel user) async {
+  Future<void> addUser(UserModel user) async {
     try {
-      await usersCollection.doc(user.uid).set({
-        'email': user.email,
-        'first_name': user.firstName,
-        'last_name': user.lastName,
-        'status': user.status,
-        'user_accomplishment': user.userAccomplishment,
-        'user_rating': user.userRating,
-        'user_trust': user.userTrust,
-        'role': user.role
-      });
+      await usersCollection.add(user.toJson());
     } catch (e) {
       debugPrint('Error adding user to Firestore: $e');
       // You might want to handle errors more gracefully here
     }
   }
 
-  // Get a user from Firestore by UID
-  Future<UserModel?> getUserByUid(String uid) async {
+  // Read a user from Firestore
+  Future<UserModel> getUser(String userId) async {
     try {
-      final DocumentSnapshot userSnapshot = await usersCollection.doc(uid).get();
-      if (userSnapshot.exists) {
-        return UserModel.fromJson(userSnapshot.data() as Map<String, dynamic>);
-      } else {
-        return null;
-      }
+      final doc = await usersCollection.doc(userId).get();
+      return UserModel.fromJson(doc.data() as Map<String, dynamic>);
     } catch (e) {
       debugPrint('Error getting user from Firestore: $e');
-      return null;
+      // You might want to handle errors more gracefully here
+      rethrow;
     }
   }
 
   // Update a user in Firestore
-  Future<void> updateUserInFirestore(UserModel user) async {
+  Future<void> updateUser(String userId, UserModel user) async {
     try {
-      // await usersCollection.doc(user.uid).update(user.toJson());
+      await usersCollection.doc(userId).update(user.toJson());
     } catch (e) {
       debugPrint('Error updating user in Firestore: $e');
       // You might want to handle errors more gracefully here
     }
   }
 
-  // Delete a user from Firestore by UID
-  Future<void> deleteUserFromFirestore(String uid) async {
+  // Delete a user from Firestore
+  Future<void> deleteUser(String userId) async {
     try {
-      await usersCollection.doc(uid).delete();
+      await usersCollection.doc(userId).delete();
     } catch (e) {
       debugPrint('Error deleting user from Firestore: $e');
       // You might want to handle errors more gracefully here

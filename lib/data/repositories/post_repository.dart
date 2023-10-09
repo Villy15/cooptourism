@@ -6,6 +6,15 @@ class PostRepository {
   final CollectionReference postsCollection =
       FirebaseFirestore.instance.collection('posts');
 
+  // Get all posts from Firestore
+  Stream<List<PostModel>> getAllPosts() {
+    return postsCollection.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return PostModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // Add a post to Firestore
   Future<void> addPost(PostModel post) async {
     try {
@@ -16,13 +25,16 @@ class PostRepository {
     }
   }
 
-  // Get all posts from Firestore
-  Stream<List<PostModel>> getAllPosts() {
-    return postsCollection.snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
-        return PostModel.fromJson(doc.data() as Map<String, dynamic>);
-      }).toList();
-    });
+  // Read a post from Firestore
+  Future<PostModel> getPost(String postId) async {
+    try {
+      final doc = await postsCollection.doc(postId).get();
+      return PostModel.fromJson(doc.data() as Map<String, dynamic>);
+    } catch (e) {
+      debugPrint('Error getting post from Firestore: $e');
+      // You might want to handle errors more gracefully here
+      rethrow;
+    }
   }
 
   // Update a post in Firestore

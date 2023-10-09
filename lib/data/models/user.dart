@@ -9,8 +9,7 @@ class UserModel {
   String? userTrust;
   String? role;
 
-
-  UserModel ({
+  UserModel({
     this.uid,
     this.email,
     this.firstName,

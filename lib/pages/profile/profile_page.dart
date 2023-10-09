@@ -35,12 +35,12 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     'Help'
   ];
 
-  final List<String> _recommended = [
-    // test for UI purposes only
-    'Take Action to improve your trust!',
-    'Need help fixing your trust?',
-    'Keep your account secure!',
-  ];
+  // final List<String> _recommended = [
+  //   // test for UI purposes only
+  //   'Take Action to improve your trust!',
+  //   'Need help fixing your trust?',
+  //   'Keep your account secure!',
+  // ];
   User? user;
   late TabController _tabController;
 

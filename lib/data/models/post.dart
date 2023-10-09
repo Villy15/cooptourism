@@ -11,7 +11,7 @@ class PostModel {
   Timestamp timestamp;
 
   PostModel({
-   this.uid,
+    this.uid,
     this.title,
     required this.content,
     required this.author,

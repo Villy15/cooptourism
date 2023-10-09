@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:cooptourism/config/route/go_router.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/util/animations/slide_transition.dart';
@@ -8,6 +5,7 @@ import 'package:cooptourism/widgets/bottom_nav_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:convert';
 
 import 'home_feed/add_post.dart';
 
@@ -16,7 +14,8 @@ import 'home_feed/add_post.dart';
 class HomePage extends ConsumerStatefulWidget {
   final Widget child;
   final String appTitle;
-  const HomePage({Key? key, required this.child, required this.appTitle}) : super(key: key);
+  const HomePage({Key? key, required this.child, required this.appTitle})
+      : super(key: key);
 
   @override
   ConsumerState<HomePage> createState() => HomePageState();
@@ -34,7 +33,7 @@ class HomePageState extends ConsumerState<HomePage> {
   void initState() {
     super.initState();
 
-    _userRepository.getUserByUid(user!.uid).then((value) {
+    _userRepository.getUser(user!.uid).then((value) {
       setState(() {
         _user = value;
         debugPrint("User: ${jsonEncode(_user?.toJson())}");
@@ -42,13 +41,12 @@ class HomePageState extends ConsumerState<HomePage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-    final router = ref.watch(goRouterProvider);
+    // final router = ref.watch(goRouterProvider);
 
-    debugPrint('Widget: $widget');
-    
+    // debugPrint('Widget: $widget');
+
     return Scaffold(
       extendBody: true,
       backgroundColor: Colors.white,
@@ -65,7 +63,7 @@ class HomePageState extends ConsumerState<HomePage> {
           ),
         ],
       ),
-      body: widget.child, 
+      body: widget.child,
       floatingActionButton: shouldShowFloatingActionButton()
           ? FloatingActionButton(
               onPressed: () {
