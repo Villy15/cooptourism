@@ -1,4 +1,5 @@
 import 'package:cooptourism/controller/home_page_controller.dart';
+import 'package:cooptourism/controller/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,15 +12,17 @@ class BottomNavHomeWidget extends ConsumerStatefulWidget {
 }
 
 class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
-  final role = 'Manager';
+  String? role;
 
   @override
   Widget build(BuildContext context) {
     final position = ref.watch(homePageControllerProvider);
+    final user = ref.watch(userModelProvider);
+    role = user?.role ?? 'Customer';
 
     // Changes the bottom navigation bar items based on the user's role
     List<BottomNavigationBarItem> items;
-    if (role == 'Manager') {
+    if (user?.role == 'Manager') {
       items = _getManagerItems();
     } else if (role == 'Member') {
       items = _getMemberItems();

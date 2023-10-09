@@ -1,3 +1,4 @@
+import 'package:cooptourism/controller/user_provider.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/util/animations/slide_transition.dart';
@@ -36,6 +37,7 @@ class HomePageState extends ConsumerState<HomePage> {
     _userRepository.getUser(user!.uid).then((value) {
       setState(() {
         _user = value;
+        ref.read(userModelProvider.notifier).setUser(value);
         debugPrint("User: ${jsonEncode(_user?.toJson())}");
       });
     });
