@@ -41,44 +41,48 @@ class _SelectedCoopPageState extends State<SelectedCoopPage> {
             children: [
               DisplayLogo(
                 storageRef: storageRef,
-                widget: widget,
+                coopId: widget.coopId,
                 data: cooperative.logo,
               ),
               Row(
                 children: [
                   DisplayProfilePicture(
-                      storageRef: storageRef,
-                      widget: widget,
-                      data: cooperative.profilePicture),
+                    storageRef: storageRef,
+                    coopId: widget.coopId,
+                    data: cooperative.profilePicture,
+                  ),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          cooperative.name,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          softWrap: true,
-                          style: TextStyle(
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall
-                                  ?.fontSize),
-                        ),
-                        // StreamBuilder(
-                        //   stream: cooperativesStream
-                        //       .collection('members')
-                        //       .snapshots(),
-                        //   builder: (BuildContext context,
-                        //       AsyncSnapshot<QuerySnapshot> snapshot) {
-                        //     final docs = snapshot.data?.docs;
-                        //     return Text(
-                        //       '${docs?.length}' ' members',
-                        //       style: const TextStyle(fontSize: 12),
-                        //     );
-                        //   },
-                        // ),
-                      ],
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            cooperative.name ?? "",
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            softWrap: true,
+                            style: TextStyle(
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall
+                                    ?.fontSize),
+                          ),
+                          // StreamBuilder(
+                          //   stream: cooperativesStream
+                          //       .collection('members')
+                          //       .snapshots(),
+                          //   builder: (BuildContext context,
+                          //       AsyncSnapshot<QuerySnapshot> snapshot) {
+                          //     final docs = snapshot.data?.docs;
+                          //     return Text(
+                          //       '${docs?.length}' ' members',
+                          //       style: const TextStyle(fontSize: 12),
+                          //     );
+                          //   },
+                          // ),
+                        ],
+                      ),
                     ),
                   ),
                   OutlinedButton(
@@ -138,9 +142,16 @@ class _SelectedCoopPageState extends State<SelectedCoopPage> {
                               )));
                     },
                     child: const Text("Join"),
-                  )
+                  ),
                 ],
-              )
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  cooperative.profileDescription ?? "",
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
             ],
           );
         });

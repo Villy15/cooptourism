@@ -11,6 +11,7 @@ class PostModel {
   int dislikes;
   List<String> comments;
   Timestamp timestamp;
+  List<String>? images;
 
   PostModel({
     this.uid,
@@ -23,6 +24,7 @@ class PostModel {
     required this.dislikes,
     required this.comments,
     required this.timestamp,
+    this.images,
   });
 
   Map<String, dynamic> toJson() {
@@ -36,6 +38,7 @@ class PostModel {
       'dislikes': dislikes,
       'comments': comments,
       'timestamp': timestamp,
+      'images': images,
     };
   }
 
@@ -50,6 +53,7 @@ class PostModel {
       dislikes: json['dislikes'],
       comments: List<String>.from(json['comments'] as List<dynamic>),
       timestamp: json['timestamp'] as Timestamp,
+      images: List<String>.from(json['images'] as List<dynamic>),
     );
   }
 }

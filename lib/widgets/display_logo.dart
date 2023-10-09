@@ -1,4 +1,3 @@
-import 'package:cooptourism/pages/cooperatives/selected_coop_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
@@ -6,12 +5,12 @@ class DisplayLogo extends StatelessWidget {
   const DisplayLogo({
     super.key,
     required this.storageRef,
-    required this.widget,
+    required this.coopId,
     required this.data,
   });
 
   final Reference storageRef;
-  final SelectedCoopPage widget;
+  final String coopId;
   final String? data;
 
   @override
@@ -19,7 +18,7 @@ class DisplayLogo extends StatelessWidget {
     return ClipRRect(
       child: FutureBuilder<String>(
         future: storageRef
-            .child("${widget.coopId}/images/$data")
+            .child("$coopId/images/$data")
             .getDownloadURL(), // Await here
         builder: (context, urlSnapshot) {
           if (urlSnapshot.connectionState ==

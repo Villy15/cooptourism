@@ -8,13 +8,15 @@ class CooperativesRepository {
 
   // Get cooperative from Firestore
   Future<CooperativesModel> getCooperative(String coopId) async {
-  try {
+    try {
+      debugPrint("$coopId = CoopId");
       final doc = await cooperativesCollection.doc(coopId).get();
       return CooperativesModel.fromJson(doc.data() as Map<String, dynamic>);
     } catch (e) {
-      debugPrint('Error getting post from Firestore: $e');
+      debugPrint('Error getting cooperative from Firestore: $e');
       // You might want to handle errors more gracefully here
       rethrow;
     }
-  // get Cooperative data
-  }}
+    // get Cooperative data
+  }
+}

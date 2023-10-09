@@ -14,6 +14,7 @@ class PostCard extends StatelessWidget {
   final int dislikes;
   final List<dynamic> comments;
   final Timestamp timestamp;
+  final List<dynamic>? images;
 
   const PostCard({
     required Key key,
@@ -24,7 +25,8 @@ class PostCard extends StatelessWidget {
     required this.likes,
     required this.dislikes,
     required this.comments,
-    required this.timestamp,
+    required this.timestamp, 
+    this.images,
   }) : super(key: key);
 
   String getTimeDifference() {
@@ -35,20 +37,19 @@ class PostCard extends StatelessWidget {
     if (difference.inMinutes < 60) {
       return '${difference.inMinutes}m ago';
     } else if (difference.inHours < 24) {
-      return '${difference.inHours}h ago'; 
+      return '${difference.inHours}h ago';
     } else {
       final formatter = DateFormat.yMd().add_jm();
-      return  formatter.format(postTime);
+      return formatter.format(postTime);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-  final storageRef = FirebaseStorage.instance.ref();
-  final cooperativeRepository = CooperativesRepository();
-  final cooperativeProfilePicture = cooperativeRepository.getProfilePicture();
+    final storageRef = FirebaseStorage.instance.ref();
 
-
+    final cooperativeRepository = CooperativesRepository();
+    final cooperative = cooperativeRepository.getCooperative(authorId ?? "");
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Card(
@@ -58,13 +59,21 @@ class PostCard extends StatelessWidget {
             Row(
               children: [
                 FutureBuilder(
-                future: cooperativesStream.get(),
-                builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-               if (snapshot.connectionState == ConnectionState.done) {
-                Map<String, dynamic> data =
-              snapshot.data?.data() as Map<String, dynamic>;
-                DisplayProfilePicture(storageRef: storageRef, widget: widget, data: data),
-                ),
+                    future: cooperative,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      }
+
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      final cooperative = snapshot.data!;
+                      return DisplayProfilePicture(
+                          storageRef: storageRef,
+                          coopId: authorId ?? "",
+                          data: cooperative.profilePicture);
+                    }),
                 const SizedBox(width: 8),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +89,8 @@ class PostCard extends StatelessWidget {
                   ],
                 ),
                 const Spacer(),
-                Icon(Icons.more_horiz, color: Theme.of(context).colorScheme.primary, size: 26),
+                Icon(Icons.more_horiz,
+                    color: Theme.of(context).colorScheme.primary, size: 26),
               ],
             ),
             const SizedBox(height: 8),
@@ -89,13 +99,37 @@ class PostCard extends StatelessWidget {
               style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 8),
-            const Placeholder(
-              fallbackHeight: 200,
+            ClipRRect(
+            child: FutureBuilder<String>(
+              future: storageRef
+                  .child("$authorId/images/${images?[0]}")
+                  .getDownloadURL(), // Await here
+              builder: (context, urlSnapshot) {
+                if (urlSnapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+
+                if (urlSnapshot.hasError) {
+                  return Text('Error: ${urlSnapshot.error}');
+                }
+
+                final imageUrl = urlSnapshot.data;
+
+                return Image.network(
+                  imageUrl!,
+                  height: 107,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                );
+              },
             ),
+          ),
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.thumb_up_alt_outlined, color: Theme.of(context).colorScheme.primary),
+                Icon(Icons.thumb_up_alt_outlined,
+                    color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   likes.toString(),
@@ -106,7 +140,8 @@ class PostCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 16),
-                Icon(Icons.thumb_down_alt_outlined, color: Theme.of(context).colorScheme.primary),
+                Icon(Icons.thumb_down_alt_outlined,
+                    color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   dislikes.toString(),
@@ -117,7 +152,8 @@ class PostCard extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                Icon(Icons.comment_outlined, color: Theme.of(context).colorScheme.primary),
+                Icon(Icons.comment_outlined,
+                    color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   comments.length.toString(),
@@ -128,7 +164,8 @@ class PostCard extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                Icon(Icons.share_outlined, color: Theme.of(context).colorScheme.primary),
+                Icon(Icons.share_outlined,
+                    color: Theme.of(context).colorScheme.primary),
               ],
             ),
           ],

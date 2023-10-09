@@ -14,7 +14,6 @@ class HomeFeedPageState extends State<HomeFeedPage> {
   final List<String> _tabTitles = ['News', 'Communities', 'Cooperatives'];
   int _selectedIndex = 0;
 
-
   late PostRepository _postRepository = PostRepository();
   late Stream<List<PostModel>> _posts;
 
@@ -47,7 +46,6 @@ class HomeFeedPageState extends State<HomeFeedPage> {
 
               final posts = snapshot.data!;
 
-
               return listViewPosts(posts);
             },
           ),
@@ -72,6 +70,7 @@ class HomeFeedPageState extends State<HomeFeedPage> {
           dislikes: post.dislikes,
           comments: post.comments,
           timestamp: post.timestamp,
+          images: post.images,
         );
       },
     );
