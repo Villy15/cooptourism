@@ -1,3 +1,5 @@
+import 'package:cooptourism/data/models/listing.dart';
+import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:flutter/material.dart';
 
 class MarketPage extends StatefulWidget {
@@ -10,6 +12,17 @@ class MarketPage extends StatefulWidget {
 class _MarketPageState extends State<MarketPage> {
   final List<String> _tabTitles = ['Shop', 'Sell', 'Cooperatives'];
   int _selectedIndex = 0;
+
+  late ListingRepository _listingRepository = ListingRepository();
+  late Stream<List<ListingModel>> _listings;
+
+  @override
+  void initState() {
+    super.initState();
+    _listingRepository = ListingRepository();
+    _listings =
+        _listingRepository.getAllListings();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +125,6 @@ class _MarketPageState extends State<MarketPage> {
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 3 / 2,
-        crossAxisSpacing: 20,
         mainAxisSpacing: 20,
         mainAxisExtent: 200,
       ),
