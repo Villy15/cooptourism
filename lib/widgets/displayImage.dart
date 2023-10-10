@@ -4,14 +4,12 @@ import 'package:flutter/material.dart';
 class DisplayImage extends StatelessWidget {
   const DisplayImage({
     super.key,
-    required this.id,
-    required this.data,
+    required this.path,
     required this.height,
     required this.width,
   });
 
-  final String id;
-  final List<dynamic>? data;
+  final String path;
   final double height;
   final double width;
 
@@ -19,10 +17,10 @@ class DisplayImage extends StatelessWidget {
   Widget build(BuildContext context) {
     final storageRef = FirebaseStorage.instance.ref();
     return ClipRRect(
-      borderRadius: BorderRadius.circular(50.0),
+      borderRadius: BorderRadius.zero,
       child: FutureBuilder<String>(
         future: storageRef
-            .child("$id/images/$data")
+            .child(path)
             .getDownloadURL(), // Await here
         builder: (context, urlSnapshot) {
           if (urlSnapshot.connectionState ==
@@ -39,7 +37,7 @@ class DisplayImage extends StatelessWidget {
           return Image.network(
             imageUrl!,
             height: height,
-            width: width,
+            width: double.infinity,
             fit: BoxFit.cover,
           );
         },

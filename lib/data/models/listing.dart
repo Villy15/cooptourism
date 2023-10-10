@@ -1,49 +1,49 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ListingModel {
-  String? listingOwner;
-  String? listingTitle;
-  String? listingDescription;
-  int? listingPrice;
-  String? listingType;
-  Timestamp? listingPostDate;
-  List<String>? listingImages;
-  int? listingVisits;
+  String? owner;
+  String? title;
+  String? description;
+  int? price;
+  String? type;
+  Timestamp? postDate;
+  List<String>? images;
+  int? visits;
 
   ListingModel({
-    this.listingOwner,
-    this.listingTitle,
-    this.listingDescription,
-    this.listingPrice,
-    this.listingType,
-    this.listingPostDate,
-    this.listingImages,
-    this.listingVisits,
+    this.owner,
+    this.title,
+    this.description,
+    this.price,
+    this.type,
+    this.postDate,
+    this.images,
+    this.visits,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      'listingOwner': listingOwner,
-      'listingTitle': listingTitle,
-      'listingDescription': listingDescription,
-      'listingPrice': listingPrice,
-      'listingType': listingType,
-      'listingPostDate': listingPostDate,
-      'listingImages': listingImages,
-      'listingVisits': listingVisits,
+      'owner': owner,
+      'title': title,
+      'description': description,
+      'price': price,
+      'type': type,
+      'postDate': postDate,
+      'images': images,
+      'visits': visits,
     };
   }
 
   factory ListingModel.fromJson(Map<String, dynamic> json) {
     return ListingModel(
-      listingOwner: json['listingOwner'],
-      listingTitle: json['listingTitle'],
-      listingDescription: json['listingDescription'],
-      listingPrice: json['listingPrice'],
-      listingType: json['listingType'],
-      listingPostDate: json['listingPostDate'] as Timestamp,
-      listingImages: List<String>.from(json['listingImages'] as List<dynamic>),
-      listingVisits: json['listingVisits'],
+      owner: json['owner'],
+      title: json['title'],
+      description: json['description'],
+      price: json['price'],
+      type: json['type'],
+      postDate: json['postDate'] as Timestamp,
+      images: List<String>.from(json['images'] as List<dynamic>),
+      visits: json['visits'],
     );
   }
 }

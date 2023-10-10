@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cooptourism/data/models/Listing.dart';
+import 'package:cooptourism/data/models/listing.dart';
 import 'package:flutter/material.dart';
 
 class ListingRepository {

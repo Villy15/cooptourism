@@ -61,7 +61,7 @@ class HomeFeedPageState extends State<HomeFeedPage> {
         final post = posts[index];
 
         return PostCard(
-          key: ValueKey(post.uid),
+          key: ValueKey(index),
           author: post.author,
           authorId: post.authorId,
           authorType: post.authorType,
