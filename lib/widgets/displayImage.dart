@@ -1,24 +1,26 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
-class DisplayLogo extends StatelessWidget {
-  const DisplayLogo({
+class DisplayImage extends StatelessWidget {
+  const DisplayImage({
     super.key,
-    required this.storageRef,
-    required this.coopId,
-    required this.data,
+    required this.path,
+    required this.height,
+    required this.width,
   });
 
-  final Reference storageRef;
-  final String coopId;
-  final String? data;
+  final String path;
+  final double height;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
+    final storageRef = FirebaseStorage.instance.ref();
     return ClipRRect(
+      borderRadius: BorderRadius.zero,
       child: FutureBuilder<String>(
         future: storageRef
-            .child("$coopId/images/$data")
+            .child(path)
             .getDownloadURL(), // Await here
         builder: (context, urlSnapshot) {
           if (urlSnapshot.connectionState ==
@@ -34,7 +36,7 @@ class DisplayLogo extends StatelessWidget {
 
           return Image.network(
             imageUrl!,
-            height: 90,
+            height: height,
             width: double.infinity,
             fit: BoxFit.cover,
           );

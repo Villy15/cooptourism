@@ -25,7 +25,7 @@ class PostCard extends StatelessWidget {
     required this.likes,
     required this.dislikes,
     required this.comments,
-    required this.timestamp, 
+    required this.timestamp,
     this.images,
   }) : super(key: key);
 
@@ -69,10 +69,16 @@ class PostCard extends StatelessWidget {
                         return const Center(child: CircularProgressIndicator());
                       }
                       final cooperative = snapshot.data!;
-                      return DisplayProfilePicture(
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: DisplayProfilePicture(
                           storageRef: storageRef,
                           coopId: authorId ?? "",
-                          data: cooperative.profilePicture);
+                          data: cooperative.profilePicture,
+                          height: 35.0,
+                          width: 35.0,
+                        ),
+                      );
                     }),
                 const SizedBox(width: 8),
                 Column(
@@ -94,37 +100,39 @@ class PostCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Text(
-              content,
-              style: Theme.of(context).textTheme.bodySmall,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Text(
+                content,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             ),
             const SizedBox(height: 8),
             ClipRRect(
-            child: FutureBuilder<String>(
-              future: storageRef
-                  .child("$authorId/images/${images?[0]}")
-                  .getDownloadURL(), // Await here
-              builder: (context, urlSnapshot) {
-                if (urlSnapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                }
+              child: FutureBuilder<String>(
+                future: storageRef
+                    .child("$authorId/images/${images?[0]}")
+                    .getDownloadURL(), // Await here
+                builder: (context, urlSnapshot) {
+                  if (urlSnapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  }
 
-                if (urlSnapshot.hasError) {
-                  return Text('Error: ${urlSnapshot.error}');
-                }
+                  if (urlSnapshot.hasError) {
+                    return Text('Error: ${urlSnapshot.error}');
+                  }
 
-                final imageUrl = urlSnapshot.data;
+                  final imageUrl = urlSnapshot.data;
 
-                return Image.network(
-                  imageUrl!,
-                  height: 107,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                );
-              },
+                  return Image.network(
+                    imageUrl!,
+                    height: 225,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  );
+                },
+              ),
             ),
-          ),
             const SizedBox(height: 8),
             Row(
               children: [

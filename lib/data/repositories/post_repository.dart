@@ -15,6 +15,14 @@ class PostRepository {
     });
   }
 
+  Stream<List<PostModel>> getSpecificPosts(String authorId) {
+    return postsCollection.where("authorId", isEqualTo: authorId).snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return PostModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // Add a post to Firestore
   Future<void> addPost(PostModel post) async {
     try {
