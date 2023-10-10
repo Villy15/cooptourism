@@ -12,6 +12,7 @@ import 'package:cooptourism/pages/manager/reports_page.dart';
 import 'package:cooptourism/pages/market/market_page.dart';
 import 'package:cooptourism/pages/menu_page.dart';
 import 'package:cooptourism/pages/profile/profile_page.dart';
+import 'package:cooptourism/pages/wallet/wallet_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -118,6 +119,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   return NoTransitionPage(
                       child: ReportsPage(key: state.pageKey));
                 }),
+
+            
+            GoRoute(
+                path: "/wallet_page",
+                name: "Wallet",
+                pageBuilder: (context, state) {
+                  return NoTransitionPage(
+                      child: WalletPage(key: state.pageKey));
+                }),
           ])
     ],
     redirect: (context, state) {
@@ -179,6 +189,9 @@ String getTitle(String location) {
       return "Members";
     case '/reports_page':
       return "Reports";
+
+    case '/wallet_page':
+      return "Wallet";
     default:
       return "Home";
   }
