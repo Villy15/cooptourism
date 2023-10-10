@@ -19,13 +19,13 @@ class _ProfileAboutState extends State<ProfileAbout> {
         const SizedBox(height: 25),
         const Divider(
           color: Color(0xff68707E),
-          thickness: 2,
+          thickness: 1.5,
         ),
         const SizedBox(height: 15),
         userSkills(context, widget.userData),
         const Divider(
           color: Color(0xff68707E),
-          thickness: 2,
+          thickness: 1.5,
         ),
       ],
     );
@@ -48,25 +48,26 @@ class _ProfileAboutState extends State<ProfileAbout> {
             ),
           ),
           SizedBox(
-            height: 270, // specify a height
+            height: 190, // specify a height
             child: GridView.count(
               crossAxisCount: 2,
               scrollDirection: Axis.horizontal,
+              childAspectRatio: (CircularProgressIndicator.strokeAlignOutside / 2),
               children: List.generate(
                 userData['skills'].length,
                 (index) => Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                  padding: const EdgeInsets.only(left: 10),
                   child: Row(
                     children: [
                       Icon(
                         Icons.circle,
-                        size: 10,
+                        size: 17,
                         color: Theme.of(context).colorScheme.primary,
                         ), // add an icon
-                      const SizedBox(width: 5), // add some spacing
+                      const SizedBox(width: 6), // add some spacing
                       Text(
-                        userData['skills'][index],
-                        style: const TextStyle(fontSize: 12),
+                        userData['skills'][index] ?? 'Skill',
+                        style: const TextStyle(fontSize: 17),
                       ),
                     ],
                   ),

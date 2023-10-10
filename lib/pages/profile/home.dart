@@ -21,17 +21,6 @@ class _ProfileHomeState extends State<ProfileHome> {
     'Keep your account secure!',
   ];
 
-  // _firestore is used to cover the recommended section
-  // q: should i use query for StreamBuilder to get the article's title?
-  // a: yes, you should use query for StreamBuilder to get the article's title
-  // q: Can you help me code it?
-  // a: Sure, I'll help you code it.
-  // q: is it like this? StreamBuilder<QueryDocumentSnapshot>()?
-  // a: yes, it's like that.
-  // q: What do i put in the parenthesis?
-  // a: You should put the query in the parenthesis.
-  // q: What is the  
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -97,16 +86,6 @@ class _ProfileHomeState extends State<ProfileHome> {
               padding: const EdgeInsets.only(left: 15, right: 15),
               separatorBuilder: ((context, index) => const SizedBox(width: 15)),
               itemBuilder: (context, index) {
-                // q: What is the best course of action for me to make this container touch responsive? Like it shows a page when I tap on it to show more info.
-                // a: Wrap the container in a GestureDetector and use the onTap property to navigate to a new page.
-                // q: Is it better to make a new page or a new widget?
-                // a: It depends on the complexity of the page. If it's a simple page, then a widget is fine. If it's a complex page, then a new page is better.
-                // q: what kind of widget should i use to display the recommended section?
-                // a: use a ListView.separated with scrollDirection: Axis.horizontal
-
-                // q: Can you help me code it?
-                // a: Sure, I'll help you code it.
-
                 return Container( 
                     width: 120,
                     decoration: BoxDecoration(

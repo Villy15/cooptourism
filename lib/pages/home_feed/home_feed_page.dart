@@ -55,13 +55,15 @@ class HomeFeedPageState extends State<HomeFeedPage> {
   }
 
   ListView listViewPosts(List<PostModel> posts) {
+    debugPrint('Number of posts: ${posts.length}');
     return ListView.builder(
       itemCount: posts.length,
       itemBuilder: (context, index) {
         final post = posts[index];
+        debugPrint(posts.length as String?);
 
         return PostCard(
-          key: ValueKey(post.uid),
+          key: ValueKey(index),
           author: post.author,
           authorId: post.authorId,
           authorType: post.authorType,

@@ -1,5 +1,6 @@
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
+import 'package:cooptourism/widgets/listing_card.dart';
 import 'package:flutter/material.dart';
 
 class MarketPage extends StatefulWidget {
@@ -20,8 +21,7 @@ class _MarketPageState extends State<MarketPage> {
   void initState() {
     super.initState();
     _listingRepository = ListingRepository();
-    _listings =
-        _listingRepository.getAllListings();
+    _listings = _listingRepository.getAllListings();
   }
 
   @override
@@ -34,13 +34,52 @@ class _MarketPageState extends State<MarketPage> {
             const SizedBox(height: 10),
             searchFilter(context),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: gridSquares(context),
+              child: StreamBuilder<List<ListingModel>>(
+                stream: _listings,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  }
+
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  final listings = snapshot.data!;
+
+                  return gridViewListings(listings);
+                },
               ),
             )
           ],
         ));
+  }
+
+  GridView gridViewListings(List<ListingModel> listings) {
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 3 / 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 0,
+        mainAxisExtent: 200,
+      ),
+      itemCount: listings.length,
+      itemBuilder: (context, index) {
+        final listing = listings[index];
+        return ListingCard(
+          key: ValueKey(index),
+          owner: listing.owner!,
+          title: listing.title!,
+          description: listing.description!,
+          price: listing.price!,
+          type: listing.type!,
+          images: listing.images!,
+          visits: listing.visits!,
+          postDate: listing.postDate!,
+        );
+      },
+    );
   }
 
   Row searchFilter(BuildContext context) {
@@ -125,13 +164,14 @@ class _MarketPageState extends State<MarketPage> {
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 3 / 2,
-        mainAxisSpacing: 20,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 0,
         mainAxisExtent: 200,
       ),
-      itemCount: 10,
+      // itemCount: listings.length,
       itemBuilder: (_, index) {
         return Container(
-          margin: const EdgeInsets.symmetric(vertical: 10),
+          margin: const EdgeInsets.symmetric(vertical: 5.0),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.background,
             borderRadius: BorderRadius.circular(20),
