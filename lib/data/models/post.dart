@@ -56,4 +56,20 @@ class PostModel {
       images: List<String>.from(json['images'] as List<dynamic>),
     );
   }
+
+  factory PostModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return PostModel(
+      uid: doc.id,
+      author: data['author'],
+      authorId: data['authorId'],
+      authorType: data['authorType'],
+      content: data['content'],
+      likes: data['likes'],
+      dislikes: data['dislikes'],
+      comments: (data['comments'] as List<dynamic>?)!.cast<String>(),
+      timestamp: data['timestamp'] as Timestamp,
+      images: (data['images'] as List<dynamic>?)?.cast<String>(),
+    );
+  }
 }
