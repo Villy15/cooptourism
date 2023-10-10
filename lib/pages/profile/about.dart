@@ -22,14 +22,18 @@ class _ProfileAboutState extends State<ProfileAbout> {
           thickness: 2,
         ),
         const SizedBox(height: 15),
-        userSkills()
+        userSkills(context, widget.userData),
+        const Divider(
+          color: Color(0xff68707E),
+          thickness: 2,
+        ),
       ],
     );
 
    
   }
 
-  Column userSkills() {
+  Column userSkills(BuildContext context, Map<String, dynamic> userData) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -43,25 +47,36 @@ class _ProfileAboutState extends State<ProfileAbout> {
               ),
             ),
           ),
-          const SizedBox(height: 30),
-          Container(
-            height: 150,
-            color: Colors.red,
+          SizedBox(
+            height: 270, // specify a height
             child: GridView.count(
-              scrollDirection: Axis.horizontal,
               crossAxisCount: 2,
-              children: [
-                Text('hello')
-              ],
-            )
+              scrollDirection: Axis.horizontal,
+              children: List.generate(
+                userData['skills'].length,
+                (index) => Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.circle,
+                        size: 10,
+                        color: Theme.of(context).colorScheme.primary,
+                        ), // add an icon
+                      const SizedBox(width: 5), // add some spacing
+                      Text(
+                        userData['skills'][index],
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           )
         ],
       );
   }
-
-
-  // q: how do i display a certain amount of skills then scroll to see more?
-  // a: use a gridview.count with scrollDirection: Axis.horizontal
 
 
   Column userDetails(context,Map<String, dynamic> userData ) {
