@@ -18,7 +18,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
   Widget build(BuildContext context) {
     final position = ref.watch(homePageControllerProvider);
     final user = ref.watch(userModelProvider);
-    role = user?.role ?? 'Customer';
+    role = user?.role ?? 'Manager';
 
     // Changes the bottom navigation bar items based on the user's role
     List<BottomNavigationBarItem> items;

@@ -38,7 +38,6 @@ ThemeData lightTheme = ThemeData(
 
   // Text Themes
   textTheme: const TextTheme(
-
     // Large
     bodyLarge: TextStyle(
       fontSize: large,
@@ -53,7 +52,7 @@ ThemeData lightTheme = ThemeData(
       color: primaryColor
     ),
 
-    // Small
+    // Post Content
     bodySmall: TextStyle(
       fontSize: small,
       fontWeight: FontWeight.w400,
@@ -65,7 +64,8 @@ ThemeData lightTheme = ThemeData(
       fontWeight: FontWeight.bold,
       color: Colors.black,
     ),
-
+    
+    //Post Author
     headlineSmall: TextStyle(
       fontSize: small,
       fontWeight: FontWeight.bold,

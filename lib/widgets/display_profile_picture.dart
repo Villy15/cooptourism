@@ -1,4 +1,3 @@
-import 'package:cooptourism/pages/cooperatives/selected_coop_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
@@ -6,13 +5,13 @@ class DisplayProfilePicture extends StatelessWidget {
   const DisplayProfilePicture({
     super.key,
     required this.storageRef,
-    required this.widget,
+    required this.coopId,
     required this.data,
   });
 
   final Reference storageRef;
-  final SelectedCoopPage widget;
-  final Map<String, dynamic> data;
+  final String coopId;
+  final String? data;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +19,7 @@ class DisplayProfilePicture extends StatelessWidget {
       borderRadius: BorderRadius.circular(50.0),
       child: FutureBuilder<String>(
         future: storageRef
-            .child("${widget.coopId}/images/${data['profilePicture']}")
+            .child("$coopId/images/$data")
             .getDownloadURL(), // Await here
         builder: (context, urlSnapshot) {
           if (urlSnapshot.connectionState ==

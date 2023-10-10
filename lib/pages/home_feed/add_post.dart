@@ -39,11 +39,14 @@ class AddPostPageState extends State<AddPostPage> {
       try {
         final post = PostModel(
           author: author,
+          authorId: "",
+          authorType: "",
           content: content,
           likes: 0,
           dislikes: 0,
           comments: [],
           timestamp: timestamp,
+          images: [],
         );
 
         await _postRepository.addPost(post);
