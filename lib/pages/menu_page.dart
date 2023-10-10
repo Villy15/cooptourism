@@ -22,7 +22,10 @@ class _MenuPageState extends State<MenuPage> {
     // {'logo': Icons.bookmark_outline_outlined, 'name': 'Saved', 'route': '/saved_page'},
     // {'logo': Icons.help_outline_outlined, 'name': 'Need Help?', 'route': '/help_page'},
     // {'logo': Icons.settings_outlined, 'name': 'Settings', 'route': '/settings_page'},
-    // {'logo': Icons.account_balance_wallet_outlined, 'name': 'Wallet', 'route': '/wallet' },
+    {'logo': Icons.account_balance_wallet_outlined, 'name': 'Wallet', 'route': '/wallet_page' },
+    {'logo': Icons.account_balance_wallet_outlined, 'name': 'Reports', 'route': '/reports_page' },
+    {'logo': Icons.account_balance_wallet_outlined, 'name': 'Members', 'route': '/members_page' },
+
     // {'logo': Icons.people_outlined, 'name': 'People', 'route': '/people'},
     // {'logo': Icons.group_outlined, 'name': 'Communities', 'route': '/communities' },
   ];
@@ -120,7 +123,7 @@ class _MenuPageState extends State<MenuPage> {
                 color = Theme.of(context).colorScheme.primary;
               });
 
-              context.push(_gridItems[index]['route']);
+              context.go(_gridItems[index]['route']);
             },
             child: Ink (
               decoration: BoxDecoration(

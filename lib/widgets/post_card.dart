@@ -37,17 +37,10 @@ class PostCard extends StatelessWidget {
     if (difference.inMinutes < 60) {
       return '${difference.inMinutes}m ago';
     } else if (difference.inHours < 24) {
-<<<<<<< HEAD
-      return '${difference.inHours}h ago'; 
-    } else {
-      final formatter = DateFormat.yMd().add_jm();
-      return  formatter.format(postTime);
-=======
       return '${difference.inHours}h ago';
     } else {
       final formatter = DateFormat.yMd().add_jm();
       return formatter.format(postTime);
->>>>>>> 073e2a12c593b3d8dc334341e36c0104186fd285
     }
   }
 
