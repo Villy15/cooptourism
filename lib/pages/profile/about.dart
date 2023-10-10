@@ -37,8 +37,8 @@ class _ProfileAboutState extends State<ProfileAbout> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 15.0),
+          const Padding(
+            padding: EdgeInsets.only(left: 15.0),
             child: Text(
               'My Skills',
               style: TextStyle(

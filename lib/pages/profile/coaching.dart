@@ -10,7 +10,7 @@ class ProfileCoaching extends StatefulWidget {
 class _ProfileCoachingState extends State<ProfileCoaching> {
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: [
         Text('Need help in improving that trust rating?'),
         Text('Get a coach to help you out!'),   

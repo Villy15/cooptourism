@@ -5,26 +5,40 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:cooptourism/data/models/cooperatives.dart';
+import 'package:cooptourism/data/repositories/cooperative_repository.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:cooptourism/main.dart';
+void main() async {
+  // Initialize Firebase
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  
+  group('CooperativesRepository', () {
+    late CooperativesRepository repository;
 
-void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    setUp(() {
+      repository = CooperativesRepository();
+    });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    test('addCooperative adds a cooperative to Firestore', () async {
+      // Create a new cooperative
+      final cooperative = CooperativesModel(
+        name: 'Test Cooperative',
+        city: 'Test City',
+        province: 'Test Province',
+      );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+      // Add the cooperative to Firestore
+      await repository.addCooperative(cooperative);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+      // Get the added cooperative from Firestore
+      // final addedCooperative = await repository.getCooperative(cooperative.id);
+
+      // Check that the added cooperative matches the original cooperative
+      // expect(addedCooperative, cooperative);
+    });
   });
 }
