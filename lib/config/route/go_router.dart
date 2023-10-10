@@ -1,4 +1,5 @@
 import 'package:cooptourism/config/auth.dart';
+import 'package:cooptourism/pages/auth/login_or_register.dart';
 import 'package:cooptourism/pages/auth/login_page.dart';
 import 'package:cooptourism/pages/auth/register_page.dart';
 import 'package:cooptourism/pages/cooperatives/coops_page.dart';
@@ -37,12 +38,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: "/login",
         name: "Login",
-        builder: (context, state) => LoginPage(key: state.pageKey),
-      ),
-      GoRoute(
-        path: "/register",
-        name: "Register",
-        builder: (context, state) => RegisterPage(key: state.pageKey),
+        builder: (context, state) => LoginOrRegister(key: state.pageKey),
       ),
       ShellRoute(
           navigatorKey: _shellNavigator,

@@ -71,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       GestureDetector(
                         onTap: () => {
-                           context.go("/register"),
+                           widget.onTap?.call(),
                         },
                         child: Text(
                           "Register now!",
@@ -129,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 100),
             
                   // go to register page
                   Row(

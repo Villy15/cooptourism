@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/widgets/button.dart';
 import 'package:cooptourism/widgets/text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -44,6 +45,13 @@ class _RegisterPageState extends State<RegisterPage> {
       }
 
       // Add to firestore database w/ UID
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set({
+        'email': emailTextController.text,
+        'role': 'Customer',
+      });
       
 
     } on FirebaseAuthException catch (e) {
@@ -146,7 +154,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 20),
                 
                   
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 100),
             
                   // go to register page
                   Row(
