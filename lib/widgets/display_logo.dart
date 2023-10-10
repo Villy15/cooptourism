@@ -34,7 +34,7 @@ class DisplayLogo extends StatelessWidget {
 
           return Image.network(
             imageUrl!,
-            height: 107,
+            height: 90,
             width: double.infinity,
             fit: BoxFit.cover,
           );

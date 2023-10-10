@@ -7,11 +7,15 @@ class DisplayProfilePicture extends StatelessWidget {
     required this.storageRef,
     required this.coopId,
     required this.data,
+    required this.height,
+    required this.width,
   });
 
   final Reference storageRef;
   final String coopId;
   final String? data;
+  final double height;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +39,8 @@ class DisplayProfilePicture extends StatelessWidget {
 
           return Image.network(
             imageUrl!,
-            height: 50,
-            width: 50,
+            height: height,
+            width: width,
             fit: BoxFit.cover,
           );
         },
