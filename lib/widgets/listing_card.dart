@@ -46,6 +46,7 @@ class ListingCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: InkWell(
           child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           DisplayImage(
             path: "$owner/listingImages/${images[0]}",
@@ -57,7 +58,9 @@ class ListingCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(title),
+                Text(
+                  title
+                ),
               ],
             ),
           )

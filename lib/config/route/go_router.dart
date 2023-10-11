@@ -27,7 +27,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     navigatorKey: _rootNavigator,
-    debugLogDiagnostics: true,
+    // debugLogDiagnostics: true,
     initialLocation: SplashPage.routeLocation,
     routes: [
       GoRoute(

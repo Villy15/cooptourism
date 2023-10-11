@@ -1,12 +1,12 @@
 import 'package:cooptourism/controller/user_provider.dart';
-import 'package:cooptourism/data/models/user.dart';
+// import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/util/animations/slide_transition.dart';
 import 'package:cooptourism/widgets/bottom_nav_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:convert';
+// import 'dart:convert';
 
 import 'home_feed/add_post.dart';
 
@@ -28,7 +28,7 @@ class HomePageState extends ConsumerState<HomePage> {
   final UserRepository _userRepository = UserRepository();
 
   // Current user
-  UserModel? _user;
+  // UserModel? _user;
 
   @override
   void initState() {
@@ -36,9 +36,9 @@ class HomePageState extends ConsumerState<HomePage> {
 
     _userRepository.getUser(user!.uid).then((value) {
       setState(() {
-        _user = value;
+        // _user = value;
         ref.read(userModelProvider.notifier).setUser(value);
-        debugPrint("User: ${jsonEncode(_user?.toJson())}");
+        // debugPrint("User: ${jsonEncode(_user?.toJson())}");
       });
     });
   }
