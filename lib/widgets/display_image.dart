@@ -37,7 +37,7 @@ class DisplayImage extends StatelessWidget {
           return Image.network(
             imageUrl!,
             height: height,
-            width: double.infinity,
+            width: width,
             fit: BoxFit.cover,
           );
         },

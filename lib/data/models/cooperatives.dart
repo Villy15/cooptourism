@@ -18,12 +18,12 @@ class CooperativesModel {
 
   factory CooperativesModel.fromJson(Map<String, dynamic> json) {
     return CooperativesModel(
-      name: json['name'] ?? '',
-      profileDescription: json['profileDescription'] ?? '',
-      profilePicture: json['profilePicture'] ?? '',
-      province: json['province'] ?? '',
-      city: json['city'] ?? '',
-      logo: json['logo'] ?? '',
+      name: json['name'],
+      profileDescription: json['profileDescription'],
+      profilePicture: json['profilePicture'],
+      province: json['province'],
+      city: json['city'],
+      logo: json['logo'],
     );
   }
 

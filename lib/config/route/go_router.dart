@@ -11,6 +11,7 @@ import 'package:cooptourism/pages/manager/dashboard_page.dart';
 import 'package:cooptourism/pages/manager/members_page.dart';
 import 'package:cooptourism/pages/manager/reports_page.dart';
 import 'package:cooptourism/pages/market/market_page.dart';
+import 'package:cooptourism/pages/market/selected_listing_page.dart';
 import 'package:cooptourism/pages/menu_page.dart';
 import 'package:cooptourism/pages/profile/profile_page.dart';
 import 'package:cooptourism/pages/wallet/wallet_page.dart';
@@ -79,12 +80,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ],
             ),
             GoRoute(
-                path: "/market_page",
-                name: "Market",
-                pageBuilder: (context, state) {
-                  return NoTransitionPage(
-                      child: MarketPage(key: state.pageKey));
-                }),
+              path: "/market_page",
+              name: "Market",
+              pageBuilder: (context, state) {
+                return NoTransitionPage(child: MarketPage(key: state.pageKey));
+              },
+              routes: [
+                GoRoute(
+                    path: ':listingId',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return SelectedListingPage(
+                        listingId: state.pathParameters["listingId"]!,
+                      );
+                    }),
+              ],
+            ),
             GoRoute(
                 path: "/profile_page",
                 name: "Profile",
@@ -116,7 +126,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       child: ReportsPage(key: state.pageKey));
                 }),
 
-            
             GoRoute(
                 path: "/wallet_page",
                 name: "Wallet",
