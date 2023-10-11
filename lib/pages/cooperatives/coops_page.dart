@@ -22,7 +22,7 @@ class _CoopsPageState extends State<CoopsPage> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          const ListFilter(list: ["Location", "Cooperatives"]),
+          // const ListFilter(list: ["Location", "Cooperatives"]),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(12.5),

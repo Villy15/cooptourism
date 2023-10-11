@@ -30,7 +30,7 @@ class _MarketPageState extends State<MarketPage> {
         backgroundColor: Colors.white,
         body: Column(
           children: [
-            listFilter(),
+            // listFilter(),
             const SizedBox(height: 10),
             searchFilter(context),
             Expanded(

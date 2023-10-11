@@ -28,10 +28,10 @@ class HomeFeedPageState extends State<HomeFeedPage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          height: 40,
-          child: listViewFilter(),
-        ),
+        // SizedBox(
+        //   height: 40,
+        //   child: listViewFilter(),
+        // ),
         Expanded(
           child: StreamBuilder<List<PostModel>>(
             stream: _posts,
@@ -60,7 +60,7 @@ class HomeFeedPageState extends State<HomeFeedPage> {
       itemCount: posts.length,
       itemBuilder: (context, index) {
         final post = posts[index];
-        debugPrint(posts.length as String?);
+        // debugPrint(posts.length as String?);
 
         return PostCard(
           key: ValueKey(index),

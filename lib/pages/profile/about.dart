@@ -34,51 +34,55 @@ class _ProfileAboutState extends State<ProfileAbout> {
   }
 
   Column userSkills(BuildContext context, Map<String, dynamic> userData) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(left: 15.0),
-            child: Text(
-              'My Skills',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold
+  final skills = userData['skills'] as List<dynamic>?;
+  if (skills == null) {
+    // Return an empty column if skills is null
+    return const Column();
+  }
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Padding(
+        padding: EdgeInsets.only(left: 15.0),
+        child: Text(
+          'My Skills',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold
+          ),
+        ),
+      ),
+      SizedBox(
+        height: 190, // specify a height
+        child: GridView.count(
+          crossAxisCount: 2,
+          scrollDirection: Axis.horizontal,
+          childAspectRatio: (CircularProgressIndicator.strokeAlignOutside / 2),
+          children: List.generate(
+            skills.length,
+            (index) => Container(
+              padding: const EdgeInsets.only(left: 10),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.circle,
+                    size: 17,
+                    color: Theme.of(context).colorScheme.primary,
+                    ), // add an icon
+                  const SizedBox(width: 6), // add some spacing
+                  Text(
+                    skills[index] ?? 'Skill',
+                    style: const TextStyle(fontSize: 17),
+                  ),
+                ],
               ),
             ),
           ),
-          SizedBox(
-            height: 190, // specify a height
-            child: GridView.count(
-              crossAxisCount: 2,
-              scrollDirection: Axis.horizontal,
-              childAspectRatio: (CircularProgressIndicator.strokeAlignOutside / 2),
-              children: List.generate(
-                userData['skills'].length,
-                (index) => Container(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.circle,
-                        size: 17,
-                        color: Theme.of(context).colorScheme.primary,
-                        ), // add an icon
-                      const SizedBox(width: 6), // add some spacing
-                      Text(
-                        userData['skills'][index] ?? 'Skill',
-                        style: const TextStyle(fontSize: 17),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          )
-        ],
-      );
-  }
-
+        ),
+      )
+    ],
+  );
+}
 
   Column userDetails(context,Map<String, dynamic> userData ) {
     return Column(
