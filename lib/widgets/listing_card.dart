@@ -1,9 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:cooptourism/data/repositories/cooperative_repository.dart';
-// import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/widgets/display_image.dart';
-// import 'package:cooptourism/widgets/display_profile_picture.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
