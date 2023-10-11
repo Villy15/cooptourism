@@ -50,7 +50,7 @@ class PostModel {
       content: json['content'],
       author: json['author'],
       likes: json['likes'],
-      dislikes: json['dislikes'],
+      dislikes: json['dislikes'] ?? 0,
       comments: List<String>.from(json['comments'] as List<dynamic>),
       timestamp: json['timestamp'] as Timestamp,
       images: List<String>.from(json['images'] as List<dynamic>),

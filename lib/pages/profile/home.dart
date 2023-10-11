@@ -21,13 +21,19 @@ class _ProfileHomeState extends State<ProfileHome> {
     'Keep your account secure!',
   ];
 
+  final List<String> _recommendedTxt = [
+    'Engage with the community to improve your trust score!',
+    'Always be respectful and kind to others!',
+    'Keep your account secure by changing your password regularly!',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         featuredSection(context, widget.userData),
         const SizedBox(height: 30),
-        recommendedSection()
+        recommendedSection(context)
       ],
     );
   }
@@ -68,7 +74,7 @@ class _ProfileHomeState extends State<ProfileHome> {
     );
   }
 
-  Column recommendedSection() {
+  Column recommendedSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -79,39 +85,74 @@ class _ProfileHomeState extends State<ProfileHome> {
         ),
         const SizedBox(height: 15),
         SizedBox(
-            height: 120,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: _recommended.length,
-              padding: const EdgeInsets.only(left: 15, right: 15),
-              separatorBuilder: ((context, index) => const SizedBox(width: 15)),
-              itemBuilder: (context, index) {
-                return Container( 
-                    width: 120,
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(_recommended[index],
-                              style: const TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w400)),
+          height: 120,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: _recommended.length,
+            padding: const EdgeInsets.only(left: 15, right: 15),
+            separatorBuilder: ((context, index) => const SizedBox(width: 15)),
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Recommended Action:'),
+                        content: Text(_recommendedTxt[index]),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Close'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: Container(
+                  width: 120,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          _recommended[index],
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
-                        if (index == 0)
-                          const Icon(Icons.tag_faces_rounded,
-                              color: Colors.white)
-                        else if (index == 1)
-                          const Icon(Icons.handshake, color: Colors.white)
-                        else if (index == 2)
-                          const Icon(Icons.privacy_tip, color: Colors.white)
-                      ],
-                    ));
-              },
-            )),
+                      ),
+                      if (index == 0)
+                        const Icon(
+                          Icons.tag_faces_rounded,
+                          color: Colors.white,
+                        )
+                      else if (index == 1)
+                        const Icon(
+                          Icons.handshake,
+                          color: Colors.white,
+                        )
+                      else if (index == 2)
+                        const Icon(
+                          Icons.privacy_tip,
+                          color: Colors.white,
+                        )
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
       ],
     );
   }
