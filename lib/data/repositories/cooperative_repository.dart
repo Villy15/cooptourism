@@ -19,4 +19,14 @@ class CooperativesRepository {
     }
     // get Cooperative data
   }
+
+  // Add cooperative
+  Future<void> addCooperative(CooperativesModel cooperative) async {
+    try {
+      await cooperativesCollection.add(cooperative.toJson());
+    } catch (e) {
+      debugPrint('Error adding cooperative to Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
+  }
 }

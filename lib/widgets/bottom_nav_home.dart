@@ -65,7 +65,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         } else if (role == 'Member') {
           context.go("/coops_page");
         } else if (role == 'Customer') {
-          context.go("/marketplace_page");
+          context.go("/wallet_page");
         }
         break;
       case 2:
@@ -74,7 +74,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         } else if (role == 'Member') {
           context.go("/market_page");
         } else if (role == 'Customer') {
-          context.go("/wallet_page");
+          context.go("/market_page");
         }
         break;
       case 3:
@@ -83,7 +83,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         } else if (role == 'Member') {
           context.go("/profile_page");
         } else if (role == 'Customer') {
-          context.go("/events_page");
+          context.go("/profile_page");
         }
         break;
       case 4:
@@ -166,19 +166,19 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         label: 'Wallet',
       ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.event_outlined),
-        activeIcon: Icon(Icons.event_rounded),
-        label: 'Events',
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.notifications_outlined),
-        activeIcon: Icon(Icons.notifications_rounded),
-        label: 'Notifications',
+        icon: Icon(Icons.store_mall_directory_outlined),
+        activeIcon: Icon(Icons.store_mall_directory_rounded),
+        label: 'Market',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.person_outline_rounded),
         activeIcon: Icon(Icons.person_rounded),
         label: 'Profile',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.menu_rounded),
+        activeIcon: Icon(Icons.menu_open_rounded),
+        label: 'Menu',
       ),
     ];
   }

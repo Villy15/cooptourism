@@ -23,7 +23,8 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin {
+class _ProfilePageState extends State<ProfilePage>
+    with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
 
   final List<String> _titles = [
@@ -82,16 +83,18 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               return Text('Error: ${snapshot.error}');
             }
             var userData = snapshot.data?.data() as Map<String, dynamic>;
+            var userUID = snapshot.data?.id;
             final List<Widget> tabs = [
-                ProfileHome(userData: userData),
-                ProfileAbout(userData: userData),
-                const ProfilePosts(),
-                const ProfileComments(),
-                const ProfileCoaching(),
-                const ProfileHelp(),
+              ProfileHome(userData: userData),
+              ProfileAbout(userData: userData),
+              ProfilePosts(userUID:userUID!),
+              const ProfileComments(),
+              const ProfileCoaching(),
+              const ProfileHelp(),
             ];
             return NestedScrollView(
-              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+              headerSliverBuilder:
+                  (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[
                   SliverToBoxAdapter(
                     child: Column(
@@ -101,11 +104,11 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                           userData['first_name'] ?? 'First Name',
                           userData['last_name'] ?? 'Last Name',
                           userData['user_trust']?.toString() ?? '0',
-                          userData['user_rating']?.toString() ?? '0'
+                          userData['user_rating']?.toString() ?? '0',
                         ),
                         const SizedBox(height: 15),
                         tabsView(),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 40),
                       ],
                     ),
                   ),
@@ -120,7 +123,6 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
           }),
     );
   }
-
 
   Widget tabsView() {
     return Column(
@@ -179,12 +181,13 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                   border:
                       Border.all(color: const Color(0xffD89B3E), width: 2.0),
                   borderRadius: const BorderRadius.all(Radius.circular(50.0))),
-              child: const ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(50.0)),
+              child: ClipRRect(
+                  borderRadius: const BorderRadius.all(Radius.circular(50.0)),
                   child: SizedBox(
                       height: 50.0,
                       width: 50.0,
-                      child: Icon(Icons.person_2_rounded))),
+                      child: Icon(Icons.person_2_rounded,
+                          color: Theme.of(context).colorScheme.secondary))),
             )),
         Padding(
             padding: const EdgeInsets.only(
