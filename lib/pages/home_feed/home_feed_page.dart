@@ -1,3 +1,5 @@
+// import 'dart:convert';
+
 import 'package:cooptourism/data/models/post.dart';
 import 'package:cooptourism/data/repositories/post_repository.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,12 @@ class HomeFeedPageState extends State<HomeFeedPage> {
     super.initState();
     _postRepository = PostRepository();
     _posts = _postRepository.getAllPosts();
+
+    // _posts.listen((posts) {
+    //   final jsonList = posts.map((post) => post.toJson()).toList();
+    //   final json = jsonEncode(jsonList);
+    //   debugPrint(json);
+    // });
   }
 
   @override
@@ -55,7 +63,7 @@ class HomeFeedPageState extends State<HomeFeedPage> {
   }
 
   ListView listViewPosts(List<PostModel> posts) {
-    debugPrint('Number of posts: ${posts.length}');
+    // debugPrint('Number of posts: ${posts.length}');
     return ListView.builder(
       itemCount: posts.length,
       itemBuilder: (context, index) {

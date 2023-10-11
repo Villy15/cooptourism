@@ -9,7 +9,7 @@ class CooperativesRepository {
   // Get cooperative from Firestore
   Future<CooperativesModel> getCooperative(String coopId) async {
     try {
-      debugPrint("$coopId = CoopId");
+      // debugPrint("$coopId = CoopId");
       final doc = await cooperativesCollection.doc(coopId).get();
       return CooperativesModel.fromJson(doc.data() as Map<String, dynamic>);
     } catch (e) {

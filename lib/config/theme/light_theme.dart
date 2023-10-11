@@ -63,14 +63,14 @@ ThemeData lightTheme = ThemeData(
     headlineMedium: TextStyle(
       fontSize: medium,
       fontWeight: FontWeight.bold,
-      color: Colors.black,
+      color: primaryColor,
     ),
     
     //Post Author
     headlineSmall: TextStyle(
       fontSize: small,
       fontWeight: FontWeight.bold,
-      color: Colors.black,
+      color: primaryColor,
     ),
   ),
 );

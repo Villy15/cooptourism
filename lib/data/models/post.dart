@@ -5,11 +5,11 @@ class PostModel {
   String? authorId;
   String? authorType;
   String? title;
-  String content;
-  String author;
-  int likes;
-  int dislikes;
-  List<String> comments;
+  String? content;
+  String? author;
+  List<String>? likes;
+  List<String>? dislikes;
+  List<String>? comments;
   Timestamp timestamp;
   List<String>? images;
 
@@ -18,11 +18,11 @@ class PostModel {
     this.title,
     this.authorId,
     this.authorType,
-    required this.content,
-    required this.author,
-    required this.likes,
-    required this.dislikes,
-    required this.comments,
+    this.content,
+    this.author,
+    this.likes,
+    this.dislikes,
+    this.comments,
     required this.timestamp,
     this.images,
   });
@@ -37,7 +37,7 @@ class PostModel {
       'likes': likes,
       'dislikes': dislikes,
       'comments': comments,
-      'timestamp': timestamp,
+      'timestamp': timestamp.toDate().toIso8601String(),
       'images': images,
     };
   }
@@ -49,9 +49,9 @@ class PostModel {
       authorType: json['authorType'],
       content: json['content'],
       author: json['author'],
-      likes: json['likes'],
-      dislikes: json['dislikes'],
-      comments: List<String>.from(json['comments'] as List<dynamic>),
+      likes: json['likes'] is List<dynamic> ? List<String>.from(json['likes'] as List<dynamic>) : null,
+      dislikes: json['dislikes'] is List<dynamic> ? List<String>.from(json['dislikes'] as List<dynamic>) : null,
+      comments: json['comments'] is List<dynamic> ? List<String>.from(json['comments'] as List<dynamic>) : null,
       timestamp: json['timestamp'] as Timestamp,
       images: List<String>.from(json['images'] as List<dynamic>),
     );

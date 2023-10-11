@@ -7,6 +7,7 @@ import 'package:cooptourism/pages/cooperatives/selected_coop_page.dart';
 import 'package:cooptourism/pages/error/error_page.dart';
 import 'package:cooptourism/pages/home_feed/home_feed_page.dart';
 import 'package:cooptourism/pages/home_page.dart';
+import 'package:cooptourism/pages/inbox_page.dart';
 import 'package:cooptourism/pages/manager/dashboard_page.dart';
 import 'package:cooptourism/pages/manager/members_page.dart';
 import 'package:cooptourism/pages/manager/reports_page.dart';
@@ -28,7 +29,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     navigatorKey: _rootNavigator,
-    debugLogDiagnostics: true,
+    // debugLogDiagnostics: true,
     initialLocation: SplashPage.routeLocation,
     routes: [
       GoRoute(
@@ -133,6 +134,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   return NoTransitionPage(
                       child: WalletPage(key: state.pageKey));
                 }),
+            GoRoute(
+                path: "/inbox_page",
+                name: "Inbox",
+                pageBuilder: (context, state) {
+                  return NoTransitionPage(
+                      child: InboxPage(key: state.pageKey));
+                }),
           ])
     ],
     redirect: (context, state) {
@@ -197,6 +205,8 @@ String getTitle(String location) {
 
     case '/wallet_page':
       return "Wallet";
+    case '/inbox_page':
+      return "Inbox";
     default:
       return "Home";
   }
