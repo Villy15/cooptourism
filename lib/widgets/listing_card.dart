@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cooptourism/widgets/displayImage.dart';
+import 'package:cooptourism/widgets/display_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
