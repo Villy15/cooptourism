@@ -25,7 +25,7 @@ class _MenuPageState extends State<MenuPage> {
     {'logo': Icons.account_balance_wallet_outlined, 'name': 'Wallet', 'route': '/wallet_page' },
     {'logo': Icons.account_balance_wallet_outlined, 'name': 'Reports', 'route': '/reports_page' },
     {'logo': Icons.account_balance_wallet_outlined, 'name': 'Members', 'route': '/members_page' },
-
+    {'logo': Icons.inbox_outlined, 'name': 'Inbox', 'route': '/inbox_page' },
     // {'logo': Icons.people_outlined, 'name': 'People', 'route': '/people'},
     // {'logo': Icons.group_outlined, 'name': 'Communities', 'route': '/communities' },
   ];
