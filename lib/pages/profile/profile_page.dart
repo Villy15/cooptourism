@@ -83,7 +83,7 @@ class _ProfilePageState extends State<ProfilePage>
               return Text('Error: ${snapshot.error}');
             }
             var userData = snapshot.data?.data() as Map<String, dynamic>;
-            var userUID = snapshot.data?.id!;
+            var userUID = snapshot.data?.id;
             final List<Widget> tabs = [
               ProfileHome(userData: userData),
               ProfileAbout(userData: userData),

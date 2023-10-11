@@ -109,29 +109,32 @@ class PostCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             ClipRRect(
-              child: FutureBuilder<String>(
-                future: storageRef
-                    .child("$authorId/images/${images?[0]}")
-                    .getDownloadURL(), // Await here
-                builder: (context, urlSnapshot) {
-                  if (urlSnapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  }
+              child: images != null && images!.isNotEmpty // Check first if images is not null and not empty
+                  ? FutureBuilder<String>(
+                      future: storageRef
+                          .child("$authorId/images/${images?[0]}")
+                          .getDownloadURL(),
+                      builder: (context, urlSnapshot) {
+                        if (urlSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        }
 
-                  if (urlSnapshot.hasError) {
-                    return Text('Error: ${urlSnapshot.error}');
-                  }
+                        if (urlSnapshot.hasError) {
+                          return Text('Error: ${urlSnapshot.error}');
+                        }
 
-                  final imageUrl = urlSnapshot.data;
+                        final imageUrl = urlSnapshot.data;
 
-                  return Image.network(
-                    imageUrl!,
-                    height: 225,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  );
-                },
-              ),
+                        return Image.network(
+                          imageUrl!,
+                          height: 225,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    )
+                  : const SizedBox.shrink(),
             ),
             const SizedBox(height: 8),
             Row(

@@ -27,7 +27,7 @@ class _ProfilePostsState extends State<ProfilePosts> {
       
         final userPosts = snapshot.data!.docs
             .map((doc) => PostModel.fromFirestore(doc))
-            .where((post) => post != null)
+            // .where((post) => post != null) //
             .cast<PostModel>()
             .toList();
             
