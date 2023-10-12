@@ -62,7 +62,7 @@ class ListingCard extends StatelessWidget {
           child: Column(
             children: [
               DisplayImage(
-                path: "$owner/listingImages/${images[0]}",
+                path: "$owner/listingImages/$id${images[0]}",
                 height: 175,
                 width: double.infinity,
               ),
@@ -78,11 +78,7 @@ class ListingCard extends StatelessWidget {
                         DisplayText(
                           text: title,
                           lines: 2,
-                          style: TextStyle(
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall
-                                  ?.fontSize),
+                          style: Theme.of(context).textTheme.headlineSmall!,
                         ),
                         DisplayText(
                           text: "₱$price",
