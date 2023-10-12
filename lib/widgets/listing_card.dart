@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/cooperatives.dart';
+import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/widgets/display_image.dart';
 import 'package:cooptourism/widgets/display_text.dart';
@@ -8,32 +9,13 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class ListingCard extends StatelessWidget {
-  final String id;
-  final String owner;
-  final String title;
-  final String description;
-  final int price;
-  final String type;
-  final List<dynamic> images;
-  final int visits;
-  final Timestamp postDate;
+  final ListingModel listingModel;
 
-  const ListingCard({
-    required Key key,
-    required this.id,
-    required this.owner,
-    required this.title,
-    required this.description,
-    required this.price,
-    required this.type,
-    required this.images,
-    required this.visits,
-    required this.postDate,
-  }) : super(key: key);
+  const ListingCard({super.key, required this.listingModel});
 
   String getTimeDifference() {
     final now = Timestamp.now().toDate();
-    final postTime = postDate.toDate();
+    final postTime = listingModel.postDate!.toDate();
     final difference = now.difference(postTime);
 
     if (difference.inMinutes < 60) {
@@ -51,18 +33,18 @@ class ListingCard extends StatelessWidget {
     final CooperativesRepository cooperativeRepository =
         CooperativesRepository();
     final Future<CooperativesModel> cooperative =
-        cooperativeRepository.getCooperative(owner);
+        cooperativeRepository.getCooperative(listingModel.owner!);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: InkWell(
           onTap: () {
-            return context.go('/market_page/$id');
+            return context.go('/market_page/${listingModel.id}');
           },
           child: Column(
             children: [
               DisplayImage(
-                path: "$owner/listingImages/$id${images[0]}",
+                path: "${listingModel.owner}/listingImages/${listingModel.id}${listingModel.images![0]}",
                 height: 175,
                 width: double.infinity,
               ),
@@ -76,12 +58,12 @@ class ListingCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         DisplayText(
-                          text: title,
+                          text: listingModel.title!,
                           lines: 2,
                           style: Theme.of(context).textTheme.headlineSmall!,
                         ),
                         DisplayText(
-                          text: "₱$price",
+                          text: "₱${listingModel.price}",
                           lines: 1,
                           style: TextStyle(
                               fontSize: Theme.of(context)
@@ -117,7 +99,7 @@ class ListingCard extends StatelessWidget {
                       },
                     ),
                     DisplayText(
-                        text: description,
+                        text: listingModel.description!,
                         lines: 2,
                         style: TextStyle(
                             fontSize: Theme.of(context)
