@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:cooptourism/controller/post_provider.dart';
+import 'package:cooptourism/data/models/cooperatives.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/data/repositories/post_repository.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
@@ -56,6 +57,27 @@ class _PostCardState extends State<PostCard> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    final storageRef = FirebaseStorage.instance.ref();
+
+    final imageUrl = imageCache.getImageUrl(widget.authorId ?? "");
+
+    if (imageUrl == null) {
+      // Load the image URL and update the cache
+      storageRef
+          .child("${widget.authorId}/images/${widget.images?[0]}")
+          .getDownloadURL()
+          .then((imageUrl) {
+        imageCache.setImageUrl(widget.authorId ?? "", imageUrl);
+        if (mounted) {
+          setState(() {});
+        }
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final storageRef = FirebaseStorage.instance.ref();
 
@@ -72,28 +94,7 @@ class _PostCardState extends State<PostCard> {
           children: [
             Row(
               children: [
-                FutureBuilder(
-                    future: cooperative,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      }
-
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      final cooperative = snapshot.data!;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: DisplayProfilePicture(
-                          storageRef: storageRef,
-                          coopId: widget.authorId ?? "",
-                          data: cooperative.profilePicture,
-                          height: 35.0,
-                          width: 35.0,
-                        ),
-                      );
-                    }),
+                profilePictureWidget(cooperative, storageRef),
                 const SizedBox(width: 8),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,67 +127,106 @@ class _PostCardState extends State<PostCard> {
             ),
             const SizedBox(height: 8),
             ClipRRect(
-              child: widget.images != null &&
-                      widget.images!
-                          .isNotEmpty // Check first if images is not null and not empty
-                  ? FutureBuilder<String>(
-                      future: storageRef
-                          .child(
-                              "${widget.authorId}/images/${widget.images?[0]}")
-                          .getDownloadURL(),
-                      builder: (context, urlSnapshot) {
-                        if (urlSnapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
-                        }
-
-                        if (urlSnapshot.hasError) {
-                          return Text('Error: ${urlSnapshot.error}');
-                        }
-
-                        final imageUrl = urlSnapshot.data;
-
-                        return Image.network(
-                          imageUrl!,
-                          height: 225,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        );
-                      },
+              child: imageCache.getImageUrl(widget.authorId ?? "") != null
+                  ? Image.network(
+                      imageCache.getImageUrl(widget.authorId ?? "")!,
+                      height: 225,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
                     )
                   : const SizedBox.shrink(),
             ),
+            // ClipRRect(
+            //   child: widget.images != null &&
+            //           widget.images!
+            //               .isNotEmpty // Check first if images is not null and not empty
+            //       /? FutureBuilder<String>(
+            //           future: storageRef
+            //               .child(
+            //                   "${widget.authorId}/images/${widget.images?[0]}")
+            //               .getDownloadURL(),
+            //           builder: (context, urlSnapshot) {
+            //             if (urlSnapshot.connectionState ==
+            //                 ConnectionState.waiting) {
+            //               return const CircularProgressIndicator();
+            //             }
+            //
+            //             if (urlSnapshot.hasError) {
+            //               return Text('Error: ${urlSnapshot.error}');
+            //             }
+            //
+            //             final imageUrl = urlSnapshot.data;
+            //
+            //             return Image.network(
+            //               imageUrl!,
+            //               height: 225,
+            //               width: double.infinity,
+            //               fit: BoxFit.cover,
+            //             );
+            //           },
+            //         )
+            //       : const SizedBox.shrink(),
+            // ),
             const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  LikeDislike(uid: widget.uid, likes: widget.likes, dislikes: widget.dislikes),
-
-                  const Spacer(),
-                  Icon(Icons.comment_outlined,
-                      color: Theme.of(context).colorScheme.primary),
-                  const SizedBox(width: 8),
-                  Text(
-                    widget.comments!.length.toString(),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const Spacer(),
-                  Icon(Icons.share_outlined,
-                      color: Theme.of(context).colorScheme.primary),
-                ],
-              ),
-            ),
+            postFunctions(context),
             // Add a horizontal line
             const Divider(height: 10, thickness: 1),
           ],
         ),
       ),
     );
+  }
+
+  Padding postFunctions(BuildContext context) {
+    return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                LikeDislike(uid: widget.uid, likes: widget.likes, dislikes: widget.dislikes),
+
+                const Spacer(),
+                Icon(Icons.comment_outlined,
+                    color: Theme.of(context).colorScheme.primary),
+                const SizedBox(width: 8),
+                Text(
+                  widget.comments!.length.toString(),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 16,
+                  ),
+                ),
+                const Spacer(),
+                Icon(Icons.share_outlined,
+                    color: Theme.of(context).colorScheme.primary),
+              ],
+            ),
+          );
+  }
+
+  FutureBuilder<CooperativesModel> profilePictureWidget(Future<CooperativesModel> cooperative, Reference storageRef) {
+    return FutureBuilder(
+                  future: cooperative,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final cooperative = snapshot.data!;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: DisplayProfilePicture(
+                        storageRef: storageRef,
+                        coopId: widget.authorId ?? "",
+                        data: cooperative.profilePicture,
+                        height: 35.0,
+                        width: 35.0,
+                      ),
+                    );
+                  });
   }
 }
 
@@ -297,3 +337,17 @@ class LikeDislikeState extends ConsumerState<LikeDislike> {
     );
   }
 }
+
+class ImageCache {
+  final Map<String, String> _urlCache = {};
+
+  String? getImageUrl(String key) {
+    return _urlCache[key];
+  }
+
+  void setImageUrl(String key, String url) {
+    _urlCache[key] = url;
+  }
+}
+
+final imageCache = ImageCache();
