@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class PostCard extends StatefulWidget {
@@ -185,8 +186,13 @@ class _PostCardState extends State<PostCard> {
                 LikeDislike(uid: widget.uid, likes: widget.likes, dislikes: widget.dislikes),
 
                 const Spacer(),
-                Icon(Icons.comment_outlined,
-                    color: Theme.of(context).colorScheme.primary),
+                GestureDetector (
+                  onTap: () {
+                    context.go('/posts/comments/${widget.uid}');
+                  },
+                  child: Icon(Icons.comment_outlined,
+                      color: Theme.of(context).colorScheme.primary),
+                ),
                 const SizedBox(width: 8),
                 Text(
                   widget.comments!.length.toString(),

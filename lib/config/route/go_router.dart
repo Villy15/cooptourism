@@ -5,6 +5,7 @@ import 'package:cooptourism/pages/auth/login_or_register.dart';
 import 'package:cooptourism/pages/cooperatives/coops_page.dart';
 import 'package:cooptourism/pages/cooperatives/selected_coop_page.dart';
 import 'package:cooptourism/pages/error/error_page.dart';
+import 'package:cooptourism/pages/home_feed/comments/post_comments.dart';
 import 'package:cooptourism/pages/home_feed/home_feed_page.dart';
 import 'package:cooptourism/pages/home_page.dart';
 import 'package:cooptourism/pages/inbox_page.dart';
@@ -50,12 +51,22 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           },
           routes: [
             GoRoute(
-                path: "/",
-                name: "Home Feed",
-                pageBuilder: (context, state) {
-                  return NoTransitionPage(
-                      child: HomeFeedPage(key: state.pageKey));
-                }),
+              path: "/",
+              name: "Home Feed",
+              pageBuilder: (context, state) {
+                return NoTransitionPage(
+                    child: HomeFeedPage(key: state.pageKey));
+              },
+              routes: [
+                GoRoute(
+                    path: 'posts/comments/:postId',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return PostCommentsPage(
+                        postId: state.pathParameters["postId"]!,
+                      );
+                    }),
+              ],
+            ),
             GoRoute(
                 path: "/menu_page",
                 name: "Menu",
@@ -138,8 +149,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: "/inbox_page",
                 name: "Inbox",
                 pageBuilder: (context, state) {
-                  return NoTransitionPage(
-                      child: InboxPage(key: state.pageKey));
+                  return NoTransitionPage(child: InboxPage(key: state.pageKey));
                 }),
           ])
     ],
@@ -188,6 +198,8 @@ String getTitle(String location) {
   switch (location) {
     case '/':
       return "Home";
+    // case '/posts/comments/':
+    //   return "Comments";
     case '/coops_page':
       return "Cooperatives";
     case '/market_page':
@@ -208,6 +220,6 @@ String getTitle(String location) {
     case '/inbox_page':
       return "Inbox";
     default:
-      return "Home";
+      return "No Route";
   }
 }
