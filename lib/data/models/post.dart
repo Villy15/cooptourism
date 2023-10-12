@@ -29,6 +29,7 @@ class PostModel {
 
   Map<String, dynamic> toJson() {
     return {
+      'uid': uid,
       'title': title,
       'authorId': authorId,
       'authorType': authorType,
@@ -42,8 +43,9 @@ class PostModel {
     };
   }
 
-  factory PostModel.fromJson(Map<String, dynamic> json) {
+  factory PostModel.fromJson(String uid, Map<String, dynamic> json) {
     return PostModel(
+      uid: uid,
       title: json['title'],
       authorId: json['authorId'],
       authorType: json['authorType'],

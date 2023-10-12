@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 class PostCard extends StatefulWidget {
+  final String? uid;
   final String? author;
   final String? authorId;
   final String? authorType;
@@ -21,6 +22,7 @@ class PostCard extends StatefulWidget {
 
   const PostCard({
     required Key key,
+    this.uid,
     this.author,
     this.authorId,
     this.authorType,
@@ -51,27 +53,6 @@ class _PostCardState extends State<PostCard> {
       return formatter.format(postTime);
     }
   }
-
-  // bool _liked = false;
-  // bool _disliked = false;
-
-  // void _toggleLike() {
-  //   setState(() {
-  //     _liked = !_liked;
-  //     if (_liked) {
-  //       _disliked = false;
-  //     }
-  //   });
-  // }
-
-  // void _toggleDislike() {
-  //   setState(() {
-  //     _disliked = !_disliked;
-  //     if (_disliked) {
-  //       _liked = false;
-  //     }
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {

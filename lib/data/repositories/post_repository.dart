@@ -10,7 +10,7 @@ class PostRepository {
   Stream<List<PostModel>> getAllPosts() {
     return postsCollection.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        return PostModel.fromJson(doc.data() as Map<String, dynamic>);
+        return PostModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
@@ -18,7 +18,7 @@ class PostRepository {
   Stream<List<PostModel>> getSpecificPosts(String authorId) {
     return postsCollection.where("authorId", isEqualTo: authorId).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        return PostModel.fromJson(doc.data() as Map<String, dynamic>);
+        return PostModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
@@ -38,7 +38,7 @@ class PostRepository {
     try {
       final doc = await postsCollection.doc(postId).get();
       debugPrint('Post from Firestore: ${doc.data()}');
-      return PostModel.fromJson(doc.data() as Map<String, dynamic>);
+      return PostModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
     } catch (e) {
       debugPrint('Error getting post from Firestore: $e');
       // You might want to handle errors more gracefully here

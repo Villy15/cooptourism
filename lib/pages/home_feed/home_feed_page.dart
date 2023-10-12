@@ -1,5 +1,3 @@
-// import 'dart:convert';
-
 import 'package:cooptourism/data/models/post.dart';
 import 'package:cooptourism/data/repositories/post_repository.dart';
 import 'package:flutter/material.dart';
@@ -24,18 +22,13 @@ class HomeFeedPageState extends State<HomeFeedPage> {
     super.initState();
     _postRepository = PostRepository();
     _posts = _postRepository.getAllPosts();
-
-    // _posts.listen((posts) {
-    //   final jsonList = posts.map((post) => post.toJson()).toList();
-    //   final json = jsonEncode(jsonList);
-    //   debugPrint(json);
-    // });
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        //TODO: Uncomment when need filter
         // SizedBox(
         //   height: 40,
         //   child: listViewFilter(),
@@ -63,15 +56,14 @@ class HomeFeedPageState extends State<HomeFeedPage> {
   }
 
   ListView listViewPosts(List<PostModel> posts) {
-    // debugPrint('Number of posts: ${posts.length}');
     return ListView.builder(
       itemCount: posts.length,
       itemBuilder: (context, index) {
         final post = posts[index];
-        // debugPrint(posts.length as String?);
 
         return PostCard(
           key: ValueKey(index),
+          uid: post.uid,
           author: post.author,
           authorId: post.authorId,
           authorType: post.authorType,
