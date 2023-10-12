@@ -38,6 +38,7 @@ class AddPostPageState extends State<AddPostPage> {
     if (content.isNotEmpty) {
       try {
         final post = PostModel(
+          uid: '',
           author: author,
           authorId: "",
           authorType: "",

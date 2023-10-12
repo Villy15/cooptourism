@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cooptourism/controller/post_provider.dart';
+// import 'package:cooptourism/controller/post_provider.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
+import 'package:cooptourism/data/repositories/post_repository.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -61,6 +62,7 @@ class _PostCardState extends State<PostCard> {
     final cooperativeRepository = CooperativesRepository();
     final cooperative =
         cooperativeRepository.getCooperative(widget.authorId ?? "");
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Card(
@@ -159,7 +161,7 @@ class _PostCardState extends State<PostCard> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  LikeDislike(likes: widget.likes, dislikes: widget.dislikes),
+                  LikeDislike(uid: widget.uid, likes: widget.likes, dislikes: widget.dislikes),
 
                   const Spacer(),
                   Icon(Icons.comment_outlined,
@@ -189,36 +191,85 @@ class _PostCardState extends State<PostCard> {
 }
 
 class LikeDislike extends ConsumerStatefulWidget {
+  final String? uid;
   final List<String>? likes;
   final List<String>? dislikes;
 
-  const LikeDislike({Key? key, this.likes, this.dislikes}) : super(key: key);
+  const LikeDislike({Key? key, this.uid, this.likes, this.dislikes}) : super(key: key);
 
   @override
   ConsumerState createState() => LikeDislikeState();
 }
 
 class LikeDislikeState extends ConsumerState<LikeDislike> {
-  final user = FirebaseAuth.instance.currentUser;
+  final user = FirebaseAuth.instance.currentUser;  
+  PostRepository postRepository = PostRepository();
+  bool isLiked = false;
+  bool isDisliked = false;
+
+  // function when pressing like, dislike, or comment
+  void onPressLike () {
+    // if isLiked 
+    if (isLiked) {
+      postRepository.unlikePost(widget.uid, user!.uid);
+
+      setState(() {
+        isLiked = false; // Update the isLiked variable
+      });
+    } else {
+      postRepository.likePost(widget.uid, user!.uid);
+
+      setState(() {
+        isLiked = true; // Update the isLiked variable
+      });
+    }
+  }
+
+  void onPressDislike () {
+    // if isLiked 
+    if (isDisliked) {
+      postRepository.undislikePost(widget.uid, user!.uid);
+
+      setState(() {
+        isDisliked = false; // Update the isLiked variable
+      });
+    } else {
+      postRepository.dislikePost(widget.uid, user!.uid);
+
+      setState(() {
+        isDisliked = true; // Update the isLiked variable
+      });
+    }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Check if the user has liked the post when the widget is first built
+    if (widget.likes != null && user != null) {
+      isLiked = widget.likes!.contains(user!.uid);
+    }
+
+    if (widget.dislikes != null && user != null) {
+      isDisliked = widget.dislikes!.contains(user!.uid);
+    }
+  }
   
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         GestureDetector(
-          onTap: () {
-            widget.likes?.add('${user?.uid}'); // Add us
-            ref.read(likesCounter.notifier).increment();
-            debugPrint(widget.likes.toString());
-          },
+          onTap: onPressLike,
           child: Icon(
             Icons.thumb_up_alt_outlined,
-            color: Theme.of(context).colorScheme.primary,
+            color: isLiked ? Colors.blue : Theme.of(context).colorScheme.primary, // Change the color
           ),
         ),
         const SizedBox(width: 8),
         Text(
-          ref.watch(likesCounter).toString(),
+          widget.likes?.length.toString() ?? '0',
           style: TextStyle(
             color: Theme.of(context).colorScheme.primary,
             fontWeight: FontWeight.w400,
@@ -227,19 +278,15 @@ class LikeDislikeState extends ConsumerState<LikeDislike> {
         ),
         const SizedBox(width: 16),
         GestureDetector(
-          onTap: () {
-            widget.dislikes?.add('${user?.uid}'); // Add us
-            ref.read(dislikesCounter.notifier).increment();
-            debugPrint(widget.likes.toString());
-          },
+          onTap: onPressDislike,
           child: Icon(
             Icons.thumb_down_alt_outlined,
-            color: Theme.of(context).colorScheme.primary,
+            color: isDisliked ? Colors.red : Theme.of(context).colorScheme.primary, // Change the color
           ),
         ),
         const SizedBox(width: 8),
         Text(
-          ref.watch(dislikesCounter).toString(),
+          widget.dislikes?.length.toString() ?? '0',
           style: TextStyle(
             color: Theme.of(context).colorScheme.primary,
             fontWeight: FontWeight.w400,
