@@ -37,7 +37,26 @@ class _ProfileAboutState extends State<ProfileAbout> {
   final skills = userData['skills'] as List<dynamic>?;
   if (skills == null) {
     // Return an empty column if skills is null
-    return const Column();
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: 15.0),
+          child: Text(
+            'My Skills',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold
+            ),
+          ),
+        ),
+        SizedBox(height: 15),
+        Padding(
+          padding: EdgeInsets.only(left: 15.0),
+          child: Text('No skills added yet'),
+        )
+      ],
+    );
   }
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,

@@ -6,7 +6,7 @@ class UserRepository {
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('users');
 
-      // Get all users from Firestore
+  // Get all users from Firestore
   Stream<List<UserModel>> getAllUsers() {
     return usersCollection.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
@@ -23,6 +23,17 @@ class UserRepository {
       debugPrint('Error adding user to Firestore: $e');
       // You might want to handle errors more gracefully here
     }
+  }
+
+  Future<List<UserModel>> getUsersByRole(String role) async {
+    return usersCollection
+        .where('role', isEqualTo: role)
+        .get()
+        .then((snapshot) {
+      return snapshot.docs.map((doc) {
+        return UserModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
   }
 
   // Read a user from Firestore
