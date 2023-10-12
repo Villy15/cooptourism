@@ -1,8 +1,11 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
+import 'package:cooptourism/widgets/display_image.dart';
+import 'package:cooptourism/widgets/display_text.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class SelectedListingPage extends StatefulWidget {
   final String listingId;
@@ -20,6 +23,7 @@ class _SelectedListingPageState extends State<SelectedListingPage> {
 
     final Future<ListingModel> listings =
         listingRepository.getSpecificListing(widget.listingId);
+
     return FutureBuilder<ListingModel>(
       future: listings,
       builder: (context, snapshot) {
@@ -31,8 +35,54 @@ class _SelectedListingPageState extends State<SelectedListingPage> {
         }
 
         final listing = snapshot.data!;
-        return Container(
-          child: Text(widget.listingId),
+        return Column(
+          children: [
+            CarouselSlider(
+              options: CarouselOptions(
+                height: 250.0,
+                enlargeFactor: .2,
+                enlargeCenterPage: true,
+                enableInfiniteScroll: false,
+                padEnds: true,
+                // clipBehavior: Clip.hardEdge,
+              ),
+              items: listing.images!
+                  .map<Widget>((e) => DisplayImage(
+                      path: "${listing.owner}/listingImages/${listing.id}$e",
+                      height: 250,
+                      width: double.infinity))
+                  .toList(),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DisplayText(
+                    text: listing.title!,
+                    lines: 1,
+                    style: Theme.of(context).textTheme.headlineSmall!,
+                  ),
+                  DisplayText(
+                    text: "Type: ${listing.type!}",
+                    lines: 4,
+                    style: TextStyle(
+                        fontSize:
+                            Theme.of(context).textTheme.headlineSmall?.fontSize),
+                  ),
+                  DisplayText(
+                    text: "Desciption: ${listing.description!}",
+                    lines: 5,
+                    style: TextStyle(
+                      fontSize:
+                          Theme.of(context).textTheme.headlineSmall?.fontSize,
+                    ),
+                  ),
+                  
+                ],
+              ),
+            ),
+          ],
         );
       },
     );

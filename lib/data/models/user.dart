@@ -46,4 +46,20 @@ class UserModel {
       'role': role,
     };
   }
+
+ void map(Function(dynamic value) function) {
+    final json = toJson();
+    json.forEach((key, value) {
+      json[key] = function(value);
+    });
+    final user = UserModel.fromJson(json);
+    email = user.email;
+    firstName = user.firstName;
+    lastName = user.lastName;
+    status = user.status;
+    userAccomplishment = user.userAccomplishment;
+    userRating = user.userRating;
+    userTrust = user.userTrust;
+    role = user.role;
+  }
 }
