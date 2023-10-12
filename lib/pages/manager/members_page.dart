@@ -20,12 +20,10 @@ class _MembersPageState extends State<MembersPage> {
   @override
   void initState() {
     super.initState();
-    print('Initializing state...');
     _fetchMembers();
   }
 
   Future<void> _fetchMembers() async {
-    print('Fetching members...');
     final userRepository = UserRepository();
     final users = await UserRepository().getUsersByRole('Member');
 
@@ -36,14 +34,10 @@ class _MembersPageState extends State<MembersPage> {
     setState(() {
       _members = memberNames;
     });
-    print('length of members: ${_members.length}');
-    print('member names: $_members');
   }
 
   @override
   Widget build(BuildContext context) {
-    print('Building MembersPage...');
-    print('widget build. member names are: ${_members.toString()}');
     _members.sort((a, b) => a.compareTo(b)); // sort alphabetically
     return Column(
       children: [
