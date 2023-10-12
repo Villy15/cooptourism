@@ -44,7 +44,7 @@ class ListingCard extends StatelessWidget {
           child: Column(
             children: [
               DisplayImage(
-                path: "${listingModel.owner}/listingImages/$listingModel.id${listingModel.images![0]}",
+                path: "${listingModel.owner}/listingImages/${listingModel.id}${listingModel.images![0]}",
                 height: 175,
                 width: double.infinity,
               ),
