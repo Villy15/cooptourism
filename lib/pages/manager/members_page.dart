@@ -1,3 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooptourism/data/models/user.dart';
+import 'package:cooptourism/data/repositories/user_repository.dart';
+import 'package:cooptourism/pages/profile/profile_page.dart';
 import 'package:flutter/material.dart';
 
 class MembersPage extends StatefulWidget {
@@ -10,74 +14,73 @@ class MembersPage extends StatefulWidget {
 class _MembersPageState extends State<MembersPage> {
   final List<String> _tabTitles = ['Members', 'Features'];
   int _selectedIndex = 0;
-  
-  final List<String> _members = [
-    'John Doe',
-    'Jane Doe',
-    'John Smith',
-    'Jane Smith',
-    'John Doe',
-    'John Doe',
-    'Jane Doe',
-    'John Smith',
-    'Jane Smith',
-    'John Doe',
-    'John Doe',
-    'Jane Doe',
-    'John Smith',
-    'Jane Smith',
-    'John Doe',
-    'John Doe',
-    'Jane Doe',
-    'John Smith',
-    'Jane Smith',
-    'John Doe',
-    'John Doe',
-    'Jane Doe',
-    'John Smith',
-    'Jane Smith',
-    'John Doe',
-    'John Doe',
-    'Jane Doe',
-    'John Smith',
-    'Jane Smith',
-    'John Doe',
-  ];
+
+  List<String> _members = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMembers();
+  }
+
+  Future<void> _fetchMembers() async {
+    final userRepository = UserRepository();
+    final users = await UserRepository().getUsersByRole('Member');
+
+    final memberNames = users.map((user) {
+      return '${user.firstName} ${user.lastName}';
+    }).toList();
+
+    setState(() {
+      _members = memberNames;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView (
-      child: Column (
-        children: [
-          SizedBox(
-            height: 40,
-            child: listViewFilter(),
-          ),
-    
-          const SizedBox(height: 10),
-          searchFilter(context),
-    
-          ListView.builder (
-            shrinkWrap: true,
-            itemCount: _members.length,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: Icon(
-                  Icons.person,
-                  color: Theme.of(context).colorScheme.primary,
-  
+    _members.sort((a, b) => a.compareTo(b)); // sort alphabetically
+    return Column(
+      children: [
+        SizedBox(
+          height: 40,
+          child: listViewFilter(),
+        ),
+        const SizedBox(height: 10),
+        searchFilter(context),
+        const SizedBox(height: 10),
+        Expanded(
+            child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2),
+          itemCount: _members.length,
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProfilePage()),
+                  );
+                },
+                child: Container(
+                  margin: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondary,
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                title: Text(
-                  _members[index],
-                    style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary),
+                  child: Center(
+                    child: Text(
+                      _members[index],
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-              );
-            },
-          )
-          
-        ],
-      ),
+                ));
+          },
+        )),
+      ],
     );
   }
 
