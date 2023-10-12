@@ -1,6 +1,8 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/listing.dart';
+import 'package:cooptourism/data/models/review.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
+import 'package:cooptourism/data/repositories/review_repository.dart';
 import 'package:cooptourism/widgets/display_image.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 // import 'package:firebase_storage/firebase_storage.dart';
@@ -21,9 +23,13 @@ class _SelectedListingPageState extends State<SelectedListingPage> {
   Widget build(BuildContext context) {
     // final storageRef = FirebaseStorage.instance.ref();
     final ListingRepository listingRepository = ListingRepository();
-
+    final ReviewRepository reviewRepository = ReviewRepository();
+     
     final Future<ListingModel> listings =
         listingRepository.getSpecificListing(widget.listingId);
+
+    final Stream<List<ReviewModel>> reviews =
+        reviewRepository.getAllListingReviews(widget.listingId);
 
     return FutureBuilder<ListingModel>(
       future: listings,
@@ -104,7 +110,7 @@ class _SelectedListingPageState extends State<SelectedListingPage> {
                         text: "Amenities",
                         lines: 1,
                         style: Theme.of(context).textTheme.headlineSmall!),
-                    // ListView(),
+                    const Placeholder(),
                   ],
                 ),
               ),
