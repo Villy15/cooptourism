@@ -58,17 +58,17 @@ class _MarketPageState extends State<MarketPage> {
   GridView gridViewListings(List<ListingModel> listings) {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 3 / 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 0,
-        mainAxisExtent: 200,
+        crossAxisCount: 1,
+        childAspectRatio: 1,
+        mainAxisSpacing: 10,
+        mainAxisExtent: 300,
       ),
       itemCount: listings.length,
       itemBuilder: (context, index) {
         final listing = listings[index];
         return ListingCard(
           key: ValueKey(index),
+          id: listing.id!,
           owner: listing.owner!,
           title: listing.title!,
           description: listing.description!,
@@ -156,32 +156,6 @@ class _MarketPageState extends State<MarketPage> {
           );
         },
       ),
-    );
-  }
-
-  GridView gridSquares(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 3 / 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 0,
-        mainAxisExtent: 200,
-      ),
-      // itemCount: listings.length,
-      itemBuilder: (_, index) {
-        return Container(
-          margin: const EdgeInsets.symmetric(vertical: 5.0),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-                width: 1.5,
-                style: BorderStyle.solid,
-                color: Theme.of(context).colorScheme.primary),
-          ),
-        );
-      },
     );
   }
 }

@@ -6,25 +6,25 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class PostCard extends StatelessWidget {
-  final String author;
+  final String? author;
   final String? authorId;
   final String? authorType;
-  final String content;
-  final int likes;
-  final int dislikes;
-  final List<dynamic> comments;
+  final String? content;
+  final List<String>? likes;
+  final List<String>? dislikes;
+  final List<dynamic>? comments;
   final Timestamp timestamp;
   final List<dynamic>? images;
 
   const PostCard({
     required Key key,
-    required this.author,
+    this.author,
     this.authorId,
     this.authorType,
-    required this.content,
-    required this.likes,
-    required this.dislikes,
-    required this.comments,
+    this.content,
+    this.likes,
+    this.dislikes,
+    this.comments,
     required this.timestamp,
     this.images,
   }) : super(key: key);
@@ -53,6 +53,7 @@ class PostCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Card(
+        elevation: 0,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -85,7 +86,7 @@ class PostCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      author,
+                      author!,
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     Text(
@@ -95,15 +96,18 @@ class PostCard extends StatelessWidget {
                   ],
                 ),
                 const Spacer(),
-                Icon(Icons.more_horiz,
-                    color: Theme.of(context).colorScheme.primary, size: 26),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(Icons.more_horiz,
+                      color: Theme.of(context).colorScheme.primary, size: 26),
+                ),
               ],
             ),
             const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(
-                content,
+                content!,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
@@ -137,48 +141,53 @@ class PostCard extends StatelessWidget {
                   : const SizedBox.shrink(),
             ),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                Icon(Icons.thumb_up_alt_outlined,
-                    color: Theme.of(context).colorScheme.primary),
-                const SizedBox(width: 8),
-                Text(
-                  likes.toString(),
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Icon(Icons.thumb_up_alt_outlined,
+                      color: Theme.of(context).colorScheme.primary),
+                  const SizedBox(width: 8),
+                  Text(
+                    likes?.length.toString() ?? '0',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Icon(Icons.thumb_down_alt_outlined,
-                    color: Theme.of(context).colorScheme.primary),
-                const SizedBox(width: 8),
-                Text(
-                  dislikes.toString(),
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16,
+                  const SizedBox(width: 16),
+                  Icon(Icons.thumb_down_alt_outlined,
+                      color: Theme.of(context).colorScheme.primary),
+                  const SizedBox(width: 8),
+                  Text(
+                    dislikes?.length.toString() ?? '0',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
+                    ),
                   ),
-                ),
-                const Spacer(),
-                Icon(Icons.comment_outlined,
-                    color: Theme.of(context).colorScheme.primary),
-                const SizedBox(width: 8),
-                Text(
-                  comments.length.toString(),
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16,
+                  const Spacer(),
+                  Icon(Icons.comment_outlined,
+                      color: Theme.of(context).colorScheme.primary),
+                  const SizedBox(width: 8),
+                  Text(
+                    comments!.length.toString(),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
+                    ),
                   ),
-                ),
-                const Spacer(),
-                Icon(Icons.share_outlined,
-                    color: Theme.of(context).colorScheme.primary),
-              ],
+                  const Spacer(),
+                  Icon(Icons.share_outlined,
+                      color: Theme.of(context).colorScheme.primary),
+                ],
+              ),
             ),
+            // Add a horizontal line
+            const Divider(height: 10, thickness: 1),
           ],
         ),
       ),

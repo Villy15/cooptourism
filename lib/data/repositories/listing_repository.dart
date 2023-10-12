@@ -10,7 +10,7 @@ class ListingRepository {
   Stream<List<ListingModel>> getAllListings() {
     return listingsCollection.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        return ListingModel.fromJson(doc.data() as Map<String, dynamic>);
+        return ListingModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
@@ -26,10 +26,10 @@ class ListingRepository {
   }
 
   // Read a Listing from Firestore
-  Future<ListingModel> getListing(String listingId) async {
+  Future<ListingModel> getSpecificListing(String listingId) async {
     try {
       final doc = await listingsCollection.doc(listingId).get();
-      return ListingModel.fromJson(doc.data() as Map<String, dynamic>);
+      return ListingModel.fromJson(listingId, doc.data() as Map<String, dynamic>);
     } catch (e) {
       debugPrint('Error getting Listing from Firestore: $e');
       // You might want to handle errors more gracefully here

@@ -16,6 +16,7 @@ class DisplayImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final storageRef = FirebaseStorage.instance.ref();
+    debugPrint("$path this is the image");
     return ClipRRect(
       borderRadius: BorderRadius.zero,
       child: FutureBuilder<String>(
@@ -37,7 +38,7 @@ class DisplayImage extends StatelessWidget {
           return Image.network(
             imageUrl!,
             height: height,
-            width: double.infinity,
+            width: width,
             fit: BoxFit.cover,
           );
         },

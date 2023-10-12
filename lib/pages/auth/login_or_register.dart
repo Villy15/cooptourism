@@ -18,7 +18,7 @@ class _LoginOrRegisterState extends State<LoginOrRegister> {
   void togglePages() {
     setState(() {
       showLoginPage = !showLoginPage;
-      debugPrint("showLoginPage: $showLoginPage");
+      // debugPrint("showLoginPage: $showLoginPage");
     });
   }
 

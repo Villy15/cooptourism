@@ -7,10 +7,12 @@ import 'package:cooptourism/pages/cooperatives/selected_coop_page.dart';
 import 'package:cooptourism/pages/error/error_page.dart';
 import 'package:cooptourism/pages/home_feed/home_feed_page.dart';
 import 'package:cooptourism/pages/home_page.dart';
+import 'package:cooptourism/pages/inbox_page.dart';
 import 'package:cooptourism/pages/manager/dashboard_page.dart';
 import 'package:cooptourism/pages/manager/members_page.dart';
 import 'package:cooptourism/pages/manager/reports_page.dart';
 import 'package:cooptourism/pages/market/market_page.dart';
+import 'package:cooptourism/pages/market/selected_listing_page.dart';
 import 'package:cooptourism/pages/menu_page.dart';
 import 'package:cooptourism/pages/profile/profile_page.dart';
 import 'package:cooptourism/pages/wallet/wallet_page.dart';
@@ -27,7 +29,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     navigatorKey: _rootNavigator,
-    debugLogDiagnostics: true,
+    // debugLogDiagnostics: true,
     initialLocation: SplashPage.routeLocation,
     routes: [
       GoRoute(
@@ -79,12 +81,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ],
             ),
             GoRoute(
-                path: "/market_page",
-                name: "Market",
-                pageBuilder: (context, state) {
-                  return NoTransitionPage(
-                      child: MarketPage(key: state.pageKey));
-                }),
+              path: "/market_page",
+              name: "Market",
+              pageBuilder: (context, state) {
+                return NoTransitionPage(child: MarketPage(key: state.pageKey));
+              },
+              routes: [
+                GoRoute(
+                    path: ':listingId',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return SelectedListingPage(
+                        listingId: state.pathParameters["listingId"]!,
+                      );
+                    }),
+              ],
+            ),
             GoRoute(
                 path: "/profile_page",
                 name: "Profile",
@@ -116,13 +127,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       child: ReportsPage(key: state.pageKey));
                 }),
 
-            
             GoRoute(
                 path: "/wallet_page",
                 name: "Wallet",
                 pageBuilder: (context, state) {
                   return NoTransitionPage(
                       child: WalletPage(key: state.pageKey));
+                }),
+            GoRoute(
+                path: "/inbox_page",
+                name: "Inbox",
+                pageBuilder: (context, state) {
+                  return NoTransitionPage(
+                      child: InboxPage(key: state.pageKey));
                 }),
           ])
     ],
@@ -188,6 +205,8 @@ String getTitle(String location) {
 
     case '/wallet_page':
       return "Wallet";
+    case '/inbox_page':
+      return "Inbox";
     default:
       return "Home";
   }

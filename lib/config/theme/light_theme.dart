@@ -53,7 +53,7 @@ ThemeData lightTheme = ThemeData(
       color: primaryColor
     ),
 
-    // Post Content
+    // Use for what would go under the title
     bodySmall: TextStyle(
       fontSize: small,
       fontWeight: FontWeight.w400,
@@ -63,14 +63,14 @@ ThemeData lightTheme = ThemeData(
     headlineMedium: TextStyle(
       fontSize: medium,
       fontWeight: FontWeight.bold,
-      color: Colors.black,
+      color: primaryColor,
     ),
     
-    //Post Author
+    // Use for title like stuff
     headlineSmall: TextStyle(
       fontSize: small,
       fontWeight: FontWeight.bold,
-      color: Colors.black,
+      color: primaryColor,
     ),
   ),
 );

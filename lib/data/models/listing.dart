@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ListingModel {
+  String? id;
   String? owner;
   String? title;
   String? description;
@@ -11,6 +12,7 @@ class ListingModel {
   int? visits;
 
   ListingModel({
+    this.id,
     this.owner,
     this.title,
     this.description,
@@ -23,6 +25,7 @@ class ListingModel {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'owner': owner,
       'title': title,
       'description': description,
@@ -34,8 +37,9 @@ class ListingModel {
     };
   }
 
-  factory ListingModel.fromJson(Map<String, dynamic> json) {
+  factory ListingModel.fromJson(String id, Map<String, dynamic> json) {
     return ListingModel(
+      id: id,
       owner: json['owner'],
       title: json['title'],
       description: json['description'],
