@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cooptourism/data/models/user.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/pages/manager/member_profile.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +25,7 @@ class _MembersPageState extends State<MembersPage> {
   }
 
   Future<void> _fetchMembers() async {
-    final userRepository = UserRepository();
+    // final userRepository = UserRepository();
     final users = await UserRepository().getUsersByRole('Member');
 
     final memberNames = users.map((user) {
@@ -60,8 +60,7 @@ class _MembersPageState extends State<MembersPage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => ManagerProfileView()),
+                    MaterialPageRoute(builder: (context) => ProfilePage()),
                   );
                 },
                 child: Container(

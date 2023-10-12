@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cooptourism/controller/post_provider.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
-import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-class PostCard extends StatelessWidget {
+class PostCard extends StatefulWidget {
+  final String? uid;
   final String? author;
   final String? authorId;
   final String? authorType;
@@ -19,6 +22,7 @@ class PostCard extends StatelessWidget {
 
   const PostCard({
     required Key key,
+    this.uid,
     this.author,
     this.authorId,
     this.authorType,
@@ -30,9 +34,14 @@ class PostCard extends StatelessWidget {
     this.images,
   }) : super(key: key);
 
+  @override
+  State<PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
   String getTimeDifference() {
     final now = Timestamp.now().toDate();
-    final postTime = timestamp.toDate();
+    final postTime = widget.timestamp.toDate();
     final difference = now.difference(postTime);
 
     if (difference.inMinutes < 60) {
@@ -51,8 +60,6 @@ class PostCard extends StatelessWidget {
 
     final cooperativeRepository = CooperativesRepository();
     final cooperative = cooperativeRepository.getCooperative(authorId ?? "");
-    final userRepository = UserRepository();
-    final user = userRepository.getUser(authorId ?? "");
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Card(
@@ -77,7 +84,7 @@ class PostCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: DisplayProfilePicture(
                           storageRef: storageRef,
-                          coopId: authorId ?? "",
+                          coopId: widget.authorId ?? "",
                           data: cooperative.profilePicture,
                           height: 35.0,
                           width: 35.0,
@@ -89,7 +96,7 @@ class PostCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      author!,
+                      widget.author!,
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     Text(
@@ -110,16 +117,19 @@ class PostCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(
-                content!,
+                widget.content!,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
             const SizedBox(height: 8),
             ClipRRect(
-              child: images != null && images!.isNotEmpty // Check first if images is not null and not empty
+              child: widget.images != null &&
+                      widget.images!
+                          .isNotEmpty // Check first if images is not null and not empty
                   ? FutureBuilder<String>(
                       future: storageRef
-                          .child("$authorId/images/${images?[0]}")
+                          .child(
+                              "${widget.authorId}/images/${widget.images?[0]}")
                           .getDownloadURL(),
                       builder: (context, urlSnapshot) {
                         if (urlSnapshot.connectionState ==
@@ -148,35 +158,14 @@ class PostCard extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Icon(Icons.thumb_up_alt_outlined,
-                      color: Theme.of(context).colorScheme.primary),
-                  const SizedBox(width: 8),
-                  Text(
-                    likes?.length.toString() ?? '0',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Icon(Icons.thumb_down_alt_outlined,
-                      color: Theme.of(context).colorScheme.primary),
-                  const SizedBox(width: 8),
-                  Text(
-                    dislikes?.length.toString() ?? '0',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
-                    ),
-                  ),
+                  LikeDislike(uid: widget.uid, likes: widget.likes, dislikes: widget.dislikes),
+
                   const Spacer(),
                   Icon(Icons.comment_outlined,
                       color: Theme.of(context).colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(
-                    comments!.length.toString(),
+                    widget.comments!.length.toString(),
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.w400,
@@ -194,6 +183,114 @@ class PostCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class LikeDislike extends ConsumerStatefulWidget {
+  final String? uid;
+  final List<String>? likes;
+  final List<String>? dislikes;
+
+  const LikeDislike({Key? key, this.uid, this.likes, this.dislikes}) : super(key: key);
+
+  @override
+  ConsumerState createState() => LikeDislikeState();
+}
+
+class LikeDislikeState extends ConsumerState<LikeDislike> {
+  final user = FirebaseAuth.instance.currentUser;  
+  PostRepository postRepository = PostRepository();
+  bool isLiked = false;
+  bool isDisliked = false;
+
+  // function when pressing like, dislike, or comment
+  void onPressLike () {
+    // if isLiked 
+    if (isLiked) {
+      postRepository.unlikePost(widget.uid, user!.uid);
+
+      setState(() {
+        isLiked = false; // Update the isLiked variable
+      });
+    } else {
+      postRepository.likePost(widget.uid, user!.uid);
+
+      setState(() {
+        isLiked = true; // Update the isLiked variable
+      });
+    }
+  }
+
+  void onPressDislike () {
+    // if isLiked 
+    if (isDisliked) {
+      postRepository.undislikePost(widget.uid, user!.uid);
+
+      setState(() {
+        isDisliked = false; // Update the isLiked variable
+      });
+    } else {
+      postRepository.dislikePost(widget.uid, user!.uid);
+
+      setState(() {
+        isDisliked = true; // Update the isLiked variable
+      });
+    }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Check if the user has liked the post when the widget is first built
+    if (widget.likes != null && user != null) {
+      isLiked = widget.likes!.contains(user!.uid);
+    }
+
+    if (widget.dislikes != null && user != null) {
+      isDisliked = widget.dislikes!.contains(user!.uid);
+    }
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        GestureDetector(
+          onTap: onPressLike,
+          child: Icon(
+            Icons.thumb_up_alt_outlined,
+            color: isLiked ? Colors.blue : Theme.of(context).colorScheme.primary, // Change the color
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          widget.likes?.length.toString() ?? '0',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontWeight: FontWeight.w400,
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(width: 16),
+        GestureDetector(
+          onTap: onPressDislike,
+          child: Icon(
+            Icons.thumb_down_alt_outlined,
+            color: isDisliked ? Colors.red : Theme.of(context).colorScheme.primary, // Change the color
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          widget.dislikes?.length.toString() ?? '0',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontWeight: FontWeight.w400,
+            fontSize: 16,
+          ),
+        ),
+      ],
     );
   }
 }
