@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
+import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +51,8 @@ class PostCard extends StatelessWidget {
 
     final cooperativeRepository = CooperativesRepository();
     final cooperative = cooperativeRepository.getCooperative(authorId ?? "");
+    final userRepository = UserRepository();
+    final user = userRepository.getUser(authorId ?? "");
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Card(
