@@ -67,16 +67,19 @@ class _MarketPageState extends State<MarketPage> {
       itemBuilder: (context, index) {
         final listing = listings[index];
         return ListingCard(
-          key: ValueKey(index),
-          id: listing.id!,
-          owner: listing.owner!,
-          title: listing.title!,
-          description: listing.description!,
-          price: listing.price!,
-          type: listing.type!,
-          images: listing.images!,
-          visits: listing.visits!,
-          postDate: listing.postDate!,
+          listingModel: ListingModel(
+            id: listing.id,
+            owner: listing.owner,
+            title: listing.title,
+            description: listing.description,
+            rating: listing.rating,
+            amenities: listing.amenities,
+            price: listing.price,
+            type: listing.type,
+            postDate: listing.postDate,
+            images: listing.images,
+            visits: listing.visits,
+          ),
         );
       },
     );

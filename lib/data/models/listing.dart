@@ -5,6 +5,8 @@ class ListingModel {
   String? owner;
   String? title;
   String? description;
+  double? rating;
+  Map? amenities;
   int? price;
   String? type;
   Timestamp? postDate;
@@ -16,6 +18,8 @@ class ListingModel {
     this.owner,
     this.title,
     this.description,
+    this.rating,
+    this.amenities,
     this.price,
     this.type,
     this.postDate,
@@ -29,6 +33,8 @@ class ListingModel {
       'owner': owner,
       'title': title,
       'description': description,
+      'rating': rating,
+      'amenities': amenities,
       'price': price,
       'type': type,
       'postDate': postDate,
@@ -43,6 +49,8 @@ class ListingModel {
       owner: json['owner'],
       title: json['title'],
       description: json['description'],
+      rating: json['rating'],
+      amenities: json['amenities'],
       price: json['price'],
       type: json['type'],
       postDate: json['postDate'] as Timestamp,
