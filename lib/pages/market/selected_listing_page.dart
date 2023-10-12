@@ -111,6 +111,8 @@ class _SelectedListingPageState extends State<SelectedListingPage> {
                         lines: 1,
                         style: Theme.of(context).textTheme.headlineSmall!),
                     const Placeholder(),
+                    const SizedBox(height: 100)
+                    // ListView(),
                   ],
                 ),
               ),

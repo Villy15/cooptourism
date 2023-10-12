@@ -66,14 +66,61 @@ class PostRepository {
     }
   }
 
+
+  // LIKES AND DISLIKES
+
   // Add a user in the likes list of a post
-  Future<void> likePost(String postId, String userId) async {
+  Future<void> likePost(String? postId, String userId) async {
     try {
       await postsCollection.doc(postId).update({
         'likes': FieldValue.arrayUnion([userId])
       });
+
+      debugPrint('Post liked in Firestore');
     } catch (e) {
       debugPrint('Error liking post in Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
+  }
+
+  // Remove a user from the likes list of a post
+  Future<void> unlikePost(String? postId, String userId) async {
+    try {
+      await postsCollection.doc(postId).update({
+        'likes': FieldValue.arrayRemove([userId])
+      });
+
+      debugPrint('Post unliked in Firestore');
+    } catch (e) {
+      debugPrint('Error unliking post in Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
+  }
+
+  // Add a user in the dislikes list of a post
+  Future<void> dislikePost(String? postId, String userId) async {
+    try {
+      await postsCollection.doc(postId).update({
+        'dislikes': FieldValue.arrayUnion([userId])
+      });
+
+      debugPrint('Post disliked in Firestore');
+    } catch (e) {
+      debugPrint('Error disliking post in Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
+  }
+
+  // Remove a user from the dislikes list of a post
+  Future<void> undislikePost(String? postId, String userId) async {
+    try {
+      await postsCollection.doc(postId).update({
+        'dislikes': FieldValue.arrayRemove([userId])
+      });
+
+      debugPrint('Post undisliked in Firestore');
+    } catch (e) {
+      debugPrint('Error undisliking post in Firestore: $e');
       // You might want to handle errors more gracefully here
     }
   }
