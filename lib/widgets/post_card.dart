@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooptourism/controller/post_provider.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-class PostCard extends StatelessWidget {
+class PostCard extends StatefulWidget {
   final String? author;
   final String? authorId;
   final String? authorType;
@@ -29,9 +32,14 @@ class PostCard extends StatelessWidget {
     this.images,
   }) : super(key: key);
 
+  @override
+  State<PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
   String getTimeDifference() {
     final now = Timestamp.now().toDate();
-    final postTime = timestamp.toDate();
+    final postTime = widget.timestamp.toDate();
     final difference = now.difference(postTime);
 
     if (difference.inMinutes < 60) {
@@ -44,12 +52,34 @@ class PostCard extends StatelessWidget {
     }
   }
 
+  // bool _liked = false;
+  // bool _disliked = false;
+
+  // void _toggleLike() {
+  //   setState(() {
+  //     _liked = !_liked;
+  //     if (_liked) {
+  //       _disliked = false;
+  //     }
+  //   });
+  // }
+
+  // void _toggleDislike() {
+  //   setState(() {
+  //     _disliked = !_disliked;
+  //     if (_disliked) {
+  //       _liked = false;
+  //     }
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
     final storageRef = FirebaseStorage.instance.ref();
 
     final cooperativeRepository = CooperativesRepository();
-    final cooperative = cooperativeRepository.getCooperative(authorId ?? "");
+    final cooperative =
+        cooperativeRepository.getCooperative(widget.authorId ?? "");
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Card(
@@ -74,7 +104,7 @@ class PostCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: DisplayProfilePicture(
                           storageRef: storageRef,
-                          coopId: authorId ?? "",
+                          coopId: widget.authorId ?? "",
                           data: cooperative.profilePicture,
                           height: 35.0,
                           width: 35.0,
@@ -86,7 +116,7 @@ class PostCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      author!,
+                      widget.author!,
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     Text(
@@ -107,16 +137,19 @@ class PostCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(
-                content!,
+                widget.content!,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
             const SizedBox(height: 8),
             ClipRRect(
-              child: images != null && images!.isNotEmpty // Check first if images is not null and not empty
+              child: widget.images != null &&
+                      widget.images!
+                          .isNotEmpty // Check first if images is not null and not empty
                   ? FutureBuilder<String>(
                       future: storageRef
-                          .child("$authorId/images/${images?[0]}")
+                          .child(
+                              "${widget.authorId}/images/${widget.images?[0]}")
                           .getDownloadURL(),
                       builder: (context, urlSnapshot) {
                         if (urlSnapshot.connectionState ==
@@ -145,35 +178,14 @@ class PostCard extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Icon(Icons.thumb_up_alt_outlined,
-                      color: Theme.of(context).colorScheme.primary),
-                  const SizedBox(width: 8),
-                  Text(
-                    likes?.length.toString() ?? '0',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Icon(Icons.thumb_down_alt_outlined,
-                      color: Theme.of(context).colorScheme.primary),
-                  const SizedBox(width: 8),
-                  Text(
-                    dislikes?.length.toString() ?? '0',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
-                    ),
-                  ),
+                  LikeDislike(likes: widget.likes, dislikes: widget.dislikes),
+
                   const Spacer(),
                   Icon(Icons.comment_outlined,
                       color: Theme.of(context).colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(
-                    comments!.length.toString(),
+                    widget.comments!.length.toString(),
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.w400,
@@ -191,6 +203,69 @@ class PostCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class LikeDislike extends ConsumerStatefulWidget {
+  final List<String>? likes;
+  final List<String>? dislikes;
+
+  const LikeDislike({Key? key, this.likes, this.dislikes}) : super(key: key);
+
+  @override
+  ConsumerState createState() => LikeDislikeState();
+}
+
+class LikeDislikeState extends ConsumerState<LikeDislike> {
+  final user = FirebaseAuth.instance.currentUser;
+  
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        GestureDetector(
+          onTap: () {
+            widget.likes?.add('${user?.uid}'); // Add us
+            ref.read(likesCounter.notifier).increment();
+            debugPrint(widget.likes.toString());
+          },
+          child: Icon(
+            Icons.thumb_up_alt_outlined,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          ref.watch(likesCounter).toString(),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontWeight: FontWeight.w400,
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(width: 16),
+        GestureDetector(
+          onTap: () {
+            widget.dislikes?.add('${user?.uid}'); // Add us
+            ref.read(dislikesCounter.notifier).increment();
+            debugPrint(widget.likes.toString());
+          },
+          child: Icon(
+            Icons.thumb_down_alt_outlined,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          ref.watch(dislikesCounter).toString(),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontWeight: FontWeight.w400,
+            fontSize: 16,
+          ),
+        ),
+      ],
     );
   }
 }

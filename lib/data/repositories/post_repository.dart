@@ -65,4 +65,16 @@ class PostRepository {
       // You might want to handle errors more gracefully here
     }
   }
+
+  // Add a user in the likes list of a post
+  Future<void> likePost(String postId, String userId) async {
+    try {
+      await postsCollection.doc(postId).update({
+        'likes': FieldValue.arrayUnion([userId])
+      });
+    } catch (e) {
+      debugPrint('Error liking post in Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
+  }
 }
