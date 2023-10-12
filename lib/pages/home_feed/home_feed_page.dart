@@ -28,7 +28,6 @@ class HomeFeedPageState extends State<HomeFeedPage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        //TODO: Uncomment when need filter
         // SizedBox(
         //   height: 40,
         //   child: listViewFilter(),

@@ -119,7 +119,7 @@ class _ProfileCoachingState extends State<ProfileCoaching> {
             const SizedBox(height: 20),
             GestureDetector(
               onTap: () {
-                print('I was tapped!');
+                debugPrint('I was tapped!');
                 
               },
               child: Center(

@@ -3,7 +3,7 @@ import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/widgets/display_image.dart';
 import 'package:cooptourism/widgets/display_text.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -19,7 +19,7 @@ class SelectedListingPage extends StatefulWidget {
 class _SelectedListingPageState extends State<SelectedListingPage> {
   @override
   Widget build(BuildContext context) {
-    final storageRef = FirebaseStorage.instance.ref();
+    // final storageRef = FirebaseStorage.instance.ref();
     final ListingRepository listingRepository = ListingRepository();
 
     final Future<ListingModel> listings =
