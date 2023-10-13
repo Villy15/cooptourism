@@ -1,32 +1,42 @@
-import 'package:cooptourism/auth/auth.dart';
-// import 'package:cooptourism/pages/home_page.dart';
-import 'package:cooptourism/firebase_options.dart';
+// import 'package:cooptourism/config/route/go_router.dart';
+import 'package:cooptourism/config/route/go_router.dart';
+import 'package:cooptourism/util/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'package:cooptourism/theme/dark_theme.dart';
-import 'package:cooptourism/theme/light_theme.dart';
+import 'package:cooptourism/config/theme/dark_theme.dart';
+import 'package:cooptourism/config/theme/light_theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    final router = ref.watch(goRouterProvider);
+
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
       darkTheme: darkTheme,
-      home: const AuthPage(),
+      routerDelegate: router.routerDelegate,
+      routeInformationParser: router.routeInformationParser,
+      routeInformationProvider: router.routeInformationProvider,
     );
   }
 }

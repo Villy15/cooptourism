@@ -1,4 +1,5 @@
 import 'package:cooptourism/widgets/chat_field.dart';
+import 'package:cooptourism/widgets/chat_messages.dart';
 import 'package:flutter/material.dart';
 import 'package:cooptourism/model/userChat.dart';
 
@@ -17,10 +18,13 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: const Padding(
-        padding: EdgeInsets.all(16.0),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          children: [ChatTextField()],
+          children: [
+            ChatMessages(receiverId: widget.user.uid),
+            const ChatTextField()
+            ],
           ),
         ),
     );

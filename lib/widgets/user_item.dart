@@ -1,5 +1,4 @@
 import 'package:cooptourism/pages/Chat.dart';
-//import 'package:cooptourism/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cooptourism/model/userChat.dart';
 

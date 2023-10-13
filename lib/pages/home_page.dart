@@ -1,48 +1,60 @@
-import 'package:cooptourism/animations/slide_transition.dart';
-import 'package:cooptourism/widgets/gnav_home.dart';
+import 'package:cooptourism/controller/user_provider.dart';
+// import 'package:cooptourism/data/models/user.dart';
+import 'package:cooptourism/data/repositories/user_repository.dart';
+import 'package:cooptourism/util/animations/slide_transition.dart';
+import 'package:cooptourism/widgets/bottom_nav_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'dart:convert';
 
-import 'home_feed_page.dart';
-import 'coops_page.dart';
-import 'market_page.dart';
-import 'menu_page.dart';
-import 'profile_page.dart';
+import 'home_feed/add_post.dart';
 
-import 'add_post.dart';
+// MANAGER
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class HomePage extends ConsumerStatefulWidget {
+  final Widget child;
+  final String appTitle;
+  const HomePage({Key? key, required this.child, required this.appTitle})
+      : super(key: key);
 
   @override
-  HomePageState createState() => HomePageState();
+  ConsumerState<HomePage> createState() => HomePageState();
 }
 
-class HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+class HomePageState extends ConsumerState<HomePage> {
+  final int _selectedIndex = 0;
+  final user = FirebaseAuth.instance.currentUser;
+  final UserRepository _userRepository = UserRepository();
 
-  final List<String> _appBarTitles = [
-    'Home',
-    'Coops',
-    'Market',
-    'Profile',
-    'Menu',
-  ];
+  // Current user
+  // UserModel? _user;
 
-  final List<Widget> _tabs = const [
-    HomeFeedPage(),
-    CoopsPage(),
-    MarketPage(),
-    ProfilePage(),
-    MenuPage(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+
+    _userRepository.getUser(user!.uid).then((value) {
+      setState(() {
+        // _user = value;
+        ref.read(userModelProvider.notifier).setUser(value);
+        // debugPrint("User: ${jsonEncode(_user?.toJson())}");
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    // final router = ref.watch(goRouterProvider);
+
+    // debugPrint('Widget: $widget');
+
     return Scaffold(
       extendBody: true,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(_appBarTitles[_selectedIndex]),
+        // appBar title based on the current page route name
+        title: Text(widget.appTitle),
         actions: [
           IconButton(
             icon: Icon(
@@ -53,7 +65,7 @@ class HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: _tabs[_selectedIndex],
+      body: widget.child,
       floatingActionButton: shouldShowFloatingActionButton()
           ? FloatingActionButton(
               onPressed: () {
@@ -72,17 +84,10 @@ class HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        child: SafeArea(
+        child: const SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
-            child: GNavHomeWidget(
-              selectedIndex: _selectedIndex,
-              onTabChange: (index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
-              },
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+            child: BottomNavHomeWidget(),
           ),
         ),
       ),
@@ -90,7 +95,9 @@ class HomePageState extends State<HomePage> {
   }
 
   void signOut() async {
-    await FirebaseAuth.instance.signOut();
+    if (mounted) {
+      await FirebaseAuth.instance.signOut();
+    }
   }
 
   void showAddPostPage(BuildContext context) {
