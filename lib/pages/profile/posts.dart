@@ -46,6 +46,7 @@ class _ProfilePostsState extends State<ProfilePosts> {
 
         return PostCard(
           key: ValueKey(post.uid),
+          uid: post.uid,
           author: post.author,
           authorId: post.authorId,
           authorType: post.authorType,

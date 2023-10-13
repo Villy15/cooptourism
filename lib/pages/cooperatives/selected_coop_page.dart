@@ -210,6 +210,7 @@ class _SelectedCoopPageState extends State<SelectedCoopPage> {
 
                       return PostCard(
                           key: ValueKey(coopPost.uid),
+                          uid: coopPost.uid,
                           author: coopPost.author,
                           authorId: coopPost.authorId,
                           authorType: coopPost.authorType,

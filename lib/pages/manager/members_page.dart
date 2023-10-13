@@ -1,8 +1,9 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
-import 'package:cooptourism/pages/profile/profile_page.dart';
+import 'package:cooptourism/pages/manager/member_profile.dart';
 import 'package:flutter/material.dart';
+import 'package:cooptourism/pages/manager/member_profile.dart';
 
 class MembersPage extends StatefulWidget {
   const MembersPage({super.key});
@@ -59,7 +60,7 @@ class _MembersPageState extends State<MembersPage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ProfilePage()),
+                    MaterialPageRoute(builder: (context) => ProfilePage()),
                   );
                 },
                 child: Container(
@@ -72,7 +73,7 @@ class _MembersPageState extends State<MembersPage> {
                     child: Text(
                       _members[index],
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 19,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
