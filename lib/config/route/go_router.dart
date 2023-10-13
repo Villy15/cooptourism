@@ -218,7 +218,7 @@ String getTitle(String location) {
     case '/wallet_page':
       return "Wallet";
     case '/inbox_page':
-      return "Inbox";
+      return "Chats";
     default:
       return "No Route";
   }

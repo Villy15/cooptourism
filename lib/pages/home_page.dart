@@ -66,14 +66,14 @@ class HomePageState extends ConsumerState<HomePage> {
         ],
       ),
       body: widget.child,
-      floatingActionButton: shouldShowFloatingActionButton()
-          ? FloatingActionButton(
-              onPressed: () {
-                showAddPostPage(context);
-              },
-              child: const Icon(Icons.add),
-            )
-          : null,
+      // floatingActionButton: shouldShowFloatingActionButton()
+      //     ? FloatingActionButton(
+      //         onPressed: () {
+      //           showAddPostPage(context);
+      //         },
+      //         child: const Icon(Icons.add),
+      //       )
+      //     : null,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.background,

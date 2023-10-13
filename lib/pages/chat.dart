@@ -23,7 +23,8 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Column(
           children: [
             ChatMessages(receiverId: widget.user.uid),
-            const ChatTextField()
+            const ChatTextField(),
+            const SizedBox(height: 60),
             ],
           ),
         ),
