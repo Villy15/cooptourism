@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cooptourism/model/message.dart';
+import 'package:cooptourism/data/models/message.dart';
 
 class MessageBubble extends StatelessWidget {
   const MessageBubble({
@@ -18,7 +18,7 @@ final Message message;
           isMe ? Alignment.topLeft : Alignment.topRight,
       child: Container(
             decoration: BoxDecoration(
-              color : isMe ? Colors.blue : Colors.grey,
+              color : isMe ? Colors.grey : Theme.of(context).colorScheme.primary ,
               borderRadius: isMe ? const BorderRadius.only(
                 topRight: Radius.circular(30),
                 bottomRight: Radius.circular(30),

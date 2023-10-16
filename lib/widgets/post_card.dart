@@ -125,47 +125,47 @@ class _PostCardState extends State<PostCard> {
               ),
             ),
             const SizedBox(height: 8),
-            ClipRRect(
-              child: imageCache.getImageUrl(widget.authorId ?? "") != null
-                  ? Image.network(
-                      imageCache.getImageUrl(widget.authorId ?? "")!,
-                      height: 225,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    )
-                  : const SizedBox.shrink(),
-            ),
             // ClipRRect(
-            //   child: widget.images != null &&
-            //           widget.images!
-            //               .isNotEmpty // Check first if images is not null and not empty
-            //       /? FutureBuilder<String>(
-            //           future: storageRef
-            //               .child(
-            //                   "${widget.authorId}/images/${widget.images?[0]}")
-            //               .getDownloadURL(),
-            //           builder: (context, urlSnapshot) {
-            //             if (urlSnapshot.connectionState ==
-            //                 ConnectionState.waiting) {
-            //               return const CircularProgressIndicator();
-            //             }
-            //
-            //             if (urlSnapshot.hasError) {
-            //               return Text('Error: ${urlSnapshot.error}');
-            //             }
-            //
-            //             final imageUrl = urlSnapshot.data;
-            //
-            //             return Image.network(
-            //               imageUrl!,
-            //               height: 225,
-            //               width: double.infinity,
-            //               fit: BoxFit.cover,
-            //             );
-            //           },
+            //   child: imageCache.getImageUrl(widget.authorId ?? "") != null
+            //       ? Image.network(
+            //           imageCache.getImageUrl(widget.authorId ?? "")!,
+            //           height: 225,
+            //           width: double.infinity,
+            //           fit: BoxFit.cover,
             //         )
             //       : const SizedBox.shrink(),
             // ),
+            ClipRRect(
+              child: widget.images != null &&
+                      widget.images!
+                          .isNotEmpty // Check first if images is not null and not empty
+                  ? FutureBuilder<String>(
+                      future: storageRef
+                          .child(
+                              "${widget.authorId}/images/${widget.images?[0]}")
+                          .getDownloadURL(),
+                      builder: (context, urlSnapshot) {
+                        if (urlSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        }
+            
+                        if (urlSnapshot.hasError) {
+                          return Text('Error: ${urlSnapshot.error}');
+                        }
+            
+                        final imageUrl = urlSnapshot.data;
+            
+                        return Image.network(
+                          imageUrl!,
+                          height: 225,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    )
+                  : const SizedBox.shrink(),
+            ),
             const SizedBox(height: 8),
             postFunctions(context),
             // Add a horizontal line

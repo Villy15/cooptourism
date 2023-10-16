@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cooptourism/widgets/message_bubble.dart';
-import 'package:cooptourism/model/message.dart';
+import 'package:cooptourism/data/models/message.dart';
 
 class ChatMessages extends StatelessWidget {
   ChatMessages({super.key, required this.receiverId});
