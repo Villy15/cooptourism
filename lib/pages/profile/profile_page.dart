@@ -82,9 +82,9 @@ class _ProfilePageState extends State<ProfilePage>
         var userData = snapshot.data?.data() as Map<String, dynamic>;
         var userUID = snapshot.data?.id;
         final List<Widget> tabs = [
-          ProfileHome(userData: userData),
+          ProfileHome(userData: userData, userUID: userUID!),
           ProfileAbout(userData: userData),
-          ProfilePosts(userUID: userUID!),
+          ProfilePosts(userUID: userUID),
           const ProfileCoaching(),
         ];
         return NestedScrollView(

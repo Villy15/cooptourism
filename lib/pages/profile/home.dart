@@ -1,13 +1,16 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooptourism/widgets/display_featured.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 // final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 class ProfileHome extends StatefulWidget {
   final Map<String, dynamic> userData;
-  const ProfileHome({Key? key, required this.userData}) : super(key: key);
+  final String userUID;
+  const ProfileHome({Key? key, required this.userData, required this.userUID}) : super(key: key);
 
   @override
   State<ProfileHome> createState() => _ProfileHomeState();
@@ -31,14 +34,14 @@ class _ProfileHomeState extends State<ProfileHome> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        featuredSection(context, widget.userData),
+        featuredSection(context, widget.userData, widget.userUID),
         const SizedBox(height: 30),
         recommendedSection(context)
       ],
     );
   }
 
-  Column featuredSection(BuildContext context, Map<String, dynamic> userData) {
+  Column featuredSection(BuildContext context, Map<String, dynamic> userData, String userID) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -48,6 +51,39 @@ class _ProfileHomeState extends State<ProfileHome> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         ),
         const SizedBox(height: 15),
+         SizedBox(
+            height: 120,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: userData['featured'].length,
+              padding: const EdgeInsets.only(left: 15, right: 15),
+              separatorBuilder: (context, index) => const SizedBox(width: 15),
+              itemBuilder: ((context, index) {
+                return InkWell(
+                  onTap: () {
+
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.secondary, 
+                        width: 2
+                      )
+                    ),
+                    child: DisplayFeatured(
+                      storageRef: FirebaseStorage.instance.ref(), 
+                      userID: userID, 
+                      data: userData['featured'][index], 
+                      height: 150, 
+                      width: 200
+                    ),
+                  )
+
+                );
+              }),
+            )
+          ),
+          const SizedBox(height: 15),
         Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: Container(
@@ -68,8 +104,11 @@ class _ProfileHomeState extends State<ProfileHome> {
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.secondary))
                 ],
-              )),
-        )
+              )
+            ),
+          ),
+          
+         
       ],
     );
   }
