@@ -49,7 +49,7 @@ class _ProfileHomeState extends State<ProfileHome> {
         ),
         const SizedBox(height: 15),
         Padding(
-          padding: const EdgeInsets.only(left: 20.0),
+          padding: const EdgeInsets.only(left: 8.0),
           child: Container(
               height: 80,
               width: 350,

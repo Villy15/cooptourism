@@ -76,64 +76,72 @@ class _SelectedListingPageState extends State<SelectedListingPage> {
                           width: double.infinity))
                       .toList(),
                 ),
-                DisplayText(
-                  text: listing.title!,
-                  lines: 1,
-                  style: Theme.of(context).textTheme.headlineSmall!,
-                ),
-                DisplayText(
-                  text: "Type: ${listing.type!}",
-                  lines: 4,
-                  style: TextStyle(
-                      fontSize: Theme.of(context)
-                          .textTheme
-                          .headlineSmall
-                          ?.fontSize),
-                ),
-                DisplayText(
-                  text: "Desciption: ${listing.description!}",
-                  lines: 5,
-                  style: TextStyle(
-                    fontSize: Theme.of(context)
-                        .textTheme
-                        .headlineSmall
-                        ?.fontSize,
-                  ),
-                ),
-                DisplayText(
-                    text: "Rating",
-                    lines: 1,
-                    style: Theme.of(context).textTheme.headlineSmall!),
-                RatingBarIndicator(
-                  rating: listing.rating!,
-                  itemBuilder: (context, index) {
-                    return Icon(
-                      Icons.star_rounded,
-                      color: Theme.of(context).primaryColor,
-                    );
-                  },
-                  itemCount: 5,
-                  itemSize: 25,
-                  direction: Axis.horizontal,
-                ),
-                DisplayText(
-                  text: "Amenities",
-                  lines: 1,
-                  style: Theme.of(context).textTheme.headlineSmall!,
-                ),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: reviews.length,
-                    itemBuilder: (context, index) {
-                      final review = reviews[index];
-                
-                      return ReviewCard(
-                        reviewModel: review,
-                      );
-                    },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        DisplayText(
+                          text: listing.title!,
+                          lines: 1,
+                          style: Theme.of(context).textTheme.headlineSmall!,
+                        ),
+                        DisplayText(
+                          text: "Type: ${listing.type!}",
+                          lines: 4,
+                          style: TextStyle(
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall
+                                  ?.fontSize),
+                        ),
+                        DisplayText(
+                          text: "Desciption: ${listing.description!}",
+                          lines: 5,
+                          style: TextStyle(
+                            fontSize:
+                                Theme.of(context).textTheme.headlineSmall?.fontSize,
+                          ),
+                        ),
+                        DisplayText(
+                            text: "Rating",
+                            lines: 1,
+                            style: Theme.of(context).textTheme.headlineSmall!),
+                        RatingBarIndicator(
+                          rating: listing.rating!,
+                          itemBuilder: (context, index) {
+                            return Icon(
+                              Icons.star_rounded,
+                              color: Theme.of(context).primaryColor,
+                            );
+                          },
+                          itemCount: 5,
+                          itemSize: 25,
+                          direction: Axis.horizontal,
+                        ),
+                        DisplayText(
+                          text: "Amenities",
+                          lines: 1,
+                          style: Theme.of(context).textTheme.headlineSmall!,
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: reviews.length,
+                            itemBuilder: (context, index) {
+                              final review = reviews[index];
+                                  
+                              return ReviewCard(
+                                reviewModel: review,
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 100),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 100),
               ],
             );
           },
