@@ -4,7 +4,9 @@ import 'package:cooptourism/pages/profile/about.dart';
 import 'package:cooptourism/pages/profile/coaching.dart';
 import 'package:cooptourism/pages/profile/home.dart';
 import 'package:cooptourism/pages/profile/posts.dart';
+import 'package:cooptourism/widgets/display_profile_picture.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 // import 'package:cooptourism/widgets/gnav_home.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -95,6 +97,8 @@ class _ProfilePageState extends State<ProfilePage>
                       userData['last_name'] ?? 'Last Name',
                       userData['user_trust']?.toString() ?? '0',
                       userData['user_rating']?.toString() ?? '0',
+                      userData['profilePicture']?.toString(),
+                      userUID
                     ),
                     const SizedBox(height: 15),
                     tabsView(),
@@ -159,11 +163,13 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
   Container _profileHeading(BuildContext context, String firstName,
-      String lastName, String userTrust, String userRating) {
+      String lastName, String userTrust, String userRating, String? profilePicture, String userUID) {
     return Container(
       height: 130,
       color: Theme.of(context).colorScheme.primary,
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
+        children: [
         Padding(
             padding: const EdgeInsets.only(
                 top: 35.0, right: 10.0, bottom: 35.0, left: 10.0),
@@ -172,13 +178,13 @@ class _ProfilePageState extends State<ProfilePage>
                   border:
                       Border.all(color: const Color(0xffD89B3E), width: 2.0),
                   borderRadius: const BorderRadius.all(Radius.circular(50.0))),
-              child: ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(50.0)),
-                  child: SizedBox(
-                      height: 50.0,
-                      width: 50.0,
-                      child: Icon(Icons.person_2_rounded,
-                          color: Theme.of(context).colorScheme.secondary))),
+              child: profilePicture != null && profilePicture.isNotEmpty ? DisplayProfilePicture(
+                storageRef: FirebaseStorage.instance.ref(), 
+                coopId: userUID, 
+                data: profilePicture,
+                height: 50, 
+                width: 50
+              ) : Icon(Icons.person, size: 50, color: Theme.of(context).colorScheme.secondary)
             )),
         Padding(
             padding: const EdgeInsets.only(
