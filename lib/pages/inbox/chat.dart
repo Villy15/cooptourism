@@ -26,16 +26,23 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            ChatMessages(receiverId: widget.user.uid),
-            const ChatTextField(),
-            // const SizedBox(height: 60),
-          ],
+    return WillPopScope (
+      onWillPop: () async {
+        ref.read(navBarVisibilityProvider.notifier).state = true;
+        ref.read(appBarVisibilityProvider.notifier).state = true;
+        return true;
+      },
+      child: Scaffold(
+        appBar: _buildAppBar(),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              ChatMessages(receiverId: widget.user.uid),
+              const ChatTextField(),
+              // const SizedBox(height: 60),
+            ],
+          ),
         ),
       ),
     );
