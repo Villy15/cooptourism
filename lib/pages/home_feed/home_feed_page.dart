@@ -1,3 +1,5 @@
+// import 'dart:convert';
+
 import 'package:cooptourism/data/models/post.dart';
 import 'package:cooptourism/data/repositories/post_repository.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +48,8 @@ class HomeFeedPageState extends State<HomeFeedPage> {
 
               final posts = snapshot.data!;
 
+              // posts: [Instance of 'PostModel', Instance of 'PostModel']
+              // debugPrint("posts: ${jsonEncode(posts)}");
               return listViewPosts(posts);
             },
           ),

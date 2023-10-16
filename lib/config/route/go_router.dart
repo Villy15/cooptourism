@@ -154,6 +154,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               pageBuilder: (context, state) {
                 return NoTransitionPage(child: InboxPage(key: state.pageKey));
               },
+              
               // routes: [
               //   GoRoute(
               //     path: '/inbox_page/chat/:userId',
@@ -235,6 +236,7 @@ String getTitle(String location) {
       return "Wallet";
     case '/inbox_page':
       return "Chats";
+  
     default:
       return "No Route";
   }

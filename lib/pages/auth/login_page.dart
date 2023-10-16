@@ -7,8 +7,9 @@ import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;
+  final Function()? onCoopTap;
 
-  const LoginPage({super.key, this.onTap});
+  const LoginPage({super.key, this.onTap, this.onCoopTap});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -129,18 +130,18 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   
-                  const SizedBox(height: 100),
+                  const SizedBox(height: 150),
             
                   // go to register page
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                        Text(
-                        "Sign up here, ",
+                        "To register as a cooperative, ",
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       GestureDetector(
-                        onTap: widget.onTap,
+                        onTap: widget.onCoopTap,
                         child: Text(
                           "click here",
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
