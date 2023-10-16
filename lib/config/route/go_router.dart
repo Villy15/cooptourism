@@ -1,14 +1,12 @@
 import 'package:cooptourism/config/auth.dart';
 import 'package:cooptourism/pages/auth/login_or_register.dart';
-// import 'package:cooptourism/pages/auth/login_page.dart';
-// import 'package:cooptourism/pages/auth/register_page.dart';
 import 'package:cooptourism/pages/cooperatives/coops_page.dart';
 import 'package:cooptourism/pages/cooperatives/selected_coop_page.dart';
 import 'package:cooptourism/pages/error/error_page.dart';
 import 'package:cooptourism/pages/home_feed/comments/post_comments.dart';
 import 'package:cooptourism/pages/home_feed/home_feed_page.dart';
 import 'package:cooptourism/pages/home_page.dart';
-import 'package:cooptourism/pages/inbox_page.dart';
+import 'package:cooptourism/pages/inbox/inbox_page.dart';
 import 'package:cooptourism/pages/manager/dashboard_page.dart';
 import 'package:cooptourism/pages/manager/members_page.dart';
 import 'package:cooptourism/pages/manager/reports_page.dart';
@@ -20,10 +18,15 @@ import 'package:cooptourism/pages/wallet/wallet_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+// import 'package:cooptourism/pages/inbox/chat.dart';
+// import 'package:cooptourism/data/repositories/user_repository.dart';
+
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
 final GlobalKey<NavigatorState> _shellNavigator =
     GlobalKey(debugLabel: 'shell');
+
+// final UserRepository _userRepository = UserRepository();
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
@@ -146,11 +149,24 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       child: WalletPage(key: state.pageKey));
                 }),
             GoRoute(
-                path: "/inbox_page",
-                name: "Inbox",
-                pageBuilder: (context, state) {
-                  return NoTransitionPage(child: InboxPage(key: state.pageKey));
-                }),
+              path: "/inbox_page",
+              name: "Inbox",
+              pageBuilder: (context, state) {
+                return NoTransitionPage(child: InboxPage(key: state.pageKey));
+              },
+              // routes: [
+              //   GoRoute(
+              //     path: '/inbox_page/chat/:userId',
+              //     name: 'Chat',
+              //     // pageBuilder: (context, state) {
+              //     //   final userId = state.pathParameters['userId']!;
+              //     //   final user = _userRepository.getUser(userId);
+
+              //     //   return MaterialPage(child: ChatScreen(user: userId));
+              //     // },
+              //   ),
+              // ],
+            ),
           ])
     ],
     redirect: (context, state) {

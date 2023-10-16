@@ -12,3 +12,6 @@ class HomePageController extends StateNotifier<int> {
     state = value;
   }
 }
+
+final appBarVisibilityProvider = StateProvider<bool>((ref) => true);
+final navBarVisibilityProvider = StateProvider<bool>((ref) => true);
