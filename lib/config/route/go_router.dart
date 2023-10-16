@@ -15,12 +15,12 @@ import 'package:cooptourism/pages/market/selected_listing_page.dart';
 import 'package:cooptourism/pages/menu_page.dart';
 import 'package:cooptourism/pages/profile/profile_page.dart';
 import 'package:cooptourism/pages/wallet/wallet_page.dart';
+import 'package:cooptourism/pages/wiki/wiki_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 // import 'package:cooptourism/pages/inbox/chat.dart';
 // import 'package:cooptourism/data/repositories/user_repository.dart';
-
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
 final GlobalKey<NavigatorState> _shellNavigator =
@@ -154,7 +154,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               pageBuilder: (context, state) {
                 return NoTransitionPage(child: InboxPage(key: state.pageKey));
               },
-              
               // routes: [
               //   GoRoute(
               //     path: '/inbox_page/chat/:userId',
@@ -168,6 +167,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               //   ),
               // ],
             ),
+            GoRoute(
+                path: "/wiki_page",
+                name: "Wiki",
+                pageBuilder: (context, state) {
+                  return NoTransitionPage(child: WikiPage(key: state.pageKey));
+                }),
           ])
     ],
     redirect: (context, state) {
@@ -215,8 +220,6 @@ String getTitle(String location) {
   switch (location) {
     case '/':
       return "Home";
-    // case '/posts/comments/':
-    //   return "Comments";
     case '/coops_page':
       return "Cooperatives";
     case '/market_page':
@@ -231,12 +234,12 @@ String getTitle(String location) {
       return "Members";
     case '/reports_page':
       return "Reports";
-
     case '/wallet_page':
       return "Wallet";
     case '/inbox_page':
       return "Chats";
-  
+    case '/wiki_page':
+      return "Wiki";
     default:
       return "No Route";
   }
