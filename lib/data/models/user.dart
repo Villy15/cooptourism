@@ -8,6 +8,7 @@ class UserModel {
   String? userRating;
   String? userTrust;
   String? role;
+  String? profilePicture;
 
   UserModel({
     this.uid,
@@ -19,6 +20,7 @@ class UserModel {
     this.userRating,
     this.userTrust,
     this.role,
+    this.profilePicture
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,7 @@ class UserModel {
       userRating: json['user_rating'] ?? '',
       userTrust: json['user_trust'] ?? '',
       role: json['role'] ?? '',
+      profilePicture: json['profilePicture'] ?? '',
     );
   }
 
@@ -44,6 +47,7 @@ class UserModel {
       'user_rating': userRating,
       'user_trust': userTrust,
       'role': role,
+      'profilePicture': profilePicture ?? '',
     };
   }
 
@@ -61,5 +65,6 @@ class UserModel {
     userRating = user.userRating;
     userTrust = user.userTrust;
     role = user.role;
+    profilePicture = user.profilePicture;
   }
 }

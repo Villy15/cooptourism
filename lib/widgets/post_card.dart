@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:cooptourism/controller/post_provider.dart';
 import 'package:cooptourism/data/models/cooperatives.dart';
+import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/data/repositories/post_repository.dart';
+import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -83,7 +85,12 @@ class _PostCardState extends State<PostCard> {
     final storageRef = FirebaseStorage.instance.ref();
 
     final cooperativeRepository = CooperativesRepository();
-    final cooperative = cooperativeRepository.getCooperative(widget.authorId ?? "");
+    final userRepository = UserRepository();
+    final authorId = widget.authorId ?? "";
+    final isCooperative = widget.authorType == 'cooperative';
+    final Future<dynamic> authorFuture = isCooperative 
+          ? cooperativeRepository.getCooperative(authorId)
+          : userRepository.getUser(authorId);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Card(
@@ -93,7 +100,10 @@ class _PostCardState extends State<PostCard> {
           children: [
             Row(
               children: [
-                profilePictureWidget(cooperative, storageRef),
+                // display picture accordingly if member or cooperative
+                isCooperative 
+                  ? pfpCoop(authorFuture as Future<CooperativesModel>, storageRef)
+                  : pfpMember(authorFuture as Future<UserModel>, storageRef),
                 const SizedBox(width: 8),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,7 +218,7 @@ class _PostCardState extends State<PostCard> {
           );
   }
 
-  FutureBuilder<CooperativesModel> profilePictureWidget(Future<CooperativesModel> cooperative, Reference storageRef) {
+  FutureBuilder<CooperativesModel> pfpCoop(Future<CooperativesModel> cooperative, Reference storageRef) {
     return FutureBuilder(
                   future: cooperative,
                   builder: (context, snapshot) {
@@ -226,6 +236,31 @@ class _PostCardState extends State<PostCard> {
                         storageRef: storageRef,
                         coopId: widget.authorId ?? "",
                         data: cooperative.profilePicture,
+                        height: 35.0,
+                        width: 35.0,
+                      ),
+                    );
+                  });
+  }
+
+  FutureBuilder<UserModel> pfpMember(Future<UserModel> user, Reference storageRef) {
+    return FutureBuilder(
+                  future: user,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final member = snapshot.data!;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: DisplayProfilePicture(
+                        storageRef: storageRef,
+                        coopId: widget.authorId ?? "",
+                        data: member.profilePicture,
                         height: 35.0,
                         width: 35.0,
                       ),
