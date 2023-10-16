@@ -7,8 +7,9 @@ import 'package:flutter/material.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
+  final Function()? onCoopTap;
 
-  const RegisterPage({super.key, this.onTap});
+  const RegisterPage({super.key, this.onTap, this.onCoopTap});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -165,7 +166,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       GestureDetector(
-                        onTap: widget.onTap,
+                        onTap: widget.onCoopTap,
                         child: Text(
                           "click here",
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
