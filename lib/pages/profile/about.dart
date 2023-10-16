@@ -27,11 +27,102 @@ class _ProfileAboutState extends State<ProfileAbout> {
           color: Color(0xff68707E),
           thickness: 1.5,
         ),
+        const SizedBox(height: 15),
+        userServices(context, widget.userData)
       ],
     );
 
    
   }
+
+
+ Column userServices(BuildContext context, Map<String, dynamic> userData) {
+  final services = userData['services'] as List<dynamic>?;
+  
+  if (services == null) {
+    // Return an empty column if skills is null
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: 15.0),
+          child: Text(
+            'My Skills',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold
+            ),
+          ),
+        ),
+        SizedBox(height: 15),
+        Padding(
+          padding: EdgeInsets.only(left: 15.0),
+          child: Text('No available services'),
+        )
+      ],
+    );
+  }
+  
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Padding(
+          padding: EdgeInsets.only(left: 15.0),
+          child: Text('My Services',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        ),
+        const SizedBox(height: 15),
+        SizedBox(
+          height: 120,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: userData['services'].length,
+            padding: const EdgeInsets.only(left: 15, right: 15),
+            separatorBuilder: (((context, index) => const SizedBox(width: 15))),
+            itemBuilder: (context, index) {
+              return Container(
+                width: 120,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 30.0),
+                  child: Column(
+                    children: [
+                      Icon(_getIconForService(userData['services'][index])),
+                      Text(
+                        userData['services'][index],
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w400
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          )
+        )
+        
+    ],
+  );
+ }
+
+ IconData _getIconForService(String service) {
+  switch (service) {
+    case 'Tour Guide':
+      return Icons.flag;
+    case 'Driver':
+      return Icons.car_rental;
+    case 'Credit Loan':
+      return Icons.attach_money;
+    default:
+      return Icons.help_outline;
+  }
+}
 
   Column userSkills(BuildContext context, Map<String, dynamic> userData) {
   final skills = userData['skills'] as List<dynamic>?;
