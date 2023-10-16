@@ -17,7 +17,7 @@ class _MenuPageState extends State<MenuPage> {
     {'logo': Icons.shopping_bag_outlined, 'name': 'Marketplace', 'route': '/market_page' },
     // {'logo': Icons.event_outlined, 'name': 'Events', 'route': '/events_page'},
     // {'logo': Icons.inbox_outlined, 'name': 'Inbox', 'route': '/inbox_page'},
-    // {'logo': Icons.book_outlined, 'name': 'Wiki', 'route': '/wiki_page'},
+    {'logo': Icons.book_outlined, 'name': 'Wiki', 'route': '/wiki_page'},
     // {'logo': Icons.build_outlined, 'name': 'Services', 'route': '/services_page'},
     // {'logo': Icons.bookmark_outline_outlined, 'name': 'Saved', 'route': '/saved_page'},
     // {'logo': Icons.help_outline_outlined, 'name': 'Need Help?', 'route': '/help_page'},
