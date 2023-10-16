@@ -10,6 +10,7 @@ class PostModel {
   List<String>? likes;
   List<String>? dislikes;
   List<String>? comments;
+  // CollectionReference? comments;
   Timestamp timestamp;
   List<String>? images;
 
@@ -54,6 +55,7 @@ class PostModel {
       likes: json['likes'] is List<dynamic> ? List<String>.from(json['likes'] as List<dynamic>) : null,
       dislikes: json['dislikes'] is List<dynamic> ? List<String>.from(json['dislikes'] as List<dynamic>) : null,
       comments: json['comments'] is List<dynamic> ? List<String>.from(json['comments'] as List<dynamic>) : null,
+      // comments: FirebaseFirestore.instance.collection('posts').doc(uid).collection('comments'),
       timestamp: json['timestamp'] as Timestamp,
       images: List<String>.from(json['images'] as List<dynamic>),
     );
@@ -69,7 +71,8 @@ class PostModel {
       content: data['content'],
       likes: data['likes'],
       dislikes: data['dislikes'],
-      comments: (data['comments'] as List<dynamic>?)!.cast<String>(),
+      comments: data['comments'],
+      // comments: FirebaseFirestore.instance.collection('posts').doc(doc.id).collection('comments'),
       timestamp: data['timestamp'] as Timestamp,
       images: (data['images'] as List<dynamic>?)?.cast<String>(),
     );

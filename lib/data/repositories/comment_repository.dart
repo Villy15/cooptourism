@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/comment.dart';
+import 'package:flutter/material.dart';
 
 class CommentRepository {
   final CollectionReference reviewsCollection =
@@ -16,5 +17,17 @@ class CommentRepository {
         return CommentModel.fromJson(doc.id, doc.data());
       }).toList();
     });
+  }
+
+  // create addComment
+  Future<void> addComment(String id, CommentModel comment) async {
+    try {
+      await reviewsCollection
+          .doc(id)
+          .collection('comments')
+          .add(comment.toJson());
+    } catch (e) {
+      debugPrint('Error adding comment to Firestore: $e');
+    }
   }
 }

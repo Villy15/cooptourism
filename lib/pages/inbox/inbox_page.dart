@@ -1,4 +1,4 @@
-import 'package:cooptourism/data/models/userChat.dart';
+import 'package:cooptourism/data/models/userchart.dart';
 import 'package:flutter/material.dart';
 import 'package:cooptourism/widgets/user_item.dart';
 
