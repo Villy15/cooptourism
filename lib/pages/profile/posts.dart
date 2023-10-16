@@ -51,6 +51,7 @@ class _ProfilePostsState extends State<ProfilePosts> {
           authorId: post.authorId,
           authorType: post.authorType,
           content: post.content,
+          images: post.images,
           likes: post.likes,
           dislikes: post.dislikes,
           comments: post.comments,

@@ -1,4 +1,6 @@
 // import 'package:cooptourism/animations/slide_transition.dart';
+import 'dart:ui';
+
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/pages/profile/about.dart';
 import 'package:cooptourism/pages/profile/coaching.dart';
@@ -173,19 +175,32 @@ class _ProfilePageState extends State<ProfilePage>
         Padding(
             padding: const EdgeInsets.only(
                 top: 35.0, right: 10.0, bottom: 35.0, left: 10.0),
-            child: Container(
+            child: InkWell(
+              onTap: () {
+
+              }, 
+              child: Container(
               decoration: BoxDecoration(
                   border:
-                      Border.all(color: const Color(0xffD89B3E), width: 2.0),
-                  borderRadius: const BorderRadius.all(Radius.circular(50.0))),
-              child: profilePicture != null && profilePicture.isNotEmpty ? DisplayProfilePicture(
-                storageRef: FirebaseStorage.instance.ref(), 
-                coopId: userUID, 
-                data: profilePicture,
-                height: 50, 
-                width: 50
-              ) : Icon(Icons.person, size: 50, color: Theme.of(context).colorScheme.secondary)
+                      Border.all(color: const Color(0xffD89B3E), width: 1.5),
+                  borderRadius: const BorderRadius.all(Radius.circular(100.0))),
+              child: InkWell(
+                onTap: () {
+                  
+                },
+                child: profilePicture != null && profilePicture.isNotEmpty ? DisplayProfilePicture(
+                  storageRef: FirebaseStorage.instance.ref(), 
+                  coopId: userUID, 
+                  data: profilePicture,
+                  height: 50, 
+                  width: 50 
+                ) : Icon(Icons.person, size: 50, color: Theme.of(context).colorScheme.secondary)
+              )
+              
+               
             )),
+            ),
+            
         Padding(
             padding: const EdgeInsets.only(
               top: 30.0,
