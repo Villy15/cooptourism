@@ -1,6 +1,7 @@
 
 import 'package:cooptourism/pages/auth/login_page.dart';
-import 'package:cooptourism/pages/auth/register_coop/register_coop_page.dart';
+// import 'package:cooptourism/pages/auth/register_coop/register_coop_page.dart';
+import 'package:cooptourism/pages/auth/register_page.dart';
 // import 'package:cooptourism/pages/auth/register_page.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +30,7 @@ class _LoginOrRegisterState extends State<LoginOrRegister> {
         onTap: togglePages,
       );
     } else {
-      return RegisterCoopPage(
+      return RegisterPage(
         onTap: togglePages,
       );
     }

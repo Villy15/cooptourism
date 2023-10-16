@@ -1,8 +1,7 @@
 // import 'package:cooptourism/animations/slide_transition.dart';
+import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/pages/profile/about.dart';
 import 'package:cooptourism/pages/profile/coaching.dart';
-import 'package:cooptourism/pages/profile/comments.dart';
-import 'package:cooptourism/pages/profile/help.dart';
 import 'package:cooptourism/pages/profile/home.dart';
 import 'package:cooptourism/pages/profile/posts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -31,19 +30,13 @@ class _ProfilePageState extends State<ProfilePage>
     'Home',
     'About',
     'Posts',
-    'Comments',
     'Coaching',
-    'Help'
   ];
 
-  // final List<String> _recommended = [
-  //   // test for UI purposes only
-  //   'Take Action to improve your trust!',
-  //   'Need help fixing your trust?',
-  //   'Keep your account secure!',
-  // ];
   User? user;
   late TabController _tabController;
+
+  final userRepository = UserRepository();
 
   @override
   void initState() {
@@ -81,48 +74,46 @@ class _ProfilePageState extends State<ProfilePage>
 
             if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
-            }
-            var userData = snapshot.data?.data() as Map<String, dynamic>;
-            var userUID = snapshot.data?.id;
-            final List<Widget> tabs = [
-              ProfileHome(userData: userData),
-              ProfileAbout(userData: userData),
-              ProfilePosts(userUID:userUID!),
-              const ProfileComments(),
-              const ProfileCoaching(),
-              const ProfileHelp(),
-            ];
-            return NestedScrollView(
-              headerSliverBuilder:
-                  (BuildContext context, bool innerBoxIsScrolled) {
-                return <Widget>[
-                  SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        _profileHeading(
-                          context,
-                          userData['first_name'] ?? 'First Name',
-                          userData['last_name'] ?? 'Last Name',
-                          userData['user_trust']?.toString() ?? '0',
-                          userData['user_rating']?.toString() ?? '0',
-                        ),
-                        const SizedBox(height: 15),
-                        tabsView(),
-                        const SizedBox(height: 40),
-                      ],
+        }
+        var userData = snapshot.data?.data() as Map<String, dynamic>;
+        var userUID = snapshot.data?.id;
+        final List<Widget> tabs = [
+          ProfileHome(userData: userData),
+          ProfileAbout(userData: userData),
+          ProfilePosts(userUID: userUID!),
+          const ProfileCoaching(),
+        ];
+        return NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    _profileHeading(
+                      context,
+                      userData['first_name'] ?? 'First Name',
+                      userData['last_name'] ?? 'Last Name',
+                      userData['user_trust']?.toString() ?? '0',
+                      userData['user_rating']?.toString() ?? '0',
                     ),
-                  ),
-                ];
-              },
-              body: TabBarView(
-                controller: _tabController,
-                physics: const NeverScrollableScrollPhysics(),
-                children: tabs,
+                    const SizedBox(height: 15),
+                    tabsView(),
+                    const SizedBox(height: 40),
+                  ],
+                ),
               ),
-            );
-          }),
-    );
-  }
+            ];
+          },
+          body: TabBarView(
+            controller: _tabController,
+            physics: const NeverScrollableScrollPhysics(),
+            children: tabs,
+          ),
+        );
+      },
+    ),
+  );
+}
 
   Widget tabsView() {
     return Column(

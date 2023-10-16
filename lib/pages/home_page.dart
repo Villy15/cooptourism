@@ -1,3 +1,4 @@
+import 'package:cooptourism/controller/home_page_controller.dart';
 import 'package:cooptourism/controller/user_provider.dart';
 // import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
@@ -48,11 +49,13 @@ class HomePageState extends ConsumerState<HomePage> {
     // final router = ref.watch(goRouterProvider);
 
     // debugPrint('Widget: $widget');
+    final isAppBarVisible = ref.watch(appBarVisibilityProvider);
+    final isNavBarVisible = ref.watch(navBarVisibilityProvider);
 
     return Scaffold(
       extendBody: true,
       backgroundColor: Colors.white,
-      appBar: AppBar(
+      appBar: isAppBarVisible ? AppBar(
         // appBar title based on the current page route name
         title: Text(widget.appTitle),
         actions: [
@@ -64,17 +67,17 @@ class HomePageState extends ConsumerState<HomePage> {
             onPressed: signOut,
           ),
         ],
-      ),
+      ) : null,
       body: widget.child,
-      floatingActionButton: shouldShowFloatingActionButton()
-          ? FloatingActionButton(
-              onPressed: () {
-                showAddPostPage(context);
-              },
-              child: const Icon(Icons.add),
-            )
-          : null,
-      bottomNavigationBar: Container(
+      // floatingActionButton: shouldShowFloatingActionButton()
+      //     ? FloatingActionButton(
+      //         onPressed: () {
+      //           showAddPostPage(context);
+      //         },
+      //         child: const Icon(Icons.add),
+      //       )
+      //     : null,
+      bottomNavigationBar: isNavBarVisible ? Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.background,
           boxShadow: [
@@ -90,7 +93,7 @@ class HomePageState extends ConsumerState<HomePage> {
             child: BottomNavHomeWidget(),
           ),
         ),
-      ),
+      ) : null,
     );
   }
 

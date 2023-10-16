@@ -1,19 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cooptourism/data/models/review.dart';
+import 'package:cooptourism/data/models/comment.dart';
 
-class ReviewRepository {
+class CommentRepository {
   final CollectionReference reviewsCollection =
-      FirebaseFirestore.instance.collection('market');
+      FirebaseFirestore.instance.collection('posts');
 
   // Get all Reviews from Firestore
-  Stream<List<ReviewModel>> getAllListingReviews(String id) {
+  Stream<List<CommentModel>> getAllPostComments(String id) {
     return reviewsCollection
         .doc(id)
-        .collection('reviews')
+        .collection('comments')
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) {
-        return ReviewModel.fromJson(doc.id, doc.data());
+        return CommentModel.fromJson(doc.id, doc.data());
       }).toList();
     });
   }

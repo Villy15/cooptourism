@@ -1,6 +1,7 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
+// import 'package:cooptourism/pages/manager/member_profile.dart';
 import 'package:cooptourism/pages/profile/profile_page.dart';
 import 'package:flutter/material.dart';
 
@@ -72,7 +73,7 @@ class _MembersPageState extends State<MembersPage> {
                     child: Text(
                       _members[index],
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 19,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
