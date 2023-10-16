@@ -49,7 +49,7 @@ class HomeFeedPageState extends State<HomeFeedPage> {
               final posts = snapshot.data!;
 
               // posts: [Instance of 'PostModel', Instance of 'PostModel']
-              debugPrint("posts: ${jsonEncode(posts)}");
+              // debugPrint("posts: ${jsonEncode(posts)}");
               return listViewPosts(posts);
             },
           ),
