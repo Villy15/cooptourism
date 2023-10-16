@@ -2,18 +2,20 @@ class CommentModel {
   String? uid;
   String? userId;
   String? content;
+  DateTime? timestamp;
 
   CommentModel({
     this.uid,
     this.userId,
     this.content,
+    this.timestamp,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      'uid': uid,
       'userId': userId,
       'content': content,
+      'timestamp': timestamp,
     };
   }
 
@@ -22,6 +24,7 @@ class CommentModel {
       uid: uid,
       userId: json['userId'],
       content: json['content'],
+      timestamp: json['timestamp']?.toDate(),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:cooptourism/pages/inbox/chat.dart';
 import 'package:flutter/material.dart';
-import 'package:cooptourism/data/models/userChat.dart';
+import 'package:cooptourism/data/models/userchart.dart';
 
 class UserItem extends StatefulWidget {
   const UserItem({super.key, required this.user});

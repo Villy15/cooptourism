@@ -4,13 +4,13 @@ class ManagerProfileView extends StatefulWidget {
   const ManagerProfileView({super.key});
 
   @override
-  State<ManagerProfileView> createState() => Manager_ProfileViewState();
+  State<ManagerProfileView> createState() => ManagerProfileViewState();
 }
 
-class Manager_ProfileViewState extends State<ManagerProfileView> {
+class ManagerProfileViewState extends State<ManagerProfileView> {
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: [
       ],
     );

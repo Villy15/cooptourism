@@ -1,4 +1,5 @@
 import 'package:cooptourism/controller/home_page_controller.dart';
+import 'package:cooptourism/controller/user_provider.dart';
 import 'package:cooptourism/data/models/comment.dart';
 import 'package:cooptourism/data/models/post.dart';
 import 'package:cooptourism/data/repositories/comment_repository.dart';
@@ -28,12 +29,19 @@ class _PostCommentsPageState extends ConsumerState<PostCommentsPage> {
     });
   }
 
+  final TextEditingController _commentController = TextEditingController();
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final Future<PostModel> post = postRepository.getPost(widget.postId);
     final Stream<List<CommentModel>> comments =
         commentRepository.getAllPostComments(widget.postId);
-
     return WillPopScope(
       onWillPop: () async {
         ref.read(navBarVisibilityProvider.notifier).state = true;
@@ -53,6 +61,7 @@ class _PostCommentsPageState extends ConsumerState<PostCommentsPage> {
             },
           ),
         ),
+        bottomNavigationBar: _buildBottomBar(),
         body: FutureBuilder<PostModel>(
           future: post,
           builder: (context, snapshot) {
@@ -126,10 +135,9 @@ class _PostCommentsPageState extends ConsumerState<PostCommentsPage> {
                                       Text(comment.content!, style: const TextStyle(fontSize: 16)),
                                       const Row(
                                         children: [
-                                          // Uncomment below if needed
                                           // Icon(Icons.thumb_up, size: 16, color: Colors.grey[600]),
                                           // Text(" Like", style: TextStyle(color: Colors.grey[600])),
-                                          // SizedBox(width: 8),
+                                          // const SizedBox(width: 8),
                                           // Icon(Icons.message, size: 16, color: Colors.grey[600]),
                                           // Text(" Reply", style: TextStyle(color: Colors.grey[600])),
                                         ],
@@ -148,6 +156,46 @@ class _PostCommentsPageState extends ConsumerState<PostCommentsPage> {
               ),
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomBar() {
+    final user = ref.watch(userModelProvider);
+
+    return BottomAppBar(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _commentController,
+                decoration: const InputDecoration(
+                  labelText: 'Add a comment...',
+                  border: OutlineInputBorder(),
+                ),
+                style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.primary),
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.send, color: Theme.of(context).colorScheme.primary),
+              onPressed: () {
+                if (_commentController.text.isNotEmpty) {
+                  commentRepository.addComment(
+                    widget.postId,
+                    CommentModel(
+                      content: _commentController.text,
+                      userId: "${user?.firstName} ${user?.lastName}",
+                      timestamp: DateTime.now(),
+                    ),
+                  );
+                  _commentController.clear();
+                }
+              },
+            ),
+          ],
         ),
       ),
     );
