@@ -2,7 +2,7 @@ import 'package:cooptourism/controller/home_page_controller.dart';
 import 'package:cooptourism/widgets/chat_field.dart';
 import 'package:cooptourism/widgets/chat_messages.dart';
 import 'package:flutter/material.dart';
-import 'package:cooptourism/data/models/userchart.dart';
+import 'package:cooptourism/data/models/user_chart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
