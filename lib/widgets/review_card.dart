@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/review.dart';
 import 'package:cooptourism/widgets/display_text.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -34,7 +34,7 @@ class _ReviewCardState extends State<ReviewCard> {
     bool expanded = false;
   @override
   Widget build(BuildContext context) {
-    final storageRef = FirebaseStorage.instance.ref();
+    // final storageRef = FirebaseStorage.instance.ref();
 
     // final cooperativeRepository = CooperativesRepository();
     // final cooperative =
