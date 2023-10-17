@@ -26,9 +26,7 @@ class _MarketPageState extends State<MarketPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        body: Column(
+    return Column(
           children: [
             // listFilter(),
             const SizedBox(height: 10),
@@ -52,7 +50,7 @@ class _MarketPageState extends State<MarketPage> {
               ),
             )
           ],
-        ));
+        );
   }
 
   GridView gridViewListings(List<ListingModel> listings) {
