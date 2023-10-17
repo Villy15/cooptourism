@@ -13,52 +13,56 @@ class _ReportsPageState extends State<ReportsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return  ListView(
-      scrollDirection: Axis.vertical,
-      children: [
-        // Lists Filter
-        SizedBox(
-          height: 40,
-          child: listViewFilter(),
-        ),
-
-        const SizedBox(height: 20),
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-          child: Text("Purchases", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        ),
-        // Sales Dashboard
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-          child: Container(
-            height: 200,
-            width: 600,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondary,
-              borderRadius: BorderRadius.circular(20.0),
+    return  Scaffold(
+      appBar: _appBar(context, "Reports"),
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: ListView(
+        scrollDirection: Axis.vertical,
+        children: [
+          // Lists Filter
+          SizedBox(
+            height: 40,
+            child: listViewFilter(),
+          ),
+    
+          const SizedBox(height: 20),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+            child: Text("Purchases", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
+          // Sales Dashboard
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+            child: Container(
+              height: 200,
+              width: 600,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary,
+                borderRadius: BorderRadius.circular(20.0),
+              ),
             ),
           ),
-        ),
-
-        const SizedBox(height: 20),
-
-         const Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-          child: Text("Balances", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        ),
-        // Sales Dashboard
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-          child: Container(
-            height: 200,
-            width: 600,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondary,
-              borderRadius: BorderRadius.circular(20.0),
+    
+          const SizedBox(height: 20),
+    
+           const Padding(
+            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+            child: Text("Balances", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
+          // Sales Dashboard
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+            child: Container(
+              height: 200,
+              width: 600,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary,
+                borderRadius: BorderRadius.circular(20.0),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -98,6 +102,28 @@ class _ReportsPageState extends State<ReportsPage> {
           ),
         );
       },
+    );
+  }
+
+  AppBar _appBar(BuildContext context, String title) {
+    return AppBar(
+      toolbarHeight: 70,
+      title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: CircleAvatar(
+              backgroundColor: Colors.grey.shade300,
+              child: IconButton(
+                onPressed: () {
+                  // showAddPostPage(context);
+                },
+                icon: const Icon(Icons.add, color: Colors.white),
+              ),
+            ),
+        ),
+      ],
     );
   }
 }

@@ -7,7 +7,7 @@ import 'package:cooptourism/pages/home_feed/comments/post_comments.dart';
 import 'package:cooptourism/pages/home_feed/home_feed_page.dart';
 import 'package:cooptourism/pages/home_page.dart';
 import 'package:cooptourism/pages/inbox/inbox_page.dart';
-import 'package:cooptourism/pages/manager/dashboard_page.dart';
+import 'package:cooptourism/pages/manager/dashboard/dashboard_page.dart';
 import 'package:cooptourism/pages/manager/members_page.dart';
 import 'package:cooptourism/pages/manager/reports_page.dart';
 import 'package:cooptourism/pages/market/market_page.dart';
@@ -36,7 +36,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     navigatorKey: _rootNavigator,
-    debugLogDiagnostics: false,
+    debugLogDiagnostics: true,
     initialLocation: SplashPage.routeLocation,
     routes: [
       GoRoute(

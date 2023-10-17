@@ -30,26 +30,30 @@ class _WalletPageState extends State<WalletPage> {
       Transaction(product: 'Item 3', timestamp: DateTime.now(), amount: 30.0),
     ];
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          listFilter(),
-          const SizedBox(height: 10),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
-            child: walletWidget(context, name, money),
-          ),
-          const SizedBox(height: 10),
-
-          // ListsView Builder of transactions table
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-            child: transactionHeading(),
-          ),
-          listTransactions(transactions)
-        ],
+    return Scaffold(
+      appBar: _appBar(context, "Wallet"),
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            listFilter(),
+            const SizedBox(height: 10),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
+              child: walletWidget(context, name, money),
+            ),
+            const SizedBox(height: 10),
+    
+            // ListsView Builder of transactions table
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+              child: transactionHeading(),
+            ),
+            listTransactions(transactions)
+          ],
+        ),
       ),
     );
   }
@@ -240,6 +244,28 @@ class _WalletPageState extends State<WalletPage> {
           );
         },
       ),
+    );
+  }
+
+  AppBar _appBar(BuildContext context, String title) {
+    return AppBar(
+      toolbarHeight: 70,
+      title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: CircleAvatar(
+              backgroundColor: Colors.grey.shade300,
+              child: IconButton(
+                onPressed: () {
+                  // showAddPostPage(context);
+                },
+                icon: const Icon(Icons.add, color: Colors.white),
+              ),
+            ),
+        ),
+      ],
     );
   }
 }

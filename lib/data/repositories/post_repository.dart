@@ -37,7 +37,6 @@ class PostRepository {
   Future<PostModel> getPost(String postId) async {
     try {
       final doc = await postsCollection.doc(postId).get();
-      debugPrint('Post from Firestore: ${doc.data()}');
       return PostModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
     } catch (e) {
       debugPrint('Error getting post from Firestore: $e');
