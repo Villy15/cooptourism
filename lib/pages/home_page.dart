@@ -68,7 +68,8 @@ class HomePageState extends ConsumerState<HomePage> {
           ),
         ],
       ) : null,
-      body: widget.child,
+      body:
+       widget.child,
       // floatingActionButton: shouldShowFloatingActionButton()
       //     ? FloatingActionButton(
       //         onPressed: () {
