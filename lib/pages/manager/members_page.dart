@@ -57,7 +57,7 @@ class _MembersPageState extends State<MembersPage> {
           itemCount: _members.length,
           shrinkWrap: true,
           itemBuilder: (context, index) {
-            return GestureDetector(
+            return InkWell(
                 onTap: () {
                   Navigator.push(
                     context,
