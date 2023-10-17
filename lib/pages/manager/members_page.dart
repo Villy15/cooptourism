@@ -3,7 +3,7 @@
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/pages/manager/member_profile.dart';
 // import 'package:cooptourism/pages/manager/member_profile.dart';
-import 'package:cooptourism/pages/profile/profile_page.dart';
+// import 'package:cooptourism/pages/profile/profile_page.dart';
 import 'package:flutter/material.dart';
 
 class MembersPage extends StatefulWidget {
