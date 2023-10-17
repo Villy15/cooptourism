@@ -65,8 +65,8 @@ class _ManagerProfileViewState extends State<ManagerProfileView> {
                           width: 100,
                         ) : Icon (
                           Icons.person,
-                          size: 100,
-                          color: Theme.of(context).colorScheme.primary
+                          size: 300,
+                          color: Theme.of(context).colorScheme.secondary
                         ),
                       ),
                     ),
@@ -109,7 +109,7 @@ class _ManagerProfileViewState extends State<ManagerProfileView> {
                     Padding(
                       padding: const EdgeInsets.only(left: 16.0, right: 16),
                       child: Text(
-                        '${user.bio}',
+                        user.bio ?? 'Bio',
                         style: TextStyle(
                           fontSize: 17,
                           color: Theme.of(context).colorScheme.primary
