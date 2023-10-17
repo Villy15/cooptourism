@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 final WikiRepository wikiRepository = WikiRepository();
+
 class WikiPage extends StatefulWidget {
   const WikiPage({super.key});
 
@@ -33,11 +34,11 @@ class _WikiPageState extends State<WikiPage> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator (
+    return RefreshIndicator(
       onRefresh: () async {
         setState(() {});
       },
-      child: SingleChildScrollView (
+      child: SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
@@ -45,11 +46,18 @@ class _WikiPageState extends State<WikiPage> {
               child: listViewFilter(),
             ),
             // New Here?
-            recommendedSection(context),
-      
-            popularReadsHeading(),
-      
-            streamBuilderWiki()
+
+            if (_selectedIndex == 0) ...[
+              recommendedSection(context),
+              wikiHeading("Popular Reads"),
+              streamBuilderWiki()
+            ] else if (_selectedIndex == 1) ...[
+              wikiHeading("Saved Reads"),
+              streamBuilderWiki()
+            ] else if (_selectedIndex == 2) ...[
+              wikiHeading("All Reads"),
+              streamBuilderWiki()
+            ],
           ],
         ),
       ),
@@ -58,38 +66,38 @@ class _WikiPageState extends State<WikiPage> {
 
   StreamBuilder<List<WikiModel>> streamBuilderWiki() {
     return StreamBuilder(
-          stream: wikiRepository.getAllWiki(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator(); // show a loader while waiting for data
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Text('No data available');
-            } else {
-              List<WikiModel> wikiList = snapshot.data!;
+        stream: wikiRepository.getAllWiki(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator(); // show a loader while waiting for data
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Text('No data available');
+          } else {
+            List<WikiModel> wikiList = snapshot.data!;
 
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: wikiList.length,
-                itemBuilder: (context, index) {
-                  return wikiCard(context, wikiList[index]);
-                },
-              );
-            }
-          });
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: wikiList.length,
+              itemBuilder: (context, index) {
+                return wikiCard(context, wikiList[index]);
+              },
+            );
+          }
+        });
   }
 
-  Padding popularReadsHeading() {
-    return const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: Text('Popular Reads',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        ),
-      );
+  Padding wikiHeading(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(title,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+      ),
+    );
   }
 
   ListView listViewFilter() {
@@ -184,7 +192,7 @@ class _WikiPageState extends State<WikiPage> {
   }
 
   Widget wikiCard(BuildContext context, WikiModel wiki) {
-    return GestureDetector (
+    return GestureDetector(
       onTap: () {
         context.go('/wiki_page/${wiki.uid}');
       },
@@ -199,13 +207,13 @@ class _WikiPageState extends State<WikiPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // If wiki.image is is null, dont show an image icon, else show the image
-            if (wiki.image != "") 
+            if (wiki.image != "")
               Center(
                 child: Icon(
-                        Icons.image,
-                        size: 80,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                  Icons.image,
+                  size: 80,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
             Row(
               children: [
