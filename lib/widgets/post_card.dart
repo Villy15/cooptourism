@@ -43,22 +43,6 @@ class _PostCardState extends State<PostCard> {
   @override
   void initState() {
     super.initState();
-    final storageRef = FirebaseStorage.instance.ref();
-
-    final imageUrl = imageCache.getImageUrl(widget.postModel.authorId ?? "");
-
-    if (imageUrl == null) {
-      // Load the image URL and update the cache
-      storageRef
-          .child("${widget.postModel.authorId}/images/${widget.postModel.images?[0]}")
-          .getDownloadURL()
-          .then((imageUrl) {
-        imageCache.setImageUrl(widget.postModel.authorId ?? "", imageUrl);
-        if (mounted) {
-          setState(() {});
-        }
-      });
-    }
   }
 
   @override
@@ -90,7 +74,7 @@ class _PostCardState extends State<PostCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.postModel.author!,
+                      widget.postModel.author ?? "No Author",
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     Text(
@@ -358,17 +342,3 @@ class LikeDislikeState extends ConsumerState<LikeDislike> {
     );
   }
 }
-
-class ImageCache {
-  final Map<String, String> _urlCache = {};
-
-  String? getImageUrl(String key) {
-    return _urlCache[key];
-  }
-
-  void setImageUrl(String key, String url) {
-    _urlCache[key] = url;
-  }
-}
-
-final imageCache = ImageCache();

@@ -6,7 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class ManagerProfileView extends StatefulWidget {
-  ManagerProfileView({Key? key, required this.member}) : super(key: key);
+  const ManagerProfileView({Key? key, required this.member}) : super(key: key);
 
   final String member;
 
