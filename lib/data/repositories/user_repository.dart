@@ -50,14 +50,14 @@ class UserRepository {
 
   Future<String> getUserUIDByNames(String firstName, String lastName) async {
     try {
-      print("$firstName is the first name, while $lastName is the last name");
+      debugPrint("$firstName is the first name, while $lastName is the last name");
       final querySnapshot = await usersCollection
           .where('first_name', isEqualTo: firstName)
           .where('last_name', isEqualTo: lastName)
           .get();
       if (querySnapshot.docs.isNotEmpty) {
         final docSnapshot = querySnapshot.docs.first;
-        print(docSnapshot);
+        debugPrint(docSnapshot.toString());
         return docSnapshot.id;
       } else {
         // Handle the error appropriately

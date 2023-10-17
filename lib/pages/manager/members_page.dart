@@ -3,7 +3,7 @@
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/pages/manager/member_profile.dart';
 // import 'package:cooptourism/pages/manager/member_profile.dart';
-import 'package:cooptourism/pages/profile/profile_page.dart';
+// import 'package:cooptourism/pages/profile/profile_page.dart';
 import 'package:flutter/material.dart';
 
 class MembersPage extends StatefulWidget {
@@ -57,7 +57,7 @@ class _MembersPageState extends State<MembersPage> {
           itemCount: _members.length,
           shrinkWrap: true,
           itemBuilder: (context, index) {
-            return GestureDetector(
+            return InkWell(
                 onTap: () {
                   Navigator.push(
                     context,

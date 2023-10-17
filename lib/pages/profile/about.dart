@@ -89,10 +89,10 @@ class _ProfileAboutState extends State<ProfileAbout> {
                     size: 17,
                     color: Theme.of(context).colorScheme.primary,
                     ), // add an icon
-                  const SizedBox(width: 6), // add some spacing
+                  const SizedBox(width: 3), // add some spacing
                   Text(
                     skills[index] ?? 'Skill',
-                    style: const TextStyle(fontSize: 17),
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ],
               ),

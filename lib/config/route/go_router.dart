@@ -15,6 +15,7 @@ import 'package:cooptourism/pages/market/selected_listing_page.dart';
 import 'package:cooptourism/pages/menu_page.dart';
 import 'package:cooptourism/pages/profile/profile_page.dart';
 import 'package:cooptourism/pages/wallet/wallet_page.dart';
+import 'package:cooptourism/pages/wiki/selected_wiki_page.dart';
 import 'package:cooptourism/pages/wiki/wiki_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,9 +32,11 @@ final GlobalKey<NavigatorState> _shellNavigator =
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
 
+  // Print current location
+
   return GoRouter(
     navigatorKey: _rootNavigator,
-    // debugLogDiagnostics: true,
+    debugLogDiagnostics: false,
     initialLocation: SplashPage.routeLocation,
     routes: [
       GoRoute(
@@ -172,7 +175,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 name: "Wiki",
                 pageBuilder: (context, state) {
                   return NoTransitionPage(child: WikiPage(key: state.pageKey));
-                }),
+                },
+                routes: [
+                GoRoute(
+                    path: ':wikiId',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return SelectedWikiPage(wikiId: state.pathParameters["wikiId"]!,
+                      );
+                    }),
+              ],
+              ),
           ])
     ],
     redirect: (context, state) {

@@ -6,7 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class ManagerProfileView extends StatefulWidget {
-  ManagerProfileView({Key? key, required this.member}) : super(key: key);
+  const ManagerProfileView({Key? key, required this.member}) : super(key: key);
 
   final String member;
 
@@ -51,119 +51,7 @@ class _ManagerProfileViewState extends State<ManagerProfileView> {
               ),
 
               const SizedBox(height: 16),
-              Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 85.0),
-                      child: Center(
-                        child: user.profilePicture != null ? DisplayProfilePicture(
-                          storageRef: FirebaseStorage.instance.ref(),
-                          coopId: _userUID,
-                          data: user.profilePicture,
-                          height: 100,
-                          width: 100,
-                        ) : Icon (
-                          Icons.person,
-                          size: 100,
-                          color: Theme.of(context).colorScheme.primary
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 10),
-                    Center(
-                      child: Text('${user.firstName} ${user.lastName}',
-                        style: TextStyle(
-                          fontSize: 23,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary
-                        )
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 5),
-                    Center(
-                      child: Text(
-                        '${user.userAccomplishment}',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Theme.of(context).colorScheme.primary
-                        )
-                      ),
-                    ),
-
-                    const SizedBox(height: 15),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: Text(
-                        'About',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary
-                        )
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0, right: 16),
-                      child: Text(
-                        '${user.bio}',
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Theme.of(context).colorScheme.primary
-                        )
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: Text(
-                        'Featured',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary
-                        )
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: SizedBox(
-                        height: 120,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: user.featuredImgs?.length ?? 0,
-                          separatorBuilder: (context, index) => SizedBox(
-                            width: 5,
-                            height: 0.5,
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.secondary.withOpacity(0.5)
-                              ),
-                            )
-                          ),
-                          itemBuilder: (context, index) {
-                            final featuredImg = user.featuredImgs![index];
-                            return Container(
-                              width: 120,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                color: Theme.of(context).colorScheme.secondary, 
-                                width: 2
-                                )
-                              ),
-                              child: DisplayFeatured(storageRef: FirebaseStorage.instance.ref(), userID: _userUID, data: featuredImg, height: 150, width: 200)
-                            );
-                          },
-                        )
-                      ),
-                    )
-                  ]
-                ),
+              userProfile(user, context),
             ],
           );
         }
@@ -176,5 +64,155 @@ class _ManagerProfileViewState extends State<ManagerProfileView> {
       }
     );
 
+  }
+
+  Column userProfile(UserModel user, BuildContext context) {
+    return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 85.0),
+                    child: Center(
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Theme.of(context).colorScheme.secondary
+                        ),
+                        child: Center(
+                          child: user.profilePicture == null || user.profilePicture!.isEmpty ? Icon (
+                        Icons.person,
+                        size: 80,
+                        color: Theme.of(context).colorScheme.primary
+                      ) : DisplayProfilePicture(
+                        storageRef: FirebaseStorage.instance.ref(),
+                        coopId: _userUID,
+                        data: user.profilePicture,
+                        height: 100,
+                        width: 100,
+                      ),
+                        )
+                      ),
+                      
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+                  Center(
+                    child: Text(
+                      '${user.firstName} ${user.lastName}',
+                      style: TextStyle(
+                        fontSize: 23,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary
+                      )
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 5),
+                  Center(
+                    child: Text(
+                      '${user.userAccomplishment!.isNotEmpty ? user.userAccomplishment : 'Unknown role'}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Theme.of(context).colorScheme.primary
+                      )
+                    ),
+                  ),
+
+                  const SizedBox(height: 15),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: Text(
+                      'Featured',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary
+                      )
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: Text(
+                      'About',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary
+                      )
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0, right: 16),
+                    child: Text(
+                      '${user.bio!.isNotEmpty ? user.bio : 'No bio added yet.'}',
+                      style: TextStyle(
+                        fontSize: 17,
+                        color: Theme.of(context).colorScheme.primary
+                      )
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: Text(
+                      'Featured',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary
+                      )
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: SizedBox(
+                      height: 120,
+                      child: user.featuredImgs?.isNotEmpty == true ? ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: user.featuredImgs?.length ?? 0,
+                        separatorBuilder: (context, index) => SizedBox(
+                          width: 5,
+                          height: 0.5,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.secondary.withOpacity(0.5)
+                            ),
+                          )
+                        ),
+                        itemBuilder: (context, index) {
+                          final featuredImg = user.featuredImgs![index];
+                          return Container(
+                            width: 120,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                              color: Theme.of(context).colorScheme.secondary, 
+                              width: 2
+                              )
+                            ),
+                            child: DisplayFeatured(storageRef: FirebaseStorage.instance.ref(), userID: _userUID, data: featuredImg, height: 150, width: 200)
+                          );
+                        },
+                      ) : Center(
+                        child: Text(
+                          'No featured images yet.',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Theme.of(context).colorScheme.primary
+                          )
+                        )
+                      )
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+
+                ]
+              );
   }
 }

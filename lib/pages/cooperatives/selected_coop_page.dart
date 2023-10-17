@@ -209,17 +209,7 @@ class _SelectedCoopPageState extends State<SelectedCoopPage> {
                       final coopPost = coopPosts[index];
 
                       return PostCard(
-                          key: ValueKey(coopPost.uid),
-                          uid: coopPost.uid,
-                          author: coopPost.author,
-                          authorId: coopPost.authorId,
-                          authorType: coopPost.authorType,
-                          content: coopPost.content,
-                          likes: coopPost.likes,
-                          dislikes: coopPost.dislikes,
-                          comments: coopPost.comments,
-                          timestamp: coopPost.timestamp,
-                          images: coopPost.images);
+                          postModel: coopPost);
                     },
                   ),
                 ],
