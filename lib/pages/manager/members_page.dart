@@ -53,7 +53,6 @@ class _MembersPageState extends State<MembersPage> {
 
   @override
   Widget build(BuildContext context) {
-    _members.sort((a, b) => a.compareTo(b)); // sort alphabetically
     return Scaffold(
       appBar: _appBar(context, "Members"),
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -80,22 +79,64 @@ class _MembersPageState extends State<MembersPage> {
                       MaterialPageRoute(builder: (context) => ManagerProfileView(member: _members[index])),
                     );
                   },
-                  child: Container(
-                    margin: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.secondary,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        _members[index],
-                        style: const TextStyle(
-                          fontSize: 19,
-                          fontWeight: FontWeight.bold,
+                  child: FutureBuilder<UserModel>(
+                  future: UserRepository().getUser(userUID[index]),
+                  builder: ((context, snapshot) {
+                    if (snapshot.hasData) {
+                      final user = snapshot.data!;
+                      return Container(
+                        margin: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary,
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                      ),
-                    ),
-                  ));
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 24.0),
+                              child: user.profilePicture == null || user.profilePicture!.isEmpty ? 
+                              Container(
+                                width: 60,
+                                height: 60,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white
+                                ),
+                                child: Icon(
+                                  Icons.person, 
+                                  size: 50,
+                                  color: Theme.of(context).colorScheme.primary
+                                ),
+                              ) :
+                               DisplayProfilePicture(
+                                storageRef: FirebaseStorage.instance.ref(), 
+                                coopId: userUID[index], 
+                                data: user.profilePicture, 
+                                height: 60, 
+                                width: 60
+                              ),
+                            ),
+                            const SizedBox(height: 15),
+                            Text(
+                              _members[index],
+                              style: const TextStyle(
+                                fontSize: 19,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ]
+                        )
+                      );
+                    }
+                    else if (snapshot.hasError) {
+                      return const Text('Error loading data');
+                    }
+                    else {
+                      return const CircularProgressIndicator();
+                    }
+                  })
+                ) 
+              );
             },
           )),
         ],
