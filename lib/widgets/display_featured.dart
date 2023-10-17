@@ -20,7 +20,6 @@ class DisplayFeatured extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(30.0),
       child: FutureBuilder<String>(
         future: storageRef
             .child('$userID/images/$data')

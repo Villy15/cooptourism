@@ -57,7 +57,15 @@ class _ProfileHomeState extends State<ProfileHome> {
               scrollDirection: Axis.horizontal,
               itemCount: userData['featured'].length,
               padding: const EdgeInsets.only(left: 15, right: 15),
-              separatorBuilder: (context, index) => const SizedBox(width: 15),
+              separatorBuilder: (context, index) => SizedBox(
+                width: 5,
+                height: 0.5,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondary.withOpacity(0.5)
+                  ),
+                )
+                ),
               itemBuilder: ((context, index) {
                 return InkWell(
                   onTap: () {

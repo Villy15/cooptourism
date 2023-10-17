@@ -9,6 +9,11 @@ class UserModel {
   String? userTrust;
   String? role;
   String? profilePicture;
+  String? bio;
+  String? location;
+  List<String>? skills;
+  List<String>? featuredImgs;
+  String? dateJoined;
 
   UserModel({
     this.uid,
@@ -20,7 +25,12 @@ class UserModel {
     this.userRating,
     this.userTrust,
     this.role,
-    this.profilePicture
+    this.profilePicture,
+    this.location,
+    this.skills,
+    this.featuredImgs,
+    this.dateJoined,
+    this.bio
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -34,6 +44,11 @@ class UserModel {
       userTrust: json['user_trust'] ?? '',
       role: json['role'] ?? '',
       profilePicture: json['profilePicture'] ?? '',
+      location: json['location'] ?? '',
+      skills: json['skills'] != null ? List<String>.from(json['skills']) : [],
+      featuredImgs: json['featured'] != null ? List<String>.from(json['featured']) : [],
+      dateJoined: json['date_joined'] ?? '',
+      bio: json['bio'] ?? ''
     );
   }
 
@@ -48,6 +63,11 @@ class UserModel {
       'user_trust': userTrust,
       'role': role,
       'profilePicture': profilePicture ?? '',
+      'location': location ?? '',
+      'skills': skills ?? [],
+      'featuredImgs': featuredImgs ?? [],
+      'dateJoined': dateJoined ?? '',
+      'bio': bio ?? ''
     };
   }
 
@@ -66,5 +86,10 @@ class UserModel {
     userTrust = user.userTrust;
     role = user.role;
     profilePicture = user.profilePicture;
+    location = user.location;
+    skills = user.skills;
+    featuredImgs = user.featuredImgs;
+    dateJoined = user.dateJoined;
+    bio = user.bio;
   }
 }
