@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:cooptourism/controller/post_provider.dart';
 import 'package:cooptourism/data/models/cooperatives.dart';
+import 'package:cooptourism/data/models/post.dart';
+import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/data/repositories/post_repository.dart';
+import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -12,30 +15,10 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class PostCard extends StatefulWidget {
-  final String? uid;
-  final String? author;
-  final String? authorId;
-  final String? authorType;
-  final String? content;
-  final List<String>? likes;
-  final List<String>? dislikes;
-  final List<dynamic>? comments;
-  final Timestamp timestamp;
-  final List<dynamic>? images;
 
-  const PostCard({
-    required Key key,
-    this.uid,
-    this.author,
-    this.authorId,
-    this.authorType,
-    this.content,
-    this.likes,
-    this.dislikes,
-    this.comments,
-    required this.timestamp,
-    this.images,
-  }) : super(key: key);
+  final PostModel postModel; 
+
+  const PostCard({super.key, required this.postModel});
 
   @override
   State<PostCard> createState() => _PostCardState();
@@ -44,7 +27,7 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> {
   String getTimeDifference() {
     final now = Timestamp.now().toDate();
-    final postTime = widget.timestamp.toDate();
+    final postTime = widget.postModel.timestamp.toDate();
     final difference = now.difference(postTime);
 
     if (difference.inMinutes < 60) {
@@ -60,22 +43,6 @@ class _PostCardState extends State<PostCard> {
   @override
   void initState() {
     super.initState();
-    final storageRef = FirebaseStorage.instance.ref();
-
-    final imageUrl = imageCache.getImageUrl(widget.authorId ?? "");
-
-    if (imageUrl == null) {
-      // Load the image URL and update the cache
-      storageRef
-          .child("${widget.authorId}/images/${widget.images?[0]}")
-          .getDownloadURL()
-          .then((imageUrl) {
-        imageCache.setImageUrl(widget.authorId ?? "", imageUrl);
-        if (mounted) {
-          setState(() {});
-        }
-      });
-    }
   }
 
   @override
@@ -83,7 +50,12 @@ class _PostCardState extends State<PostCard> {
     final storageRef = FirebaseStorage.instance.ref();
 
     final cooperativeRepository = CooperativesRepository();
-    final cooperative = cooperativeRepository.getCooperative(widget.authorId ?? "");
+    final userRepository = UserRepository();
+    final authorId = widget.postModel.authorId ?? "";
+    final isCooperative = widget.postModel.authorType == 'cooperative';
+    final Future<dynamic> authorFuture = isCooperative 
+          ? cooperativeRepository.getCooperative(authorId)
+          : userRepository.getUser(authorId);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Card(
@@ -93,13 +65,16 @@ class _PostCardState extends State<PostCard> {
           children: [
             Row(
               children: [
-                profilePictureWidget(cooperative, storageRef),
+                // display picture accordingly if member or cooperative
+                isCooperative 
+                  ? pfpCoop(authorFuture as Future<CooperativesModel>, storageRef)
+                  : pfpMember(authorFuture as Future<UserModel>, storageRef),
                 const SizedBox(width: 8),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.author!,
+                      widget.postModel.author ?? "No Author",
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     Text(
@@ -120,7 +95,7 @@ class _PostCardState extends State<PostCard> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(
-                widget.content!,
+                widget.postModel.content!,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
@@ -136,13 +111,13 @@ class _PostCardState extends State<PostCard> {
             //       : const SizedBox.shrink(),
             // ),
             ClipRRect(
-              child: widget.images != null &&
-                      widget.images!
+              child: widget.postModel.images != null &&
+                      widget.postModel.images!
                           .isNotEmpty // Check first if images is not null and not empty
                   ? FutureBuilder<String>(
                       future: storageRef
                           .child(
-                              "${widget.authorId}/images/${widget.images?[0]}")
+                              "${widget.postModel.authorId}/images/${widget.postModel.images?[0]}")
                           .getDownloadURL(),
                       builder: (context, urlSnapshot) {
                         if (urlSnapshot.connectionState ==
@@ -156,12 +131,13 @@ class _PostCardState extends State<PostCard> {
             
                         final imageUrl = urlSnapshot.data;
             
-                        return Image.network(
-                          imageUrl!,
+                        return imageUrl != null ? 
+                        Image.network(
+                          imageUrl,
                           height: 225,
                           width: double.infinity,
                           fit: BoxFit.cover,
-                        );
+                        ) : Container();
                       },
                     )
                   : const SizedBox.shrink(),
@@ -181,19 +157,19 @@ class _PostCardState extends State<PostCard> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                LikeDislike(uid: widget.uid, likes: widget.likes, dislikes: widget.dislikes),
+                LikeDislike(uid: widget.postModel.uid, likes: widget.postModel.likes, dislikes: widget.postModel.dislikes),
 
                 const Spacer(),
                 GestureDetector (
                   onTap: () {
-                    context.go('/posts/comments/${widget.uid}');
+                    context.go('/posts/comments/${widget.postModel.uid}');
                   },
                   child: Icon(Icons.comment_outlined,
                       color: Theme.of(context).colorScheme.primary),
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  widget.comments!.length.toString(),
+                  widget.postModel.comments!.length.toString(),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.w400,
@@ -208,7 +184,7 @@ class _PostCardState extends State<PostCard> {
           );
   }
 
-  FutureBuilder<CooperativesModel> profilePictureWidget(Future<CooperativesModel> cooperative, Reference storageRef) {
+  FutureBuilder<CooperativesModel> pfpCoop(Future<CooperativesModel> cooperative, Reference storageRef) {
     return FutureBuilder(
                   future: cooperative,
                   builder: (context, snapshot) {
@@ -224,8 +200,33 @@ class _PostCardState extends State<PostCard> {
                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
                       child: DisplayProfilePicture(
                         storageRef: storageRef,
-                        coopId: widget.authorId ?? "",
+                        coopId: widget.postModel.authorId ?? "",
                         data: cooperative.profilePicture,
+                        height: 35.0,
+                        width: 35.0,
+                      ),
+                    );
+                  });
+  }
+
+  FutureBuilder<UserModel> pfpMember(Future<UserModel> user, Reference storageRef) {
+    return FutureBuilder(
+                  future: user,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final member = snapshot.data!;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: DisplayProfilePicture(
+                        storageRef: storageRef,
+                        coopId: widget.postModel.authorId ?? "",
+                        data: member.profilePicture,
                         height: 35.0,
                         width: 35.0,
                       ),
@@ -341,17 +342,3 @@ class LikeDislikeState extends ConsumerState<LikeDislike> {
     );
   }
 }
-
-class ImageCache {
-  final Map<String, String> _urlCache = {};
-
-  String? getImageUrl(String key) {
-    return _urlCache[key];
-  }
-
-  void setImageUrl(String key, String url) {
-    _urlCache[key] = url;
-  }
-}
-
-final imageCache = ImageCache();

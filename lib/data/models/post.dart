@@ -10,6 +10,7 @@ class PostModel {
   List<String>? likes;
   List<String>? dislikes;
   List<String>? comments;
+  // CollectionReference? comments;
   Timestamp timestamp;
   List<String>? images;
 
@@ -54,24 +55,26 @@ class PostModel {
       likes: json['likes'] is List<dynamic> ? List<String>.from(json['likes'] as List<dynamic>) : null,
       dislikes: json['dislikes'] is List<dynamic> ? List<String>.from(json['dislikes'] as List<dynamic>) : null,
       comments: json['comments'] is List<dynamic> ? List<String>.from(json['comments'] as List<dynamic>) : null,
+      // comments: FirebaseFirestore.instance.collection('posts').doc(uid).collection('comments'),
       timestamp: json['timestamp'] as Timestamp,
-      images: List<String>.from(json['images'] as List<dynamic>),
+      images: (json['images'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
     );
   }
 
   factory PostModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+
     return PostModel(
       uid: doc.id,
-      author: data['author'],
-      authorId: data['authorId'],
-      authorType: data['authorType'],
-      content: data['content'],
-      likes: data['likes'],
-      dislikes: data['dislikes'],
-      comments: (data['comments'] as List<dynamic>?)!.cast<String>(),
-      timestamp: data['timestamp'] as Timestamp,
-      images: (data['images'] as List<dynamic>?)?.cast<String>(),
+      author: data['author'] ?? '',
+      authorId: data['authorId'] ?? '',
+      authorType: data['authorType'] ?? '',
+      content: data['content'] ?? '',
+      likes: List<String>.from(data['likes'] ?? []),
+      dislikes: List<String>.from(data['dislikes'] ?? []),
+      comments: List<String>.from(data['comments'] ?? []), // add type annotation here
+      timestamp: data['timestamp'] ?? Timestamp.now(),
+      images: List<String>.from(data['images'] ?? []),
     );
   }
 }

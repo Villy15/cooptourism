@@ -49,20 +49,26 @@ class UserRepository {
   }
 
   Future<String> getUserUIDByNames(String firstName, String lastName) async {
-  try {
-    final querySnapshot = await usersCollection
-        .where('firstName', isEqualTo: firstName)
-        .where('lastName', isEqualTo: lastName)
-        .get();
-    final docSnapshot = querySnapshot.docs.first;
-    return docSnapshot.id;
-  } catch (e) {
-    debugPrint('Error getting user from Firestore: $e');
-    // You might want to handle errors more gracefully here
-    rethrow;
+    try {
+      debugPrint("$firstName is the first name, while $lastName is the last name");
+      final querySnapshot = await usersCollection
+          .where('first_name', isEqualTo: firstName)
+          .where('last_name', isEqualTo: lastName)
+          .get();
+      if (querySnapshot.docs.isNotEmpty) {
+        final docSnapshot = querySnapshot.docs.first;
+        debugPrint(docSnapshot.toString());
+        return docSnapshot.id;
+      } else {
+        // Handle the error appropriately
+        throw Exception('No user found with the specified first and last name');
+      }
+    } catch (e) {
+      debugPrint('Error getting user from Firestore: $e');
+      // You might want to handle errors more gracefully here
+      rethrow;
+    }
   }
-}
-
   // Update a user in Firestore
   Future<void> updateUser(String userId, UserModel user) async {
     try {

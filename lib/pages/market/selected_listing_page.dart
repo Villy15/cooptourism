@@ -41,25 +41,25 @@ class _SelectedListingPageState extends State<SelectedListingPage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
-
+    
         final listing = snapshot.data!;
-
+    
         return StreamBuilder<List<ReviewModel>>(
           stream: reviews,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             }
-
+          
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
-
+          
             final reviews = snapshot.data!;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
+            return ListView(
+              // crossAxisAlignment: CrossAxisAlignment.start,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
                 CarouselSlider(
                   options: CarouselOptions(
                     height: 250.0,
@@ -76,64 +76,74 @@ class _SelectedListingPageState extends State<SelectedListingPage> {
                           width: double.infinity))
                       .toList(),
                 ),
-                DisplayText(
-                  text: listing.title!,
-                  lines: 1,
-                  style: Theme.of(context).textTheme.headlineSmall!,
-                ),
-                DisplayText(
-                  text: "Type: ${listing.type!}",
-                  lines: 4,
-                  style: TextStyle(
-                      fontSize: Theme.of(context)
-                          .textTheme
-                          .headlineSmall
-                          ?.fontSize),
-                ),
-                DisplayText(
-                  text: "Desciption: ${listing.description!}",
-                  lines: 5,
-                  style: TextStyle(
-                    fontSize: Theme.of(context)
-                        .textTheme
-                        .headlineSmall
-                        ?.fontSize,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      DisplayText(
+                        text: listing.title!,
+                        lines: 1,
+                        style: Theme.of(context).textTheme.headlineSmall!,
+                      ),
+                      DisplayText(
+                        text: "Type: ${listing.type!}",
+                        lines: 4,
+                        style: TextStyle(
+                            fontSize: Theme.of(context)
+                                .textTheme
+                                .headlineSmall
+                                ?.fontSize),
+                      ),
+                      DisplayText(
+                        text: "Desciption: ${listing.description!}",
+                        lines: 5,
+                        style: TextStyle(
+                          fontSize:
+                              Theme.of(context).textTheme.headlineSmall?.fontSize,
+                        ),
+                      ),
+                      DisplayText(
+                          text: "Rating",
+                          lines: 1,
+                          style: Theme.of(context).textTheme.headlineSmall!),
+                      RatingBarIndicator(
+                        rating: listing.rating!,
+                        itemBuilder: (context, index) {
+                          return Icon(
+                            Icons.star_rounded,
+                            color: Theme.of(context).primaryColor,
+                          );
+                        },
+                        itemCount: 5,
+                        itemSize: 25,
+                        direction: Axis.horizontal,
+                      ),
+                      DisplayText(
+                        text: "Amenities",
+                        lines: 1,
+                        style: Theme.of(context).textTheme.headlineSmall!,
+                      ),
+                      DisplayText(
+                        text: "Reviews",
+                        lines: 1,
+                        style: Theme.of(context).textTheme.headlineSmall!,
+                      ),
+                      ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: reviews.length,
+                        itemBuilder: (context, index) {
+                          final review = reviews[index];
+                              
+                          return ReviewCard(
+                            reviewModel: review,
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
-                DisplayText(
-                    text: "Rating",
-                    lines: 1,
-                    style: Theme.of(context).textTheme.headlineSmall!),
-                RatingBarIndicator(
-                  rating: listing.rating!,
-                  itemBuilder: (context, index) {
-                    return Icon(
-                      Icons.star_rounded,
-                      color: Theme.of(context).primaryColor,
-                    );
-                  },
-                  itemCount: 5,
-                  itemSize: 25,
-                  direction: Axis.horizontal,
-                ),
-                DisplayText(
-                  text: "Amenities",
-                  lines: 1,
-                  style: Theme.of(context).textTheme.headlineSmall!,
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: reviews.length,
-                    itemBuilder: (context, index) {
-                      final review = reviews[index];
-                
-                      return ReviewCard(
-                        reviewModel: review,
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 100),
               ],
             );
           },

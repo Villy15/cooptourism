@@ -44,18 +44,7 @@ class _ProfilePostsState extends State<ProfilePosts> {
       itemBuilder: (context, index) {
         final post = posts[index];
 
-        return PostCard(
-          key: ValueKey(post.uid),
-          uid: post.uid,
-          author: post.author,
-          authorId: post.authorId,
-          authorType: post.authorType,
-          content: post.content,
-          likes: post.likes,
-          dislikes: post.dislikes,
-          comments: post.comments,
-          timestamp: post.timestamp,
-        );
+        return PostCard(postModel: post);
       },
     );
   }

@@ -1,3 +1,5 @@
+// import 'dart:convert';
+
 import 'package:cooptourism/data/models/post.dart';
 import 'package:cooptourism/data/repositories/post_repository.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,9 @@ class HomeFeedPageState extends State<HomeFeedPage> {
     super.initState();
     _postRepository = PostRepository();
     _posts = _postRepository.getAllPosts();
+    
+    // Comment out the following line to add a dummy post
+    // _postRepository.addDummyPost();
   }
 
   @override
@@ -46,6 +51,8 @@ class HomeFeedPageState extends State<HomeFeedPage> {
 
               final posts = snapshot.data!;
 
+              // posts: [Instance of 'PostModel', Instance of 'PostModel']
+              // debugPrint("posts: ${jsonEncode(posts)}");
               return listViewPosts(posts);
             },
           ),
@@ -60,19 +67,7 @@ class HomeFeedPageState extends State<HomeFeedPage> {
       itemBuilder: (context, index) {
         final post = posts[index];
 
-        return PostCard(
-          key: ValueKey(index),
-          uid: post.uid,
-          author: post.author,
-          authorId: post.authorId,
-          authorType: post.authorType,
-          content: post.content,
-          likes: post.likes,
-          dislikes: post.dislikes,
-          comments: post.comments,
-          timestamp: post.timestamp,
-          images: post.images,
-        );
+        return PostCard(postModel: post);
       },
     );
   }

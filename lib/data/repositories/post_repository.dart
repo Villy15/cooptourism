@@ -124,4 +124,23 @@ class PostRepository {
       // You might want to handle errors more gracefully here
     }
   }
+
+  // Add dummy post
+  Future<void> addDummyPost() async {
+    try {
+      await postsCollection.add({
+        'author:': 'Iwahori Multipurpose Cooperative',
+        'authorId': 'sslvO5tgDoCHGBO82kxq',
+        'authorType': 'cooperative',
+        'comments': [],
+        'content': 'A joyful DAY TODAY! #inthezone',
+        'likes': [],
+        'dislikes': [],
+        'timestamp': DateTime.now(),
+      });
+    } catch (e) {
+      debugPrint('Error adding dummy post to Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
+  }
 }
