@@ -57,7 +57,7 @@ class PostModel {
       comments: json['comments'] is List<dynamic> ? List<String>.from(json['comments'] as List<dynamic>) : null,
       // comments: FirebaseFirestore.instance.collection('posts').doc(uid).collection('comments'),
       timestamp: json['timestamp'] as Timestamp,
-      images: List<String>.from(json['images'] as List<dynamic>),
+      images: (json['images'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
     );
   }
 

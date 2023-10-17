@@ -1,5 +1,5 @@
 // import 'package:cooptourism/animations/slide_transition.dart';
-import 'dart:ui';
+// import 'dart:ui';
 
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/pages/profile/about.dart';

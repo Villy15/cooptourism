@@ -24,6 +24,9 @@ class HomeFeedPageState extends State<HomeFeedPage> {
     super.initState();
     _postRepository = PostRepository();
     _posts = _postRepository.getAllPosts();
+    
+    // Comment out the following line to add a dummy post
+    // _postRepository.addDummyPost();
   }
 
   @override

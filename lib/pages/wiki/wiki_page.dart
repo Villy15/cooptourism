@@ -1,4 +1,9 @@
+import 'package:cooptourism/data/models/wiki.dart';
+import 'package:cooptourism/data/repositories/wiki_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+final WikiRepository wikiRepository = WikiRepository();
 
 class WikiPage extends StatefulWidget {
   const WikiPage({super.key});
@@ -20,74 +25,78 @@ class _WikiPageState extends State<WikiPage> {
     {'logo': Icons.analytics, 'text': 'How to use your analytics'},
   ];
 
+  // Comment out the initState() method to remove manual data input
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   wikiRepository.addWikiManually();
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 40,
-          child: listViewFilter(),
-        ),
-        // New Here?
-        recommendedSection(context),
+    return RefreshIndicator(
+      onRefresh: () async {
+        setState(() {});
+      },
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 40,
+              child: listViewFilter(),
+            ),
+            // New Here?
 
-        // The Fertilizer UI starts here
-
-        // Text popular reads and align it from the start
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text('Popular Reads',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
-          padding: const EdgeInsets.all(15.0),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(Icons.image,
-                  size: 80,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .primary), // Placeholder for the image.
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  const Expanded (
-                    child: Text(
-                      'Fertilizer Types and their Effectiveness',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-
-                  // Add fav icon here
-                  IconButton(
-                    icon: Icon(Icons.favorite_border, color: Theme.of(context).colorScheme.primary),
-                    onPressed: () {
-                      // Add your favorite logic here.
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Different types of fertilizers exhibit varying levels of effectiveness in promoting plant growth and improving soil fertility. Organic fertilizers, derived from natural sources such as compost, manure...',
-                style: TextStyle(fontSize: 14),
-              ),
+            if (_selectedIndex == 0) ...[
+              recommendedSection(context),
+              wikiHeading("Popular Reads"),
+              streamBuilderWiki()
+            ] else if (_selectedIndex == 1) ...[
+              wikiHeading("Saved Reads"),
+              streamBuilderWiki()
+            ] else if (_selectedIndex == 2) ...[
+              wikiHeading("All Reads"),
+              streamBuilderWiki()
             ],
-          ),
+          ],
         ),
-      ],
+      ),
+    );
+  }
+
+  StreamBuilder<List<WikiModel>> streamBuilderWiki() {
+    return StreamBuilder(
+        stream: wikiRepository.getAllWiki(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator(); // show a loader while waiting for data
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Text('No data available');
+          } else {
+            List<WikiModel> wikiList = snapshot.data!;
+
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: wikiList.length,
+              itemBuilder: (context, index) {
+                return wikiCard(context, wikiList[index]);
+              },
+            );
+          }
+        });
+  }
+
+  Padding wikiHeading(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(title,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+      ),
     );
   }
 
@@ -162,7 +171,7 @@ class _WikiPageState extends State<WikiPage> {
                       child: Text(
                         item['text'],
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           color: Colors.white,
                           fontWeight: FontWeight.w400,
                         ),
@@ -179,6 +188,62 @@ class _WikiPageState extends State<WikiPage> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget wikiCard(BuildContext context, WikiModel wiki) {
+    return GestureDetector(
+      onTap: () {
+        context.go('/wiki_page/${wiki.uid}');
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
+        padding: const EdgeInsets.all(15.0),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // If wiki.image is is null, dont show an image icon, else show the image
+            if (wiki.image != "")
+              Center(
+                child: Icon(
+                  Icons.image,
+                  size: 80,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    wiki.title ?? 'No title',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+                // Add fav icon here
+                IconButton(
+                  icon: Icon(Icons.favorite_border,
+                      color: Theme.of(context).colorScheme.primary),
+                  onPressed: () {
+                    // Add your favorite logic here.
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              wiki.description ?? 'No description',
+              style: const TextStyle(fontSize: 14),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
