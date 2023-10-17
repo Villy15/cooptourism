@@ -79,17 +79,7 @@ class _PostCommentsPageState extends ConsumerState<PostCommentsPage> {
               child: Column(
                 children: [
                   PostCard(
-                    key: ValueKey(post.uid),
-                    uid: post.uid,
-                    author: post.author,
-                    authorId: post.authorId,
-                    authorType: post.authorType,
-                    content: post.content,
-                    likes: post.likes,
-                    dislikes: post.dislikes,
-                    comments: post.comments,
-                    timestamp: post.timestamp,
-                    images: post.images,
+                    postModel: post
                   ),
                   StreamBuilder<List<CommentModel>>(
                     stream: comments,

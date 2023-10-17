@@ -64,19 +64,7 @@ class HomeFeedPageState extends State<HomeFeedPage> {
       itemBuilder: (context, index) {
         final post = posts[index];
 
-        return PostCard(
-          key: ValueKey(index),
-          uid: post.uid,
-          author: post.author,
-          authorId: post.authorId,
-          authorType: post.authorType,
-          content: post.content,
-          likes: post.likes,
-          dislikes: post.dislikes,
-          comments: post.comments,
-          timestamp: post.timestamp,
-          images: post.images,
-        );
+        return PostCard(postModel: post);
       },
     );
   }
