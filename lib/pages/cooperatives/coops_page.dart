@@ -19,7 +19,8 @@ class _CoopsPageState extends State<CoopsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      appBar: _appBar(context, "Cooperatives"),
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Column(
         children: [
           // const ListFilter(list: ["Location", "Cooperatives"]),
@@ -132,6 +133,29 @@ class _CoopsPageState extends State<CoopsPage> {
           ),
         ],
       ),
+    );
+  }
+
+  AppBar _appBar(BuildContext context, String title) {
+    return AppBar(
+      toolbarHeight: 70,
+      title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
+      actions: [
+        // add search
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: CircleAvatar(
+            backgroundColor: Colors.grey.shade300,
+            child: IconButton(
+              onPressed: () {
+                // showAddPostPage(context);
+              },
+              icon: const Icon(Icons.search, color: Colors.white),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

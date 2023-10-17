@@ -2,6 +2,8 @@
 
 import 'package:cooptourism/data/models/post.dart';
 import 'package:cooptourism/data/repositories/post_repository.dart';
+import 'package:cooptourism/pages/home_feed/add_post.dart';
+import 'package:cooptourism/util/animations/slide_transition.dart';
 import 'package:flutter/material.dart';
 import 'package:cooptourism/widgets/post_card.dart';
 
@@ -19,6 +21,9 @@ class HomeFeedPageState extends State<HomeFeedPage> {
   late PostRepository _postRepository = PostRepository();
   late Stream<List<PostModel>> _posts;
 
+  final double maxIconSize = 40.0;
+  final double minIconSize = 20.0;
+
   @override
   void initState() {
     super.initState();
@@ -31,35 +36,94 @@ class HomeFeedPageState extends State<HomeFeedPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // SizedBox(
-        //   height: 40,
-        //   child: listViewFilter(),
-        // ),
-        Expanded(
-          child: StreamBuilder<List<PostModel>>(
-            stream: _posts,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: StreamBuilder<List<PostModel>>(
+        stream: _posts,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final posts = snapshot.data!;
 
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              final posts = snapshot.data!;
-
-              // posts: [Instance of 'PostModel', Instance of 'PostModel']
-              // debugPrint("posts: ${jsonEncode(posts)}");
-              return listViewPosts(posts);
+          return RefreshIndicator(
+            onRefresh: () async {
+              setState(() {
+                _posts = _postRepository.getAllPosts();
+              });
             },
+            child: CustomScrollView(
+              slivers: <Widget>[
+                sliverAppBar(context),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return PostCard(postModel: posts[index]);
+                    },
+                    childCount: posts.length,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  SliverAppBar sliverAppBar(BuildContext context) {
+    return SliverAppBar(
+      toolbarHeight: 70,
+      floating: false,
+      pinned: false, // This keeps the app bar visible at the top
+      title: Text(
+        "lakbay",
+        style: TextStyle(
+            fontSize: 28,
+            color: Colors.orange.shade700,
+            fontWeight: FontWeight.bold),
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: CircleAvatar(
+            backgroundColor: Colors.grey.shade300,
+            child: IconButton(
+              onPressed: () {
+                showAddPostPage(context);
+              },
+              icon: const Icon(Icons.add, color: Colors.white),
+            ),
           ),
         ),
       ],
     );
   }
+
+  // AppBar _appBar(BuildContext context, String title) {
+  //   return AppBar(
+  //     toolbarHeight: 70,
+  //     title: Text(title,
+  //         style: TextStyle(fontSize: 28, color: Colors.orange.shade700)),
+  //     actions: [
+  //       Padding(
+  //         padding: const EdgeInsets.only(right: 16.0),
+  //         child: CircleAvatar(
+  //           backgroundColor: Colors.grey.shade300,
+  //           child: IconButton(
+  //             onPressed: () {
+  //               showAddPostPage(context);
+  //             },
+  //             icon: const Icon(Icons.add, color: Colors.white),
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   ListView listViewPosts(List<PostModel> posts) {
     return ListView.builder(
@@ -108,6 +172,22 @@ class HomeFeedPageState extends State<HomeFeedPage> {
           ),
         );
       },
+    );
+  }
+
+  void showAddPostPage(BuildContext context) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return const AddPostPage();
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransitionAnimation(
+            animation: animation,
+            child: child,
+          );
+        },
+      ),
     );
   }
 }

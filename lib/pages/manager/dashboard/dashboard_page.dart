@@ -20,75 +20,79 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return  Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: ListView(
-          scrollDirection: Axis.vertical,
-          children: [
-            // Lists Filter
-            SizedBox(
-              height: 40,
-              child: listViewFilter(),
-            ),
-
-            // Sales Dashboard
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: Container(
-                height: 200,
-                width: 400,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                // Circular border
-                child: const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text('Sales',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
+    return  Scaffold(
+      appBar: _appBar(context, "Dashboard"),
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: ListView(
+            scrollDirection: Axis.vertical,
+            children: [
+              // Lists Filter
+              SizedBox(
+                height: 40,
+                child: listViewFilter(),
               ),
-            ),
-
-            GridView.builder(
-              shrinkWrap: true,
-              itemCount: _dashboardTitles.length,
-              // Make this unscrollable
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                mainAxisExtent: 300,
-                childAspectRatio: 1,
-              ),
-              itemBuilder: (context, index) {
-                return Container(
+    
+              // Sales Dashboard
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: Container(
+                  height: 200,
+                  width: 400,
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.secondary,
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                   // Circular border
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        for (final word in _dashboardTitles[index].split(' '))
-                          Text(
-                            word,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                      ],
-                    ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text('Sales',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
-                );
-              },
-            ),
-
-            const SizedBox(height: 20),
-          ],
-        ),
+                ),
+              ),
+    
+              GridView.builder(
+                shrinkWrap: true,
+                itemCount: _dashboardTitles.length,
+                // Make this unscrollable
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  mainAxisExtent: 300,
+                  childAspectRatio: 1,
+                ),
+                itemBuilder: (context, index) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.secondary,
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    // Circular border
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          for (final word in _dashboardTitles[index].split(' '))
+                            Text(
+                              word,
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+    
+              const SizedBox(height: 20),
+            ],
+          ),
+      ),
     );
   }
 
@@ -128,6 +132,27 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         );
       },
+    );
+  }
+
+  AppBar _appBar(BuildContext context, String title) {
+    return AppBar(
+      toolbarHeight: 70,
+      title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: CircleAvatar(
+              backgroundColor: Colors.grey.shade300,
+              child: IconButton(
+                onPressed: () {
+                  // showAddPostPage(context);
+                },
+                icon: const Icon(Icons.settings, color: Colors.white),
+              ),
+            ),
+        ),
+      ],
     );
   }
 }
