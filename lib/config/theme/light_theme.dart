@@ -60,6 +60,12 @@ ThemeData lightTheme = ThemeData(
       color: primaryColor
     ),
 
+    headlineLarge: TextStyle(
+      fontSize: 26,
+      fontWeight: FontWeight.bold,
+      color: primaryColor
+    ),
+
     headlineMedium: TextStyle(
       fontSize: medium,
       fontWeight: FontWeight.bold,
