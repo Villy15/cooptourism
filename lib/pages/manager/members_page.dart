@@ -53,90 +53,53 @@ class _MembersPageState extends State<MembersPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 40,
-          child: listViewFilter(),
-        ),
-        const SizedBox(height: 10),
-        searchFilter(context),
-        const SizedBox(height: 10),
-        Expanded(
-            child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2),
-          itemCount: _members.length,
-          shrinkWrap: true,
-          itemBuilder: (context, index) {
-            return InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ManagerProfileView(member: _members[index])),
-                  );
-                },
-                child: FutureBuilder<UserModel>(
-                  future: UserRepository().getUser(userUID[index]),
-                  builder: ((context, snapshot) {
-                    if (snapshot.hasData) {
-                      final user = snapshot.data!;
-                      return Container(
-                        margin: const EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.secondary,
-                          borderRadius: BorderRadius.circular(10),
+    _members.sort((a, b) => a.compareTo(b)); // sort alphabetically
+    return Scaffold(
+      appBar: _appBar(context, "Members"),
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: Column(
+        children: [
+          SizedBox(
+            height: 40,
+            child: listViewFilter(),
+          ),
+          const SizedBox(height: 10),
+          searchFilter(context),
+          const SizedBox(height: 10),
+          Expanded(
+              child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2),
+            itemCount: _members.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ManagerProfileView(member: _members[index])),
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.secondary,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(
+                      child: Text(
+                        _members[index],
+                        style: const TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
                         ),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 24.0),
-                              child: user.profilePicture == null || user.profilePicture!.isEmpty ? 
-                              Container(
-                                width: 60,
-                                height: 60,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.white
-                                ),
-                                child: Icon(
-                                  Icons.person, 
-                                  size: 50,
-                                  color: Theme.of(context).colorScheme.primary
-                                ),
-                              ) :
-                               DisplayProfilePicture(
-                                storageRef: FirebaseStorage.instance.ref(), 
-                                coopId: userUID[index], 
-                                data: user.profilePicture, 
-                                height: 60, 
-                                width: 60
-                              ),
-                            ),
-                            const SizedBox(height: 15),
-                            Text(
-                              _members[index],
-                              style: const TextStyle(
-                                fontSize: 19,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ]
-                        )
-                      );
-                    }
-                    else if (snapshot.hasError) {
-                      return const Text('Error loading data');
-                    }
-                    else {
-                      return const CircularProgressIndicator();
-                    }
-                  })
-                ) 
-              );
-          },
-        )),
-      ],
+                      ),
+                    ),
+                  ));
+            },
+          )),
+        ],
+      ),
     );
   }
 
@@ -209,6 +172,28 @@ class _MembersPageState extends State<MembersPage> {
             icon: const Icon(Icons.filter_list),
             label: const Text('Filter'),
           ),
+        ),
+      ],
+    );
+  }
+
+  AppBar _appBar(BuildContext context, String title) {
+    return AppBar(
+      toolbarHeight: 70,
+      title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: CircleAvatar(
+              backgroundColor: Colors.grey.shade300,
+              child: IconButton(
+                onPressed: () {
+                  // showAddPostPage(context);
+                },
+                icon: const Icon(Icons.add, color: Colors.white),
+              ),
+            ),
         ),
       ],
     );
