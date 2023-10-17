@@ -11,26 +11,20 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
-class SelectedListingPage extends StatefulWidget {
+class SelectedListingPage extends StatelessWidget {
   final String listingId;
   const SelectedListingPage({super.key, required this.listingId});
 
   @override
-  State<SelectedListingPage> createState() => _SelectedListingPageState();
-}
-
-class _SelectedListingPageState extends State<SelectedListingPage> {
-  @override
   Widget build(BuildContext context) {
-    // final storageRef = FirebaseStorage.instance.ref();
     final ListingRepository listingRepository = ListingRepository();
     final ReviewRepository reviewRepository = ReviewRepository();
 
     final Future<ListingModel> listings =
-        listingRepository.getSpecificListing(widget.listingId);
+        listingRepository.getSpecificListing(listingId);
 
     final Stream<List<ReviewModel>> reviews =
-        reviewRepository.getAllListingReviews(widget.listingId);
+        reviewRepository.getAllListingReviews(listingId);
 
     return FutureBuilder<ListingModel>(
       future: listings,
@@ -41,41 +35,24 @@ class _SelectedListingPageState extends State<SelectedListingPage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
-    
+
         final listing = snapshot.data!;
-    
+
         return StreamBuilder<List<ReviewModel>>(
           stream: reviews,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             }
-          
+
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
-          
+
             final reviews = snapshot.data!;
             return ListView(
-              // crossAxisAlignment: CrossAxisAlignment.start,
-              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CarouselSlider(
-                  options: CarouselOptions(
-                    height: 250.0,
-                    enlargeFactor: .2,
-                    enlargeCenterPage: true,
-                    enableInfiniteScroll: false,
-                    padEnds: true,
-                  ),
-                  items: listing.images!
-                      .map<Widget>((e) => DisplayImage(
-                          path:
-                              "${listing.owner}/listingImages/${listing.id}$e",
-                          height: 250,
-                          width: double.infinity))
-                      .toList(),
-                ),
+                ImageSlider(listing: listing),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Column(
@@ -99,8 +76,10 @@ class _SelectedListingPageState extends State<SelectedListingPage> {
                         text: "Desciption: ${listing.description!}",
                         lines: 5,
                         style: TextStyle(
-                          fontSize:
-                              Theme.of(context).textTheme.headlineSmall?.fontSize,
+                          fontSize: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.fontSize,
                         ),
                       ),
                       DisplayText(
@@ -135,7 +114,7 @@ class _SelectedListingPageState extends State<SelectedListingPage> {
                         itemCount: reviews.length,
                         itemBuilder: (context, index) {
                           final review = reviews[index];
-                              
+
                           return ReviewCard(
                             reviewModel: review,
                           );
@@ -149,6 +128,94 @@ class _SelectedListingPageState extends State<SelectedListingPage> {
           },
         );
       },
+    );
+  }
+}
+
+class ImageSlider extends StatefulWidget {
+  final ListingModel listing;
+  const ImageSlider({super.key, required this.listing});
+
+  @override
+  State<ImageSlider> createState() => _ImageSliderState();
+}
+
+class _ImageSliderState extends State<ImageSlider> {
+  @override
+  Widget build(BuildContext context) {
+    // int currentImageIndex = 0;
+    // int maxImageIndex = widget.listing.images!.length;
+    // CarouselController carouselController = CarouselController();
+    
+    return Stack(
+      children: [
+        CarouselSlider(
+          // carouselController: carouselController,
+          options: CarouselOptions(
+            viewportFraction: 1.0,
+            height: 250.0,
+            enlargeFactor: .2,
+            enlargeCenterPage: true,
+            enableInfiniteScroll: false,
+            padEnds: true,
+            onPageChanged: (index, reason) {
+              setState(() {
+                // currentImageIndex = index;
+                // debugPrint("this is the index $index");
+              });
+            },
+          ),
+          items: widget.listing.images!
+              .map<Widget>((e) => DisplayImage(
+                  path:
+                      "${widget.listing.owner}/listingImages/${widget.listing.id}$e",
+                  height: 250,
+                  width: double.infinity))
+              .toList(),
+        ),
+        // if (currentImageIndex > 0)
+          // Align(
+          //   alignment: Alignment.centerLeft,
+          //   child: Container(
+          //     height: 35,
+          //     width: 35,
+          //     decoration: BoxDecoration(
+          //       color: Colors.grey[800],
+          //       borderRadius: BorderRadius.circular(50),
+          //     ),
+          //     child: IconButton(
+          //         icon: const Icon(
+          //           Icons.arrow_back_ios,
+          //           color: Colors.white,
+          //           size: 15,
+          //         ),
+          //         onPressed: () {
+          //           carouselController.previousPage();
+          //         }),
+          //   ),
+          // ),
+        // if (currentImageIndex <= maxImageIndex)
+          // Align(
+          //   alignment: Alignment.centerRight,
+          //   child: Container(
+          //     height: 35,
+          //     width: 35,
+          //     decoration: BoxDecoration(
+          //       color: Colors.grey[800],
+          //       borderRadius: BorderRadius.circular(50),
+          //     ),
+          //     child: IconButton(
+          //         icon: const Icon(
+          //           Icons.arrow_forward_ios,
+          //           color: Colors.white,
+          //           size: 15,
+          //         ),
+          //         onPressed: () {
+          //           carouselController.nextPage();
+          //         }),
+          //   ),
+          // ),
+      ],
     );
   }
 }

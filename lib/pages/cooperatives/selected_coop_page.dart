@@ -1,26 +1,36 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooptourism/controller/home_page_controller.dart';
 import 'package:cooptourism/data/models/cooperatives.dart';
 import 'package:cooptourism/data/models/post.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/data/repositories/post_repository.dart';
-import 'package:cooptourism/widgets/display_logo.dart';
-import 'package:cooptourism/widgets/display_profile_picture.dart';
+import 'package:cooptourism/widgets/display_image.dart';
+import 'package:cooptourism/widgets/display_text.dart';
 import 'package:cooptourism/widgets/post_card.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SelectedCoopPage extends StatefulWidget {
+class SelectedCoopPage extends ConsumerStatefulWidget {
   final String coopId;
   const SelectedCoopPage({super.key, required this.coopId});
 
   @override
-  State<SelectedCoopPage> createState() => _SelectedCoopPageState();
+  ConsumerState<SelectedCoopPage> createState() => _SelectedCoopPageState();
 }
 
-class _SelectedCoopPageState extends State<SelectedCoopPage> {
+class _SelectedCoopPageState extends ConsumerState<SelectedCoopPage> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      ref.read(appBarVisibilityProvider.notifier).state = false;
+      ref.read(navBarVisibilityProvider.notifier).state = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
     final storageRef = FirebaseStorage.instance.ref();
     final CooperativesRepository cooperativeRepository =
         CooperativesRepository();
@@ -31,73 +41,87 @@ class _SelectedCoopPageState extends State<SelectedCoopPage> {
     final Future<CooperativesModel> cooperative =
         cooperativeRepository.getCooperative(widget.coopId);
 
-    return FutureBuilder(
-        future: cooperative,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
+    return Scaffold(
+      body: FutureBuilder(
+          future: cooperative,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          final cooperative = snapshot.data!;
+            final cooperative = snapshot.data!;
 
-          return StreamBuilder<List<PostModel>>(
-            stream: coopPosts,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Text("Error: ${snapshot.error}");
-              }
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
+            return StreamBuilder<List<PostModel>>(
+              stream: coopPosts,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text("Error: ${snapshot.error}");
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              final coopPosts = snapshot.data!;
-              return CustomScrollView(
-                slivers: <Widget>[
-                  SliverAppBar(
-                    automaticallyImplyLeading: false,
-                    expandedHeight: 240,
-                    pinned: false,
-                    floating: true,
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: Column(
-                        children: [
-                          DisplayLogo(
-                            storageRef: storageRef,
-                            coopId: widget.coopId,
-                            data: cooperative.logo,
+                final coopPosts = snapshot.data!;
+                return CustomScrollView(
+                  slivers: <Widget>[
+                    SliverAppBar(
+                      leadingWidth: 45,
+                      toolbarHeight: 35,
+                      leading: Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Container(
+                          height: 20,
+                          width: 20,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[800],
+                            borderRadius: BorderRadius.circular(50),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Row(
-                              children: [
-                                DisplayProfilePicture(
-                                  storageRef: storageRef,
-                                  coopId: widget.coopId,
-                                  data: cooperative.profilePicture,
-                                  height: 50.0,
-                                  width: 50.0,
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 10),
+                          child: IconButton(
+                            icon: Icon(Icons.arrow_back,
+                                size: 20,
+                                color: Theme.of(context).colorScheme.secondary),
+                            onPressed: () {
+                              ref.read(navBarVisibilityProvider.notifier).state =
+                                  true;
+                              ref.read(appBarVisibilityProvider.notifier).state =
+                                  true;
+                              Navigator.of(context).pop(); // to go back
+                            },
+                          ),
+                        ),
+                      ),
+                      expandedHeight: 300,
+                      pinned: false,
+                      floating: true,
+                      flexibleSpace: FlexibleSpaceBar(
+                        background: Column(
+                          children: [
+                            DisplayImage(
+                              path:
+                                  "${widget.coopId}/images/${cooperative.logo}",
+                              height: 150,
+                              width: double.infinity,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
+                              child: Row(
+                                children: [
+                                  Expanded(
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          cooperative.name ?? "",
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
-                                          softWrap: true,
-                                          style: TextStyle(
-                                              fontSize: Theme.of(context)
-                                                  .textTheme
-                                                  .headlineSmall
-                                                  ?.fontSize),
+                                        DisplayText(
+                                          text: cooperative.name!,
+                                          lines: 2,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headlineLarge!,
                                         ),
                                         // StreamBuilder(
                                         //   stream: cooperativesStream
@@ -115,107 +139,45 @@ class _SelectedCoopPageState extends State<SelectedCoopPage> {
                                       ],
                                     ),
                                   ),
-                                ),
-                                OutlinedButton(
-                                  onPressed: () async {
-                                    await showDialog<void>(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                                content: Stack(
-                                              clipBehavior: Clip.none,
-                                              children: <Widget>[
-                                                Positioned(
-                                                  right: -40,
-                                                  top: -40,
-                                                  child: InkResponse(
-                                                    onTap: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                    child: const CircleAvatar(
-                                                      backgroundColor:
-                                                          Colors.red,
-                                                      child: Icon(Icons.close),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Form(
-                                                  key: formKey,
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: <Widget>[
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8),
-                                                        child: TextFormField(),
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8),
-                                                        child: TextFormField(),
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8),
-                                                        child: TextFormField(),
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8),
-                                                        child: ElevatedButton(
-                                                          child: const Text(
-                                                              'Submitß'),
-                                                          onPressed: () {
-                                                            if (formKey
-                                                                .currentState!
-                                                                .validate()) {
-                                                              formKey
-                                                                  .currentState!
-                                                                  .save();
-                                                            }
-                                                          },
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            )));
-                                  },
-                                  child: const Text("Join"),
-                                ),
-                              ],
+                                  Container(
+                                    height: 40,
+                                    width: 40,
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey[800],
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: const Icon(
+                                      Icons.handshake,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              cooperative.profileDescription ?? "",
-                              style: Theme.of(context).textTheme.bodySmall,
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                cooperative.profileDescription ?? "",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  SliverList.builder(
-                    itemCount: coopPosts.length,
-                    itemBuilder: (context, index) {
-                      final coopPost = coopPosts[index];
+                    SliverList.builder(
+                      itemCount: coopPosts.length,
+                      itemBuilder: (context, index) {
+                        final coopPost = coopPosts[index];
 
-                      return PostCard(
-                          postModel: coopPost);
-                    },
-                  ),
-                ],
-              );
-            },
-          );
-        });
+                        return PostCard(postModel: coopPost);
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          }),
+    );
   }
 }
