@@ -1,6 +1,7 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
+import 'package:cooptourism/pages/manager/member_profile.dart';
 // import 'package:cooptourism/pages/manager/member_profile.dart';
 import 'package:cooptourism/pages/profile/profile_page.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +61,7 @@ class _MembersPageState extends State<MembersPage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ProfilePage()),
+                    MaterialPageRoute(builder: (context) => ManagerProfileView(member: _members[index])),
                   );
                 },
                 child: Container(
