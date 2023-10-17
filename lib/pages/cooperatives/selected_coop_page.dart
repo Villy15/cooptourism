@@ -7,7 +7,7 @@ import 'package:cooptourism/data/repositories/post_repository.dart';
 import 'package:cooptourism/widgets/display_image.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 import 'package:cooptourism/widgets/post_card.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -31,7 +31,7 @@ class _SelectedCoopPageState extends ConsumerState<SelectedCoopPage> {
 
   @override
   Widget build(BuildContext context) {
-    final storageRef = FirebaseStorage.instance.ref();
+    // final storageRef = FirebaseStorage.instance.ref();
     final CooperativesRepository cooperativeRepository =
         CooperativesRepository();
     final PostRepository postRepository = PostRepository();
