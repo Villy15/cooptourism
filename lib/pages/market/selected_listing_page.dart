@@ -6,6 +6,7 @@ import 'package:cooptourism/data/repositories/review_repository.dart';
 import 'package:cooptourism/widgets/display_image.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 import 'package:cooptourism/widgets/review_card.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 // import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -141,80 +142,72 @@ class ImageSlider extends StatefulWidget {
 }
 
 class _ImageSliderState extends State<ImageSlider> {
+  int currentImageIndex = 0;
   @override
   Widget build(BuildContext context) {
-    // int currentImageIndex = 0;
-    // int maxImageIndex = widget.listing.images!.length;
-    // CarouselController carouselController = CarouselController();
-    
+    final decorator = DotsDecorator(
+      activeColor: Colors.orange[700],
+      size: const Size.square(7.5),
+      activeSize: const Size.square(10.0),
+      activeShape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      spacing: const EdgeInsets.all(2.5),
+    );
+    int maxImageIndex = widget.listing.images!.length;
+    CarouselController carouselController = CarouselController();
+
     return Stack(
       children: [
-        CarouselSlider(
-          // carouselController: carouselController,
-          options: CarouselOptions(
-            viewportFraction: 1.0,
-            height: 250.0,
-            enlargeFactor: .2,
-            enlargeCenterPage: true,
-            enableInfiniteScroll: false,
-            padEnds: true,
-            onPageChanged: (index, reason) {
-              setState(() {
-                // currentImageIndex = index;
-                // debugPrint("this is the index $index");
-              });
-            },
+        SizedBox(
+          height: 250,
+          child: CarouselSlider(
+            carouselController: carouselController,
+            options: CarouselOptions(
+              viewportFraction: 1.0,
+              height: 250.0,
+              enlargeFactor: 0,
+              enlargeCenterPage: true,
+              enableInfiniteScroll: false,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  currentImageIndex = index;
+                  debugPrint("this is the index $index");
+                });
+              },
+            ),
+            items: widget.listing.images!
+                .map<Widget>((e) => DisplayImage(
+                    path:
+                        "${widget.listing.owner}/listingImages/${widget.listing.id}$e",
+                    height: 250,
+                    width: double.infinity))
+                .toList(),
           ),
-          items: widget.listing.images!
-              .map<Widget>((e) => DisplayImage(
-                  path:
-                      "${widget.listing.owner}/listingImages/${widget.listing.id}$e",
-                  height: 250,
-                  width: double.infinity))
-              .toList(),
         ),
-        // if (currentImageIndex > 0)
-          // Align(
-          //   alignment: Alignment.centerLeft,
-          //   child: Container(
-          //     height: 35,
-          //     width: 35,
-          //     decoration: BoxDecoration(
-          //       color: Colors.grey[800],
-          //       borderRadius: BorderRadius.circular(50),
-          //     ),
-          //     child: IconButton(
-          //         icon: const Icon(
-          //           Icons.arrow_back_ios,
-          //           color: Colors.white,
-          //           size: 15,
-          //         ),
-          //         onPressed: () {
-          //           carouselController.previousPage();
-          //         }),
-          //   ),
-          // ),
-        // if (currentImageIndex <= maxImageIndex)
-          // Align(
-          //   alignment: Alignment.centerRight,
-          //   child: Container(
-          //     height: 35,
-          //     width: 35,
-          //     decoration: BoxDecoration(
-          //       color: Colors.grey[800],
-          //       borderRadius: BorderRadius.circular(50),
-          //     ),
-          //     child: IconButton(
-          //         icon: const Icon(
-          //           Icons.arrow_forward_ios,
-          //           color: Colors.white,
-          //           size: 15,
-          //         ),
-          //         onPressed: () {
-          //           carouselController.nextPage();
-          //         }),
-          //   ),
-          // ),
+        SizedBox(
+          height: 250,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 10.0),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(25)),
+                child: Padding(
+                    padding: const EdgeInsets.all(2.5),
+                    child: DotsIndicator(
+                      key: ValueKey(currentImageIndex),
+                      dotsCount: maxImageIndex,
+                      position: currentImageIndex,
+                      decorator: decorator,
+                    ),
+                    ),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
