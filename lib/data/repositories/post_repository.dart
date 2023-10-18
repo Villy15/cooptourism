@@ -8,7 +8,7 @@ class PostRepository {
 
   // Get all posts from Firestore
   Stream<List<PostModel>> getAllPosts() {
-    return postsCollection.snapshots().map((snapshot) {
+    return postsCollection.orderBy("timestamp", descending: true).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         return PostModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
@@ -16,7 +16,7 @@ class PostRepository {
   }
 
   Stream<List<PostModel>> getSpecificPosts(String authorId) {
-    return postsCollection.where("authorId", isEqualTo: authorId).snapshots().map((snapshot) {
+    return postsCollection.where("authorId", isEqualTo: authorId).orderBy("timestamp", descending: true).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         return PostModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
@@ -37,7 +37,6 @@ class PostRepository {
   Future<PostModel> getPost(String postId) async {
     try {
       final doc = await postsCollection.doc(postId).get();
-      debugPrint('Post from Firestore: ${doc.data()}');
       return PostModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
     } catch (e) {
       debugPrint('Error getting post from Firestore: $e');

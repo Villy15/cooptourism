@@ -34,31 +34,35 @@ class _WikiPageState extends State<WikiPage> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        setState(() {});
-      },
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 40,
-              child: listViewFilter(),
-            ),
-            // New Here?
-
-            if (_selectedIndex == 0) ...[
-              recommendedSection(context),
-              wikiHeading("Popular Reads"),
-              streamBuilderWiki()
-            ] else if (_selectedIndex == 1) ...[
-              wikiHeading("Saved Reads"),
-              streamBuilderWiki()
-            ] else if (_selectedIndex == 2) ...[
-              wikiHeading("All Reads"),
-              streamBuilderWiki()
+    return Scaffold (
+      appBar: _appBar(context, "Wiki"),
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {});
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 40,
+                child: listViewFilter(),
+              ),
+              // New Here?
+    
+              if (_selectedIndex == 0) ...[
+                recommendedSection(context),
+                wikiHeading("Popular Reads"),
+                streamBuilderWiki()
+              ] else if (_selectedIndex == 1) ...[
+                wikiHeading("Saved Reads"),
+                streamBuilderWiki()
+              ] else if (_selectedIndex == 2) ...[
+                wikiHeading("All Reads"),
+                streamBuilderWiki()
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
@@ -244,6 +248,28 @@ class _WikiPageState extends State<WikiPage> {
           ],
         ),
       ),
+    );
+  }
+
+  AppBar _appBar(BuildContext context, String title) {
+    return AppBar(
+      toolbarHeight: 70,
+      title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: CircleAvatar(
+              backgroundColor: Colors.grey.shade300,
+              child: IconButton(
+                onPressed: () {
+                  // showAddPostPage(context);
+                },
+                icon: const Icon(Icons.add, color: Colors.white),
+              ),
+            ),
+        ),
+      ],
     );
   }
 }

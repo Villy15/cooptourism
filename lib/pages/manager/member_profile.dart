@@ -125,18 +125,6 @@ class _ManagerProfileViewState extends State<ManagerProfileView> {
                   Padding(
                     padding: const EdgeInsets.only(left: 16.0),
                     child: Text(
-                      'Featured',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary
-                      )
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Text(
                       'About',
                       style: TextStyle(
                         fontSize: 20,

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -26,6 +27,8 @@ class _MenuPageState extends State<MenuPage> {
     {'logo': Icons.account_balance_wallet_outlined, 'name': 'Reports', 'route': '/reports_page' },
     {'logo': Icons.people_alt_outlined, 'name': 'Members', 'route': '/members_page' },
     {'logo': Icons.inbox_outlined, 'name': 'Inbox', 'route': '/inbox_page' },
+    {'logo': Icons.person_outlined, 'name': 'Profile', 'route': '/profile_page' },
+
     // {'logo': Icons.content_paste_search_outlined, 'name': 'Services', 'route': '/service_page' },
     // {'logo': Icons.people_outlined, 'name': 'People', 'route': '/people'},
     // {'logo': Icons.group_outlined, 'name': 'Communities', 'route': '/communities' },
@@ -34,7 +37,8 @@ class _MenuPageState extends State<MenuPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
+        appBar: _appBar(context, "Menu"),
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: Column(
           children: [
             listFilter(),
@@ -52,12 +56,33 @@ class _MenuPageState extends State<MenuPage> {
                 ),
               ),
             ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: gridSquares(context),
+
+            SizedBox(
+              height: 400,
+              child: Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: gridSquares(context),
+                ),
               ),
-            )
+            ),
+
+            // Add a logout button that is long and red
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  signOut();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                  minimumSize: const Size(double.infinity, 50),
+                  elevation: 2,
+                ),
+                child: Text('Logout', style: TextStyle(fontSize: 20,color: Theme.of(context).colorScheme.primary)),
+              ),
+            ),
+            
           ],
         ));
   }
@@ -107,6 +132,8 @@ class _MenuPageState extends State<MenuPage> {
   GridView gridSquares(BuildContext context) {
     Color color = Theme.of(context).colorScheme.secondary;
     return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 3 / 2,
@@ -124,7 +151,7 @@ class _MenuPageState extends State<MenuPage> {
                 color = Theme.of(context).colorScheme.primary;
               });
 
-              context.go(_gridItems[index]['route']);
+              context.push(_gridItems[index]['route']);
             },
             child: Ink (
               decoration: BoxDecoration(
@@ -158,5 +185,32 @@ class _MenuPageState extends State<MenuPage> {
         );
       },
     );
+  }
+
+  AppBar _appBar(BuildContext context, String title) {
+    return AppBar(
+      toolbarHeight: 70,
+      title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: CircleAvatar(
+              backgroundColor: Colors.grey.shade300,
+              child: IconButton(
+                onPressed: () {
+                  // showAddPostPage(context);
+                },
+                icon: const Icon(Icons.settings, color: Colors.white),
+              ),
+            ),
+        ),
+      ],
+    );
+  }
+
+  void signOut() async {
+    if (mounted) {
+      await FirebaseAuth.instance.signOut();
+    }
   }
 }

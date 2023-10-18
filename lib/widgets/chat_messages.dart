@@ -10,11 +10,11 @@ class ChatMessages extends StatelessWidget {
     const Message(
         senderId: '102',
         receiverId: 'gNfEHSQZ5ZUcY6JG5AarK8O0SVw1',
-        content: 'Hello Tim'),
+        content: 'Hello Test Send'),
     const Message(
         senderId: '101',
         receiverId: 'gNfEHSQZ5ZUcY6JG5AarK8O0SVw1',
-        content: 'Hi Jaz'),
+        content: 'Hi Jaz Test Send '),
   ];
 
   @override

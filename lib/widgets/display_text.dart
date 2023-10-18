@@ -17,7 +17,7 @@ class DisplayText extends StatelessWidget {
     return Text(
       text,
       maxLines: lines,
-      textAlign: TextAlign.justify,
+      // textAlign: TextAlign.justify,
       overflow: TextOverflow.ellipsis,
       softWrap: true,
       style: style,
