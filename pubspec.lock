@@ -137,14 +137,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.6"
-  dart_style:
-    dependency: transitive
+  dots_indicator:
+    dependency: "direct main"
     description:
-      name: dart_style
-      sha256: abd7625e16f51f554ea244d090292945ec4d4be7bfbaf2ec8cccea568919d334
+      name: dots_indicator
+      sha256: "58b6a365744aa62aa1b70c4ea29e5106fbe064f5edaf7e9652e9b856edbfd9bb"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.3"
+    version: "3.0.0"
   fake_async:
     dependency: transitive
     description:
