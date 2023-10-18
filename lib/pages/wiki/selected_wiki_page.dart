@@ -1,4 +1,4 @@
-import 'package:cooptourism/controller/home_page_controller.dart';
+import 'package:cooptourism/providers/home_page_provider.dart';
 import 'package:cooptourism/data/models/wiki.dart';
 import 'package:cooptourism/data/repositories/wiki_repository.dart';
 import 'package:flutter/material.dart';

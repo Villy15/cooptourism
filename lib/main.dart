@@ -1,11 +1,11 @@
 // import 'package:cooptourism/config/route/go_router.dart';
-import 'package:cooptourism/config/route/go_router.dart';
-import 'package:cooptourism/util/firebase_options.dart';
+import 'package:cooptourism/router/go_router.dart';
+import 'package:cooptourism/core/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'package:cooptourism/config/theme/dark_theme.dart';
-import 'package:cooptourism/config/theme/light_theme.dart';
+import 'package:cooptourism/core/theme/dark_theme.dart';
+import 'package:cooptourism/core/theme/light_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {

@@ -1,5 +1,5 @@
-import 'package:cooptourism/controller/home_page_controller.dart';
-import 'package:cooptourism/controller/user_provider.dart';
+import 'package:cooptourism/providers/home_page_provider.dart';
+import 'package:cooptourism/providers/user_provider.dart';
 import 'package:cooptourism/data/models/comment.dart';
 import 'package:cooptourism/data/models/post.dart';
 import 'package:cooptourism/data/repositories/comment_repository.dart';

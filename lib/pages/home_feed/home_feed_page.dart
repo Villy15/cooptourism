@@ -3,7 +3,7 @@
 import 'package:cooptourism/data/models/post.dart';
 import 'package:cooptourism/data/repositories/post_repository.dart';
 import 'package:cooptourism/pages/home_feed/add_post.dart';
-import 'package:cooptourism/util/animations/slide_transition.dart';
+import 'package:cooptourism/core/util/animations/slide_transition.dart';
 import 'package:flutter/material.dart';
 import 'package:cooptourism/widgets/post_card.dart';
 
@@ -20,9 +20,6 @@ class HomeFeedPageState extends State<HomeFeedPage> {
 
   late PostRepository _postRepository = PostRepository();
   late Stream<List<PostModel>> _posts;
-
-  final double maxIconSize = 40.0;
-  final double minIconSize = 20.0;
 
   @override
   void initState() {
@@ -102,28 +99,6 @@ class HomeFeedPageState extends State<HomeFeedPage> {
       ],
     );
   }
-
-  // AppBar _appBar(BuildContext context, String title) {
-  //   return AppBar(
-  //     toolbarHeight: 70,
-  //     title: Text(title,
-  //         style: TextStyle(fontSize: 28, color: Colors.orange.shade700)),
-  //     actions: [
-  //       Padding(
-  //         padding: const EdgeInsets.only(right: 16.0),
-  //         child: CircleAvatar(
-  //           backgroundColor: Colors.grey.shade300,
-  //           child: IconButton(
-  //             onPressed: () {
-  //               showAddPostPage(context);
-  //             },
-  //             icon: const Icon(Icons.add, color: Colors.white),
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
 
   ListView listViewPosts(List<PostModel> posts) {
     return ListView.builder(

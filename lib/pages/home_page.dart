@@ -1,5 +1,5 @@
-import 'package:cooptourism/controller/home_page_controller.dart';
-import 'package:cooptourism/controller/user_provider.dart';
+import 'package:cooptourism/providers/home_page_provider.dart';
+import 'package:cooptourism/providers/user_provider.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/widgets/bottom_nav_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,9 +20,6 @@ class HomePageState extends ConsumerState<HomePage> {
   final user = FirebaseAuth.instance.currentUser;
   final UserRepository _userRepository = UserRepository();
 
-  // Current user
-  // UserModel? _user;
-
   @override
   void initState() {
     super.initState();
@@ -36,24 +33,11 @@ class HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // final isAppBarVisible = ref.watch(appBarVisibilityProvider);
     final isNavBarVisible = ref.watch(navBarVisibilityProvider);
 
     return Scaffold(
       extendBody: true,
       backgroundColor: Theme.of(context).colorScheme.background,
-      // appBar: isAppBarVisible ? AppBar(
-      //   title: Text(widget.appTitle),
-      //   actions: [
-      //     IconButton(
-      //       icon: Icon(
-      //         Icons.logout,
-      //         color: Theme.of(context).colorScheme.primary,
-      //       ),
-      //       onPressed: signOut,
-      //     ),
-      //   ],
-      // ) : null,
       body: widget.child,
       bottomNavigationBar: isNavBarVisible ? Container(
         decoration: BoxDecoration(
@@ -73,11 +57,5 @@ class HomePageState extends ConsumerState<HomePage> {
         ),
       ) : null,
     );
-  }
-
-  void signOut() async {
-    if (mounted) {
-      await FirebaseAuth.instance.signOut();
-    }
   }
 }
