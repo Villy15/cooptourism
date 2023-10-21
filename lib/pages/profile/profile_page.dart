@@ -1,23 +1,18 @@
 // import 'package:cooptourism/animations/slide_transition.dart';
 // import 'dart:ui';
 
+import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
-import 'package:cooptourism/pages/profile/about.dart';
-import 'package:cooptourism/pages/profile/coaching.dart';
-import 'package:cooptourism/pages/profile/home.dart';
-import 'package:cooptourism/pages/profile/posts.dart';
+import 'package:cooptourism/widgets/display_featured.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 // import 'package:cooptourism/widgets/gnav_home.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 // import 'package:cooptourism/theme/dark_theme.dart';
 // import 'package:cooptourism/theme/light_theme.dart';
-
-final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -26,8 +21,7 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage>
-    with SingleTickerProviderStateMixin {
+class _ProfilePageState extends State<ProfilePage> {
   int _selectedIndex = 0;
 
   final List<String> _titles = [
@@ -38,7 +32,6 @@ class _ProfilePageState extends State<ProfilePage>
   ];
 
   User? user;
-  late TabController _tabController;
 
   final userRepository = UserRepository();
 
@@ -47,126 +40,128 @@ class _ProfilePageState extends State<ProfilePage>
     super.initState();
     user = FirebaseAuth.instance.currentUser;
 
-    _tabController = TabController(
-      length: _titles.length,
-      initialIndex: _selectedIndex,
-      vsync: this,
-    );
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(context, "Profile"),
-      backgroundColor: Colors.white,
-      body: StreamBuilder(
-          stream: _firestore
-              .collection('users')
-              .doc(user?.uid) // temporary document ID for the mean time
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (mounted) {
-              if (!snapshot.hasData) {
-                return const CircularProgressIndicator();
-              }
-            }
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {});
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 40,
+                child: listViewFilter(),
+              ),
 
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-        }
-        var userData = snapshot.data?.data() as Map<String, dynamic>;
-        var userUID = snapshot.data?.id;
-        final List<Widget> tabs = [
-          ProfileHome(userData: userData, userUID: userUID!),
-          ProfileAbout(userData: userData),
-          ProfilePosts(userUID: userUID),
-          const ProfileCoaching(),
-        ];
-        return NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              SliverToBoxAdapter(
-                child: Column(
-                  children: [
-                    _profileHeading(
-                      context,
-                      userData['first_name'] ?? 'First Name',
-                      userData['last_name'] ?? 'Last Name',
-                      userData['user_trust']?.toString() ?? '0',
-                      userData['user_rating']?.toString() ?? '0',
-                      userData['profilePicture']?.toString(),
-                      userUID
-                    ),
-                    const SizedBox(height: 15),
-                    tabsView(),
-                    const SizedBox(height: 40),
-                  ],
+              const SizedBox(height: 15),
+
+              currentUserProfile(user!, _selectedIndex),
+              const SizedBox(height: 15),
+
+            ]
+          )
+        )
+      )
+  );
+}
+  ListView listViewFilter() {
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: _titles.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: GestureDetector(
+            onTap: () => setState(() => _selectedIndex = index),
+            child: Container(
+              decoration: BoxDecoration(
+                color: _selectedIndex == index
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.secondary,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 28.0, vertical: 10.0),
+                child: Text(
+                  _titles[index],
+                  style: TextStyle(
+                    color: _selectedIndex == index
+                        ? Theme.of(context).colorScheme.background
+                        : Theme.of(context).colorScheme.primary,
+                    fontWeight: _selectedIndex == index
+                        ? FontWeight.bold
+                        : FontWeight.w400,
+                    fontSize: 16,
+                  ),
                 ),
               ),
-            ];
-          },
-          body: TabBarView(
-            controller: _tabController,
-            physics: const NeverScrollableScrollPhysics(),
-            children: tabs,
+            ),
           ),
         );
       },
-    ),
-  );
-}
-
-  Widget tabsView() {
-    return Column(
-      children: [
-        TabBar(
-          controller: _tabController,
-          isScrollable: true, // this makes the tab bar scrollable
-          indicatorColor: Colors.transparent,
-          onTap: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-          tabs: _titles.map((title) {
-            return Tab(
-              child: Container(
-                width: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  color: _selectedIndex == _titles.indexOf(title)
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.secondary,
-                ),
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Text(title,
-                      style: TextStyle(
-                        color: _selectedIndex == _titles.indexOf(title)
-                            ? Theme.of(context).colorScheme.background
-                            : Theme.of(context).colorScheme.primary,
-                        fontWeight: _selectedIndex == _titles.indexOf(title)
-                            ? FontWeight.bold
-                            : FontWeight.w400,
-                        fontSize: 16,
-                      )),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
     );
   }
 
-  Container _profileHeading(BuildContext context, String firstName,
-      String lastName, String userTrust, String userRating, String? profilePicture, String userUID) {
+  StreamBuilder<UserModel> currentUserProfile(User user, int selectedIndex) {
+    final String uidString = user.uid;
+    return StreamBuilder(
+        stream: userRepository.getUser(user.uid).asStream(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            var userData = snapshot.data;
+            print('user uid is ' + user.uid);
+
+            if (selectedIndex == 0) {
+              return Column(
+                children: [
+                  profileHeading(context, userData!, uidString),
+                  const SizedBox(height: 30),
+                  homeSection(context, userData, uidString),
+                ],
+              );
+            }
+            else if (selectedIndex == 1) {
+              return Column(
+                children: [
+                  profileHeading(context, userData!, uidString),
+                  const SizedBox(height: 30),
+                  aboutSection(context, userData, uidString)
+                ],
+              );
+            }
+
+            else if (selectedIndex == 2) {
+              return Column(
+                children: [
+                  profileHeading(context, userData!, uidString),
+                  const SizedBox(height: 30)
+                ],
+              );
+            }
+            
+
+            return profileHeading(context, userData!, uidString);
+            
+
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            return const CircularProgressIndicator();
+          }
+        });
+  }
+
+
+
+  Container profileHeading(BuildContext context, UserModel user, String userUID) {
     return Container(
       height: 130,
       color: Theme.of(context).colorScheme.primary,
@@ -189,10 +184,10 @@ class _ProfilePageState extends State<ProfilePage>
                 onTap: () {
                   
                 },
-                child: profilePicture != null && profilePicture.isNotEmpty ? DisplayProfilePicture(
+                child: user.profilePicture != null && user.profilePicture!.isNotEmpty ? DisplayProfilePicture(
                   storageRef: FirebaseStorage.instance.ref(), 
                   coopId: userUID, 
-                  data: profilePicture,
+                  data: user.profilePicture,
                   height: 50, 
                   width: 50 
                 ) : Icon(Icons.person, size: 50, color: Theme.of(context).colorScheme.secondary)
@@ -208,7 +203,7 @@ class _ProfilePageState extends State<ProfilePage>
               right: 35.0,
             ),
             child: Column(children: [
-              Text('$firstName $lastName',
+              Text('${user.firstName} ${user.lastName}' ,
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -232,9 +227,9 @@ class _ProfilePageState extends State<ProfilePage>
                           Padding(
                               padding:
                                   const EdgeInsets.only(top: 1.0, left: 3.0),
-                              child: Text(userTrust,
-                                  style: const TextStyle(
-                                      color: Color(0xff68707E),
+                              child: Text('${user.userTrust}',
+                                  style: TextStyle(
+                                      color: Theme.of(context).colorScheme.primary,
                                       fontSize: 10,
                                       fontWeight: FontWeight.w500)))
                         ],
@@ -244,9 +239,9 @@ class _ProfilePageState extends State<ProfilePage>
                           Padding(
                               padding:
                                   const EdgeInsets.only(top: 1.0, right: 3.0),
-                              child: Text(userRating,
-                                  style: const TextStyle(
-                                      color: Color(0xff68707E),
+                              child: Text('${user.userRating}',
+                                  style: TextStyle(
+                                      color: Theme.of(context).colorScheme.primary,
                                       fontSize: 10,
                                       fontWeight: FontWeight.w500))),
                           const Padding(
@@ -259,6 +254,212 @@ class _ProfilePageState extends State<ProfilePage>
                   ))
             ]))
       ]),
+    );
+  }
+
+  Column homeSection(BuildContext context, UserModel user, String userUID) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 15.0),
+          child: Text(
+            'Featured',
+            style: TextStyle(
+              fontSize: 20, 
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary
+            )
+          ),
+        ),
+
+        const SizedBox(height: 15),
+
+        SizedBox(
+          height: 150,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: user.featuredImgs!.length,
+            padding: const EdgeInsets.only(
+              left: 15, 
+              right: 15
+            ),
+            separatorBuilder: (context, index) => SizedBox(
+              width: 5,
+              height: 0.5,
+              child: DecoratedBox(
+                  decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.secondary.withOpacity(0.5)
+                ),
+              )
+            ),
+            itemBuilder:(((context, index) {
+              return InkWell(
+                  onTap: () {
+
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.secondary, 
+                        width: 2
+                      )
+                    ),
+                    child: DisplayFeatured(
+                      storageRef: FirebaseStorage.instance.ref(), 
+                      userID: userUID, 
+                      data: user.featuredImgs?[index], 
+                      height: 150, 
+                      width: 200
+                    ),
+                  )
+
+                );
+              })
+            ) 
+          )
+        ),
+
+        const SizedBox(height: 15),
+
+        Padding(
+          padding: const EdgeInsets.only(left: 15.0),
+          child: Text(
+            'My Services',
+            style: TextStyle(
+              fontSize: 20, 
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary
+            )
+          ),
+        ),
+
+        const SizedBox(height: 15),
+
+        Padding(
+          padding: const EdgeInsets.only(left: 15.0),
+          child: Text(
+            'My Listings',
+            style: TextStyle(
+              fontSize: 20, 
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary
+            )
+          ),
+        ),
+
+      ]
+    );
+  }
+
+  Column aboutSection(BuildContext context, UserModel user, String userUID) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              user.location ?? 'No location added yet.', 
+              style: TextStyle(
+                fontSize: 20, 
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w600
+              )
+            ),
+            const Text(' | '),
+            Text('Joined ${user.dateJoined!.isNotEmpty ? user.dateJoined : 'No date added yet.'}', 
+              style: TextStyle(
+                fontSize: 20, 
+                color: Theme.of(context).colorScheme.primary,
+              )
+            ),
+            
+          ],
+        ),
+        const SizedBox(height: 5),
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              '${user.bio!.isNotEmpty ? user.bio : 'No bio added yet.'}',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15,
+                color: Theme.of(context).colorScheme.primary
+              )
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Divider(
+          thickness: 1.5,
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+        ),
+        
+        const SizedBox(height: 15),
+
+        Padding(
+          padding: const EdgeInsets.only(left: 15.0),
+          child: Text(
+            'My Skills',
+            style: TextStyle(
+              fontSize: 20, 
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary
+            )
+          ),
+        ),
+        
+        if(user.skills!.isEmpty) ... [
+          Text(
+            'No skills added yet.',
+            style: TextStyle(
+              fontSize: 17, 
+              color: Theme.of(context).colorScheme.primary
+            )
+          )
+        ]
+
+        else ... [
+          SizedBox(
+            height: 190,
+            child: GridView.count(
+              crossAxisCount: 2,
+              scrollDirection: Axis.horizontal,
+              childAspectRatio: (CircularProgressIndicator.strokeAlignOutside / 2),
+              children: List.generate(
+                user.skills!.length, (index) => Container(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.circle,
+                        size: 17,
+                        color: Theme.of(context).colorScheme.primary
+                      ),
+                      const SizedBox(width: 3),
+                      Text(
+                        user.skills![index],
+                        style: const TextStyle(fontSize: 16),
+                      )
+                    ],
+                  )
+                )
+              )
+            )
+          )
+        ],
+
+        const SizedBox(height: 10),
+
+        Divider(
+          thickness: 1.5,
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+        ),
+
+        const SizedBox(height: 10)
+      ]
     );
   }
 
