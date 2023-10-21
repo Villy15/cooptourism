@@ -1,4 +1,4 @@
-import 'package:cooptourism/config/auth.dart';
+import 'package:cooptourism/providers/auth.dart';
 import 'package:cooptourism/pages/auth/login_or_register.dart';
 import 'package:cooptourism/pages/cooperatives/coops_page.dart';
 import 'package:cooptourism/pages/cooperatives/selected_coop_page.dart';

@@ -11,7 +11,7 @@ class MarketPage extends StatefulWidget {
 }
 
 class _MarketPageState extends State<MarketPage> {
-  final List<String> _tabTitles = ['Shop', 'Sell', 'Cooperatives'];
+  final List<String> _tabTitles = ['Products', 'Services'];
   int _selectedIndex = 0;
 
   late ListingRepository _listingRepository = ListingRepository();
@@ -31,9 +31,9 @@ class _MarketPageState extends State<MarketPage> {
         backgroundColor: Colors.white,
         body: Column(
           children: [
-            // listFilter(),
-            const SizedBox(height: 10),
-            searchFilter(context),
+            listFilter(),
+            // const SizedBox(height: 10),
+            // searchFilter(context),
             Expanded(
               child: StreamBuilder<List<ListingModel>>(
                 stream: _listings,
@@ -125,6 +125,7 @@ class _MarketPageState extends State<MarketPage> {
     return SizedBox(
       height: 40,
       child: ListView.builder(
+        shrinkWrap: true,
         scrollDirection: Axis.horizontal,
         itemCount: _tabTitles.length,
         itemBuilder: (context, index) {

@@ -1,5 +1,5 @@
-import 'package:cooptourism/controller/home_page_controller.dart';
-import 'package:cooptourism/controller/user_provider.dart';
+import 'package:cooptourism/providers/home_page_provider.dart';
+import 'package:cooptourism/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
