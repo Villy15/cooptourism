@@ -1,3 +1,5 @@
+import 'package:cooptourism/pages/events/events_page.dart';
+import 'package:cooptourism/pages/events/selected_events_page.dart';
 import 'package:cooptourism/pages/market/listing_edit.dart';
 import 'package:cooptourism/pages/market/listing_messages.dart';
 import 'package:cooptourism/pages/tasks/tasks_page.dart';
@@ -212,7 +214,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       );
                     }),
               ],
-            ),
+              ),
           ])
     ],
     redirect: (context, state) {

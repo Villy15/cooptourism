@@ -2,9 +2,9 @@
 // import 'dart:ui';
 
 import 'package:cooptourism/data/models/user.dart';
-import 'package:cooptourism/data/repositories/listing_repository.dart';
+// import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
-import 'package:cooptourism/widgets/display_featured.dart';
+// import 'package:cooptourism/widgets/display_featured.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
