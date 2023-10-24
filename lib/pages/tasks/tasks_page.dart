@@ -1,0 +1,246 @@
+import 'package:cooptourism/data/models/task.dart';
+import 'package:cooptourism/data/repositories/task_repository.dart';
+import 'package:flutter/material.dart';
+
+final TaskRepository taskRepository = TaskRepository();
+
+class TasksPage extends StatefulWidget {
+  const TasksPage({super.key});
+
+  @override
+  State<TasksPage> createState() => _TasksPageState();
+}
+
+class _TasksPageState extends State<TasksPage> {
+  final List<String> _tabTitles = ['All', 'Required', 'Bonus'];
+  int _selectedIndex = 0;
+
+
+  // Comment out the initState() method to remove manual data input
+  @override
+  void initState() {
+    super.initState();
+    // taskRepository.addTaskManually();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: _appBar(context, "Tasks"),
+        body: SingleChildScrollView (
+          child: Column (
+            children: [
+              SizedBox(
+                height: 40,
+                child: listViewFilter(),
+              ),
+        
+              StreamBuilder(
+                stream: taskRepository.getAllTasks(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator(); // show a loader while waiting for data
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Text('No Tasks available');
+                  } else {
+                    List<TaskModel> taskList = snapshot.data!;
+
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: taskList.length,
+                      itemBuilder: (context, index) {
+                        return taskCard(context, taskList[index]);
+                      },
+                    );
+                  }
+                },
+              )
+
+            ],
+          ),
+        ));
+  }
+
+
+  Padding taskCard(BuildContext context, TaskModel task) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+      child: Container(
+        width: 400,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondary,
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        // Circular border
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            taskTitle(task),
+            taskDescription(task),
+            taskProgress(context, task),
+
+            divider(),
+
+            tasksText(),
+            ...buildToDoList(task),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> buildToDoList(TaskModel task) {
+    List<Widget> toDoList = [];
+
+    for (ToDoItem item in task.toDoList) {
+      toDoList.add(
+        Row(
+          children: [
+            Checkbox(
+              value: item.isChecked,
+              activeColor: Theme.of(context).colorScheme.primary,
+              onChanged: (value) {
+                item.isChecked = value!;
+                task.progress = calculateProgress(task);
+                taskRepository.updateTask(task.uid, task);
+              },
+            ),
+            Text(item.title,
+                style: const TextStyle(
+                    fontWeight: FontWeight.normal, fontSize: 12)),
+          ],
+        ),
+      );
+    }
+
+    return toDoList;
+  }
+
+  double calculateProgress(TaskModel task) {
+    double progress = 0.0;
+    int totalTasks = task.toDoList.length;
+    int completedTasks = 0;
+
+    for (ToDoItem item in task.toDoList) {
+      if (item.isChecked) {
+        completedTasks++;
+      }
+    }
+
+    progress = completedTasks / totalTasks;
+
+    return progress;
+  }
+
+  Padding tasksText() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Text('Tasks',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+    );
+  }
+
+  Padding divider() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      child: Divider(
+        color: Colors.grey,
+        thickness: 1,
+      ),
+    );
+  }
+
+  Padding taskProgress(BuildContext context, TaskModel task) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: LinearProgressIndicator(
+        value: calculateProgress(task),
+        backgroundColor: Colors.white,
+        valueColor: AlwaysStoppedAnimation<Color>(
+            Theme.of(context).colorScheme.primary),
+      ),
+    );
+  }
+
+  Padding taskDescription(TaskModel task) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Text(
+          task.description,
+          style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 12)),
+    );
+  }
+
+  Padding taskTitle(TaskModel task) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0, left: 16.0),
+      child: Text(task.title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+    );
+  }
+
+  AppBar _appBar(BuildContext context, String title) {
+    return AppBar(
+      toolbarHeight: 70,
+      title: Text(title,
+          style: TextStyle(
+              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: CircleAvatar(
+            backgroundColor: Colors.grey.shade300,
+            child: IconButton(
+              onPressed: () {
+                // showAddPostPage(context);
+              },
+              icon: const Icon(Icons.settings, color: Colors.white),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  ListView listViewFilter() {
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: _tabTitles.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: GestureDetector(
+            onTap: () => setState(() => _selectedIndex = index),
+            child: Container(
+              decoration: BoxDecoration(
+                color: _selectedIndex == index
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.secondary,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 28.0, vertical: 10.0),
+                child: Text(
+                  _tabTitles[index],
+                  style: TextStyle(
+                    color: _selectedIndex == index
+                        ? Theme.of(context).colorScheme.background
+                        : Theme.of(context).colorScheme.primary,
+                    fontWeight: _selectedIndex == index
+                        ? FontWeight.bold
+                        : FontWeight.w400,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}

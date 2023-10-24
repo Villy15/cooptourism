@@ -119,6 +119,7 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             var userData = snapshot.data;
+            debugPrint('user uid is ${user.uid}');
 
             if (selectedIndex == 0) {
               return Column(
