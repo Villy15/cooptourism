@@ -53,7 +53,7 @@ class UserModel {
       featuredImgs: json['featured'] != null ? List<String>.from(json['featured']) : [],
       dateJoined: json['date_joined'] ?? '',
       bio: json['bio'] ?? '',
-      memberType: json['member_type'] ?? '',
+      memberType: json['memberType'] ?? '',
       currentListings: json['currentListings'] != null ? List<String>.from(json['currentListings']) : []
     );
   }
@@ -74,7 +74,7 @@ class UserModel {
       'featuredImgs': featuredImgs ?? [],
       'dateJoined': dateJoined ?? '',
       'bio': bio ?? '',
-      'member_type': memberType ?? '',
+      'memberType': memberType ?? '',
       'currentListings': currentListings ?? []
     };
   }

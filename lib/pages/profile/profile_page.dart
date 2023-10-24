@@ -6,6 +6,7 @@ import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/widgets/display_featured.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
+import 'package:cooptourism/widgets/pie_chart.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 // import 'package:cooptourism/widgets/gnav_home.dart';
@@ -125,7 +126,7 @@ class _ProfilePageState extends State<ProfilePage> {
               return Column(
                 children: [
                   profile(context, userData!, uidString),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 15),
                   performanceSection(context, userData, uidString)
                 ],
               );
@@ -134,7 +135,8 @@ class _ProfilePageState extends State<ProfilePage> {
               return Column(
                 children: [
                   profile(context, userData!, uidString),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 15),
+                  aboutSection(context, userData, uidString)
                 ],
               );
             }
@@ -143,7 +145,11 @@ class _ProfilePageState extends State<ProfilePage> {
               return Column(
                 children: [
                   profile(context, userData!, uidString),
-                  const SizedBox(height: 30)
+                  const SizedBox(height: 15),
+                  SizedBox(
+                    height: 150,
+                    child: MyPieChart(),)
+                  
                 ],
               );
             }
@@ -163,6 +169,33 @@ class _ProfilePageState extends State<ProfilePage> {
 
 
   Container profile(BuildContext context, UserModel user, String userUID) {
+    Color borderColor = Theme.of(context).colorScheme.secondary; 
+
+    debugPrint(user.memberType);
+
+    switch (user.memberType) {
+      case 'Bronze' 
+        : borderColor = const Color(0xffCD7F32);
+        break;
+      case 'Gold'
+        : borderColor = const Color(0xffFFD700);
+        break;
+
+      case 'Silver'
+        : borderColor = const Color(0xffC0C0C0);
+        break;
+
+      case 'Platinum'
+        : borderColor = const Color(0xffA0B2c6);
+        break;
+
+      case 'Diamond'
+        : borderColor = const Color(0xffB9F2FF);
+        break;
+
+      default : Theme.of(context).colorScheme.secondary;
+      
+    }
     return Container(
       height: 290,
       width: 400,
@@ -178,8 +211,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(35),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.secondary,
-                      width: 2
+                      color: borderColor,
+                      width: 3.5
                     )
                   ),
                   child: user.profilePicture != null && user.profilePicture!.isNotEmpty ? DisplayProfilePicture(
@@ -304,7 +337,7 @@ class _ProfilePageState extends State<ProfilePage> {
             crossAxisCount: 2,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
-            mainAxisExtent: 200,
+            mainAxisExtent: 300,
             childAspectRatio: 1
           ),
           itemBuilder: (context, index) {
@@ -318,15 +351,32 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          for (final word in profileTiles[index].split(' '))
-                            Column(
-                              children: [
-                                Text(
-                                  word,
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            )
+                          Column(
+                            children: [
+                              Text(
+                                profileTiles[index],
+                                style: TextStyle(
+                                  fontSize: 18, 
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary
+                                )
+                              ),
+                              const SizedBox(height: 10),
+                              const SizedBox(
+                                height: 200,
+                                child: MyPieChart()
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Text(
+                                  'Goal: '
+                                  ),
+                                ],
+                              )
+                              
+                            ],
+                          )
                             
                         ],
                       ),
@@ -394,28 +444,16 @@ class _ProfilePageState extends State<ProfilePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              user.location ?? 'No location added yet.', 
-              style: TextStyle(
-                fontSize: 20, 
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w600
-              )
-            ),
-            const Text(' | '),
-            Text('Joined ${user.dateJoined!.isNotEmpty ? user.dateJoined : 'No date added yet.'}', 
-              style: TextStyle(
-                fontSize: 20, 
-                color: Theme.of(context).colorScheme.primary,
-              )
-            ),
-            
-          ],
+        Center(
+          child: Text(
+            'About',
+            style: TextStyle(
+              fontSize: 22,
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.bold
+            )
+          ),
         ),
-        const SizedBox(height: 5),
         Center(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -429,7 +467,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 5),
         Divider(
           thickness: 1.5,
           color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
@@ -461,7 +499,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
         else ... [
           SizedBox(
-            height: 190,
+            height: 210,
             child: GridView.count(
               crossAxisCount: 2,
               scrollDirection: Axis.horizontal,
