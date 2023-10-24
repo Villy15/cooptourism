@@ -28,7 +28,7 @@ class _ListingMessagesState extends State<ListingMessages> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final messages = snapshot.data!;
+          // final messages = snapshot.data!;
 
           return Scaffold(appBar: AppBar(backgroundColor: Colors.grey[800],), body: Container(), bottomNavigationBar: BottomNavSelectedListing(listingId: widget.listingId));
         });

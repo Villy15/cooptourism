@@ -215,6 +215,24 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     }),
               ],
               ),
+            
+            GoRoute(
+                path: "/events_page",
+                name: "Events",
+                pageBuilder: (context, state) {
+                  return NoTransitionPage(
+                      child: EventsPage(key: state.pageKey));
+                },
+                routes: [
+                GoRoute(
+                    path: ':eventId',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return SelectedEventsPage(
+                        eventId: state.pathParameters["eventId"]!,
+                      );
+                    }),
+              ],
+            ),
           ])
     ],
     redirect: (context, state) {
