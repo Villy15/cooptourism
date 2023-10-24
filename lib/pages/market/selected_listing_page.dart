@@ -88,7 +88,7 @@ class SelectedListingPage extends StatelessWidget {
                           lines: 1,
                           style: Theme.of(context).textTheme.headlineSmall!),
                       RatingBarIndicator(
-                        rating: listing.rating!,
+                        rating: listing.rating ?? 0.0,
                         itemBuilder: (context, index) {
                           return Icon(
                             Icons.star_rounded,
