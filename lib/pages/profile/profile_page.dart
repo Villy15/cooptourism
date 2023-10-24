@@ -248,7 +248,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 6.0, right: 8.0),
-                    child: Icon(icon),
+                    child: Icon(
+                      icon,
+                      color: Theme.of(context).colorScheme.secondary
+                    ),
                   ),
                   Text(
                     description,
