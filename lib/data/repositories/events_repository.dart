@@ -59,36 +59,43 @@ class EventsRepository {
 
   // Add manually
   Future<void> addEventManually() async {
+  List<Map<String, dynamic>> events = [
+    {
+      'title': 'Palawan Island Adventure',
+      'startDate': DateTime.now().add(const Duration(days: 2)).millisecondsSinceEpoch,
+      'endDate': DateTime.now().add(const Duration(days: 5)).millisecondsSinceEpoch,
+      'description': 'Join us for a 3-day adventure in the heart of Palawan. Explore the hidden lagoons, snorkel in crystal-clear waters, and enjoy the tranquility of this paradise.',
+      'location': 'El Nido, Palawan',
+      'tags': ['adventure', 'nature', 'beach', 'hiking'],
+      'image': ['https://picsum.photos/200/300?random=1', 'https://picsum.photos/200/300?random=2', 'https://picsum.photos/200/300?random=3']
+    },
+    {
+      'title': 'Historical Walk in Intramuros',
+      'startDate': DateTime.now().add(const Duration(days: 7)).millisecondsSinceEpoch,
+      'endDate': DateTime.now().add(const Duration(days: 7)).millisecondsSinceEpoch,
+      'description': 'Take a step back in time and discover the rich history of the Philippines with our guided walk in Intramuros, the Walled City of Manila.',
+      'location': 'Intramuros, Manila',
+      'image': ['https://picsum.photos/200/300?random=1', 'https://picsum.photos/200/300?random=2', 'https://picsum.photos/200/300?random=3']
+    },
+    {
+      'title': 'Mount Apo Trekking Experience',
+      'startDate': DateTime.now().add(const Duration(days: 10)).millisecondsSinceEpoch,
+      'endDate': DateTime.now().add(const Duration(days: 13)).millisecondsSinceEpoch,
+      'description': 'Challenge yourself with a trek to the highest peak in the Philippines. Witness diverse flora and fauna, enjoy the scenic views, and immerse yourself in the beauty of nature.',
+      'location': 'Mount Apo, Mindanao',
+      'tags': ['adventure', 'nature', 'hiking'],
+    }
+  ];
+
+  for (var event in events) {
     try {
-      await eventsCollection.add({
-        'title': 'Event 1',
-        'startDate': DateTime.now().millisecondsSinceEpoch,
-        'endDate': DateTime.now().millisecondsSinceEpoch,
-        'description': 'Description 1',
-        'location': 'Location 1',
-        'image': 'https://picsum.photos/200/300'
-      });
-      await eventsCollection.add({
-        'title': 'Event 2',
-        'startDate': DateTime.now().millisecondsSinceEpoch,
-        'endDate': DateTime.now().millisecondsSinceEpoch,
-        'description': 'Description 2',
-        'location': 'Location 2',
-        'image': 'https://picsum.photos/200/300'
-      });
-      await eventsCollection.add({
-        'title': 'Event 3',
-        'startDate': DateTime.now().millisecondsSinceEpoch,
-        'endDate': DateTime.now().millisecondsSinceEpoch,
-        'description': 'Description 3',
-        'location': 'Location 3',
-        'image': 'https://picsum.photos/200/300'
-      });
+      await eventsCollection.add(event);
     } catch (e) {
       debugPrint('Error adding event to Firestore: $e');
       // You might want to handle errors more gracefully here
     }
   }
+}
 
   // Delete all events
   Future<void> deleteAllEvents() async {

@@ -44,14 +44,23 @@ class _SelectedEventsPageState extends State<SelectedEventsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              event.image != ""
-                  ? ImageSlider(event: event)
-                  : const SizedBox(height: 10),
+              if (event.image != null && event.image!.isNotEmpty) ...[
+                ImageSlider(event: event),
+              ] else ...[
+                const SizedBox(height: 10),
+              ],
+                  
               eventDurationBar(event),
               eventTitle(event),
               eventsParticipant(event),
               eventDescription(event),
-              eventTags(),
+
+              if (event.tags != null && event.tags!.isNotEmpty) ...[
+                eventTags(event),
+              ] else ...[
+                const SizedBox(height: 10),
+              ],
+
               eventLocation(event),
             ],
           ),
@@ -98,22 +107,21 @@ class _SelectedEventsPageState extends State<SelectedEventsPage> {
     );
   }
 
-  Padding eventTags() {
+  Padding eventTags(EventsModel event) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
       child: SizedBox(
         height: 40,
-        child: listViewFilter(),
+        child: listViewFilter(event),
       ),
     );
   }
 
-  ListView listViewFilter() {
-    final List<String> tabTitles = ['Sports', 'Basketball'];
+  ListView listViewFilter(EventsModel event) {
 
     return ListView.builder(
       scrollDirection: Axis.horizontal,
-      itemCount: tabTitles.length,
+      itemCount: event.tags!.length,
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -126,7 +134,7 @@ class _SelectedEventsPageState extends State<SelectedEventsPage> {
               padding: const EdgeInsets.symmetric(
                   horizontal: 28.0, vertical: 10.0),
               child: Text(
-                tabTitles[index],
+                event.tags![index],
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w300,
@@ -168,9 +176,12 @@ class _SelectedEventsPageState extends State<SelectedEventsPage> {
             size: 16,
           ),
           const SizedBox(width: 10),
-          const Text("Participants",
+          // if length is null, print 0 else print the length
+          Text(event.participants != null
+              ? "${event.participants!.length} Participants"
+              : "0 participants",
               style:
-                  TextStyle(fontWeight: FontWeight.normal, fontSize: 14)),
+                  const TextStyle(fontWeight: FontWeight.normal, fontSize: 14)),
         ],
       ),
     );
@@ -201,29 +212,29 @@ class _SelectedEventsPageState extends State<SelectedEventsPage> {
     );
   }
 
-  AppBar _appBar(BuildContext context, String title) {
-    return AppBar(
-      toolbarHeight: 70,
-      title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
-      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
-            child: IconButton(
-              onPressed: () {
-                // showAddPostPage(context);
-              },
-              icon: const Icon(Icons.add, color: Colors.white),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // AppBar _appBar(BuildContext context, String title) {
+  //   return AppBar(
+  //     toolbarHeight: 70,
+  //     title: Text(title,
+  //         style: TextStyle(
+  //             fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+  //     iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
+  //     actions: [
+  //       Padding(
+  //         padding: const EdgeInsets.only(right: 16.0),
+  //         child: CircleAvatar(
+  //           backgroundColor: Colors.grey.shade300,
+  //           child: IconButton(
+  //             onPressed: () {
+  //               // showAddPostPage(context);
+  //             },
+  //             icon: const Icon(Icons.add, color: Colors.white),
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 }
 
 class ImageSlider extends StatefulWidget {
@@ -239,7 +250,7 @@ class _ImageSliderState extends State<ImageSlider> {
   @override
   Widget build(BuildContext context) {
     final decorator = DotsDecorator(
-      activeColor: Colors.orange[700],
+      activeColor: Theme.of(context).colorScheme.primary,
       size: const Size.square(7.5),
       activeSize: const Size.square(10.0),
       activeShape: RoundedRectangleBorder(
@@ -247,7 +258,7 @@ class _ImageSliderState extends State<ImageSlider> {
       ),
       spacing: const EdgeInsets.all(2.5),
     );
-    int maxImageIndex = 1; // widget.event.images!.length;
+    int maxImageIndex = widget.event.image!.length;
     CarouselController carouselController = CarouselController();
 
     return Stack(
@@ -269,13 +280,16 @@ class _ImageSliderState extends State<ImageSlider> {
                 });
               },
             ),
-            items: [
-              Image.network(
-                widget.event.image!,
-                fit: BoxFit.cover,
-                width: double.infinity,
-              ),
-            ],
+            items: widget.event.image!
+                .map((item) => Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.network(item,
+                            fit: BoxFit.cover, width: 1000),
+                      ),
+                    ))
+                .toList(),
           ),
         ),
         SizedBox(
@@ -289,14 +303,14 @@ class _ImageSliderState extends State<ImageSlider> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(25)),
                 child: Padding(
-                  padding: const EdgeInsets.all(2.5),
-                  child: DotsIndicator(
-                    key: ValueKey(currentImageIndex),
-                    dotsCount: maxImageIndex,
-                    position: currentImageIndex,
-                    decorator: decorator,
-                  ),
-                ),
+                    padding: const EdgeInsets.all(2.5),
+                    child: DotsIndicator(
+                      key: ValueKey(currentImageIndex),
+                      dotsCount: maxImageIndex,
+                      position: currentImageIndex,
+                      decorator: decorator,
+                    ),
+                    ),
               ),
             ),
           ),
@@ -305,3 +319,4 @@ class _ImageSliderState extends State<ImageSlider> {
     );
   }
 }
+

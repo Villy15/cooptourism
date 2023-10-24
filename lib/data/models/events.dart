@@ -1,4 +1,7 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 
 class EventsModel {
   String? uid;
@@ -7,7 +10,10 @@ class EventsModel {
   DateTime endDate;
   String description;
   String location;
-  String? image;
+  List<String>? participants;
+  List<String>? tags;
+  List<String>? image;
+  
   EventsModel({
     this.uid,
     required this.title,
@@ -15,6 +21,8 @@ class EventsModel {
     required this.endDate,
     required this.description,
     required this.location,
+    this.participants,
+    this.tags,
     this.image,
   });
 
@@ -25,7 +33,9 @@ class EventsModel {
     DateTime? endDate,
     String? description,
     String? location,
-    String? image,
+    List<String>? participants,
+    List<String>? tags,
+    List<String>? image,
   }) {
     return EventsModel(
       uid: uid ?? this.uid,
@@ -34,6 +44,8 @@ class EventsModel {
       endDate: endDate ?? this.endDate,
       description: description ?? this.description,
       location: location ?? this.location,
+      participants: participants ?? this.participants,
+      tags: tags ?? this.tags,
       image: image ?? this.image,
     );
   }
@@ -46,6 +58,8 @@ class EventsModel {
       'endDate': endDate.millisecondsSinceEpoch,
       'description': description,
       'location': location,
+      'participants': participants,
+      'tags': tags,
       'image': image,
     };
   }
@@ -58,7 +72,9 @@ class EventsModel {
       endDate: DateTime.fromMillisecondsSinceEpoch(map['endDate'] as int),
       description: map['description'] as String,
       location: map['location'] as String,
-      image: map['image'] != null ? map['image'] as String : null,
+      participants: map['participants'] != null ? List<String>.from(map['participants'] as List<dynamic>).cast<String>() : null,
+      tags: map['tags'] != null ? List<String>.from(map['tags'] as List<dynamic>).cast<String>() : null,
+      image: map['image'] != null ? List<String>.from(map['image'] as List<dynamic>).cast<String>() : null,
     );
   }
 
@@ -68,7 +84,7 @@ class EventsModel {
 
   @override
   String toString() {
-    return 'EventsModel(uid: $uid, title: $title, startDate: $startDate, endDate: $endDate, description: $description, location: $location, image: $image)';
+    return 'EventsModel(uid: $uid, title: $title, startDate: $startDate, endDate: $endDate, description: $description, location: $location, participants: $participants, tags: $tags, image: $image)';
   }
 
   @override
@@ -82,7 +98,9 @@ class EventsModel {
       other.endDate == endDate &&
       other.description == description &&
       other.location == location &&
-      other.image == image;
+      listEquals(other.participants, participants) &&
+      listEquals(other.tags, tags) &&
+      listEquals(other.image, image);
   }
 
   @override
@@ -93,6 +111,8 @@ class EventsModel {
       endDate.hashCode ^
       description.hashCode ^
       location.hashCode ^
+      participants.hashCode ^
+      tags.hashCode ^
       image.hashCode;
   }
 }

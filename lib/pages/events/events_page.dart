@@ -20,6 +20,7 @@ class _EventsPageState extends State<EventsPage> {
   @override
   void initState() {
     super.initState();
+    // eventsRepository.deleteAllEvents();
     // eventsRepository.addEventManually();
   }
 
@@ -44,7 +45,7 @@ class _EventsPageState extends State<EventsPage> {
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Text('No Tasks available');
+                    return const Text('No Events available');
                   } else {
                     List<EventsModel> eventsList = snapshot.data!;
 
@@ -86,10 +87,9 @@ class _EventsPageState extends State<EventsPage> {
               eventTitle(event),
 
               // eventImage(event),
-              // If there is no image, just don't show it
-              event.image != ""
-                  ? eventImage(event)
-                  : const SizedBox( height: 10),
+              // If the length of the image list is greater than 0, show the image
+              if (event.image != null && event.image!.isNotEmpty)
+                eventImage(event),
 
               taskProgress(context, event),
                 
@@ -134,7 +134,7 @@ class _EventsPageState extends State<EventsPage> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0),
           image: DecorationImage(
-            image: NetworkImage(event.image!),
+            image: NetworkImage(event.image![0]), // Get the first image 
             fit: BoxFit.cover,
           ),
         ),
