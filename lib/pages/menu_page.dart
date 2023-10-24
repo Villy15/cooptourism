@@ -28,6 +28,8 @@ class _MenuPageState extends State<MenuPage> {
     {'logo': Icons.people_alt_outlined, 'name': 'Members', 'route': '/members_page' },
     {'logo': Icons.inbox_outlined, 'name': 'Inbox', 'route': '/inbox_page' },
     {'logo': Icons.person_outlined, 'name': 'Profile', 'route': '/profile_page' },
+    {'logo': Icons.feed_outlined , 'name': 'Feed', 'route': '/' },
+
 
     // {'logo': Icons.content_paste_search_outlined, 'name': 'Services', 'route': '/service_page' },
     // {'logo': Icons.people_outlined, 'name': 'People', 'route': '/people'},
@@ -57,32 +59,12 @@ class _MenuPageState extends State<MenuPage> {
               ),
             ),
 
-            SizedBox(
-              height: 400,
-              child: Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: gridSquares(context),
-                ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: gridSquares(context),
               ),
             ),
-
-            // Add a logout button that is long and red
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  signOut();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  minimumSize: const Size(double.infinity, 50),
-                  elevation: 2,
-                ),
-                child: Text('Logout', style: TextStyle(fontSize: 20,color: Theme.of(context).colorScheme.primary)),
-              ),
-            ),
-            
           ],
         ));
   }
@@ -133,7 +115,7 @@ class _MenuPageState extends State<MenuPage> {
     Color color = Theme.of(context).colorScheme.secondary;
     return GridView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+      // physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 3 / 2,
@@ -201,6 +183,20 @@ class _MenuPageState extends State<MenuPage> {
                   // showAddPostPage(context);
                 },
                 icon: const Icon(Icons.settings, color: Colors.white),
+              ),
+            ),
+        ),
+
+        // Add signout
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: CircleAvatar(
+              backgroundColor: Colors.grey.shade300,
+              child: IconButton(
+                onPressed: () {
+                  signOut();
+                },
+                icon: const Icon(Icons.logout, color: Colors.white),
               ),
             ),
         ),

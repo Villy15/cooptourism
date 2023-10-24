@@ -57,7 +57,12 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
 
     switch (index) {
       case 0:
-        context.go("/");
+        if (role == 'Member') {
+          context.go("/tasks_page");
+        } else {
+          context.go("/");
+        }
+
         break;
       case 1:
         if (role == 'Manager') {
@@ -126,9 +131,9 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
   List<BottomNavigationBarItem> _getMemberItems() {
     return const <BottomNavigationBarItem>[
       BottomNavigationBarItem(
-        icon: Icon(Icons.home_outlined),
-        activeIcon: Icon(Icons.home_rounded),
-        label: 'Home',
+        icon: Icon(Icons.task_outlined),
+        activeIcon: Icon(Icons.task_rounded),
+        label: 'Tasks',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.groups_outlined),

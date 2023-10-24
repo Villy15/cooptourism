@@ -1,5 +1,6 @@
 import 'package:cooptourism/pages/market/listing_edit.dart';
 import 'package:cooptourism/pages/market/listing_messages.dart';
+import 'package:cooptourism/pages/tasks/tasks_page.dart';
 import 'package:cooptourism/providers/auth.dart';
 import 'package:cooptourism/pages/auth/login_or_register.dart';
 import 'package:cooptourism/pages/cooperatives/coops_page.dart';
@@ -54,8 +55,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ShellRoute(
           navigatorKey: _shellNavigator,
           builder: (context, state, child) {
-            String title = getTitle(state.location);
-            return HomePage(key: state.pageKey, appTitle: title, child: child);
+            return HomePage(key: state.pageKey, child: child);
           },
           routes: [
             GoRoute(
@@ -75,6 +75,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     }),
               ],
             ),
+            
+            GoRoute(
+                path: "/tasks_page",
+                name: "Tasks",
+                pageBuilder: (context, state) {
+                  return NoTransitionPage(child: TasksPage(key: state.pageKey));
+                }),
+
             GoRoute(
                 path: "/menu_page",
                 name: "Menu",
@@ -219,11 +227,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
       final isSplash = state.location == SplashPage.routeLocation;
       if (isSplash) {
-        return isAuth ? "/" : "/login";
+        return isAuth ? "/tasks_page" : "/login";
       }
 
       final isLoggingIn = state.location == '/login';
-      if (isLoggingIn) return isAuth ? '/' : null;
+      if (isLoggingIn) return isAuth ? '/tasks_page' : null;
 
       return isAuth ? null : SplashPage.routeLocation;
     },
@@ -245,34 +253,5 @@ class SplashPage extends StatelessWidget {
       // Make it a circualr loading
       body: Center(child: CircularProgressIndicator()),
     );
-  }
-}
-
-String getTitle(String location) {
-  switch (location) {
-    case '/':
-      return "Home";
-    case '/coops_page':
-      return "Cooperatives";
-    case '/market_page':
-      return "Market";
-    case '/profile_page':
-      return "Profile";
-    case '/menu_page':
-      return "Menu";
-    case '/dashboard_page':
-      return "Dashboard";
-    case '/members_page':
-      return "Members";
-    case '/reports_page':
-      return "Reports";
-    case '/wallet_page':
-      return "Wallet";
-    case '/inbox_page':
-      return "Chats";
-    case '/wiki_page':
-      return "Wiki";
-    default:
-      return "No Route";
   }
 }

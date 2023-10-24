@@ -8,8 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   final Widget child;
-  final String appTitle;
-  const HomePage({Key? key, required this.child, required this.appTitle})
+  const HomePage({Key? key, required this.child,})
       : super(key: key);
 
   @override
