@@ -66,6 +66,7 @@ class EventsRepository {
       'endDate': DateTime.now().add(const Duration(days: 5)).millisecondsSinceEpoch,
       'description': 'Join us for a 3-day adventure in the heart of Palawan. Explore the hidden lagoons, snorkel in crystal-clear waters, and enjoy the tranquility of this paradise.',
       'location': 'El Nido, Palawan',
+      'participants': ['John Doe', 'Jane Doe', 'John Smith', 'Jane Smith'],
       'tags': ['adventure', 'nature', 'beach', 'hiking'],
       'image': ['https://picsum.photos/200/300?random=1', 'https://picsum.photos/200/300?random=2', 'https://picsum.photos/200/300?random=3']
     },
@@ -75,6 +76,7 @@ class EventsRepository {
       'endDate': DateTime.now().add(const Duration(days: 7)).millisecondsSinceEpoch,
       'description': 'Take a step back in time and discover the rich history of the Philippines with our guided walk in Intramuros, the Walled City of Manila.',
       'location': 'Intramuros, Manila',
+      'participants': ['John Doe', 'Jane Doe'],
       'image': ['https://picsum.photos/200/300?random=1', 'https://picsum.photos/200/300?random=2', 'https://picsum.photos/200/300?random=3']
     },
     {
@@ -82,6 +84,7 @@ class EventsRepository {
       'startDate': DateTime.now().add(const Duration(days: 10)).millisecondsSinceEpoch,
       'endDate': DateTime.now().add(const Duration(days: 13)).millisecondsSinceEpoch,
       'description': 'Challenge yourself with a trek to the highest peak in the Philippines. Witness diverse flora and fauna, enjoy the scenic views, and immerse yourself in the beauty of nature.',
+      'participants': ['John Doe', 'Jane Doe', 'John Smith', 'Jane Smith'],
       'location': 'Mount Apo, Mindanao',
       'tags': ['adventure', 'nature', 'hiking'],
     }
