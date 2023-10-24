@@ -1,3 +1,5 @@
+import 'package:cooptourism/pages/market/listing_edit.dart';
+import 'package:cooptourism/pages/market/listing_messages.dart';
 import 'package:cooptourism/providers/auth.dart';
 import 'package:cooptourism/pages/auth/login_or_register.dart';
 import 'package:cooptourism/pages/cooperatives/coops_page.dart';
@@ -105,12 +107,29 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               },
               routes: [
                 GoRoute(
-                    path: ':listingId',
-                    builder: (BuildContext context, GoRouterState state) {
-                      return SelectedListingPage(
-                        listingId: state.pathParameters["listingId"]!,
-                      );
-                    }),
+                  path: ':listingId',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return SelectedListingPage(
+                      listingId: state.pathParameters["listingId"]!,
+                    );
+                  },
+                  routes: [
+                    GoRoute(
+                      path: 'listing_messages',
+                      builder: (BuildContext context, GoRouterState state) {
+                        return ListingMessages(
+                            listingId: state.pathParameters["listingId"]!);
+                      },
+                    ),
+                    GoRoute(
+                      path: 'listing_edit',
+                      builder: (BuildContext context, GoRouterState state) {
+                        return ListingEdit(
+                            listingId: state.pathParameters["listingId"]!);
+                      },
+                    ),
+                  ],
+                ),
               ],
             ),
             GoRoute(
@@ -171,20 +190,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               // ],
             ),
             GoRoute(
-                path: "/wiki_page",
-                name: "Wiki",
-                pageBuilder: (context, state) {
-                  return NoTransitionPage(child: WikiPage(key: state.pageKey));
-                },
-                routes: [
+              path: "/wiki_page",
+              name: "Wiki",
+              pageBuilder: (context, state) {
+                return NoTransitionPage(child: WikiPage(key: state.pageKey));
+              },
+              routes: [
                 GoRoute(
                     path: ':wikiId',
                     builder: (BuildContext context, GoRouterState state) {
-                      return SelectedWikiPage(wikiId: state.pathParameters["wikiId"]!,
+                      return SelectedWikiPage(
+                        wikiId: state.pathParameters["wikiId"]!,
                       );
                     }),
               ],
-              ),
+            ),
           ])
     ],
     redirect: (context, state) {

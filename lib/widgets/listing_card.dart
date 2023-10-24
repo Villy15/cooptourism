@@ -39,7 +39,7 @@ class ListingCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: InkWell(
           onTap: () {
-            return context.go('/market_page/${listingModel.id}');
+            context.push('/market_page/${listingModel.id}');
           },
           child: Column(
             children: [

@@ -9,7 +9,7 @@ class MessageBubble extends StatelessWidget {
     });
 
 final bool isMe;
-final Message message;
+final MessageModel message;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ final Message message;
               ? CrossAxisAlignment.start 
               : CrossAxisAlignment.end,
               children: [
-                Text(message.content,
+                Text(message.content!,
                   style:
                     const TextStyle(color: Colors.white)),
               ],

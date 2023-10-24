@@ -7,30 +7,34 @@ class ChatMessages extends StatelessWidget {
   final String receiverId;
 
   final messages = [
-    const Message(
+    MessageModel(
+        docId: 'null',
         senderId: '102',
         receiverId: 'gNfEHSQZ5ZUcY6JG5AarK8O0SVw1',
-        content: 'Hello Test Send'),
-    const Message(
+        content: 'Hello Test Send',
+        timeStamp: DateTime.now(),
+        ),
+    MessageModel(
+        docId: null,
         senderId: '101',
         receiverId: 'gNfEHSQZ5ZUcY6JG5AarK8O0SVw1',
-        content: 'Hi Jaz Test Send '),
+        content: 'Hi Jaz Test Send ',
+        timeStamp: DateTime.now()),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child : ListView.builder(
-      itemCount: messages.length,
-      itemBuilder: (context, index) {
-        final isMe = 
-              receiverId != messages[index].senderId;
-        return MessageBubble(
-              isMe: isMe,
-              message: messages[index],
-            );
-      },
-    ),
+      child: ListView.builder(
+        itemCount: messages.length,
+        itemBuilder: (context, index) {
+          final isMe = receiverId != messages[index].senderId;
+          return MessageBubble(
+            isMe: isMe,
+            message: messages[index],
+          );
+        },
+      ),
     );
   }
 }

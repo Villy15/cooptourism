@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/listing.dart';
+import 'package:cooptourism/data/models/message.dart';
 import 'package:flutter/material.dart';
 
 class ListingRepository {
@@ -56,4 +57,39 @@ class ListingRepository {
       // You might want to handle errors more gracefully here
     }
   }
+
+  Stream<List<MessageModel>> getAllMessages() {
+    return listingsCollection.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return MessageModel.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+// Add manually
+  Future<void> addMessageManually() async {
+  List<Map<String, dynamic>> events = [
+    {
+      'senderId': 'G5nugbNv6hh1fcbuLc1Uwf785ls1',
+      'receiverId': 'sslvO5tgDoCHGBO82kxq',
+      'content': 'also is there any particular of pet not allowed?',
+      'timeStamp': DateTime.now(),
+    },
+    {
+      'senderId': 'sslvO5tgDoCHGBO82kxq',
+      'receiverId': 'G5nugbNv6hh1fcbuLc1Uwf785ls1',
+      'content': 'We have a few openings during the holidays. Small dogs and cats are allowed.',
+      'timeStamp': DateTime.now(),
+    },
+  ];
+
+  for (var event in events) {
+    try {
+      await listingsCollection.doc('jBg8MlxWLllJPSu8r00o').collection('messages').add(event);
+    } catch (e) {
+      debugPrint('Error adding event to Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
+  }
+}
 }

@@ -3,18 +3,37 @@ import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/models/review.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/data/repositories/review_repository.dart';
+import 'package:cooptourism/providers/home_page_provider.dart';
+import 'package:cooptourism/widgets/bottom_nav_selected_listing.dart';
 import 'package:cooptourism/widgets/display_image.dart';
 import 'package:cooptourism/widgets/display_text.dart';
+import 'package:cooptourism/widgets/leading_back_button.dart';
 import 'package:cooptourism/widgets/review_card.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 // import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SelectedListingPage extends StatelessWidget {
+class SelectedListingPage extends ConsumerStatefulWidget {
   final String listingId;
   const SelectedListingPage({super.key, required this.listingId});
+
+  @override
+  ConsumerState<SelectedListingPage> createState() =>
+      _SelectedListingPageState();
+}
+
+class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      ref.read(appBarVisibilityProvider.notifier).state = false;
+      ref.read(navBarVisibilityProvider.notifier).state = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,116 +41,127 @@ class SelectedListingPage extends StatelessWidget {
     final ReviewRepository reviewRepository = ReviewRepository();
 
     final Future<ListingModel> listings =
-        listingRepository.getSpecificListing(listingId);
+        listingRepository.getSpecificListing(widget.listingId);
 
     final Stream<List<ReviewModel>> reviews =
-        reviewRepository.getAllListingReviews(listingId);
+        reviewRepository.getAllListingReviews(widget.listingId);
+        
+      return Scaffold(
+          appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              leadingWidth: 45,
+              toolbarHeight: 35,
+              leading: LeadingBackButton(ref: ref)),
+          extendBodyBehindAppBar: true,
+          body: FutureBuilder<ListingModel>(
+            future: listings,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Text("Error: ${snapshot.error}");
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-    return FutureBuilder<ListingModel>(
-      future: listings,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text("Error: ${snapshot.error}");
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
+              final listing = snapshot.data!;
 
-        final listing = snapshot.data!;
+              return StreamBuilder<List<ReviewModel>>(
+                stream: reviews,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  }
 
-        return StreamBuilder<List<ReviewModel>>(
-          stream: reviews,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            final reviews = snapshot.data!;
-            return ListView(
-              children: [
-                ImageSlider(listing: listing),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  final reviews = snapshot.data!;
+                  return ListView(
+                    padding: const EdgeInsets.only(top: 0),
                     children: [
-                      DisplayText(
-                        text: listing.title!,
-                        lines: 1,
-                        style: Theme.of(context).textTheme.headlineSmall!,
-                      ),
-                      DisplayText(
-                        text: "Type: ${listing.type!}",
-                        lines: 4,
-                        style: TextStyle(
-                            fontSize: Theme.of(context)
-                                .textTheme
-                                .headlineSmall
-                                ?.fontSize),
-                      ),
-                      DisplayText(
-                        text: "Desciption: ${listing.description!}",
-                        lines: 5,
-                        style: TextStyle(
-                          fontSize: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.fontSize,
+                      ImageSlider(listing: listing),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            DisplayText(
+                              text: listing.title!,
+                              lines: 1,
+                              style: Theme.of(context).textTheme.headlineSmall!,
+                            ),
+                            DisplayText(
+                              text: "Type: ${listing.type!}",
+                              lines: 4,
+                              style: TextStyle(
+                                  fontSize: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall
+                                      ?.fontSize),
+                            ),
+                            DisplayText(
+                              text: "Desciption: ${listing.description!}",
+                              lines: 5,
+                              style: TextStyle(
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall
+                                    ?.fontSize,
+                              ),
+                            ),
+                            DisplayText(
+                                text: "Rating",
+                                lines: 1,
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall!),
+                            RatingBarIndicator(
+                              rating: listing.rating!,
+                              itemBuilder: (context, index) {
+                                return Icon(
+                                  Icons.star_rounded,
+                                  color: Theme.of(context).primaryColor,
+                                );
+                              },
+                              itemCount: 5,
+                              itemSize: 25,
+                              direction: Axis.horizontal,
+                            ),
+                            DisplayText(
+                              text: "Amenities",
+                              lines: 1,
+                              style: Theme.of(context).textTheme.headlineSmall!,
+                            ),
+                            DisplayText(
+                              text: "Reviews",
+                              lines: 1,
+                              style: Theme.of(context).textTheme.headlineSmall!,
+                            ),
+                            ListView.builder(
+                              padding: const EdgeInsets.only(top: 0),
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: reviews.length,
+                              itemBuilder: (context, index) {
+                                final review = reviews[index];
+
+                                return ReviewCard(
+                                  reviewModel: review,
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
-                      DisplayText(
-                          text: "Rating",
-                          lines: 1,
-                          style: Theme.of(context).textTheme.headlineSmall!),
-                      RatingBarIndicator(
-                        rating: listing.rating!,
-                        itemBuilder: (context, index) {
-                          return Icon(
-                            Icons.star_rounded,
-                            color: Theme.of(context).primaryColor,
-                          );
-                        },
-                        itemCount: 5,
-                        itemSize: 25,
-                        direction: Axis.horizontal,
-                      ),
-                      DisplayText(
-                        text: "Amenities",
-                        lines: 1,
-                        style: Theme.of(context).textTheme.headlineSmall!,
-                      ),
-                      DisplayText(
-                        text: "Reviews",
-                        lines: 1,
-                        style: Theme.of(context).textTheme.headlineSmall!,
-                      ),
-                      ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: reviews.length,
-                        itemBuilder: (context, index) {
-                          final review = reviews[index];
-
-                          return ReviewCard(
-                            reviewModel: review,
-                          );
-                        },
-                      ),
                     ],
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+                  );
+                },
+              );
+            },
+          ),
+          bottomNavigationBar: BottomNavSelectedListing(listingId: widget.listingId));
+    }
   }
-}
 
 class ImageSlider extends StatefulWidget {
   final ListingModel listing;
@@ -196,14 +226,14 @@ class _ImageSliderState extends State<ImageSlider> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(25)),
                 child: Padding(
-                    padding: const EdgeInsets.all(2.5),
-                    child: DotsIndicator(
-                      key: ValueKey(currentImageIndex),
-                      dotsCount: maxImageIndex,
-                      position: currentImageIndex,
-                      decorator: decorator,
-                    ),
-                    ),
+                  padding: const EdgeInsets.all(2.5),
+                  child: DotsIndicator(
+                    key: ValueKey(currentImageIndex),
+                    dotsCount: maxImageIndex,
+                    position: currentImageIndex,
+                    decorator: decorator,
+                  ),
+                ),
               ),
             ),
           ),

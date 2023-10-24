@@ -6,6 +6,7 @@ import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/data/repositories/post_repository.dart';
 import 'package:cooptourism/widgets/display_image.dart';
 import 'package:cooptourism/widgets/display_text.dart';
+import 'package:cooptourism/widgets/leading_back_button.dart';
 import 'package:cooptourism/widgets/post_card.dart';
 // import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -71,29 +72,7 @@ class _SelectedCoopPageState extends ConsumerState<SelectedCoopPage> {
                     SliverAppBar(
                       leadingWidth: 45,
                       toolbarHeight: 35,
-                      leading: Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Container(
-                          height: 20,
-                          width: 20,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[800],
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: IconButton(
-                            icon: Icon(Icons.arrow_back,
-                                size: 20,
-                                color: Theme.of(context).colorScheme.secondary),
-                            onPressed: () {
-                              ref.read(navBarVisibilityProvider.notifier).state =
-                                  true;
-                              ref.read(appBarVisibilityProvider.notifier).state =
-                                  true;
-                              Navigator.of(context).pop(); // to go back
-                            },
-                          ),
-                        ),
-                      ),
+                      leading: LeadingBackButton(ref: ref),
                       expandedHeight: 300,
                       pinned: false,
                       floating: true,
