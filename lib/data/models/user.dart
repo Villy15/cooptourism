@@ -15,7 +15,11 @@ class UserModel {
   List<String>? featuredImgs;
   String? dateJoined;
   String? memberType;
-  List<String>? currentListings;
+  List<String>? currentListings; 
+  // for testing purposes
+  String? monthlySales;
+  String? annualProfit;
+  String? totalSales;
 
   UserModel({
     this.uid,
@@ -34,7 +38,10 @@ class UserModel {
     this.dateJoined,
     this.bio,
     this.memberType,
-    this.currentListings
+    this.currentListings,
+    this.monthlySales,
+    this.annualProfit,
+    this.totalSales
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -54,7 +61,10 @@ class UserModel {
       dateJoined: json['date_joined'] ?? '',
       bio: json['bio'] ?? '',
       memberType: json['memberType'] ?? '',
-      currentListings: json['currentListings'] != null ? List<String>.from(json['currentListings']) : []
+      currentListings: json['currentListings'] != null ? List<String>.from(json['currentListings']) : [],
+      monthlySales: json['monthlySales'] ?? '',
+      annualProfit: json['annualProfit'] ?? '',
+      totalSales: json['totalSales'] ?? ''
     );
   }
 
@@ -75,7 +85,10 @@ class UserModel {
       'dateJoined': dateJoined ?? '',
       'bio': bio ?? '',
       'memberType': memberType ?? '',
-      'currentListings': currentListings ?? []
+      'currentListings': currentListings ?? [],
+      'monthlySales': monthlySales ?? '',
+      'annualProfit': annualProfit ?? '',
+      'totalSales': totalSales ?? ''
     };
   }
 
@@ -101,5 +114,8 @@ class UserModel {
     bio = user.bio;
     memberType = user.memberType;
     currentListings = user.currentListings;
+    monthlySales = user.monthlySales;
+    annualProfit = user.annualProfit;
+    totalSales = user.totalSales;
   }
 }

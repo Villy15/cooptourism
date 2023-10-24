@@ -6,12 +6,12 @@ import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/widgets/display_featured.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
-import 'package:cooptourism/widgets/pie_chart.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 // import 'package:cooptourism/widgets/gnav_home.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 
 // import 'package:cooptourism/theme/dark_theme.dart';
 // import 'package:cooptourism/theme/light_theme.dart';
@@ -146,9 +146,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   profile(context, userData!, uidString),
                   const SizedBox(height: 15),
-                  SizedBox(
-                    height: 150,
-                    child: MyPieChart(),)
                   
                 ],
               );
@@ -312,6 +309,12 @@ class _ProfilePageState extends State<ProfilePage> {
       'Total Sales',
       'Trust Rating'
     ];
+    final List<String> tempData = [
+      user.monthlySales!,
+      user.annualProfit!,
+      user.totalSales!,
+      user.userRating!
+    ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -361,19 +364,55 @@ class _ProfilePageState extends State<ProfilePage> {
                                   color: Theme.of(context).colorScheme.primary
                                 )
                               ),
-                              const SizedBox(height: 10),
-                              const SizedBox(
-                                height: 200,
-                                child: MyPieChart()
+                              const SizedBox(height: 50),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: CircularPercentIndicator(
+                                  radius: 40,
+                                  lineWidth: 10,
+                                  percent: 0.85,
+                                  progressColor: Theme.of(context).colorScheme.primary,
+                                  center: const Text('85%')
+                                ),
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 15),
+                              
+
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                  'Goal: '
+                                  const Text(
+                                  'Current: '
                                   ),
+                                  Text(
+                                    tempData[index],
+                                    style: TextStyle(
+                                      fontSize: 20, 
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).colorScheme.primary
+                                    )
+                                  )
                                 ],
-                              )
+                              ),
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                                    child: Text('Goal: '),
+                                  ),
+                                  Text(
+                                    '100,000',
+                                    style: TextStyle(
+                                      fontSize: 20, 
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).colorScheme.primary
+                                    )
+                                  )
+                                ],
+                              ),
+                              
                               
                             ],
                           )
