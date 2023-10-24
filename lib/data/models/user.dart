@@ -14,6 +14,8 @@ class UserModel {
   List<String>? skills;
   List<String>? featuredImgs;
   String? dateJoined;
+  String? memberType;
+  List<String>? currentListings;
 
   UserModel({
     this.uid,
@@ -30,7 +32,9 @@ class UserModel {
     this.skills,
     this.featuredImgs,
     this.dateJoined,
-    this.bio
+    this.bio,
+    this.memberType,
+    this.currentListings
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -48,7 +52,9 @@ class UserModel {
       skills: json['skills'] != null ? List<String>.from(json['skills']) : [],
       featuredImgs: json['featured'] != null ? List<String>.from(json['featured']) : [],
       dateJoined: json['date_joined'] ?? '',
-      bio: json['bio'] ?? ''
+      bio: json['bio'] ?? '',
+      memberType: json['member_type'] ?? '',
+      currentListings: json['currentListings'] != null ? List<String>.from(json['currentListings']) : []
     );
   }
 
@@ -67,7 +73,9 @@ class UserModel {
       'skills': skills ?? [],
       'featuredImgs': featuredImgs ?? [],
       'dateJoined': dateJoined ?? '',
-      'bio': bio ?? ''
+      'bio': bio ?? '',
+      'member_type': memberType ?? '',
+      'currentListings': currentListings ?? []
     };
   }
 
@@ -91,5 +99,7 @@ class UserModel {
     featuredImgs = user.featuredImgs;
     dateJoined = user.dateJoined;
     bio = user.bio;
+    memberType = user.memberType;
+    currentListings = user.currentListings;
   }
 }

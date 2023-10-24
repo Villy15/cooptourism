@@ -2,6 +2,7 @@
 // import 'dart:ui';
 
 import 'package:cooptourism/data/models/user.dart';
+import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/widgets/display_featured.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
@@ -25,11 +26,12 @@ class _ProfilePageState extends State<ProfilePage> {
   int _selectedIndex = 0;
 
   final List<String> _titles = [
-    'Home',
+    'Performance',
     'About',
     'Posts',
     'Coaching',
   ];
+
 
   User? user;
 
@@ -117,23 +119,21 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             var userData = snapshot.data;
-            print('user uid is ' + user.uid);
 
             if (selectedIndex == 0) {
               return Column(
                 children: [
-                  profileHeading(context, userData!, uidString),
+                  profile(context, userData!, uidString),
                   const SizedBox(height: 30),
-                  homeSection(context, userData, uidString),
+                  performanceSection(context, userData, uidString)
                 ],
               );
             }
             else if (selectedIndex == 1) {
               return Column(
                 children: [
-                  profileHeading(context, userData!, uidString),
+                  profile(context, userData!, uidString),
                   const SizedBox(height: 30),
-                  aboutSection(context, userData, uidString)
                 ],
               );
             }
@@ -141,14 +141,14 @@ class _ProfilePageState extends State<ProfilePage> {
             else if (selectedIndex == 2) {
               return Column(
                 children: [
-                  profileHeading(context, userData!, uidString),
+                  profile(context, userData!, uidString),
                   const SizedBox(height: 30)
                 ],
               );
             }
             
 
-            return profileHeading(context, userData!, uidString);
+            return profile(context, userData!, uidString);
             
 
           } else if (snapshot.hasError) {
@@ -161,16 +161,201 @@ class _ProfilePageState extends State<ProfilePage> {
 
 
 
+  Container profile(BuildContext context, UserModel user, String userUID) {
+    return Container(
+      height: 290,
+      width: 400,
+      color: Theme.of(context).colorScheme.primary,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,  
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Container(
+                  height: 70,
+                  width: 70,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(35),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.secondary,
+                      width: 2
+                    )
+                  ),
+                  child: user.profilePicture != null && user.profilePicture!.isNotEmpty ? DisplayProfilePicture(
+                    storageRef: FirebaseStorage.instance.ref(), 
+                    coopId: userUID, 
+                    data: user.profilePicture,
+                    height: 70, 
+                    width:70  
+                  ) : Icon(Icons.person, size: 50, color: Theme.of(context).colorScheme.secondary),
+                  
+                ),
+              ),
+
+               const SizedBox(height: 7),
+               Padding(
+                 padding: const EdgeInsets.only(top: 8.0),
+                 child: Text(
+                  '${user.firstName} ${user.lastName}', 
+                  style: TextStyle(
+                    fontSize: 22, 
+                    color: Theme.of(context).colorScheme.secondary, 
+                    fontWeight: FontWeight.bold
+                    )
+                  ),
+               ),
+              
+              const SizedBox(height: 15),
+              rowData(Icons.calendar_month, 'Joined: ', user.dateJoined),
+              const SizedBox(height: 5),
+              rowData(Icons.cases_outlined, 'Role: ', user.role),
+              const SizedBox(height: 5),
+              rowData(Icons.location_on_outlined, 'Location: ', user.location),
+
+              const SizedBox(height: 15),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10.0),
+                    child: InkWell(
+                      onTap: () {},
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary,
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        child: Icon(
+                          Icons.message,
+                          color: Theme.of(context).colorScheme.primary,
+                        )
+                      ),
+                    ),
+                  )
+                ],
+              )
+            ],
+          )
+    );
+  }
+
+  Row rowData(IconData icon, String description, String? userData) {
+    return Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 6.0, right: 8.0),
+                    child: Icon(icon),
+                  ),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 15, 
+                      color: Theme.of(context).colorScheme.secondary, 
+                      fontWeight: FontWeight.bold
+                    )
+                  ),
+                  Text(
+                    userData!.isNotEmpty ? userData : 'Unavailable info.',
+                    style: TextStyle(
+                      fontSize: 15, 
+                      color: Theme.of(context).colorScheme.secondary, 
+                    )
+                  )
+                ],
+              );
+  }
+
+  Column performanceSection(BuildContext context, UserModel user, String userUID) {
+    final List<String> profileTiles = [
+      'Monthly Sales',
+      'Annual Profit',
+      'Total Sales',
+      'Trust Rating'
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 15.0),
+          child: Text(
+            'Performance',
+            style: TextStyle(
+              fontSize: 20, 
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary
+            )
+          ),
+        ),
+        const SizedBox(height: 15),
+
+        GridView.builder(
+          shrinkWrap: true, 
+          itemCount: profileTiles.length,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            mainAxisExtent: 200,
+            childAspectRatio: 1
+          ),
+          itemBuilder: (context, index) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          for (final word in profileTiles[index].split(' '))
+                            Column(
+                              children: [
+                                Text(
+                                  word,
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            )
+                            
+                        ],
+                      ),
+                    ),
+            );
+          }
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 15.0),
+          child: Text(
+            'Current Listings',
+            style: TextStyle(
+              fontSize: 20, 
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary
+            )
+          ),
+        ),
+
+        
+      ],
+    );
+  }
+
   Container profileHeading(BuildContext context, UserModel user, String userUID) {
     return Container(
-      height: 130,
+      height: 180,
       color: Theme.of(context).colorScheme.primary,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
         children: [
         Padding(
-            padding: const EdgeInsets.only(
-                top: 35.0, right: 10.0, bottom: 35.0, left: 10.0),
+            padding: const EdgeInsets.all(10.0),
             child: InkWell(
               onTap: () {
 
@@ -178,7 +363,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Container(
               decoration: BoxDecoration(
                   border:
-                      Border.all(color: const Color(0xffD89B3E), width: 1.5),
+                      Border.all(color: const Color(0xffD89B3E), width: 3.5),
                   borderRadius: const BorderRadius.all(Radius.circular(100.0))),
               child: InkWell(
                 onTap: () {
@@ -188,169 +373,18 @@ class _ProfilePageState extends State<ProfilePage> {
                   storageRef: FirebaseStorage.instance.ref(), 
                   coopId: userUID, 
                   data: user.profilePicture,
-                  height: 50, 
-                  width: 50 
+                  height: 70, 
+                  width:70  
                 ) : Icon(Icons.person, size: 50, color: Theme.of(context).colorScheme.secondary)
               )
               
                
             )),
             ),
-            
-        Padding(
-            padding: const EdgeInsets.only(
-              top: 30.0,
-              right: 35.0,
-            ),
-            child: Column(children: [
-              Text('${user.firstName} ${user.lastName}' ,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  )),
-              const SizedBox(height: 10),
-              Container(
-                  height: 30,
-                  width: 205,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.white),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          const Padding(
-                              padding: EdgeInsets.only(left: 8.0),
-                              child: Icon(Icons.stars_sharp,
-                                  color: Color(0xff68707E), size: 20)),
-                          Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 1.0, left: 3.0),
-                              child: Text('${user.userTrust}',
-                                  style: TextStyle(
-                                      color: Theme.of(context).colorScheme.primary,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w500)))
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 1.0, right: 3.0),
-                              child: Text('${user.userRating}',
-                                  style: TextStyle(
-                                      color: Theme.of(context).colorScheme.primary,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w500))),
-                          const Padding(
-                              padding: EdgeInsets.only(right: 8.0),
-                              child: Icon(Icons.add_reaction_rounded,
-                                  color: Color(0xff68707E), size: 20))
-                        ],
-                      )
-                    ],
-                  ))
-            ]))
       ]),
     );
   }
 
-  Column homeSection(BuildContext context, UserModel user, String userUID) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 15.0),
-          child: Text(
-            'Featured',
-            style: TextStyle(
-              fontSize: 20, 
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary
-            )
-          ),
-        ),
-
-        const SizedBox(height: 15),
-
-        SizedBox(
-          height: 150,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: user.featuredImgs!.length,
-            padding: const EdgeInsets.only(
-              left: 15, 
-              right: 15
-            ),
-            separatorBuilder: (context, index) => SizedBox(
-              width: 5,
-              height: 0.5,
-              child: DecoratedBox(
-                  decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary.withOpacity(0.5)
-                ),
-              )
-            ),
-            itemBuilder:(((context, index) {
-              return InkWell(
-                  onTap: () {
-
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Theme.of(context).colorScheme.secondary, 
-                        width: 2
-                      )
-                    ),
-                    child: DisplayFeatured(
-                      storageRef: FirebaseStorage.instance.ref(), 
-                      userID: userUID, 
-                      data: user.featuredImgs?[index], 
-                      height: 150, 
-                      width: 200
-                    ),
-                  )
-
-                );
-              })
-            ) 
-          )
-        ),
-
-        const SizedBox(height: 15),
-
-        Padding(
-          padding: const EdgeInsets.only(left: 15.0),
-          child: Text(
-            'My Services',
-            style: TextStyle(
-              fontSize: 20, 
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary
-            )
-          ),
-        ),
-
-        const SizedBox(height: 15),
-
-        Padding(
-          padding: const EdgeInsets.only(left: 15.0),
-          child: Text(
-            'My Listings',
-            style: TextStyle(
-              fontSize: 20, 
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary
-            )
-          ),
-        ),
-
-      ]
-    );
-  }
 
   Column aboutSection(BuildContext context, UserModel user, String userUID) {
     return Column(
