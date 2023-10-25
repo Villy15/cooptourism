@@ -68,10 +68,11 @@ class ListingRepository {
     return listingsCollection
         .doc(listingId)
         .collection('messages')
-        .where(Filter.or(Filter('senderId', isEqualTo: senderId),
-            Filter('senderId', isEqualTo: receiverId)))
-        .where(Filter.or(Filter('receiverId', isEqualTo: senderId),
-            Filter('receiverId', isEqualTo: receiverId)))
+        .where(Filter.and(
+            Filter.or(Filter('senderId', isEqualTo: senderId),
+                Filter('senderId', isEqualTo: receiverId)),
+            Filter.or(Filter('receiverId', isEqualTo: senderId),
+                Filter('receiverId', isEqualTo: receiverId))))
         .orderBy('timeStamp', descending: false)
         .snapshots()
         .map((snapshot) {

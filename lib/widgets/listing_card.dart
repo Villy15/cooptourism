@@ -43,80 +43,84 @@ class _ListingCardState extends ConsumerState<ListingCard> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: InkWell(
-          onTap: () {
-            context.push('/market_page/${widget.listingModel.id}');
-          },
-          child: Column(
-            children: [
-              DisplayImage(
-                path: "${widget.listingModel.owner}/listingImages/${widget.listingModel.id}${widget.listingModel.images![0]}",
-                height: 175,
-                width: double.infinity,
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        DisplayText(
-                          text: widget.listingModel.title!,
-                          lines: 2,
-                          style: Theme.of(context).textTheme.headlineSmall!,
-                        ),
-                        DisplayText(
-                          text: "₱${widget.listingModel.price}",
-                          lines: 1,
-                          style: TextStyle(
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall
-                                  ?.fontSize),
-                        ),
-                      ],
-                    ),
-                    FutureBuilder(
-                      future: cooperative,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
-                        }
-
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                        final cooperative = snapshot.data!;
-
-                        return DisplayText(
-                          text: cooperative.name!,
-                          lines: 1,
-                          style: TextStyle(
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall
-                                  ?.fontSize),
-                        );
-                      },
-                    ),
-                    DisplayText(
-                        text: widget.listingModel.description!,
-                        lines: 2,
-                        style: TextStyle(
-                            fontSize: Theme.of(context)
-                                .textTheme
-                                .headlineSmall
-                                ?.fontSize)),
-                  ],
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.grey[800]!)),
+        child: InkWell(
+            onTap: () {
+              context.push('/market_page/${widget.listingModel.id}');
+            },
+            child: Column(
+              children: [
+                DisplayImage(
+                  path: "${widget.listingModel.owner}/listingImages/${widget.listingModel.id}${widget.listingModel.images![0]}",
+                  height: 175,
+                  width: double.infinity,
                 ),
-              )
-            ],
-          )),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          DisplayText(
+                            text: widget.listingModel.title!,
+                            lines: 2,
+                            style: Theme.of(context).textTheme.headlineSmall!,
+                          ),
+                          DisplayText(
+                            text: "₱${widget.listingModel.price}",
+                            lines: 1,
+                            style: TextStyle(
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall
+                                    ?.fontSize),
+                          ),
+                        ],
+                      ),
+                      FutureBuilder(
+                        future: cooperative,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          }
+      
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          final cooperative = snapshot.data!;
+      
+                          return DisplayText(
+                            text: cooperative.name!,
+                            lines: 1,
+                            style: TextStyle(
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall
+                                    ?.fontSize),
+                          );
+                        },
+                      ),
+                      DisplayText(
+                          text: widget.listingModel.description!,
+                          lines: 2,
+                          style: TextStyle(
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall
+                                  ?.fontSize)),
+                    ],
+                  ),
+                )
+              ],
+            )),
+      ),
     );
   }
 }
