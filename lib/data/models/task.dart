@@ -10,12 +10,17 @@ class TaskModel {
   String description;
   num progress;
   List<ToDoItem> toDoList;
+  String? type;
+  String? referenceId;
+
   TaskModel({
     this.uid,
     required this.title,
     required this.description,
     required this.progress,
     required this.toDoList,
+    this.type,
+    this.referenceId,
   });
 
   TaskModel copyWith({
@@ -24,6 +29,10 @@ class TaskModel {
     String? description,
     double? progress,
     List<ToDoItem>? toDoList,
+    String? type,
+    String? referenceId,
+    
+    
   }) {
     return TaskModel(
       uid: uid ?? this.uid,
@@ -31,6 +40,8 @@ class TaskModel {
       description: description ?? this.description,
       progress: progress ?? this.progress,
       toDoList: toDoList ?? this.toDoList,
+      type: type ?? this.type,
+      referenceId: referenceId ?? this.referenceId,
     );
   }
 
@@ -41,6 +52,8 @@ class TaskModel {
       'description': description,
       'progress': progress,
       'toDoList': toDoList.map((x) => x.toMap()).toList(),
+      'type': type,
+      'referenceId': referenceId,
     };
   }
 
@@ -52,6 +65,8 @@ class TaskModel {
       progress: map['progress'] as num,
       toDoList: List<ToDoItem>.from(
           map['toDoList']?.map((x) => ToDoItem.fromMap('', x)) as Iterable),
+      type: map['type'] as String?,
+      referenceId: map['referenceId'] as String?,
     );
   }
 
@@ -61,7 +76,7 @@ class TaskModel {
 
   @override
   String toString() {
-    return 'TaskModel(uid: $uid, title: $title, description: $description, progress: $progress, toDoList: $toDoList)';
+    return 'TaskModel(uid: $uid, title: $title, description: $description, progress: $progress, toDoList: $toDoList, type: $type , referenceId: $referenceId)';
   }
 
   @override
@@ -73,7 +88,9 @@ class TaskModel {
       other.title == title &&
       other.description == description &&
       other.progress == progress &&
-      listEquals(other.toDoList, toDoList);
+      listEquals(other.toDoList, toDoList) &&
+      other.type == type &&
+      other.referenceId == referenceId;
   }
 
   @override
@@ -82,7 +99,9 @@ class TaskModel {
       title.hashCode ^
       description.hashCode ^
       progress.hashCode ^
-      toDoList.hashCode;
+      toDoList.hashCode ^
+      type.hashCode ^
+      referenceId.hashCode;
   }
 }
 

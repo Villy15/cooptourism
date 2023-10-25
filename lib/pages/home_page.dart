@@ -28,6 +28,7 @@ class HomePageState extends ConsumerState<HomePage> {
         ref.read(userModelProvider.notifier).setUser(value);
       });
     });
+
   }
 
   @override

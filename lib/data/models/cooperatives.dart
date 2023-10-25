@@ -1,4 +1,4 @@
-import 'package:cooptourism/data/models/listing.dart';
+// import 'package:cooptourism/data/models/listing.dart';
 
 class CooperativesModel {
   String? name;

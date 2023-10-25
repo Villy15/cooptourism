@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/cooperatives.dart';
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
-import 'package:cooptourism/providers/cooperative_provider.dart';
+// import 'package:cooptourism/providers/cooperative_provider.dart';
 import 'package:cooptourism/widgets/display_image.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 import 'package:flutter/material.dart';

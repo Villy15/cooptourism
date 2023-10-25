@@ -18,7 +18,9 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
   Widget build(BuildContext context) {
     final position = ref.watch(homePageControllerProvider);
     final user = ref.watch(userModelProvider);
-    role = user?.role ?? 'Manager';
+    role = user?.role ?? 'Customer';
+
+    debugPrint("role: $role");
 
     // Changes the bottom navigation bar items based on the user's role
     List<BottomNavigationBarItem> items;
@@ -57,10 +59,12 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
 
     switch (index) {
       case 0:
-        if (role == 'Member') {
-          context.go("/tasks_page");
-        } else {
+        if (role == "Manager") {
           context.go("/");
+        } else if (role == 'Member') {
+          context.go("/tasks_page");
+        } else if (role == 'Customer'){
+          context.go("/market_page");
         }
 
         break;
@@ -79,7 +83,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         } else if (role == 'Member') {
           context.go("/market_page");
         } else if (role == 'Customer') {
-          context.go("/market_page");
+          context.go("/events_page");
         }
         break;
       case 3:
@@ -88,7 +92,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         } else if (role == 'Member') {
           context.go("/profile_page");
         } else if (role == 'Customer') {
-          context.go("/profile_page");
+          context.go("/inbox_page");
         }
         break;
       case 4:
@@ -163,7 +167,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
       BottomNavigationBarItem(
         icon: Icon(Icons.store_mall_directory_outlined),
         activeIcon: Icon(Icons.store_mall_directory_rounded),
-        label: 'Marketplace',
+        label: 'Market',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.account_balance_wallet_outlined),
@@ -171,14 +175,14 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         label: 'Wallet',
       ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.store_mall_directory_outlined),
-        activeIcon: Icon(Icons.store_mall_directory_rounded),
-        label: 'Market',
+        icon: Icon(Icons.event_outlined),
+        activeIcon: Icon(Icons.event_rounded),
+        label: 'Events',
       ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.person_outline_rounded),
-        activeIcon: Icon(Icons.person_rounded),
-        label: 'Profile',
+        icon: Icon(Icons.inbox_outlined),
+        activeIcon: Icon(Icons.inbox_rounded),
+        label: 'Inbox',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.menu_rounded),
