@@ -4,7 +4,7 @@ import 'package:cooptourism/data/models/message.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/providers/user_provider.dart';
 import 'package:cooptourism/widgets/bottom_nav_selected_listing.dart';
-import 'package:cooptourism/widgets/display_text.dart';
+// import 'package:cooptourism/widgets/display_text.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
