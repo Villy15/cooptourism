@@ -37,6 +37,16 @@ class TaskRepository {
     }
   }
 
+  Stream<TaskModel?> streamSpecificTask(String taskId) {
+    return tasksColleciton.doc(taskId).snapshots().map((snapshot) {
+      if (snapshot.exists && snapshot.data() != null) {
+        return TaskModel.fromMap(
+            taskId, snapshot.data() as Map<String, dynamic>);
+      }
+      return null;
+    });
+  }
+
   // Update a Task in Firestore
   Future<void> updateTask(String? taskId, TaskModel task) async {
     try {
@@ -60,16 +70,28 @@ class TaskRepository {
   // Add manually
   Future<void> addTaskManually() async {
     try {
-      await tasksColleciton.add(TaskModel(
-              title: 'Event Contribution1',
-              description:
-                  'The following tasks are required to be accomplished by gold level members within this cooperative',
-              progress: 0.0,
-              toDoList: [
-                ToDoItem(title: 'Contributess to event', isChecked: false),
-                ToDoItem(title: 'Bring food and tables', isChecked: false),
-                ToDoItem(title: 'Prepare medicines etc.', isChecked: false),
-              ]).toMap());
+      await tasksColleciton.add(
+        TaskModel(
+          title: 'Palawan Island Adventure Preparations',
+          description:
+              'Tasks associated with the Palawan Island Adventure. Ensure all tasks are completed for a successful event.',
+          progress: 0.0,
+          toDoList: [
+            ToDoItem(title: 'Coordinate with participants', isChecked: false),
+            ToDoItem(title: 'Arrange transportation to El Nido, Palawan', isChecked: false),
+            ToDoItem(title: 'Reserve accommodations in El Nido', isChecked: false),
+            ToDoItem(title: 'Plan the itinerary for hidden lagoon exploration', isChecked: false),
+            ToDoItem(title: 'Arrange snorkeling gear for participants', isChecked: false),
+            ToDoItem(title: 'Prepare hiking trail maps', isChecked: false),
+            ToDoItem(title: 'Gather emergency contact details of participants', isChecked: false),
+            ToDoItem(title: 'Ensure all participants are aware of the safety protocols', isChecked: false),
+            ToDoItem(title: 'Collect contributions for event expenses', isChecked: false),
+            ToDoItem(title: 'Prepare a backup plan in case of unforeseen events', isChecked: false),
+          ],
+          type: 'Event',
+          referenceId: 'jHMdC3KQOk5Ah8kgS0YL' // This seems to be the ID of the event in the Firestore database.
+        ).toMap()
+      );
     } catch (e) {
       debugPrint('Error adding Task to Firestore: $e');
       // You might want to handle errors more gracefully here
@@ -89,4 +111,6 @@ class TaskRepository {
       // You might want to handle errors more gracefully here
     }
   }
+
+  
 }

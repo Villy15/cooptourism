@@ -2,6 +2,7 @@ import 'package:cooptourism/pages/events/events_page.dart';
 import 'package:cooptourism/pages/events/selected_events_page.dart';
 import 'package:cooptourism/pages/market/listing_edit.dart';
 import 'package:cooptourism/pages/market/listing_messages.dart';
+import 'package:cooptourism/pages/tasks/selected_task_page.dart';
 import 'package:cooptourism/pages/tasks/tasks_page.dart';
 import 'package:cooptourism/providers/auth.dart';
 import 'package:cooptourism/pages/auth/login_or_register.dart';
@@ -83,7 +84,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 name: "Tasks",
                 pageBuilder: (context, state) {
                   return NoTransitionPage(child: TasksPage(key: state.pageKey));
-                }),
+                },
+                routes: [
+                GoRoute(
+                    path: ':taskId',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return SelectedTaskPage(
+                        taskId: state.pathParameters["taskId"]!,
+                      );
+                    }),
+              ],
+            ),
 
             GoRoute(
                 path: "/menu_page",
