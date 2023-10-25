@@ -9,7 +9,7 @@ class ListingRepository {
 
       // Get all Listings from Firestore
   Stream<List<ListingModel>> getAllListings() {
-    return listingsCollection.snapshots().map((snapshot) {
+    return listingsCollection.orderBy('postDate', descending: true).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         return ListingModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
@@ -58,12 +58,22 @@ class ListingRepository {
     }
   }
 
-  Stream<List<MessageModel>> getAllMessages() {
-    return listingsCollection.snapshots().map((snapshot) {
+  Stream<List<MessageModel>> getAllMessages(String listingId) {
+    return listingsCollection.doc(listingId).collection('messages').orderBy('timeStamp', descending: false).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        return MessageModel.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+        return MessageModel.fromMap(doc.id, doc.data());
       }).toList();
     });
+  }
+
+  // Add a Message to Firestore
+  Future<void> addMessage(MessageModel message, String listingId) async {
+    try {
+      await listingsCollection.doc(listingId).collection('messages').add(message.toMap());
+    } catch (e) {
+      debugPrint('Error adding Listing to Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
   }
 
 // Add manually

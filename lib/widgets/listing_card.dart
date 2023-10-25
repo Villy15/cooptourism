@@ -2,20 +2,26 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/cooperatives.dart';
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
+import 'package:cooptourism/providers/cooperative_provider.dart';
 import 'package:cooptourism/widgets/display_image.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-class ListingCard extends StatelessWidget {
+class ListingCard extends ConsumerStatefulWidget {
   final ListingModel listingModel;
-
   const ListingCard({super.key, required this.listingModel});
 
+  @override
+  ConsumerState<ListingCard> createState() => _ListingCardState();
+}
+
+class _ListingCardState extends ConsumerState<ListingCard> {
   String getTimeDifference() {
     final now = Timestamp.now().toDate();
-    final postTime = listingModel.postDate!.toDate();
+    final postTime = widget.listingModel.postDate!.toDate();
     final difference = now.difference(postTime);
 
     if (difference.inMinutes < 60) {
@@ -33,18 +39,18 @@ class ListingCard extends StatelessWidget {
     final CooperativesRepository cooperativeRepository =
         CooperativesRepository();
     final Future<CooperativesModel> cooperative =
-        cooperativeRepository.getCooperative(listingModel.owner!);
+        cooperativeRepository.getCooperative(widget.listingModel.owner!);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: InkWell(
           onTap: () {
-            context.push('/market_page/${listingModel.id}');
+            context.push('/market_page/${widget.listingModel.id}');
           },
           child: Column(
             children: [
               DisplayImage(
-                path: "${listingModel.owner}/listingImages/${listingModel.id}${listingModel.images![0]}",
+                path: "${widget.listingModel.owner}/listingImages/${widget.listingModel.id}${widget.listingModel.images![0]}",
                 height: 175,
                 width: double.infinity,
               ),
@@ -58,12 +64,12 @@ class ListingCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         DisplayText(
-                          text: listingModel.title!,
+                          text: widget.listingModel.title!,
                           lines: 2,
                           style: Theme.of(context).textTheme.headlineSmall!,
                         ),
                         DisplayText(
-                          text: "₱${listingModel.price}",
+                          text: "₱${widget.listingModel.price}",
                           lines: 1,
                           style: TextStyle(
                               fontSize: Theme.of(context)
@@ -99,7 +105,7 @@ class ListingCard extends StatelessWidget {
                       },
                     ),
                     DisplayText(
-                        text: listingModel.description!,
+                        text: widget.listingModel.description!,
                         lines: 2,
                         style: TextStyle(
                             fontSize: Theme.of(context)
@@ -114,3 +120,4 @@ class ListingCard extends StatelessWidget {
     );
   }
 }
+

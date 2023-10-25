@@ -44,8 +44,9 @@ class UserModel {
     this.totalSales
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
+  factory UserModel.fromJson(String docId, Map<String, dynamic> json) {
     return UserModel(
+      uid: docId,
       email: json['email'] ?? '',
       firstName: json['first_name'] ?? '',
       lastName: json['last_name'] ?? '',
@@ -97,7 +98,7 @@ class UserModel {
     json.forEach((key, value) {
       json[key] = function(value);
     });
-    final user = UserModel.fromJson(json);
+    final user = UserModel.fromJson("", json);
     email = user.email;
     firstName = user.firstName;
     lastName = user.lastName;

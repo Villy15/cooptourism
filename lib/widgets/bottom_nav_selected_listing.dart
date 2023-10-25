@@ -18,6 +18,7 @@ class _BottomNavSelectedListingState extends ConsumerState<BottomNavSelectedList
   int position = ref.watch(selectedListingPageControllerProvider);
   
     return BottomNavigationBar(
+      elevation: 0,
       showUnselectedLabels: true,
       showSelectedLabels: true,
       // unselectedIconTheme: IconThemeData(color: Theme.of(context).colorScheme.secondary),

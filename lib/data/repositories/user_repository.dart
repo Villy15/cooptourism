@@ -11,7 +11,7 @@ class UserRepository {
   Stream<List<UserModel>> getAllUsers() {
     return usersCollection.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        return UserModel.fromJson(doc.data() as Map<String, dynamic>);
+        return UserModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
@@ -34,7 +34,7 @@ class UserRepository {
       return snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
         data['uid'] = doc.id; // 
-        return UserModel.fromJson(doc.data() as Map<String, dynamic>);
+        return UserModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
         
       }).toList();
       
@@ -59,7 +59,7 @@ class UserRepository {
   Future<UserModel> getUser(String userId) async {
     try {
       final doc = await usersCollection.doc(userId).get();
-      return UserModel.fromJson(doc.data() as Map<String, dynamic>);
+      return UserModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
     } catch (e) {
       debugPrint('Error getting user from Firestore: $e');
       // You might want to handle errors more gracefully here
@@ -70,7 +70,7 @@ class UserRepository {
   Future<UserModel> getUserProfile(User user) async {
     try {
       final doc = await usersCollection.doc(user.uid).get();
-      return UserModel.fromJson(doc.data() as Map<String, dynamic>);
+      return UserModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
     } catch (e) {
       debugPrint('Error getting user from Firestore: $e');
       // You might want to handle errors more gracefully here
@@ -85,7 +85,7 @@ class UserRepository {
     final users = querySnapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
       data['uid'] = doc.id; // include uid in the retrieved data
-      return UserModel.fromJson(data);
+      return UserModel.fromJson("", data);
     }).toList();
     return users;
   } catch (e) {

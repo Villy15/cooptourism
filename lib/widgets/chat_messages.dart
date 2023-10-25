@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cooptourism/widgets/message_bubble.dart';
 import 'package:cooptourism/data/models/message.dart';
@@ -12,14 +13,14 @@ class ChatMessages extends StatelessWidget {
         senderId: '102',
         receiverId: 'gNfEHSQZ5ZUcY6JG5AarK8O0SVw1',
         content: 'Hello Test Send',
-        timeStamp: DateTime.now(),
+        timeStamp: Timestamp.now(),
         ),
     MessageModel(
         docId: null,
         senderId: '101',
         receiverId: 'gNfEHSQZ5ZUcY6JG5AarK8O0SVw1',
         content: 'Hi Jaz Test Send ',
-        timeStamp: DateTime.now()),
+        timeStamp: Timestamp.now()),
   ];
 
   @override
