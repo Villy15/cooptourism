@@ -1,8 +1,8 @@
+import 'package:cooptourism/core/util/animations/slide_transition.dart';
 import 'package:cooptourism/data/models/task.dart';
 import 'package:cooptourism/data/repositories/task_repository.dart';
+import 'package:cooptourism/pages/tasks/add_proof.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-// import 'package:go_router/go_router.dart';
 
 final TaskRepository taskRepository = TaskRepository();
 
@@ -87,7 +87,7 @@ class _SelectedTaskPageState extends State<SelectedTaskPage> {
               iconSize: 20,
               color: Theme.of(context).colorScheme.primary,
               onPressed: () {
-                context.push('/tasks_page/${task.uid}/add_proof');                
+                showAddProofPage(context, item, task);             
               },
             ),
           ],
@@ -187,10 +187,26 @@ class _SelectedTaskPageState extends State<SelectedTaskPage> {
           //   iconSize: 20,
           //   color: Theme.of(context).colorScheme.primary,
           //   onPressed: () {
-          //     context.go('/tasks_page/${task.uid}');
+          //     showAddProofPage(context);
           //   },
           // ),
         ],
+      ),
+    );
+  }
+
+  void showAddProofPage(BuildContext context, ToDoItem item, TaskModel task) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return AddTaskProofPage(item: item, task: task);
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransitionAnimation(
+            animation: animation,
+            child: child,
+          );
+        },
       ),
     );
   }

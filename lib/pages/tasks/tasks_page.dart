@@ -223,6 +223,8 @@ class _TasksPageState extends State<TasksPage> {
     );
   }
 
+  
+
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
       toolbarHeight: 70,
