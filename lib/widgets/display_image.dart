@@ -7,21 +7,23 @@ class DisplayImage extends StatelessWidget {
     required this.path,
     required this.height,
     required this.width,
+    required this.radius,
   });
 
-  final String path;
-  final double height;
-  final double width;
+  final String? path;
+  final double? height;
+  final double? width;
+  final BorderRadius? radius;
 
   @override
   Widget build(BuildContext context) {
     final storageRef = FirebaseStorage.instance.ref();
     // debugPrint("$path this is the image");
     return ClipRRect(
-      borderRadius: BorderRadius.zero,
+      borderRadius: radius!,
       child: FutureBuilder<String>(
         future: storageRef
-            .child(path)
+            .child(path!)
             .getDownloadURL(), // Await here
         builder: (context, urlSnapshot) {
           if (urlSnapshot.connectionState ==

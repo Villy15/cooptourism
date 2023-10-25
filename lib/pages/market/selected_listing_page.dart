@@ -211,7 +211,8 @@ class _ImageSliderState extends State<ImageSlider> {
                     path:
                         "${widget.listing.owner}/listingImages/${widget.listing.id}$e",
                     height: 250,
-                    width: double.infinity))
+                    width: double.infinity,
+                    radius: BorderRadius.zero,))
                 .toList(),
           ),
         ),

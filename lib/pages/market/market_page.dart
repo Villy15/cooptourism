@@ -12,20 +12,16 @@ class MarketPage extends StatefulWidget {
 
 class _MarketPageState extends State<MarketPage> {
   final List<String> _tabTitles = ['Products', 'Services'];
+  final List<String> _type = ['Product', 'Service'];
   int _selectedIndex = 0;
 
-  late ListingRepository _listingRepository = ListingRepository();
-  late Stream<List<ListingModel>> _listings;
-
-  @override
-  void initState() {
-    super.initState();
-    _listingRepository = ListingRepository();
-    _listings = _listingRepository.getAllListings();
-  }
+  // late ListingRepository _listingRepository = ListingRepository();
+  // late Stream<List<ListingModel>> _listings;
 
   @override
   Widget build(BuildContext context) {
+    final ListingRepository listingRepository = ListingRepository();
+    final Stream<List<ListingModel>> listings0 = listingRepository.getListingsByType(_type[_selectedIndex]);
     return Scaffold(
         appBar: _appBar(context, "Market"),
         backgroundColor: Colors.white,
@@ -36,7 +32,7 @@ class _MarketPageState extends State<MarketPage> {
             // searchFilter(context),
             Expanded(
               child: StreamBuilder<List<ListingModel>>(
-                stream: _listings,
+                stream: listings0,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');

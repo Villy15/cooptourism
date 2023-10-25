@@ -84,6 +84,7 @@ class _SelectedCoopPageState extends ConsumerState<SelectedCoopPage> {
                                   "${widget.coopId}/images/${cooperative.logo}",
                               height: 150,
                               width: double.infinity,
+                              radius: BorderRadius.zero,
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
