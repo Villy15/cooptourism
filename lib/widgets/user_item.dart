@@ -24,9 +24,14 @@ class _UserItemState extends State<UserItem> {
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         leading: CircleAvatar(
-          radius: 30,
-          backgroundImage: NetworkImage(widget.user.image),
-        ),
+              radius: 30,
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+              child:  Icon(Icons.person, size: 30, color: Theme.of(context).colorScheme.primary),
+            ),
+        // leading: CircleAvatar(
+        //   radius: 30,
+        //   backgroundImage: NetworkImage(widget.user.image),
+        // ),
       title: Text(
         widget.user.name,
         style: TextStyle(
