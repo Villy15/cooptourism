@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -10,24 +9,21 @@ class MessageModel {
   String? receiverId;
   String? content;
   Timestamp? timeStamp;
-  bool? isSender;
   MessageModel({
     this.docId,
     this.senderId,
     this.receiverId,
     this.content,
     this.timeStamp,
-    this.isSender,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'docId': docId,
+      // 'docId': docId,
       'senderId': senderId,
       'receiverId': receiverId,
       'content': content,
       'timeStamp': timeStamp,
-      'isSender': isSender,
     };
   }
 
@@ -38,7 +34,6 @@ class MessageModel {
       receiverId: map['receiverId'],
       content: map['content'],
       timeStamp: map['timeStamp'],
-      isSender: map['isSender'],
     );
   }
 
@@ -48,7 +43,7 @@ class MessageModel {
 
   @override
   String toString() {
-    return 'MessageModel(docId: $docId, senderId: $senderId, receiverId: $receiverId, content: $content, timeStamp: $timeStamp, isSender: $isSender)';
+    return 'MessageModel(docId: $docId, senderId: $senderId, receiverId: $receiverId, content: $content, timeStamp: $timeStamp)';
   }
 
   @override
@@ -60,8 +55,7 @@ class MessageModel {
       other.senderId == senderId &&
       other.receiverId == receiverId &&
       other.content == content &&
-      other.timeStamp == timeStamp &&
-      other.isSender == isSender;
+      other.timeStamp == timeStamp;
   }
 
   @override
@@ -70,7 +64,5 @@ class MessageModel {
       senderId.hashCode ^
       receiverId.hashCode ^
       content.hashCode ^
-      timeStamp.hashCode ^
-      isSender.hashCode;
-  }
+      timeStamp.hashCode;  }
 }
