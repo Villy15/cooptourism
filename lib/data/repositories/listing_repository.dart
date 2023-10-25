@@ -19,6 +19,19 @@ class ListingRepository {
       }).toList();
     });
   }
+  // Get Listing by type from Firestore
+  Stream<List<ListingModel>> getListingsByType(String type) {
+    return listingsCollection
+        .where('type', isEqualTo: type)
+        .orderBy('postDate', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return ListingModel.fromJson(
+            doc.id, doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
 
   // Add a Listing to Firestore
   Future<void> addListing(ListingModel listing) async {

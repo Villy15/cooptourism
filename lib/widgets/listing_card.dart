@@ -45,7 +45,9 @@ class _ListingCardState extends ConsumerState<ListingCard> {
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 20),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.grey[800]!)),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.grey[800]!, width: .25)),
         child: InkWell(
             onTap: () {
               context.push('/market_page/${widget.listingModel.id}');
@@ -53,69 +55,87 @@ class _ListingCardState extends ConsumerState<ListingCard> {
             child: Column(
               children: [
                 DisplayImage(
-                  path: "${widget.listingModel.owner}/listingImages/${widget.listingModel.id}${widget.listingModel.images![0]}",
+                  path:
+                      "${widget.listingModel.owner}/listingImages/${widget.listingModel.id}${widget.listingModel.images![0]}",
                   height: 175,
                   width: double.infinity,
+                  radius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
                 ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.secondary,
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(20),
+                          bottomRight: Radius.circular(20),
+                        )),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          DisplayText(
-                            text: widget.listingModel.title!,
-                            lines: 2,
-                            style: Theme.of(context).textTheme.headlineSmall!,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              DisplayText(
+                                text: widget.listingModel.title!,
+                                lines: 2,
+                                style: Theme.of(context).textTheme.headlineSmall!,
+                              ),
+                              DisplayText(
+                                text: "₱${widget.listingModel.price}",
+                                lines: 1,
+                                style: TextStyle(
+                                    fontSize: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.fontSize),
+                              ),
+                            ],
+                          ),
+                          FutureBuilder(
+                            future: cooperative,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              }
+                
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              }
+                              final cooperative = snapshot.data!;
+                
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 10.0),
+                                child: DisplayText(
+                                  text: cooperative.name!,
+                                  lines: 1,
+                                  style: TextStyle(
+                                      fontSize: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall
+                                          ?.fontSize),
+                                ),
+                              );
+                            },
                           ),
                           DisplayText(
-                            text: "₱${widget.listingModel.price}",
-                            lines: 1,
-                            style: TextStyle(
-                                fontSize: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall
-                                    ?.fontSize),
-                          ),
+                              text: widget.listingModel.description!,
+                              lines: 2,
+                              style: TextStyle(
+                                  fontSize: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall
+                                      ?.fontSize)),
                         ],
                       ),
-                      FutureBuilder(
-                        future: cooperative,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          }
-      
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }
-                          final cooperative = snapshot.data!;
-      
-                          return DisplayText(
-                            text: cooperative.name!,
-                            lines: 1,
-                            style: TextStyle(
-                                fontSize: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall
-                                    ?.fontSize),
-                          );
-                        },
-                      ),
-                      DisplayText(
-                          text: widget.listingModel.description!,
-                          lines: 2,
-                          style: TextStyle(
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall
-                                  ?.fontSize)),
-                    ],
+                    ),
                   ),
                 )
               ],
@@ -124,4 +144,3 @@ class _ListingCardState extends ConsumerState<ListingCard> {
     );
   }
 }
-
