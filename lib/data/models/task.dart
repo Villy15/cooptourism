@@ -12,6 +12,7 @@ class TaskModel {
   List<ToDoItem> toDoList;
   String? type;
   String? referenceId;
+  String? proof;
 
   TaskModel({
     this.uid,
@@ -21,6 +22,7 @@ class TaskModel {
     required this.toDoList,
     this.type,
     this.referenceId,
+    this.proof,
   });
 
   TaskModel copyWith({
@@ -31,6 +33,7 @@ class TaskModel {
     List<ToDoItem>? toDoList,
     String? type,
     String? referenceId,
+    String? proof,
     
     
   }) {
@@ -42,6 +45,7 @@ class TaskModel {
       toDoList: toDoList ?? this.toDoList,
       type: type ?? this.type,
       referenceId: referenceId ?? this.referenceId,
+      proof: proof ?? this.proof,
     );
   }
 
@@ -54,6 +58,7 @@ class TaskModel {
       'toDoList': toDoList.map((x) => x.toMap()).toList(),
       'type': type,
       'referenceId': referenceId,
+      'proof': proof,
     };
   }
 
@@ -67,6 +72,7 @@ class TaskModel {
           map['toDoList']?.map((x) => ToDoItem.fromMap('', x)) as Iterable),
       type: map['type'] as String?,
       referenceId: map['referenceId'] as String?,
+      proof: map['proof'] as String?,
     );
   }
 
@@ -76,7 +82,7 @@ class TaskModel {
 
   @override
   String toString() {
-    return 'TaskModel(uid: $uid, title: $title, description: $description, progress: $progress, toDoList: $toDoList, type: $type , referenceId: $referenceId)';
+    return 'TaskModel(uid: $uid, title: $title, description: $description, progress: $progress, toDoList: $toDoList, type: $type , referenceId: $referenceId, proof: $proof)';
   }
 
   @override
@@ -90,7 +96,8 @@ class TaskModel {
       other.progress == progress &&
       listEquals(other.toDoList, toDoList) &&
       other.type == type &&
-      other.referenceId == referenceId;
+      other.referenceId == referenceId &&
+      other.proof == proof;
   }
 
   @override
@@ -101,7 +108,8 @@ class TaskModel {
       progress.hashCode ^
       toDoList.hashCode ^
       type.hashCode ^
-      referenceId.hashCode;
+      referenceId.hashCode ^
+      proof.hashCode;
   }
 }
 

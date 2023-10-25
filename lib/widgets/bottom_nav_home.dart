@@ -20,7 +20,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
     final user = ref.watch(userModelProvider);
     role = user?.role ?? 'Customer';
 
-    debugPrint("role: $role");
+    // debugPrint("role: $role");
 
     // Changes the bottom navigation bar items based on the user's role
     List<BottomNavigationBarItem> items;
