@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ListingModel {
@@ -29,7 +30,6 @@ class ListingModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'owner': owner,
       'title': title,
       'description': description,
@@ -56,6 +56,34 @@ class ListingModel {
       postDate: json['postDate'] as Timestamp,
       images: List<String>.from(json['images'] as List<dynamic>),
       visits: json['visits'],
+    );
+  }
+
+  ListingModel copyWith({
+    String? id,
+    String? owner,
+    String? title,
+    String? description,
+    double? rating,
+    Map? amenities,
+    int? price,
+    String? type,
+    Timestamp? postDate,
+    List<String>? images,
+    int? visits,
+  }) {
+    return ListingModel(
+      id: id ?? this.id,
+      owner: owner ?? this.owner,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      rating: rating ?? this.rating,
+      amenities: amenities ?? this.amenities,
+      price: price ?? this.price,
+      type: type ?? this.type,
+      postDate: postDate ?? this.postDate,
+      images: images ?? this.images,
+      visits: visits ?? this.visits,
     );
   }
 }

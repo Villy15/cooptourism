@@ -18,7 +18,9 @@ class _ListingEditState extends State<ListingEdit> {
     final Future<ListingModel> listing =
         listingRepository.getSpecificListing(widget.listingId);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        toolbarHeight: kToolbarHeight,
         backgroundColor: Colors.grey[800],
       ),
       body: FutureBuilder(
@@ -27,11 +29,11 @@ class _ListingEditState extends State<ListingEdit> {
           if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           }
-
+      
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-
+      
           final listing = snapshot.data!;
           TextEditingController titleController =
               TextEditingController(text: listing.title);
@@ -39,20 +41,63 @@ class _ListingEditState extends State<ListingEdit> {
               TextEditingController(text: listing.description);
           TextEditingController priceController =
               TextEditingController(text: listing.price.toString());
-
-          return Column(
-            children: [
-              TextField(
-                controller: titleController,
+      
+          return SingleChildScrollView(
+            child: Container(
+              height: MediaQuery.of(context).size.height - kToolbarHeight - kBottomNavigationBarHeight - 100,
+              width: MediaQuery.of(context).size.width,
+              margin: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black, width: 1),
+                borderRadius: BorderRadius.circular(20),
               ),
-              TextField(
-                controller: descriptionController,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Expanded(
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: titleController,
+                        decoration: const InputDecoration(label: Text('Title')),
+                        maxLines: 1,
+                      ),
+                      TextField(
+                        controller: descriptionController,
+                        decoration:
+                            const InputDecoration(label: Text('Description')),
+                        maxLines: null,
+                      ),
+                      TextField(
+                        controller: priceController,
+                        decoration: const InputDecoration(label: Text('Price')),
+                        keyboardType: TextInputType.number,
+                        maxLines: 1,
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: FractionalOffset.bottomCenter,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 15.0),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                listingRepository.updateListing(
+                                    widget.listingId,
+                                    listing.copyWith(
+                                      title: titleController.text,
+                                      description: descriptionController.text,
+                                      price: int.parse(priceController.text),
+                                    ));
+                              },
+                              child: const Text("Save Listing"),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
               ),
-              TextField(
-                controller: priceController,
-                keyboardType: TextInputType.number,
-              ),
-            ],
+            ),
           );
         },
       ),
