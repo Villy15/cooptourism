@@ -119,4 +119,10 @@ class UserModel {
     annualProfit = user.annualProfit;
     totalSales = user.totalSales;
   }
+
+  // Generate toString
+  @override
+  String toString() {
+    return 'UserModel{uid: $uid, email: $email, firstName: $firstName, lastName: $lastName, status: $status, userAccomplishment: $userAccomplishment, userRating: $userRating, userTrust: $userTrust, role: $role, profilePicture: $profilePicture, location: $location, skills: $skills, featuredImgs: $featuredImgs, dateJoined: $dateJoined, bio: $bio, memberType: $memberType, currentListings: $currentListings, monthlySales: $monthlySales, annualProfit: $annualProfit, totalSales: $totalSales}';
+  }
 }

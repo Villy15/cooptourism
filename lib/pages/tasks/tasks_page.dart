@@ -13,10 +13,6 @@ class TasksPage extends StatefulWidget {
 }
 
 class _TasksPageState extends State<TasksPage> {
-  final List<String> _tabTitles = ['All', 'Required', 'Bonus'];
-  int _selectedIndex = 0;
-
-
   // Comment out the initState() method to remove manual data input
   @override
   void initState() {
@@ -27,16 +23,9 @@ class _TasksPageState extends State<TasksPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: _appBar(context, "Tasks"),
-        body: SingleChildScrollView (
+    return SingleChildScrollView (
           child: Column (
             children: [
-              SizedBox(
-                height: 40,
-                child: listViewFilter(),
-              ),
-        
               StreamBuilder(
                 stream: taskRepository.getAllTasks(),
                 builder: (context, snapshot) {
@@ -63,7 +52,7 @@ class _TasksPageState extends State<TasksPage> {
 
             ],
           ),
-        ));
+        );
   }
 
 
@@ -202,7 +191,7 @@ class _TasksPageState extends State<TasksPage> {
           Expanded (
             child: GestureDetector (
               onTap: () {
-                context.go('/tasks_page/${task.uid}');
+                context.go('/member_dashboard_page/tasks_page/${task.uid}');
               },
               child: Text(task.title,
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
@@ -223,68 +212,4 @@ class _TasksPageState extends State<TasksPage> {
     );
   }
 
-  
-
-  AppBar _appBar(BuildContext context, String title) {
-    return AppBar(
-      toolbarHeight: 70,
-      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
-      title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
-            child: IconButton(
-              onPressed: () {
-                // showAddPostPage(context);
-              },
-              icon: const Icon(Icons.settings, color: Colors.white),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  ListView listViewFilter() {
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: _tabTitles.length,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: GestureDetector(
-            onTap: () => setState(() => _selectedIndex = index),
-            child: Container(
-              decoration: BoxDecoration(
-                color: _selectedIndex == index
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.secondary,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 28.0, vertical: 10.0),
-                child: Text(
-                  _tabTitles[index],
-                  style: TextStyle(
-                    color: _selectedIndex == index
-                        ? Theme.of(context).colorScheme.background
-                        : Theme.of(context).colorScheme.primary,
-                    fontWeight: _selectedIndex == index
-                        ? FontWeight.bold
-                        : FontWeight.w400,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
 }

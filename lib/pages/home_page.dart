@@ -1,8 +1,5 @@
 import 'package:cooptourism/providers/home_page_provider.dart';
-import 'package:cooptourism/providers/user_provider.dart';
-import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/widgets/bottom_nav_home.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,20 +13,6 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class HomePageState extends ConsumerState<HomePage> {
-  final user = FirebaseAuth.instance.currentUser;
-  final UserRepository _userRepository = UserRepository();
-
-  @override
-  void initState() {
-    super.initState();
-
-    _userRepository.getUser(user!.uid).then((value) {
-      setState(() {
-        ref.read(userModelProvider.notifier).setUser(value);
-      });
-    });
-
-  }
 
   @override
   Widget build(BuildContext context) {

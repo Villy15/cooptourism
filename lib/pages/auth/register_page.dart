@@ -51,7 +51,14 @@ class _RegisterPageState extends State<RegisterPage> {
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .set({
         'email': emailTextController.text,
+        'first_name': 'Adrian',
+        'last_name': 'Villanueva',
+        'profilePicture': 'villy.jpg',
         'role': 'Customer',
+        'status': 'active',
+        'user_accomplishment': "Tour Driver",
+        'user_rating': 'Great',
+        'user_trust': 'Trust',
       });
       
 

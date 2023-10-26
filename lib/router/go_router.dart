@@ -2,8 +2,8 @@ import 'package:cooptourism/pages/events/events_page.dart';
 import 'package:cooptourism/pages/events/selected_events_page.dart';
 import 'package:cooptourism/pages/market/listing_edit.dart';
 import 'package:cooptourism/pages/market/listing_messages.dart';
+import 'package:cooptourism/pages/member/member_dashboard_page.dart';
 import 'package:cooptourism/pages/tasks/selected_task_page.dart';
-import 'package:cooptourism/pages/tasks/tasks_page.dart';
 import 'package:cooptourism/providers/auth.dart';
 import 'package:cooptourism/pages/auth/login_or_register.dart';
 import 'package:cooptourism/pages/cooperatives/coops_page.dart';
@@ -23,22 +23,19 @@ import 'package:cooptourism/pages/profile/profile_page.dart';
 import 'package:cooptourism/pages/wallet/wallet_page.dart';
 import 'package:cooptourism/pages/wiki/selected_wiki_page.dart';
 import 'package:cooptourism/pages/wiki/wiki_page.dart';
+import 'package:cooptourism/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-// import 'package:cooptourism/pages/inbox/chat.dart';
-// import 'package:cooptourism/data/repositories/user_repository.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
 final GlobalKey<NavigatorState> _shellNavigator =
     GlobalKey(debugLabel: 'shell');
 
-// final UserRepository _userRepository = UserRepository();
-
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
-
-  // Print current location
+  final user = ref.watch(userModelProvider);
+  String role = user?.role ?? 'Customer';
 
   return GoRouter(
     navigatorKey: _rootNavigator,
@@ -78,16 +75,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     }),
               ],
             ),
-            
+
             GoRoute(
-                path: "/tasks_page",
-                name: "Tasks",
-                pageBuilder: (context, state) {
-                  return NoTransitionPage(child: TasksPage(key: state.pageKey));
-                },
-                routes: [
+              path: "/member_dashboard_page",
+              name: "Member Dashboard",
+              pageBuilder: (context, state) {
+                return NoTransitionPage(
+                    child: MemberDashboardPage(key: state.pageKey));
+              },
+              routes: [
                 GoRoute(
-                    path: ':taskId',
+                    path: 'tasks_page/:taskId',
                     builder: (BuildContext context, GoRouterState state) {
                       return SelectedTaskPage(
                         taskId: state.pathParameters["taskId"]!,
@@ -197,18 +195,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               pageBuilder: (context, state) {
                 return NoTransitionPage(child: InboxPage(key: state.pageKey));
               },
-              // routes: [
-              //   GoRoute(
-              //     path: '/inbox_page/chat/:userId',
-              //     name: 'Chat',
-              //     // pageBuilder: (context, state) {
-              //     //   final userId = state.pathParameters['userId']!;
-              //     //   final user = _userRepository.getUser(userId);
-
-              //     //   return MaterialPage(child: ChatScreen(user: userId));
-              //     // },
-              //   ),
-              // ],
             ),
             GoRoute(
               path: "/wiki_page",
@@ -225,16 +211,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       );
                     }),
               ],
-              ),
-            
+            ),
+
             GoRoute(
-                path: "/events_page",
-                name: "Events",
-                pageBuilder: (context, state) {
-                  return NoTransitionPage(
-                      child: EventsPage(key: state.pageKey));
-                },
-                routes: [
+              path: "/events_page",
+              name: "Events",
+              pageBuilder: (context, state) {
+                return NoTransitionPage(child: EventsPage(key: state.pageKey));
+              },
+              routes: [
                 GoRoute(
                     path: ':eventId',
                     builder: (BuildContext context, GoRouterState state) {
@@ -258,11 +243,24 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
       final isSplash = state.location == SplashPage.routeLocation;
       if (isSplash) {
-        return isAuth ? "/tasks_page" : "/login";
+        debugPrint(role);
+        if (role == 'Customer') {
+          return isAuth ? "/market_page" : "/login";
+        }
+
+        if (role == 'Member') {
+          return isAuth ? "/member_dashboard_page" : "/login";
+        }
+
+        if (role == 'Manager') {
+          return isAuth ? "/dashboard_page" : "/login";
+        }
+
+        return isAuth ? "/market_page" : "/login";
       }
 
       final isLoggingIn = state.location == '/login';
-      if (isLoggingIn) return isAuth ? '/tasks_page' : null;
+      if (isLoggingIn) return isAuth ? '/member_dashboard_page' : null;
 
       return isAuth ? null : SplashPage.routeLocation;
     },

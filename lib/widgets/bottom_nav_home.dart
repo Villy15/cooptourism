@@ -62,7 +62,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         if (role == "Manager") {
           context.go("/");
         } else if (role == 'Member') {
-          context.go("/tasks_page");
+          context.go("/member_dashboard_page");
         } else if (role == 'Customer'){
           context.go("/market_page");
         }
@@ -135,9 +135,9 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
   List<BottomNavigationBarItem> _getMemberItems() {
     return const <BottomNavigationBarItem>[
       BottomNavigationBarItem(
-        icon: Icon(Icons.task_outlined),
-        activeIcon: Icon(Icons.task_rounded),
-        label: 'Tasks',
+        icon: Icon(Icons.dashboard_outlined),
+        activeIcon: Icon(Icons.dashboard_rounded),
+        label: 'Dashboard',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.groups_outlined),
