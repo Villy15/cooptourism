@@ -1,8 +1,9 @@
-// import 'package:carousel_slider/carousel_controller.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cooptourism/data/models/events.dart';
 import 'package:cooptourism/data/repositories/events_repository.dart';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -246,11 +247,29 @@ class ImageSlider extends StatefulWidget {
 }
 
 class _ImageSliderState extends State<ImageSlider> {
+  final storageRef = FirebaseStorage.instance.ref();
   int currentImageIndex = 0;
+
+  List<String>? imageUrls;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchImageUrls();
+  }
+
+  Future<void> _fetchImageUrls() async {
+    List<String> urls = await eventsRepository.getEventImageUrls(
+        widget.event.uid, widget.event.image!);
+    setState(() {
+      imageUrls = urls;
+    });
+  }
+  
   @override
   Widget build(BuildContext context) {
     final decorator = DotsDecorator(
-      activeColor: Theme.of(context).colorScheme.primary,
+      activeColor: Colors.orange[700],
       size: const Size.square(7.5),
       activeSize: const Size.square(10.0),
       activeShape: RoundedRectangleBorder(
@@ -280,16 +299,22 @@ class _ImageSliderState extends State<ImageSlider> {
                 });
               },
             ),
-            items: widget.event.image!
-                .map((item) => Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Image.network(item,
-                            fit: BoxFit.cover, width: 1000),
+            items: imageUrls != null
+                ? imageUrls!
+                    .map<Widget>(
+                      (url) => CachedNetworkImage(
+                        imageUrl: url,
+                        height: 250,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            const CircularProgressIndicator(),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
                       ),
-                    ))
-                .toList(),
+                    )
+                    .toList()
+                : [const Center(child: CircularProgressIndicator())],
           ),
         ),
         SizedBox(
