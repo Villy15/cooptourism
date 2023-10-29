@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooptourism/data/models/message.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:flutter/material.dart';
 
 class UserRepository {
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('users');
+
+
 
   // Get all users from Firestore
   Stream<List<UserModel>> getAllUsers() {
@@ -132,6 +135,69 @@ class UserRepository {
     } catch (e) {
       debugPrint('Error deleting user from Firestore: $e');
       // You might want to handle errors more gracefully here
+    }
+  }
+
+  // get messages from firestore
+  Stream<List<MessageModel>> getAllMessages(
+      String senderId, String receiverId) {
+    return usersCollection
+        .doc(senderId)
+        .collection('coaching_messages')
+        .where(Filter.and(
+            Filter.or(Filter('senderId', isEqualTo: senderId),
+                Filter('senderId', isEqualTo: receiverId)),
+            Filter.or(Filter('receiverId', isEqualTo: senderId),
+                Filter('receiverId', isEqualTo: receiverId))))
+        .orderBy('timeStamp', descending: false)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return MessageModel.fromMap(doc.id, doc.data());
+      }).toList();
+    });
+  }
+
+  // Add a message to Firestore
+  Future<void> addMessage(MessageModel message, String userId) async {
+    try {
+      await usersCollection
+          .doc(userId)
+          .collection('coaching_messages')
+          .add(message.toMap());
+    } catch (e) {
+      debugPrint('Error adding Listing to Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
+  }
+
+  // add manually
+  Future<void> addMessageManually() async {
+    List<Map<String, dynamic>> events = [
+      {
+        'senderId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+        'receiverId': 'Vy4YiXQBhuNZu3sHeSel',
+        'content': 'Hello! I am interested in coaching!',
+        'timeStamp': DateTime.now(),
+      },
+      {
+        'senderId': 'Vy4YiXQBhuNZu3sHeSel',
+        'receiverId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+        'content': 'Oh yes. I am available.',
+        'timeStamp': DateTime.now(),
+      }
+    ];
+
+    for (var event in events) {
+      try {
+        await usersCollection
+            .doc('ewBh7JJqkpe0XwYRMiAsRwuw0in1')
+            .collection('coaching_messages')
+            .add(event);
+      } catch (e) {
+        debugPrint('Error adding event to Firestore: $e');
+        // You might want to handle errors more gracefully here
+      }
     }
   }
 }

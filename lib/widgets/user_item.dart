@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cooptourism/pages/inbox/chat.dart';
 import 'package:cooptourism/data/models/user.dart';
+import 'package:go_router/go_router.dart';
 
 class UserItem extends StatefulWidget {
   const UserItem({Key? key, required this.user}) : super(key: key);
@@ -15,12 +16,9 @@ class _UserItemState extends State<UserItem> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => ChatScreen(user: widget.user),
-          ),
-        );
+        context.go('/inbox_page/${widget.user.uid!}}');
       },
       child: ListTile(
         contentPadding: EdgeInsets.zero,

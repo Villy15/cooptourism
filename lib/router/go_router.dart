@@ -1,6 +1,8 @@
+import 'package:cooptourism/pages/coaching/coaching_messaging.dart';
 import 'package:cooptourism/pages/coaching/coaching_page.dart';
 import 'package:cooptourism/pages/events/events_page.dart';
 import 'package:cooptourism/pages/events/selected_events_page.dart';
+import 'package:cooptourism/pages/inbox/chat.dart';
 import 'package:cooptourism/pages/market/listing_edit.dart';
 import 'package:cooptourism/pages/market/listing_messages.dart';
 import 'package:cooptourism/pages/member/member_dashboard_page.dart';
@@ -163,10 +165,22 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: "coaching_page",
                     name: "Coaching",
-                    builder: (context, state) => CoachingPage(key: state.pageKey),
+                    pageBuilder: (context, state) {
+                      return NoTransitionPage(child: CoachingPage(key: state.pageKey));
+                    },
+                    routes: [
+                      GoRoute(
+                        path: ':coachId',
+                        builder: (BuildContext context, GoRouterState state) {
+                          return CoachingMessaging(
+                            coachId: state.pathParameters["coachId"]!,
+                          );
+                        }
+                      )
+                    ],
                   ),
                 ]
-                ),
+              ),
               
 
             // ADMIN ROUTES
@@ -215,6 +229,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               pageBuilder: (context, state) {
                 return NoTransitionPage(child: InboxPage(key: state.pageKey));
               },
+              routes: [
+                GoRoute(
+                  path: ':userId',
+                  name: 'Chat',
+                  pageBuilder: (context, state) {
+                    return NoTransitionPage(
+                        child: ChatScreen(
+                            userId: state.pathParameters["userId"]!));
+                  }
+                )
+              ]
             ),
             GoRoute(
               path: "/wiki_page",
