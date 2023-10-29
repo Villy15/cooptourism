@@ -1,3 +1,4 @@
+import 'package:cooptourism/pages/coaching/coaching_page.dart';
 import 'package:cooptourism/pages/events/events_page.dart';
 import 'package:cooptourism/pages/events/selected_events_page.dart';
 import 'package:cooptourism/pages/market/listing_edit.dart';
@@ -157,7 +158,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 pageBuilder: (context, state) {
                   return NoTransitionPage(
                       child: ProfilePage(key: state.pageKey));
-                }),
+                },
+                routes: [
+                  GoRoute(
+                    path: "coaching_page",
+                    name: "Coaching",
+                    builder: (context, state) => CoachingPage(key: state.pageKey),
+                  ),
+                ]
+                ),
+              
 
             // ADMIN ROUTES
             GoRoute(
@@ -173,7 +183,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 pageBuilder: (context, state) {
                   return NoTransitionPage(
                       child: MembersPage(key: state.pageKey));
-                }),
+                },
+                // routes: [ to be added later
+                //   GoRoute(
+                //       path: ':memberId',
+                //       builder: (BuildContext context, GoRouterState state) {
+                //         return ManagerProfileView(
+                //           memberId: state.pathParameters["memberId"]!,
+                //         );
+                //       }),
+                // ]
+                ),
             GoRoute(
                 path: "/reports_page",
                 name: "Reports",
@@ -229,7 +249,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     }),
               ],
             ),
-          ])
+          ]),
+          
     ],
     redirect: (context, state) {
       // If our async state is loading, don't perform redirects, yet
