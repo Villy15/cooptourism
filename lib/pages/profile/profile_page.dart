@@ -146,6 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   profile(context, userData!, uidString),
                   const SizedBox(height: 15),
+                  coachingSection(context, userData, uidString)
                   
                 ],
               );
@@ -574,6 +575,25 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
 
         const SizedBox(height: 10)
+      ]
+    );
+  }
+
+  Column coachingSection(BuildContext context, UserModel user, String userUID) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 15.0),
+          child: Text(
+            'My Skills',
+            style: TextStyle(
+              fontSize: 20, 
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary
+            )
+          ),
+        ),
       ]
     );
   }
