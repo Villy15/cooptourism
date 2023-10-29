@@ -54,6 +54,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       future: userFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
+          debugPrint("Building app with user data");
           return _buildApp(router);
         }
         return _buildApp(router);
@@ -85,14 +86,5 @@ class _MyAppState extends ConsumerState<MyApp> {
     UserModel? userValue = await _userRepository.getUser(uid);
     ref.read(userModelProvider.notifier).setUser(userValue);
     return userValue;
-  }
-
-  Widget _buildLoadingApp() {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      home: const Scaffold(body: Center(child: Text("test"))),
-    );
   }
 }

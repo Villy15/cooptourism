@@ -3,6 +3,7 @@ import 'package:cooptourism/pages/events/selected_events_page.dart';
 import 'package:cooptourism/pages/market/listing_edit.dart';
 import 'package:cooptourism/pages/market/listing_messages.dart';
 import 'package:cooptourism/pages/member/member_dashboard_page.dart';
+import 'package:cooptourism/pages/profile/poll_profile_page.dart';
 import 'package:cooptourism/pages/tasks/selected_task_page.dart';
 import 'package:cooptourism/providers/auth.dart';
 import 'package:cooptourism/pages/auth/login_or_register.dart';
@@ -152,12 +153,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ],
             ),
             GoRoute(
-                path: "/profile_page",
-                name: "Profile",
-                pageBuilder: (context, state) {
-                  return NoTransitionPage(
-                      child: ProfilePage(key: state.pageKey));
-                }),
+              path: "/profile_page",
+              name: "Profile",
+              pageBuilder: (context, state) {
+                return NoTransitionPage(child: ProfilePage(key: state.pageKey));
+              },
+              routes: [
+                GoRoute(
+                    path: ':profileId',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return PollProfilePage(
+                        profileId: state.pathParameters["profileId"]!,
+                      );
+                    }),
+              ],
+            ),
 
             // ADMIN ROUTES
             GoRoute(

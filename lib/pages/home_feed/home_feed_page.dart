@@ -29,6 +29,7 @@ class HomeFeedPageState extends State<HomeFeedPage> {
 
     // Comment out the following line to add a dummy post
     // _postRepository.addDummyPost();
+    // _postRepository.deletePost('A40I177oe5IkKMPv9seU');
   }
 
   @override
@@ -45,6 +46,8 @@ class HomeFeedPageState extends State<HomeFeedPage> {
             return const Center(child: CircularProgressIndicator());
           }
           final posts = snapshot.data!;
+
+          debugPrint("Posts: $posts.toString()");
 
           return RefreshIndicator(
             onRefresh: () async {
