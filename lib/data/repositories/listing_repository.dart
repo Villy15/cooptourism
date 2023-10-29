@@ -14,7 +14,7 @@ class ListingRepository {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) {
-        return ListingModel.fromJson(
+        return ListingModel.fromMap(
             doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
     });
@@ -27,7 +27,7 @@ class ListingRepository {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) {
-        return ListingModel.fromJson(
+        return ListingModel.fromMap(
             doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
     });
@@ -47,7 +47,7 @@ class ListingRepository {
   Future<ListingModel> getSpecificListing(String listingId) async {
     try {
       final doc = await listingsCollection.doc(listingId).get();
-      return ListingModel.fromJson(
+      return ListingModel.fromMap(
           listingId, doc.data() as Map<String, dynamic>);
     } catch (e) {
       debugPrint('Error getting Listing from Firestore: $e');
@@ -59,7 +59,7 @@ class ListingRepository {
   // Update a Listing in Firestore
   Future<void> updateListing(String listingId, ListingModel listing) async {
     try {
-      await listingsCollection.doc(listingId).update(listing.toJson());
+      await listingsCollection.doc(listingId).update(listing.toMap());
     } catch (e) {
       debugPrint('Error updating Listing in Firestore: $e');
       // You might want to handle errors more gracefully here
