@@ -15,6 +15,7 @@ class ListingModel {
   Timestamp? postDate;
   List<String>? images;
   int? visits;
+  String? ownerMember;
 
   ListingModel({
     this.id,
@@ -28,6 +29,7 @@ class ListingModel {
     this.postDate,
     this.images,
     this.visits,
+    this.ownerMember,
   });
 
 
@@ -44,6 +46,7 @@ class ListingModel {
     Timestamp? postDate,
     List<String>? images,
     int? visits,
+    String? ownerMember,
   }) {
     return ListingModel(
       id: id ?? this.id,
@@ -57,6 +60,7 @@ class ListingModel {
       postDate: postDate ?? this.postDate,
       images: images ?? this.images,
       visits: visits ?? this.visits,
+      ownerMember: ownerMember ?? this.ownerMember,
     );
   }
 
@@ -69,9 +73,10 @@ class ListingModel {
       'amenities': amenities,
       'price': price,
       'type': type,
-      'postDate': postDate?.millisecondsSinceEpoch,
+      'postDate': postDate,
       'images': images,
       'visits': visits,
+      'ownerMember': ownerMember,
     };
   }
 
@@ -88,6 +93,7 @@ class ListingModel {
       postDate: map['postDate'] as Timestamp?,
       images: map['images'] != null ? List<String>.from(map['images'].map((e) => e.toString())) : null,
       visits: map['visits'] != null ? map['visits'] as int : null,
+      ownerMember: map['ownerMember'] != null ? map['ownerMember'] as String : null,
     );
   }
 
@@ -97,6 +103,6 @@ class ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(id: $id, owner: $owner, title: $title, description: $description, rating: $rating, amenities: $amenities, price: $price, type: $type, postDate: $postDate, images: $images, visits: $visits)';
+    return 'ListingModel(id: $id, owner: $owner, title: $title, description: $description, rating: $rating, amenities: $amenities, price: $price, type: $type, postDate: $postDate, images: $images, visits: $visits, ownerMember: $ownerMember)';
   }
 }
