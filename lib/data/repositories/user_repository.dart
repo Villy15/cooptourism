@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/user.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class UserRepository {
@@ -10,6 +9,19 @@ class UserRepository {
   // Get all users from Firestore
   Stream<List<UserModel>> getAllUsers() {
     return usersCollection.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return UserModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+  
+  // get users with role of Coach
+  Stream<List<UserModel>> getAllCoaches() {
+    return usersCollection
+        .where('role', isEqualTo: 'Coach')
+        .snapshots()
+        .map((snapshot) {
       return snapshot.docs.map((doc) {
         return UserModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
@@ -54,17 +66,6 @@ class UserRepository {
   Future<UserModel> getUser(String userId) async {
     try {
       final doc = await usersCollection.doc(userId).get();
-      return UserModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
-    } catch (e) {
-      debugPrint('Error getting user from Firestore: $e');
-      // You might want to handle errors more gracefully here
-      rethrow;
-    }
-  }
-
-  Future<UserModel> getUserProfile(User user) async {
-    try {
-      final doc = await usersCollection.doc(user.uid).get();
       return UserModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
     } catch (e) {
       debugPrint('Error getting user from Firestore: $e');

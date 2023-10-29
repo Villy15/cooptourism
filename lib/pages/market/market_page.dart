@@ -36,7 +36,7 @@ class _MarketPageState extends State<MarketPage> {
                 stream: listings0,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
+                    return Text('Error: ${snapshot. error}  ');
                   }
 
                   if (snapshot.connectionState == ConnectionState.waiting) {

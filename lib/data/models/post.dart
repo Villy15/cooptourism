@@ -10,7 +10,6 @@ class PostModel {
   List<String>? likes;
   List<String>? dislikes;
   List<String>? comments;
-  // CollectionReference? comments;
   Timestamp timestamp;
   List<String>? images;
 

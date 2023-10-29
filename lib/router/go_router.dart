@@ -1,3 +1,4 @@
+import 'package:cooptourism/pages/coaching/coaching_page.dart';
 import 'package:cooptourism/pages/events/events_page.dart';
 import 'package:cooptourism/pages/events/selected_events_page.dart';
 import 'package:cooptourism/pages/market/add_listing.dart';
@@ -5,6 +6,7 @@ import 'package:cooptourism/pages/market/listing_edit.dart';
 import 'package:cooptourism/pages/market/listing_messages.dart';
 import 'package:cooptourism/pages/market/listing_messages_inbox.dart';
 import 'package:cooptourism/pages/member/member_dashboard_page.dart';
+import 'package:cooptourism/pages/profile/poll_profile_page.dart';
 import 'package:cooptourism/pages/tasks/selected_task_page.dart';
 import 'package:cooptourism/providers/auth.dart';
 import 'package:cooptourism/pages/auth/login_or_register.dart';
@@ -169,13 +171,26 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ],
             ),
             GoRoute(
-                path: "/profile_page",
-                name: "Profile",
-                pageBuilder: (context, state) {
-                  return NoTransitionPage(
-                      child: ProfilePage(key: state.pageKey));
-                }),
-
+              path: "/profile_page",
+              name: "Profile",
+              pageBuilder: (context, state) {
+                return NoTransitionPage(child: ProfilePage(key: state.pageKey));
+              },
+              routes: [
+                GoRoute(
+                    path: ':profileId',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return PollProfilePage(
+                        profileId: state.pathParameters["profileId"]!,
+                      );
+                    }),
+                GoRoute(
+                  path: "coaching_page",
+                  name: "Coaching",
+                  builder: (context, state) => CoachingPage(key: state.pageKey),
+                ),
+              ],
+            ),
             // ADMIN ROUTES
             GoRoute(
                 path: "/dashboard_page",
@@ -190,7 +205,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 pageBuilder: (context, state) {
                   return NoTransitionPage(
                       child: MembersPage(key: state.pageKey));
-                }),
+                },
+                // routes: [ to be added later
+                //   GoRoute(
+                //       path: ':memberId',
+                //       builder: (BuildContext context, GoRouterState state) {
+                //         return ManagerProfileView(
+                //           memberId: state.pathParameters["memberId"]!,
+                //         );
+                //       }),
+                // ]
+                ),
             GoRoute(
                 path: "/reports_page",
                 name: "Reports",
@@ -246,7 +271,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     }),
               ],
             ),
-          ])
+          ]),
+          
     ],
     redirect: (context, state) {
       // If our async state is loading, don't perform redirects, yet

@@ -2,6 +2,7 @@ import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/widgets/bottom_nav_selected_listing.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ListingEdit extends StatefulWidget {
   final String listingId;
@@ -84,6 +85,19 @@ class _ListingEditState extends State<ListingEdit> {
                                     description: descriptionController.text,
                                     price: int.parse(priceController.text),
                                   ));
+
+
+                              const snackBar = SnackBar(
+                                content: Text('Listing updated successfully!'),
+                                behavior: SnackBarBehavior.floating,
+                                duration: Duration(seconds: 2),
+                              );
+
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+
+                              context.go('/market_page/${widget.listingId}');
+
                             },
                             child: const Text("Save Listing"),
                           ),

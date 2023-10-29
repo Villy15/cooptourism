@@ -18,7 +18,7 @@ class LeadingBackButton extends StatelessWidget {
         height: 20,
         width: 20,
         decoration: BoxDecoration(
-          color: Colors.grey[800],
+          color: Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(50),
         ),
         child: IconButton(

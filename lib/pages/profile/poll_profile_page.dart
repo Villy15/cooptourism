@@ -11,20 +11,20 @@ import 'package:firebase_storage/firebase_storage.dart';
 // import 'package:cooptourism/widgets/gnav_home.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 // import 'package:cooptourism/theme/dark_theme.dart';
 // import 'package:cooptourism/theme/light_theme.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+class PollProfilePage extends StatefulWidget {
+  final String profileId;
+  const PollProfilePage({Key? key, required this.profileId}) : super(key: key);
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<PollProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilePageState extends State<PollProfilePage> {
   int _selectedIndex = 0;
 
   final List<String> _titles = [
@@ -117,13 +117,13 @@ class _ProfilePageState extends State<ProfilePage> {
   StreamBuilder<UserModel> currentUserProfile(User user, int selectedIndex) {
     final String uidString = user.uid;
     return StreamBuilder(
-        stream: userRepository.getUser(user.uid).asStream(),
+        stream: userRepository.getUser(widget.profileId).asStream(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             var userData = snapshot.data;
             debugPrint('user uid is ${user.uid}');
 
-            if (selectedIndex == 0) { // Perforrmance
+            if (selectedIndex == 0) {
               return Column(
                 children: [
                   profile(context, userData!, uidString),
@@ -132,7 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               );
             }
-            else if (selectedIndex == 1) { // About
+            else if (selectedIndex == 1) {
               return Column(
                 children: [
                   profile(context, userData!, uidString),
@@ -142,22 +142,12 @@ class _ProfilePageState extends State<ProfilePage> {
               );
             }
 
-            else if (selectedIndex == 2) { // Posts
+            else if (selectedIndex == 2) {
               return Column(
                 children: [
                   profile(context, userData!, uidString),
                   const SizedBox(height: 15),
                   
-                ],
-              );
-            }
-            
-            else if (selectedIndex == 3) {
-              return Column(
-                children: [
-                  profile(context, userData!, uidString),
-                  const SizedBox(height: 15),
-                  coachingSection(context, userData, uidString)
                 ],
               );
             }
@@ -585,248 +575,6 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
 
         const SizedBox(height: 10)
-      ]
-    );
-  }
-
-  Column coachingSection(BuildContext context, UserModel user, String userUID) {
-
-    final List<String> tips = [
-      'Honoring commitments and delivering on promises.',
-      'Being transparent and honest in your interactions.',
-      'Maintaining open and clear communication.',
-      'Resolving conflicts and addressing concerns promptly and professionally.'
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 24.0),
-          child: Text(
-            'Need help in improving your trust rating?',
-            style: TextStyle(
-              fontSize: 20, 
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary
-            )
-          ),
-        ),
-
-        const SizedBox(height: 15),
-
-        Padding(
-          padding: const EdgeInsets.only(left: 12.0),
-          child: RichText(
-            text: TextSpan(
-              style: TextStyle(
-                fontSize: 18.0,
-                color: Theme.of(context).colorScheme.primary
-              ),
-              children: const <TextSpan> [
-                TextSpan(
-                  text: 'Q:',
-                  style: TextStyle(
-                  fontWeight: FontWeight.bold
-                  )
-                ),
-                TextSpan(
-                  text: ' What is a trust rating?'
-                )
-              ]
-            ),
-            
-          ),
-        ),
-
-        const SizedBox(height: 10),
-
-        Padding(
-          padding: const EdgeInsets.only(left: 16.0, right: 12.0),
-          child: Text(
-            "A trust rating is a measure of credibility and reliability that is assigned to individuals or entities based on their past actions, behavior, and reputation.",
-            style: TextStyle(
-              fontSize: 15,
-              color: Theme.of(context).colorScheme.primary
-            )
-          ),
-        ),
-
-
-        const SizedBox(height: 10),
-
-        Padding(
-          padding: const EdgeInsets.only(left: 12.0),
-          child: RichText(
-            text: TextSpan(
-              style: TextStyle(
-                fontSize: 18.0,
-                color: Theme.of(context).colorScheme.primary
-              ),
-              children: const <TextSpan> [
-                TextSpan(
-                  text: 'Q:',
-                  style: TextStyle(
-                  fontWeight: FontWeight.bold
-                  )
-                ),
-                TextSpan(
-                  text: ' Why is a trust rating important?'
-                )
-              ]
-            ),
-          ),
-        ),
-
-        const SizedBox(height: 10),
-
-        Padding(
-          padding: const EdgeInsets.only(left: 16.0, right: 12.0),
-          child: Text(
-            "A trust rating is important because it affects how others perceive and interact with you. It can can influence people's willingness to engage in transactions, collaborations or partnerships with you.",
-            style: TextStyle(
-              fontSize: 15,
-              color: Theme.of(context).colorScheme.primary
-            )
-          ),
-        ),
-
-        const SizedBox(height: 10),
-
-        Padding(
-          padding: const EdgeInsets.only(left: 12.0),
-          child: RichText(
-            text: TextSpan(
-              style: TextStyle(
-                fontSize: 18.0,
-                color: Theme.of(context).colorScheme.primary
-              ),
-              children: const <TextSpan> [
-                TextSpan(
-                  text: 'Q:',
-                  style: TextStyle(
-                  fontWeight: FontWeight.bold
-                  )
-                ),
-                TextSpan(
-                  text: ' How can I improve my trust rating?'
-                )
-              ]
-            ),
-          ),
-        ),
-
-        const SizedBox(height: 10),
-
-        Padding(
-          padding: const EdgeInsets.only(left: 16.0, right: 12.0),
-          child: Text(
-            "Improving your trust rating requires consistent effort and positive actions. Some ways to improve your trust rating include:",
-            style: TextStyle(
-              fontSize: 15,
-              color: Theme.of(context).colorScheme.primary
-            )
-          ),
-        ),
-
-        const SizedBox(height: 5),
-        
-        SizedBox(
-          child: ListView.builder(
-            itemCount: tips.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: ((context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(left: 24.0),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.circle, 
-                      size: 8, 
-                      color: Theme.of(context).colorScheme.primary
-                      ),
-                    const SizedBox(width: 7),
-                    Expanded(
-                      child: Text(
-                        tips[index],
-                        style: const TextStyle(
-                          fontSize: 13,
-                        )
-                      ),
-                    )
-                  ],
-                ),
-              );
-            })
-          ),
-        ),
-
-
-        Center(
-          child: Text(
-            'Need more assistance?',
-            style: TextStyle(
-              fontSize: 18, 
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary
-            )
-          ),
-        ),
-        
-        const SizedBox(height: 10),
-        Center(
-          child: Container(
-            height: 155,
-            width: 250,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              borderRadius: BorderRadius.circular(10)
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top:16.0, bottom: 12),
-                    child: Text(
-                      'Connect with a coach!',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
-                        fontWeight: FontWeight.bold
-                      )
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  GestureDetector(
-                    onTap: () {
-                      context.go('/profile_page/coaching_page');
-                    },
-                    child: Container(
-                      height: 40,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondary,
-                        borderRadius: BorderRadius.circular(24)
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Start',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 16
-                          )
-                        )
-                      )
-                    ),
-                  )
-                ],
-              ),
-            )
-          ),
-        ),
-
-        const SizedBox(height: 70)
       ]
     );
   }
