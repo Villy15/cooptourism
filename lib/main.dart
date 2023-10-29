@@ -56,7 +56,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         if (snapshot.connectionState == ConnectionState.done) {
           return _buildApp(router);
         }
-        return _buildLoadingApp();
+        return _buildApp(router);
       },
     );
   }
@@ -92,7 +92,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
       darkTheme: darkTheme,
-      home: const Scaffold(body: Center(child: CircularProgressIndicator())),
+      home: const Scaffold(body: Center(child: Text("test"))),
     );
   }
 }
