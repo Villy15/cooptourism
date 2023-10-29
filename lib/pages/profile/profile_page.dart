@@ -800,6 +800,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 10),
                   InkWell(
                     onTap: () {
+                      debugPrint('TEST');
                       context.go('/profile_page/coaching_page');
                     },
                     child: Container(
