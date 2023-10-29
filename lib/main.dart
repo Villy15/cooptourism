@@ -92,7 +92,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
       darkTheme: darkTheme,
-      home: const Scaffold(body: Center(child: CircularProgressIndicator())),
+      home: const Scaffold(body: Center(child: Text("test"))),
     );
   }
 }

@@ -54,7 +54,7 @@ class _RegisterPageState extends State<RegisterPage> {
         'first_name': 'Adrian',
         'last_name': 'Villanueva',
         'profilePicture': 'villy.jpg',
-        'role': 'Customer',
+        'role': 'Manager',
         'status': 'active',
         'user_accomplishment': "Tour Driver",
         'user_rating': 'Great',

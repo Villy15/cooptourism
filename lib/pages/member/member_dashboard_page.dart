@@ -16,6 +16,7 @@ class _MemberDashboardPageState extends State<MemberDashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: _appBar(context, "Dashboard"),
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: SingleChildScrollView (
           child: Column (
             children: [
