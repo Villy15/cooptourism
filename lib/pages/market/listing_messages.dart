@@ -48,8 +48,6 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
           final Stream<List<MessageModel>> messages = listingRepository
               .getReceivedFromMessages(widget.listingId, widget.docId);
 
-          debugPrint("testing this $messages");
-
           return StreamBuilder(
               stream: messages,
               builder: ((context, snapshot) {
