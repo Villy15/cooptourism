@@ -55,7 +55,7 @@ class UserModel {
       firstName: json['first_name'] ?? '',
       lastName: json['last_name'] ?? '',
       status: json['status'] ?? '',
-      userAccomplishment: json['user_accomplishment'] ?? '',
+      userAccomplishment: json['user_achievement'] ?? '',
       userRating: json['user_rating'] ?? '',
       userTrust: json['user_trust'] ?? '',
       role: json['role'] ?? '',

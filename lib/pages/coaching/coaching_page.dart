@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class CoachingPage extends ConsumerStatefulWidget {
   const CoachingPage({super.key});
@@ -26,6 +27,7 @@ class _CoachingPageState extends ConsumerState<CoachingPage> {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
     _fetchCoaches();
+    // userRepository.addMessageManually();
     Future.delayed(Duration.zero, () {
       _updateNavBarAndAppBarVisibility(false);
     });
@@ -55,18 +57,29 @@ class _CoachingPageState extends ConsumerState<CoachingPage> {
             physics: const NeverScrollableScrollPhysics(),
             // display coach full name
             itemBuilder: (context, index) {
-              debugPrint(_coaches[index].toString());
               return ListTile(
-                leading: _coaches[index].profilePicture != null && _coaches[index].profilePicture!.isNotEmpty 
-                         ? DisplayProfilePicture(
-                          storageRef: FirebaseStorage.instance.ref(), 
-                          coopId: _coaches[index].uid!,
-                          data: _coaches[index].profilePicture, 
-                          height: 50, 
-                          width: 50) : Icon (Icons.person, size: 50, color: Theme.of(context).colorScheme.primary),
+                leading: Container(
+                  height: 50, 
+                  width: 50,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondary,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: _coaches[index].profilePicture != null && _coaches[index].profilePicture!.isNotEmpty 
+                           ? DisplayProfilePicture(
+                            storageRef: FirebaseStorage.instance.ref(), 
+                            coopId: _coaches[index].uid!,
+                            data: _coaches[index].profilePicture, 
+                            height: 50, 
+                            width: 50) : Icon (Icons.person, size: 50, color: Theme.of(context).colorScheme.primary),
+                ),
                 title: Text(
                   '${_coaches[index].firstName} ${_coaches[index].lastName}',
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600
+                  )
                 ),
                 subtitle: Row(
                   children: [
@@ -75,13 +88,23 @@ class _CoachingPageState extends ConsumerState<CoachingPage> {
                         color: Theme.of(context).colorScheme.primary,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Text('test', style: TextStyle(color: Colors.white, fontSize: 12))
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          '${_coaches[index].userAccomplishment}', 
+                          style: const TextStyle(
+                            color: Colors.white, 
+                            fontSize: 14
+                          )
+                        ),
+                      )
                     ),
-                    const Text('testing')
+                    
+                    const SizedBox(width: 10),
                   ],
                 ),
                 onTap: () {
-                  // context.go('/wiki_page/${_coaches[index].uid}');
+                  context.go('/profile_page/coaching_page/${_coaches[index].uid}');
                 },
               );
             },
@@ -104,15 +127,6 @@ class _CoachingPageState extends ConsumerState<CoachingPage> {
           Navigator.of(context).pop(); // to go back
         },
       ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.edit),
-          color: Theme.of(context).colorScheme.primary,
-          onPressed: () {
-            // context.go('/wiki_page/${widget.wikiId}/edit');
-          },
-        ),
-      ],
     );
   }
 

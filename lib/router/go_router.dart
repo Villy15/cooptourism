@@ -1,3 +1,4 @@
+import 'package:cooptourism/pages/coaching/coaching_messaging.dart';
 import 'package:cooptourism/pages/coaching/coaching_page.dart';
 import 'package:cooptourism/pages/events/events_page.dart';
 import 'package:cooptourism/pages/events/selected_events_page.dart';
@@ -31,6 +32,7 @@ import 'package:cooptourism/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cooptourism/pages/inbox/chat.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
 final GlobalKey<NavigatorState> _shellNavigator =
@@ -237,6 +239,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               pageBuilder: (context, state) {
                 return NoTransitionPage(child: InboxPage(key: state.pageKey));
               },
+              routes: [
+                GoRoute(
+                  path: ':userId',
+                  name: 'Chat',
+                  pageBuilder: (context, state) {
+                    return NoTransitionPage(
+                        child: ChatScreen(
+                            userId: state.pathParameters["userId"]!));
+                  }
+                )
+              ]
             ),
             GoRoute(
               path: "/wiki_page",
