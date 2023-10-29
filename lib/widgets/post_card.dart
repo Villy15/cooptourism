@@ -55,6 +55,7 @@ class _PostCardState extends State<PostCard> {
     final isCooperative = widget.postModel.authorType == 'cooperative';
     final Future<dynamic> authorFuture = isCooperative 
           ? cooperativeRepository.getCooperative(authorId)
+   
           : userRepository.getUser(authorId);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),

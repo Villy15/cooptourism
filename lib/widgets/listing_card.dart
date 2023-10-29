@@ -1,8 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cooptourism/data/models/cooperatives.dart';
 import 'package:cooptourism/data/models/listing.dart';
-import 'package:cooptourism/data/repositories/cooperative_repository.dart';
-// import 'package:cooptourism/providers/cooperative_provider.dart';
 import 'package:cooptourism/widgets/display_image.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 import 'package:flutter/material.dart';
@@ -36,10 +33,6 @@ class _ListingCardState extends ConsumerState<ListingCard> {
 
   @override
   Widget build(BuildContext context) {
-    final CooperativesRepository cooperativeRepository =
-        CooperativesRepository();
-    final Future<CooperativesModel> cooperative =
-        cooperativeRepository.getCooperative(widget.listingModel.owner!);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -97,37 +90,9 @@ class _ListingCardState extends ConsumerState<ListingCard> {
                               ),
                             ],
                           ),
-                          FutureBuilder(
-                            future: cooperative,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasError) {
-                                return Text('Error: ${snapshot.error}');
-                              }
-                
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                              }
-                              final cooperative = snapshot.data!;
-                
-                              return Padding(
-                                padding: const EdgeInsets.only(top: 10.0),
-                                child: DisplayText(
-                                  text: cooperative.name!,
-                                  lines: 1,
-                                  style: TextStyle(
-                                      fontSize: Theme.of(context)
-                                          .textTheme
-                                          .headlineSmall
-                                          ?.fontSize),
-                                ),
-                              );
-                            },
-                          ),
                           DisplayText(
                               text: widget.listingModel.description!,
-                              lines: 2,
+                              lines: 3,
                               style: TextStyle(
                                   fontSize: Theme.of(context)
                                       .textTheme

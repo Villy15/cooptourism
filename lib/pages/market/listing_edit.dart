@@ -42,45 +42,39 @@ class _ListingEditState extends State<ListingEdit> {
               toolbarHeight: kToolbarHeight,
               backgroundColor: Colors.grey[800],
             ),
-            body: Container(
-              // height: MediaQuery.of(context).size.height -
-              //     kToolbarHeight -
-              //     kBottomNavigationBarHeight -
-              //     20,
-              width: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 1),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: titleController,
-                      decoration:
-                          const InputDecoration(label: Text('Title')),
-                      maxLines: 1,
-                    ),
-                    TextField(
-                      controller: descriptionController,
-                      decoration:
-                          const InputDecoration(label: Text('Description')),
-                      maxLines: null,
-                    ),
-                    TextField(
-                      controller: priceController,
-                      decoration:
-                          const InputDecoration(label: Text('Price')),
-                      keyboardType: TextInputType.number,
-                      maxLines: 1,
-                    ),
-                    Expanded(
-                      child: Align(
-                        alignment: FractionalOffset.bottomCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 15.0),
+            body: Center(
+              child: SingleChildScrollView(
+                child: Container(
+                  margin: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black, width: 1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: titleController,
+                          decoration:
+                              const InputDecoration(label: Text('Title')),
+                          maxLines: 1,
+                        ),
+                        TextField(
+                          controller: descriptionController,
+                          decoration:
+                              const InputDecoration(label: Text('Description')),
+                          maxLines: null,
+                        ),
+                        TextField(
+                          controller: priceController,
+                          decoration:
+                              const InputDecoration(label: Text('Price')),
+                          keyboardType: TextInputType.number,
+                          maxLines: 1,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 50, bottom: 15.0),
                           child: ElevatedButton(
                             onPressed: () {
                               listingRepository.updateListing(
@@ -93,10 +87,10 @@ class _ListingEditState extends State<ListingEdit> {
                             },
                             child: const Text("Save Listing"),
                           ),
-                        ),
-                      ),
-                    )
-                  ],
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),

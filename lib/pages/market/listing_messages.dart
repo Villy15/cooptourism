@@ -10,7 +10,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ListingMessages extends ConsumerStatefulWidget {
   final String listingId;
-  const ListingMessages({super.key, required this.listingId});
+  final String docId;
+  const ListingMessages({super.key, required this.listingId, required this.docId});
 
   @override
   ConsumerState<ListingMessages> createState() => _ListingMessagesState();
@@ -45,7 +46,7 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
 
           final listing = snapshot.data!;
           final Stream<List<MessageModel>> messages = listingRepository
-              .getAllMessages(widget.listingId, user!.uid!, listing.owner!);
+              .getSingleSourceMessages(widget.listingId, user!.uid!, listing.owner!, widget.docId);
 
           return StreamBuilder(
               stream: messages,

@@ -19,6 +19,7 @@ class ListingRepository {
       }).toList();
     });
   }
+
   // Get Listing by type from Firestore
   Stream<List<ListingModel>> getListingsByType(String type) {
     return listingsCollection
@@ -76,8 +77,9 @@ class ListingRepository {
     }
   }
 
-  Stream<List<MessageModel>> getAllMessages(
-      String listingId, String senderId, String receiverId) {
+  //Get all messages for specific receiver and sender 1 is to 1 relationship
+  Stream<List<MessageModel>> getSingleSourceMessages(
+      String listingId, String senderId, String receiverId, String docId) {
     return listingsCollection
         .doc(listingId)
         .collection('messages')
@@ -95,45 +97,89 @@ class ListingRepository {
     });
   }
 
-  // Add a Message to Firestore
-  Future<void> addMessage(MessageModel message, String listingId) async {
-    try {
-      await listingsCollection
-          .doc(listingId)
-          .collection('messages')
-          .add(message.toMap());
-    } catch (e) {
-      debugPrint('Error adding Listing to Firestore: $e');
-      // You might want to handle errors more gracefully here
-    }
+  //Get all messages for specific receiver and sender 1 is to many relationship
+  // applies for listing owners since they need an inbox for people who message
+  Stream<List<MessageModel>> getReceivedFromMessages(
+      String listingId, String docId) {
+    return listingsCollection
+        .doc(listingId)
+        .collection('messages')
+        .doc(docId)
+        .collection('chat')
+        .orderBy('timeStamp', descending: false)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return MessageModel.fromMap(doc.id, doc.data());
+      }).toList();
+    });
   }
 
-// Add manually
-  Future<void> addMessageManually() async {
-    List<Map<String, dynamic>> events = [
-      {
-        'senderId': 'G5nugbNv6hh1fcbuLc1Uwf785ls1',
-        'receiverId': 'sslvO5tgDoCHGBO82kxq',
-        'content': 'also is there any particular of pet not allowed?',
-        'timeStamp': DateTime.now(),
-      },
-      {
-        'senderId': 'sslvO5tgDoCHGBO82kxq',
-        'receiverId': 'G5nugbNv6hh1fcbuLc1Uwf785ls1',
-        'content':
-            'We have a few openings during the holidays. Small dogs and cats are allowed.',
-        'timeStamp': DateTime.now(),
-      },
-    ];
+  //Get all message received for a specific listing.
+  Stream<List<MessageModel>> getAllReceivedFrom(String listingId) {
+    return listingsCollection
+        .doc(listingId)
+        .collection('messages')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+       return MessageModel.fromMap(doc.id, doc.data());
+      }).toList();
+    });
+  }
 
-    for (var event in events) {
+  // Add a Message to Firestore
+  Future<void> addMessage(MessageModel message, String listingId) async {
+    Map<String, dynamic> messageDoc = {
+      'receiverId': message.receiverId,
+      'senderId': message.senderId,
+      'timeStamp': message.timeStamp
+    };
+
+    Map<String, dynamic> chatDoc = {
+      'content': message.receiverId,
+      'timeStamp': message.timeStamp
+    };
+
+    final exists = await listingsCollection
+        .doc(listingId)
+        .collection('messages')
+        .where(Filter.and(
+          Filter.or(Filter('senderId', isEqualTo: message.senderId),
+              Filter('senderId', isEqualTo: message.receiverId)),
+          Filter.or(
+            Filter('receiverId', isEqualTo: message.senderId),
+            Filter('receiverId', isEqualTo: message.receiverId),
+          ),
+        ))
+        .count()
+        .get();
+    if (exists.count == 0) {
       try {
-        await listingsCollection
-            .doc('jBg8MlxWLllJPSu8r00o')
+        listingsCollection
+            .doc(listingId)
             .collection('messages')
-            .add(event);
+            .add(messageDoc)
+            .then((docRef) => listingsCollection
+                .doc()
+                .collection('messages')
+                .doc(docRef.id)
+                .collection('chat')
+                .add(chatDoc));
       } catch (e) {
-        debugPrint('Error adding event to Firestore: $e');
+        debugPrint('Error adding Listing to Firestore: $e');
+        // You might want to handle errors more gracefully here
+      }
+    } else {
+      try {
+        listingsCollection
+            .doc(listingId)
+            .collection('messages')
+            .doc()
+            .collection('chat')
+            .add(chatDoc);
+      } catch (e) {
+        debugPrint('Error adding Listing to Firestore: $e');
         // You might want to handle errors more gracefully here
       }
     }

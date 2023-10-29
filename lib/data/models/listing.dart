@@ -6,13 +6,13 @@ class ListingModel {
   String? owner;
   String? title;
   String? description;
-  double? rating;
+  num? rating;
   Map? amenities;
-  int? price;
+  num? price;
   String? type;
   Timestamp? postDate;
   List<String>? images;
-  int? visits;
+  num? visits;
 
   ListingModel({
     this.id,
@@ -64,13 +64,13 @@ class ListingModel {
     String? owner,
     String? title,
     String? description,
-    double? rating,
+    num? rating,
     Map? amenities,
-    int? price,
+    num? price,
     String? type,
     Timestamp? postDate,
     List<String>? images,
-    int? visits,
+    num? visits,
   }) {
     return ListingModel(
       id: id ?? this.id,

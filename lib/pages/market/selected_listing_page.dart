@@ -116,7 +116,7 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                                 style:
                                     Theme.of(context).textTheme.headlineSmall!),
                             RatingBarIndicator(
-                              rating: listing.rating!,
+                              rating: listing.rating!.toDouble(),
                               itemBuilder: (context, index) {
                                 return Icon(
                                   Icons.star_rounded,
@@ -202,7 +202,6 @@ class _ImageSliderState extends State<ImageSlider> {
               onPageChanged: (index, reason) {
                 setState(() {
                   currentImageIndex = index;
-                  debugPrint("this is the index $index");
                 });
               },
             ),

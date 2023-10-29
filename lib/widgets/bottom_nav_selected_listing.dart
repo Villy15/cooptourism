@@ -1,4 +1,6 @@
+import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/providers/selected_listing_page_provider.dart';
+import 'package:cooptourism/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,10 +15,11 @@ class BottomNavSelectedListing extends ConsumerStatefulWidget {
 
 class _BottomNavSelectedListingState extends ConsumerState<BottomNavSelectedListing> {
 
+  String docId = "";
   @override
   Widget build(BuildContext context) {
   int position = ref.watch(selectedListingPageControllerProvider);
-  
+    
     return BottomNavigationBar(
       elevation: 0,
       showUnselectedLabels: true,
@@ -61,14 +64,31 @@ class _BottomNavSelectedListingState extends ConsumerState<BottomNavSelectedList
     );
   }
 
-  void _onTap(int newPosition, int oldPosition) {
-    debugPrint('this is the new one $newPosition and this is the old one $oldPosition');
+  Future<void> _onTap(int newPosition, int oldPosition) async {
+    final ListingRepository listingRepository = ListingRepository();
+
+
     ref.read(selectedListingPageControllerProvider.notifier).setPosition(newPosition);
-    switch(newPosition) {
+    final user = ref.read(userModelProvider);
+    final listing =
+        await listingRepository.getSpecificListing(widget.listingId);
+    listingRepository.getAllReceivedFrom(widget.listingId).first.then((value) => setState(() => docId = value.first.docId!));
+
+    debugPrint('this is the uid ${user!.uid} and this is the owner ${listing.owner}');
+    if(context.mounted) {
+      switch(newPosition) {
       case 0: if(oldPosition == 0 || oldPosition == 2) {
-        context.replace('/market_page/${widget.listingId}/listing_messages');
+        if(user.uid == listing.owner) {
+          context.replace('/market_page/${widget.listingId}/listing_messages_inbox/');
+        }else {
+          context.replace('/market_page/${widget.listingId}/listing_messages_inbox/$docId');
+        }
       }else{
-        context.push('/market_page/${widget.listingId}/listing_messages');
+        if(user.uid == listing.owner) {
+          context.push('/market_page/${widget.listingId}/listing_messages_inbox/');
+        }else {
+          context.push('/market_page/${widget.listingId}/listing_messages_inbox/listing_message/$docId');
+        }
       }
       case 1: if((oldPosition == 0 || oldPosition == 2) && newPosition == 1) {
         context.pop();
@@ -78,6 +98,7 @@ class _BottomNavSelectedListingState extends ConsumerState<BottomNavSelectedList
       }else{
         context.push('/market_page/${widget.listingId}/listing_edit');
       }
+    }
     }
   }
 }
