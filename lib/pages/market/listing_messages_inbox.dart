@@ -48,12 +48,11 @@ class _ListingMessagesInboxState extends ConsumerState<ListingMessagesInbox> {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 final received = receivedFrom[index];
-                final sender = userRepository.getUser(received.senderId!);
                 final Stream<List<MessageModel>> messages = listingRepository
                     .getReceivedFromMessages(widget.listingId, received.docId!);
 
-                return FutureBuilder(
-                  future: sender,
+                return StreamBuilder(
+                  stream: messages,
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       return Text("Error: ${snapshot.error}");
@@ -61,12 +60,12 @@ class _ListingMessagesInboxState extends ConsumerState<ListingMessagesInbox> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     }
-                    final sender = snapshot.data!;
-                    final path =
-                        "${sender.uid}/images/${sender.profilePicture}";
+                    final messages = snapshot.data!;
+                    final sender =
+                        userRepository.getUser(messages.first.senderId!);
 
-                    return StreamBuilder(
-                      stream: messages,
+                    return FutureBuilder(
+                      future: sender,
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           return Text("Error: ${snapshot.error}");
@@ -76,14 +75,16 @@ class _ListingMessagesInboxState extends ConsumerState<ListingMessagesInbox> {
                           return const Center(
                               child: CircularProgressIndicator());
                         }
-                        final messages = snapshot.data!;
-
+                        final sender = snapshot.data!;
+                        final path =
+                            "${sender.uid}/images/${sender.profilePicture}";
                         final time =
                             TimeDifferenceCalculator(messages.first.timeStamp!);
+
                         return InkWell(
                           onTap: () {
                             context.push(
-                                '/market_page/${widget.listingId}/listing_messages_inbox/listing_message/${received.docId}');
+                                '/market_page/${widget.listingId}/listing_messages_inbox/${received.docId}');
                           },
                           child: Row(
                             children: [

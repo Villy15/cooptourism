@@ -10,16 +10,16 @@ class BottomNavSelectedListing extends ConsumerStatefulWidget {
   const BottomNavSelectedListing({super.key, required this.listingId});
 
   @override
-  ConsumerState<BottomNavSelectedListing> createState() => _BottomNavSelectedListingState();
+  ConsumerState<BottomNavSelectedListing> createState() =>
+      _BottomNavSelectedListingState();
 }
 
-class _BottomNavSelectedListingState extends ConsumerState<BottomNavSelectedListing> {
-
-  String docId = "";
+class _BottomNavSelectedListingState
+    extends ConsumerState<BottomNavSelectedListing> {
   @override
   Widget build(BuildContext context) {
-  int position = ref.watch(selectedListingPageControllerProvider);
-    
+    int position = ref.watch(selectedListingPageControllerProvider);
+
     return BottomNavigationBar(
       elevation: 0,
       showUnselectedLabels: true,
@@ -67,38 +67,33 @@ class _BottomNavSelectedListingState extends ConsumerState<BottomNavSelectedList
   Future<void> _onTap(int newPosition, int oldPosition) async {
     final ListingRepository listingRepository = ListingRepository();
 
-
-    ref.read(selectedListingPageControllerProvider.notifier).setPosition(newPosition);
+    ref
+        .read(selectedListingPageControllerProvider.notifier)
+        .setPosition(newPosition);
     final user = ref.read(userModelProvider);
     final listing =
         await listingRepository.getSpecificListing(widget.listingId);
-    listingRepository.getAllReceivedFrom(widget.listingId).first.then((value) => setState(() => docId = value.first.docId!));
-
-    debugPrint('this is the uid ${user!.uid} and this is the owner ${listing.owner}');
-    if(context.mounted) {
-      switch(newPosition) {
-      case 0: if(oldPosition == 0 || oldPosition == 2) {
-        if(user.uid == listing.owner) {
-          context.replace('/market_page/${widget.listingId}/listing_messages_inbox/');
-        }else {
-          context.replace('/market_page/${widget.listingId}/listing_messages_inbox/$docId');
-        }
-      }else{
-        if(user.uid == listing.owner) {
-          context.push('/market_page/${widget.listingId}/listing_messages_inbox/');
-        }else {
-          context.push('/market_page/${widget.listingId}/listing_messages_inbox/listing_message/$docId');
-        }
+    if (context.mounted) {
+      switch (newPosition) {
+        case 0:
+          if (oldPosition == 0 || oldPosition == 2) {
+            context.replace(
+                '/market_page/${widget.listingId}/listing_messages_inbox/');
+          } else {
+            context.push(
+                '/market_page/${widget.listingId}/listing_messages_inbox/');
+          }
+        case 1:
+          if ((oldPosition == 0 || oldPosition == 2) && newPosition == 1) {
+            context.pop();
+          }
+        case 2:
+          if (oldPosition == 0 || oldPosition == 2) {
+            context.replace('/market_page/${widget.listingId}/listing_edit');
+          } else {
+            context.push('/market_page/${widget.listingId}/listing_edit');
+          }
       }
-      case 1: if((oldPosition == 0 || oldPosition == 2) && newPosition == 1) {
-        context.pop();
-      }
-      case 2: if(oldPosition == 0 || oldPosition == 2) {
-        context.replace('/market_page/${widget.listingId}/listing_edit');
-      }else{
-        context.push('/market_page/${widget.listingId}/listing_edit');
-      }
-    }
     }
   }
 }

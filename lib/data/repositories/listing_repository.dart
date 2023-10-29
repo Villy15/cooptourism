@@ -115,7 +115,7 @@ class ListingRepository {
     });
   }
 
-  //Get all message received for a specific listing.
+  //Get all messages received for a specific listing.
   Stream<List<MessageModel>> getAllReceivedFrom(String listingId) {
     return listingsCollection
         .doc(listingId)
@@ -123,27 +123,19 @@ class ListingRepository {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) {
-       return MessageModel.fromMap(doc.id, doc.data());
+        return MessageModel.fromMap(doc.id, doc.data());
       }).toList();
     });
   }
 
   // Add a Message to Firestore
-  Future<void> addMessage(MessageModel message, String listingId) async {
-    Map<String, dynamic> messageDoc = {
-      'receiverId': message.receiverId,
-      'senderId': message.senderId,
-      'timeStamp': message.timeStamp
-    };
-
-    Map<String, dynamic> chatDoc = {
-      'content': message.receiverId,
-      'timeStamp': message.timeStamp
-    };
-
+  Future<void> addMessage(
+      MessageModel message, String listingId, String docId) async {
     final exists = await listingsCollection
         .doc(listingId)
         .collection('messages')
+        .doc(docId)
+        .collection('chat')
         .where(Filter.and(
           Filter.or(Filter('senderId', isEqualTo: message.senderId),
               Filter('senderId', isEqualTo: message.receiverId)),
@@ -154,18 +146,15 @@ class ListingRepository {
         ))
         .count()
         .get();
-    if (exists.count == 0) {
+  debugPrint("this is the exist count $message");
+    if (exists.count != 0) {
       try {
         listingsCollection
             .doc(listingId)
             .collection('messages')
-            .add(messageDoc)
-            .then((docRef) => listingsCollection
-                .doc()
-                .collection('messages')
-                .doc(docRef.id)
-                .collection('chat')
-                .add(chatDoc));
+            .doc(docId)
+            .collection('chat')
+            .add(message.toMap());
       } catch (e) {
         debugPrint('Error adding Listing to Firestore: $e');
         // You might want to handle errors more gracefully here
@@ -177,7 +166,7 @@ class ListingRepository {
             .collection('messages')
             .doc()
             .collection('chat')
-            .add(chatDoc);
+            .add(message.toMap());
       } catch (e) {
         debugPrint('Error adding Listing to Firestore: $e');
         // You might want to handle errors more gracefully here
