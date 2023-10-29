@@ -15,6 +15,19 @@ class UserRepository {
     });
   }
 
+  
+  // get users with role of Coach
+  Stream<List<UserModel>> getAllCoaches() {
+    return usersCollection
+        .where('role', isEqualTo: 'Coach')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return UserModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // Add a user to Firestore
   Future<void> addUser(UserModel user) async {
     try {

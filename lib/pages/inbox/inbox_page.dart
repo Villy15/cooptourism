@@ -1,39 +1,36 @@
-import 'package:cooptourism/data/models/user_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:cooptourism/widgets/user_item.dart';
+import 'package:cooptourism/data/models/user.dart';
+import 'package:cooptourism/data/repositories/user_repository.dart';
 
-class InboxPage extends StatefulWidget {
-  const InboxPage({super.key});
+class InboxPage extends StatelessWidget {
+  final UserRepository userRepository = UserRepository();
 
-  @override
-  State<InboxPage> createState() => _InboxPageState();
-}
-
-class _InboxPageState extends State<InboxPage> {
-  
-
-
-  final userData = [
-    const UserModel(
-      uid: '101',
-      name: 'Jaz Campanilla',
-      email: 'jaz@gmail.com',
-      image:
-          'https://www.mmaweekly.com/.image/ar_16:9%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cg_xy_center%2Cq_auto:good%2Cw_620%2Cx_755%2Cy_550/MTk5NzMyNDM0MDg5MDI2NjYz/conor-mcgregor-ufc-weigh-in.jpg',
-    ), //UserModel
-  ];
+  InboxPage({Key? key}) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
-    return Scaffold (
+    return Scaffold(
       appBar: _appBar(context, "Inbox"),
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: userData.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 10),
-        physics: const BouncingScrollPhysics(),
-        itemBuilder: (context, index) => UserItem(user: userData[index]),
+      body: StreamBuilder<List<UserModel>>(
+        stream: userRepository.getAllUsers(),
+        builder: (context, AsyncSnapshot<List<UserModel>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            List<UserModel> users = snapshot.data ?? [];
+            return ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: users.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 10),
+              physics: const BouncingScrollPhysics(),
+              itemBuilder: (context, index) => UserItem(user: users[index]),
+            );
+          }
+        },
       ),
     );
   }
@@ -47,17 +44,16 @@ class _InboxPageState extends State<InboxPage> {
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: CircleAvatar(
-              backgroundColor: Colors.grey.shade300,
-              child: IconButton(
-                onPressed: () {
-                  // showAddPostPage(context);
-                },
-                icon: const Icon(Icons.message, color: Colors.white),
-              ),
+            backgroundColor: Colors.grey.shade300,
+            child: IconButton(
+              onPressed: () {
+                // showAddPostPage(context);
+              },
+              icon: const Icon(Icons.message, color: Colors.white),
             ),
+          ),
         ),
       ],
     );
   }
 }
-
