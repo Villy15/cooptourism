@@ -44,7 +44,7 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final listing = snapshot.data!;
+          // final listing = snapshot.data!;
           final Stream<List<MessageModel>> messages = listingRepository
               .getReceivedFromMessages(widget.listingId, widget.docId);
 

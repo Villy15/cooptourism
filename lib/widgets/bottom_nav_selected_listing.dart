@@ -1,6 +1,4 @@
-import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/providers/selected_listing_page_provider.dart';
-import 'package:cooptourism/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -65,14 +63,10 @@ class _BottomNavSelectedListingState
   }
 
   Future<void> _onTap(int newPosition, int oldPosition) async {
-    final ListingRepository listingRepository = ListingRepository();
 
     ref
         .read(selectedListingPageControllerProvider.notifier)
         .setPosition(newPosition);
-    final user = ref.read(userModelProvider);
-    final listing =
-        await listingRepository.getSpecificListing(widget.listingId);
     if (context.mounted) {
       switch (newPosition) {
         case 0:
