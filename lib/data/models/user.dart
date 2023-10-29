@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserModel {
   String? uid;
   String? email;
@@ -20,6 +22,7 @@ class UserModel {
   String? monthlySales;
   String? annualProfit;
   String? totalSales;
+  Timestamp? joinedAt;
 
   UserModel({
     this.uid,
@@ -41,7 +44,8 @@ class UserModel {
     this.currentListings,
     this.monthlySales,
     this.annualProfit,
-    this.totalSales
+    this.totalSales,
+    this.joinedAt,
   });
 
   factory UserModel.fromJson(String docId, Map<String, dynamic> json) {
@@ -65,7 +69,8 @@ class UserModel {
       currentListings: json['currentListings'] != null ? List<String>.from(json['currentListings']) : [],
       monthlySales: json['monthlySales'] ?? '',
       annualProfit: json['annualProfit'] ?? '',
-      totalSales: json['totalSales'] ?? ''
+      totalSales: json['totalSales'] ?? '',
+      joinedAt: json['joined_at'] != null ? json['joined_at'] as Timestamp : null,
     );
   }
 
@@ -89,7 +94,8 @@ class UserModel {
       'currentListings': currentListings ?? [],
       'monthlySales': monthlySales ?? '',
       'annualProfit': annualProfit ?? '',
-      'totalSales': totalSales ?? ''
+      'totalSales': totalSales ?? '',
+      'joinedAt': joinedAt,
     };
   }
 
@@ -118,11 +124,12 @@ class UserModel {
     monthlySales = user.monthlySales;
     annualProfit = user.annualProfit;
     totalSales = user.totalSales;
+    joinedAt = user.joinedAt;
   }
 
   // Generate toString
   @override
   String toString() {
-    return 'UserModel{uid: $uid, email: $email, firstName: $firstName, lastName: $lastName, status: $status, userAccomplishment: $userAccomplishment, userRating: $userRating, userTrust: $userTrust, role: $role, profilePicture: $profilePicture, location: $location, skills: $skills, featuredImgs: $featuredImgs, dateJoined: $dateJoined, bio: $bio, memberType: $memberType, currentListings: $currentListings, monthlySales: $monthlySales, annualProfit: $annualProfit, totalSales: $totalSales}';
+    return 'UserModel{uid: $uid, email: $email, firstName: $firstName, lastName: $lastName, status: $status, userAccomplishment: $userAccomplishment, userRating: $userRating, userTrust: $userTrust, role: $role, profilePicture: $profilePicture, location: $location, skills: $skills, featuredImgs: $featuredImgs, dateJoined: $dateJoined, bio: $bio, memberType: $memberType, currentListings: $currentListings, monthlySales: $monthlySales, annualProfit: $annualProfit, totalSales: $totalSales, joinedAt: $joinedAt}';
   }
 }

@@ -2,6 +2,7 @@ import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/widgets/listing_card.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class MarketPage extends StatefulWidget {
   const MarketPage({super.key});
@@ -11,8 +12,8 @@ class MarketPage extends StatefulWidget {
 }
 
 class _MarketPageState extends State<MarketPage> {
-  final List<String> _tabTitles = ['Products', 'Services'];
-  final List<String> _type = ['Product', 'Service'];
+  final List<String> _tabTitles = ['Services', 'Products'];
+  final List<String> _type = ['Service', 'Product'];
   int _selectedIndex = 0;
 
   // late ListingRepository _listingRepository = ListingRepository();
@@ -35,7 +36,7 @@ class _MarketPageState extends State<MarketPage> {
                 stream: listings0,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
+                    return Text('Error: ${snapshot. error}  ');
                   }
 
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -172,7 +173,7 @@ class _MarketPageState extends State<MarketPage> {
               backgroundColor: Colors.grey.shade300,
               child: IconButton(
                 onPressed: () {
-                  // showAddPostPage(context);
+                  context.push('/market_page/add_listing');
                 },
                 icon: const Icon(Icons.add, color: Colors.white),
               ),

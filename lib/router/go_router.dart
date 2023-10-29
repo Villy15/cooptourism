@@ -2,10 +2,12 @@ import 'package:cooptourism/pages/coaching/coaching_messaging.dart';
 import 'package:cooptourism/pages/coaching/coaching_page.dart';
 import 'package:cooptourism/pages/events/events_page.dart';
 import 'package:cooptourism/pages/events/selected_events_page.dart';
-import 'package:cooptourism/pages/inbox/chat.dart';
+import 'package:cooptourism/pages/market/add_listing.dart';
 import 'package:cooptourism/pages/market/listing_edit.dart';
 import 'package:cooptourism/pages/market/listing_messages.dart';
+import 'package:cooptourism/pages/market/listing_messages_inbox.dart';
 import 'package:cooptourism/pages/member/member_dashboard_page.dart';
+import 'package:cooptourism/pages/profile/poll_profile_page.dart';
 import 'package:cooptourism/pages/tasks/selected_task_page.dart';
 import 'package:cooptourism/providers/auth.dart';
 import 'package:cooptourism/pages/auth/login_or_register.dart';
@@ -129,6 +131,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               },
               routes: [
                 GoRoute(
+                    path: 'add_listing',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return const AddListing();
+                    }),
+                GoRoute(
                   path: ':listingId',
                   builder: (BuildContext context, GoRouterState state) {
                     return SelectedListingPage(
@@ -137,12 +144,22 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   },
                   routes: [
                     GoRoute(
-                      path: 'listing_messages',
-                      builder: (BuildContext context, GoRouterState state) {
-                        return ListingMessages(
-                            listingId: state.pathParameters["listingId"]!);
-                      },
-                    ),
+                        path: 'listing_messages_inbox',
+                        builder: (BuildContext context, GoRouterState state) {
+                          return ListingMessagesInbox(listingId: state.pathParameters["listingId"]!);
+                        },
+                        routes: [
+                          GoRoute(
+                            path: ':docId',
+                            builder:
+                                (BuildContext context, GoRouterState state) {
+                              return ListingMessages(
+                                  docId: state.pathParameters["docId"]!,
+                                  listingId:
+                                      state.pathParameters["listingId"]!);
+                            },
+                          ),
+                        ]),
                     GoRoute(
                       path: 'listing_edit',
                       builder: (BuildContext context, GoRouterState state) {
@@ -155,34 +172,26 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ],
             ),
             GoRoute(
-                path: "/profile_page",
-                name: "Profile",
-                pageBuilder: (context, state) {
-                  return NoTransitionPage(
-                      child: ProfilePage(key: state.pageKey));
-                },
-                routes: [
-                  GoRoute(
-                    path: "coaching_page",
-                    name: "Coaching",
-                    pageBuilder: (context, state) {
-                      return NoTransitionPage(child: CoachingPage(key: state.pageKey));
-                    },
-                    routes: [
-                      GoRoute(
-                        path: ':coachId',
-                        builder: (BuildContext context, GoRouterState state) {
-                          return CoachingMessaging(
-                            coachId: state.pathParameters["coachId"]!,
-                          );
-                        }
-                      )
-                    ],
-                  ),
-                ]
-              ),
-              
-
+              path: "/profile_page",
+              name: "Profile",
+              pageBuilder: (context, state) {
+                return NoTransitionPage(child: ProfilePage(key: state.pageKey));
+              },
+              routes: [
+                GoRoute(
+                    path: ':profileId',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return PollProfilePage(
+                        profileId: state.pathParameters["profileId"]!,
+                      );
+                    }),
+                GoRoute(
+                  path: "coaching_page",
+                  name: "Coaching",
+                  builder: (context, state) => CoachingPage(key: state.pageKey),
+                ),
+              ],
+            ),
             // ADMIN ROUTES
             GoRoute(
                 path: "/dashboard_page",

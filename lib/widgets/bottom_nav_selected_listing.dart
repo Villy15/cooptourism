@@ -8,15 +8,16 @@ class BottomNavSelectedListing extends ConsumerStatefulWidget {
   const BottomNavSelectedListing({super.key, required this.listingId});
 
   @override
-  ConsumerState<BottomNavSelectedListing> createState() => _BottomNavSelectedListingState();
+  ConsumerState<BottomNavSelectedListing> createState() =>
+      _BottomNavSelectedListingState();
 }
 
-class _BottomNavSelectedListingState extends ConsumerState<BottomNavSelectedListing> {
-
+class _BottomNavSelectedListingState
+    extends ConsumerState<BottomNavSelectedListing> {
   @override
   Widget build(BuildContext context) {
-  int position = ref.watch(selectedListingPageControllerProvider);
-  
+    int position = ref.watch(selectedListingPageControllerProvider);
+
     return BottomNavigationBar(
       elevation: 0,
       showUnselectedLabels: true,
@@ -61,22 +62,31 @@ class _BottomNavSelectedListingState extends ConsumerState<BottomNavSelectedList
     );
   }
 
-  void _onTap(int newPosition, int oldPosition) {
-    debugPrint('this is the new one $newPosition and this is the old one $oldPosition');
-    ref.read(selectedListingPageControllerProvider.notifier).setPosition(newPosition);
-    switch(newPosition) {
-      case 0: if(oldPosition == 0 || oldPosition == 2) {
-        context.replace('/market_page/${widget.listingId}/listing_messages');
-      }else{
-        context.push('/market_page/${widget.listingId}/listing_messages');
-      }
-      case 1: if((oldPosition == 0 || oldPosition == 2) && newPosition == 1) {
-        context.pop();
-      }
-      case 2: if(oldPosition == 0 || oldPosition == 2) {
-        context.replace('/market_page/${widget.listingId}/listing_edit');
-      }else{
-        context.push('/market_page/${widget.listingId}/listing_edit');
+  Future<void> _onTap(int newPosition, int oldPosition) async {
+
+    ref
+        .read(selectedListingPageControllerProvider.notifier)
+        .setPosition(newPosition);
+    if (context.mounted) {
+      switch (newPosition) {
+        case 0:
+          if (oldPosition == 0 || oldPosition == 2) {
+            context.replace(
+                '/market_page/${widget.listingId}/listing_messages_inbox/');
+          } else {
+            context.push(
+                '/market_page/${widget.listingId}/listing_messages_inbox/');
+          }
+        case 1:
+          if ((oldPosition == 0 || oldPosition == 2) && newPosition == 1) {
+            context.pop();
+          }
+        case 2:
+          if (oldPosition == 0 || oldPosition == 2) {
+            context.replace('/market_page/${widget.listingId}/listing_edit');
+          } else {
+            context.push('/market_page/${widget.listingId}/listing_edit');
+          }
       }
     }
   }

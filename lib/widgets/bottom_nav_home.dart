@@ -72,7 +72,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         if (role == 'Manager') {
           context.go("/dashboard_page");
         } else if (role == 'Member') {
-          context.go("/coops_page");
+          context.go("/wallet_page");
         } else if (role == 'Customer') {
           context.go("/wallet_page");
         }
@@ -140,9 +140,9 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         label: 'Dashboard',
       ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.groups_outlined),
-        activeIcon: Icon(Icons.groups),
-        label: 'Coops',
+        icon: Icon(Icons.account_balance_wallet_outlined),
+        activeIcon: Icon(Icons.account_balance_wallet_rounded),
+        label: 'Wallet',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.store_mall_directory_outlined),

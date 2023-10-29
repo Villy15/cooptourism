@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/events.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class EventsRepository {
@@ -111,5 +112,20 @@ class EventsRepository {
       debugPrint('Error deleting all events from Firestore: $e');
       // You might want to handle errors more gracefully here
     }
+  }
+
+  Future<List<String>> getEventImageUrls(
+      String? uid, List<String> imagePaths) async {
+        
+    final storageRef = FirebaseStorage.instance.ref();
+    List<String> imageUrls = [];
+
+    for (String imagePath in imagePaths) {
+      String fullPath = '$uid/$imagePath';
+      String downloadUrl = await storageRef.child(fullPath).getDownloadURL();
+      imageUrls.add(downloadUrl);
+    }
+
+    return imageUrls;
   }
 }

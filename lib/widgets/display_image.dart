@@ -32,7 +32,7 @@ class DisplayImage extends StatelessWidget {
           }
 
           if (urlSnapshot.hasError) {
-            return Text('Error: ${urlSnapshot.error}');
+            // return Text('Error: ${urlSnapshot.error}');
           }
 
           final imageUrl = urlSnapshot.data;

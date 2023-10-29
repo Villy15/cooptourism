@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // Dart Data Class Generator
@@ -13,6 +12,7 @@ class TaskModel {
   String? type;
   String? referenceId;
   String? proof;
+  String? taskType;
 
   TaskModel({
     this.uid,
@@ -23,6 +23,7 @@ class TaskModel {
     this.type,
     this.referenceId,
     this.proof,
+    this.taskType,
   });
 
   TaskModel copyWith({
@@ -34,6 +35,7 @@ class TaskModel {
     String? type,
     String? referenceId,
     String? proof,
+    String? taskType,
     
     
   }) {
@@ -46,6 +48,7 @@ class TaskModel {
       type: type ?? this.type,
       referenceId: referenceId ?? this.referenceId,
       proof: proof ?? this.proof,
+      taskType: taskType ?? this.taskType,
     );
   }
 
@@ -59,6 +62,7 @@ class TaskModel {
       'type': type,
       'referenceId': referenceId,
       'proof': proof,
+      'taskType': taskType,
     };
   }
 
@@ -73,6 +77,7 @@ class TaskModel {
       type: map['type'] as String?,
       referenceId: map['referenceId'] as String?,
       proof: map['proof'] as String?,
+      taskType: map['taskType'] as String?,
     );
   }
 
@@ -82,34 +87,7 @@ class TaskModel {
 
   @override
   String toString() {
-    return 'TaskModel(uid: $uid, title: $title, description: $description, progress: $progress, toDoList: $toDoList, type: $type , referenceId: $referenceId, proof: $proof)';
-  }
-
-  @override
-  bool operator ==(covariant TaskModel other) {
-    if (identical(this, other)) return true;
-  
-    return 
-      other.uid == uid &&
-      other.title == title &&
-      other.description == description &&
-      other.progress == progress &&
-      listEquals(other.toDoList, toDoList) &&
-      other.type == type &&
-      other.referenceId == referenceId &&
-      other.proof == proof;
-  }
-
-  @override
-  int get hashCode {
-    return uid.hashCode ^
-      title.hashCode ^
-      description.hashCode ^
-      progress.hashCode ^
-      toDoList.hashCode ^
-      type.hashCode ^
-      referenceId.hashCode ^
-      proof.hashCode;
+    return 'TaskModel(uid: $uid, title: $title, description: $description, progress: $progress, toDoList: $toDoList, type: $type , referenceId: $referenceId, proof: $proof , taskType: $taskType)';
   }
 }
 
