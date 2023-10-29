@@ -1,4 +1,3 @@
-import 'package:cooptourism/pages/coaching/coaching_messaging.dart';
 import 'package:cooptourism/pages/coaching/coaching_page.dart';
 import 'package:cooptourism/pages/events/events_page.dart';
 import 'package:cooptourism/pages/events/selected_events_page.dart';

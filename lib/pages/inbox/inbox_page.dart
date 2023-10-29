@@ -3,7 +3,7 @@ import 'package:cooptourism/widgets/display_profile_picture.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:cooptourism/widgets/user_item.dart';
+// import 'package:cooptourism/widgets/user_item.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
