@@ -1,6 +1,7 @@
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/providers/user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -93,6 +94,10 @@ class _MenuPageState extends ConsumerState<MenuPage> {
   }
 
   GestureDetector profileCard(BuildContext context, UserModel? user) {
+    final storageRef = FirebaseStorage.instance.ref();
+
+    String imagePath = "${user?.uid}/images/${user?.profilePicture}";
+
     return GestureDetector(
               onTap: () {
                 context.push('/profile_page');
@@ -107,11 +112,21 @@ class _MenuPageState extends ConsumerState<MenuPage> {
                       // Create a profile picture circular, dont use network image, just use an icon
                       CircleAvatar(
                         radius: 30,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.secondary,
-                        child: Icon(Icons.person,
-                            size: 30,
-                            color: Theme.of(context).colorScheme.primary),
+                        backgroundColor: Colors.grey.shade300,
+                        child: FutureBuilder(
+                          future: storageRef
+                              .child(imagePath)
+                              .getDownloadURL(), // Await here
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return CircleAvatar(
+                                radius: 30,
+                                backgroundImage: NetworkImage(snapshot.data.toString()),
+                              );
+                            } 
+                            return const Icon(Icons.person, size: 30, color: Colors.white);
+                          },
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),

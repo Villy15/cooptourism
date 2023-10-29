@@ -1,5 +1,6 @@
 import 'package:cooptourism/data/models/events.dart';
 import 'package:cooptourism/data/repositories/events_repository.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -126,6 +127,10 @@ class _EventsPageState extends State<EventsPage> {
   }
 
   Padding eventImage(EventsModel event) {
+    final storageRef = FirebaseStorage.instance.ref();
+    // Assuming event.image![0] is the path of the image in Firebase Storage
+    String imagePath = "${event.uid}/${event.image?[0]}";
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Container(
@@ -133,10 +138,26 @@ class _EventsPageState extends State<EventsPage> {
         height: 150,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0),
-          image: DecorationImage(
-            image: NetworkImage(event.image![0]), // Get the first image 
-            fit: BoxFit.cover,
-          ),
+
+        ),
+        child: FutureBuilder(
+          future: storageRef.child(imagePath).getDownloadURL(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            final imageUrl = snapshot.data!;
+
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: Image.network(imageUrl, fit: BoxFit.cover),
+            );
+          },
         ),
       ),
     );
