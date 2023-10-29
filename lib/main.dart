@@ -56,7 +56,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         if (snapshot.connectionState == ConnectionState.done) {
           return _buildApp(router);
         }
-        return _buildLoadingApp();
+        return _buildApp(router);
       },
     );
   }
