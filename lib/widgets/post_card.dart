@@ -370,6 +370,7 @@ class PollingWidgetState extends ConsumerState<PollingWidget> {
                   bottomRight: Radius.circular(8.0)), // Rounded corners
             ),
             child: ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
               padding: const EdgeInsets.symmetric(horizontal: 4.0),
               shrinkWrap: true, // Makes the list view confined to its content
               itemCount: widget.polls.length,
