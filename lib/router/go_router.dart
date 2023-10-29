@@ -1,8 +1,10 @@
 import 'package:cooptourism/pages/coaching/coaching_page.dart';
 import 'package:cooptourism/pages/events/events_page.dart';
 import 'package:cooptourism/pages/events/selected_events_page.dart';
+import 'package:cooptourism/pages/market/add_listing.dart';
 import 'package:cooptourism/pages/market/listing_edit.dart';
 import 'package:cooptourism/pages/market/listing_messages.dart';
+import 'package:cooptourism/pages/market/listing_messages_inbox.dart';
 import 'package:cooptourism/pages/member/member_dashboard_page.dart';
 import 'package:cooptourism/pages/profile/poll_profile_page.dart';
 import 'package:cooptourism/pages/tasks/selected_task_page.dart';
@@ -128,6 +130,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               },
               routes: [
                 GoRoute(
+                    path: 'add_listing',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return const AddListing();
+                    }),
+                GoRoute(
                   path: ':listingId',
                   builder: (BuildContext context, GoRouterState state) {
                     return SelectedListingPage(
@@ -136,12 +143,22 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   },
                   routes: [
                     GoRoute(
-                      path: 'listing_messages',
-                      builder: (BuildContext context, GoRouterState state) {
-                        return ListingMessages(
-                            listingId: state.pathParameters["listingId"]!);
-                      },
-                    ),
+                        path: 'listing_messages_inbox',
+                        builder: (BuildContext context, GoRouterState state) {
+                          return ListingMessagesInbox(listingId: state.pathParameters["listingId"]!);
+                        },
+                        routes: [
+                          GoRoute(
+                            path: ':docId',
+                            builder:
+                                (BuildContext context, GoRouterState state) {
+                              return ListingMessages(
+                                  docId: state.pathParameters["docId"]!,
+                                  listingId:
+                                      state.pathParameters["listingId"]!);
+                            },
+                          ),
+                        ]),
                     GoRoute(
                       path: 'listing_edit',
                       builder: (BuildContext context, GoRouterState state) {

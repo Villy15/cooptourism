@@ -374,7 +374,6 @@ class _ImageSliderState extends State<ImageSlider> {
               onPageChanged: (index, reason) {
                 setState(() {
                   currentImageIndex = index;
-                  debugPrint("this is the index $index");
                 });
               },
             ),

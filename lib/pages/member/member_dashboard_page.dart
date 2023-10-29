@@ -96,35 +96,61 @@ class _MemberDashboardPageState extends State<MemberDashboardPage> {
       scrollDirection: Axis.horizontal,
       itemCount: _tabTitles.length,
       itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: GestureDetector(
-            onTap: () => setState(() => _selectedIndex = index),
-            child: Container(
-              decoration: BoxDecoration(
-                color: _selectedIndex == index
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.secondary,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 28.0, vertical: 10.0),
-                child: Text(
-                  _tabTitles[index],
-                  style: TextStyle(
+        return Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: GestureDetector(
+                onTap: () => setState(() => _selectedIndex = index),
+                child: Container(
+                  decoration: BoxDecoration(
                     color: _selectedIndex == index
-                        ? Theme.of(context).colorScheme.background
-                        : Theme.of(context).colorScheme.primary,
-                    fontWeight: _selectedIndex == index
-                        ? FontWeight.bold
-                        : FontWeight.w400,
-                    fontSize: 16,
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.secondary,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 28.0, vertical: 10.0),
+                    child: Text(
+                      _tabTitles[index],
+                      style: TextStyle(
+                        color: _selectedIndex == index
+                            ? Theme.of(context).colorScheme.background
+                            : Theme.of(context).colorScheme.primary,
+                        fontWeight: _selectedIndex == index
+                            ? FontWeight.bold
+                            : FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
+
+            // Only show the notification badge on the "Announcements" tab
+          if (_tabTitles[index] == "Announcements")
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: const BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+                child: const Text(
+                  '1', // Replace with the actual number of announcements
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
         );
       },
     );

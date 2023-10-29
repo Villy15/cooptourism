@@ -10,7 +10,7 @@ class ListingModel {
   String? description;
   num? rating;
   Map? amenities;
-  int? price;
+  num? price;
   String? type;
   Timestamp? postDate;
   List<String>? images;
@@ -41,7 +41,7 @@ class ListingModel {
     String? description,
     num? rating,
     Map? amenities,
-    int? price,
+    num? price,
     String? type,
     Timestamp? postDate,
     List<String>? images,

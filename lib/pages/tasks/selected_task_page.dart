@@ -3,6 +3,7 @@ import 'package:cooptourism/data/models/task.dart';
 import 'package:cooptourism/data/repositories/task_repository.dart';
 import 'package:cooptourism/pages/tasks/add_proof.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 final TaskRepository taskRepository = TaskRepository();
 
@@ -146,6 +147,19 @@ class _SelectedTaskPageState extends State<SelectedTaskPage> {
               Text('${(calculateProgress(task) * 100).toStringAsFixed(0)}%',
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 12)),
+
+              Expanded(
+                // This will take up all available space and push the button to the right
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      context.push('/events_page/${task.referenceId}');
+                    },
+                    child: const Text('View Event'),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

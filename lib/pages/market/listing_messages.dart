@@ -10,7 +10,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ListingMessages extends ConsumerStatefulWidget {
   final String listingId;
-  const ListingMessages({super.key, required this.listingId});
+  final String docId;
+  const ListingMessages({super.key, required this.listingId, required this.docId});
 
   @override
   ConsumerState<ListingMessages> createState() => _ListingMessagesState();
@@ -43,9 +44,11 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final listing = snapshot.data!;
+          // final listing = snapshot.data!;
           final Stream<List<MessageModel>> messages = listingRepository
-              .getAllMessages(widget.listingId, user!.uid!, listing.owner!);
+              .getReceivedFromMessages(widget.listingId, widget.docId);
+
+          debugPrint("testing this $messages");
 
           return StreamBuilder(
               stream: messages,
@@ -74,7 +77,7 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
 
                             return BubbleNormal(
                               text: message.content!,
-                              isSender: user.uid == message.senderId!,
+                              isSender: user!.uid == message.senderId!,
                               color: Colors.grey[800]!,
                               textStyle: TextStyle(
                                 color: Colors.white,
@@ -121,15 +124,21 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
                             ),
                             child: InkWell(
                               onTap: () {
+                                String receiverId = "";
+                                if(user!.uid == messages.first.senderId) {
+                                  receiverId = messages.first.receiverId!;
+                                }else {
+                                  receiverId = messages.first.senderId!;
+                                }
                                 listingRepository.addMessage(
                                   MessageModel(
-                                    docId: "",
                                     senderId: user.uid,
-                                    receiverId: listing.owner,
+                                    receiverId: receiverId,
                                     content: textController.text,
                                     timeStamp: Timestamp.now(),
                                   ),
                                   widget.listingId,
+                                  widget.docId,
                                 );
                                 textController.clear();
                               },
