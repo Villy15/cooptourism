@@ -158,7 +158,7 @@ class _WalletPageState extends State<WalletPage> {
                   // Make the size bigger
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 24.0, vertical: 16.0),
+                        horizontal: 24.0, vertical: 9.0),
                   ),
                   child: const Row(
                     children: [
@@ -179,7 +179,7 @@ class _WalletPageState extends State<WalletPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 16.0),
+                        horizontal: 16.0, vertical: 9.0),
                   ),
                   child: Row(
                     children: [
