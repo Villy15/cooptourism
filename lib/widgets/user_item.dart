@@ -1,14 +1,14 @@
-import 'package:cooptourism/pages/inbox/chat.dart';
 import 'package:flutter/material.dart';
-import 'package:cooptourism/data/models/user_chart.dart';
+import 'package:cooptourism/pages/inbox/chat.dart';
+import 'package:cooptourism/data/models/user.dart';
 
 class UserItem extends StatefulWidget {
-  const UserItem({super.key, required this.user});
+  const UserItem({Key? key, required this.user}) : super(key: key);
 
   final UserModel user;
 
   @override
-  State <UserItem> createState() => _UserItemState();
+  State<UserItem> createState() => _UserItemState();
 }
 
 class _UserItemState extends State<UserItem> {
@@ -16,30 +16,27 @@ class _UserItemState extends State<UserItem> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-       Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) =>
-             ChatScreen(user: widget.user)));
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => ChatScreen(user: widget.user),
+          ),
+        );
       },
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         leading: CircleAvatar(
-              radius: 30,
-              backgroundColor: Theme.of(context).colorScheme.secondary,
-              child:  Icon(Icons.person, size: 30, color: Theme.of(context).colorScheme.primary),
-            ),
-        // leading: CircleAvatar(
-        //   radius: 30,
-        //   backgroundImage: NetworkImage(widget.user.image),
-        // ),
-      title: Text(
-        widget.user.name,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.primary,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
+          radius: 30,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+          child: Icon(Icons.person, size: 30, color: Theme.of(context).colorScheme.primary),
         ),
-      )
+        title: Text(
+          '${widget.user.firstName} ${widget.user.lastName}',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }
