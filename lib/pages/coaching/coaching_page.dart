@@ -120,3 +120,4 @@ class _CoachingPageState extends ConsumerState<CoachingPage> {
     ref.read(navBarVisibilityProvider.notifier).state = isVisible;
     ref.read(appBarVisibilityProvider.notifier).state = isVisible;
   }
+}
