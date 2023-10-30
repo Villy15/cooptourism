@@ -92,7 +92,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         } else if (role == 'Member') {
           context.go("/profile_page");
         } else if (role == 'Customer') {
-          context.go("/inbox_page");
+          context.go("/coops_page");
         }
         break;
       case 4:
@@ -180,9 +180,9 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         label: 'Events',
       ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.inbox_outlined),
-        activeIcon: Icon(Icons.inbox_rounded),
-        label: 'Inbox',
+        icon: Icon(Icons.group_outlined),
+        activeIcon: Icon(Icons.group_rounded),
+        label: 'Coops',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.menu_rounded),

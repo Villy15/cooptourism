@@ -2,24 +2,34 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cooptourism/data/models/events.dart';
 import 'package:cooptourism/data/repositories/events_repository.dart';
+import 'package:cooptourism/pages/events/contribute_event.dart';
+import 'package:cooptourism/pages/events/join_event.dart';
+import 'package:cooptourism/providers/user_provider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 final EventsRepository eventsRepository = EventsRepository();
 
-class SelectedEventsPage extends StatefulWidget {
+class SelectedEventsPage extends ConsumerStatefulWidget {
   final String eventId;
   const SelectedEventsPage({super.key, required this.eventId});
 
   @override
-  State<SelectedEventsPage> createState() => _SelectedEventsPageState();
+  ConsumerState<SelectedEventsPage> createState() => _SelectedEventsPageState();
 }
 
-class _SelectedEventsPageState extends State<SelectedEventsPage> {
+class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
+  String? role;
+  
+
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userModelProvider);
+    role = user?.role ?? 'Customer';
+
     return SafeArea(
       child: Scaffold(
           // appBar: _appBar(context, "Event"),
@@ -63,11 +73,60 @@ class _SelectedEventsPageState extends State<SelectedEventsPage> {
               ],
 
               eventLocation(event),
+              
+              const SizedBox(height: 10),
+
+              // Create a button that spans the entire width and has a height of 50
+              if (role == 'Customer')
+              customerFunctions(event),
+
+              if (role == 'Member')
+              memberFunctions(event),
+
+              const SizedBox(height: 10),
             ],
           ),
         );
       },
     );
+  }
+
+   Padding memberFunctions(EventsModel event) {
+    return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Push to the contribute event page use native 
+                    Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ContributeEventPage(event: event)),
+                    );
+                  },
+                  child: const Text(">     Contribute Event     < ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                ),
+              ),
+            );
+  }
+
+  Padding customerFunctions(EventsModel event) {
+    return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Push to the contribute event page use native 
+                    Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => JoinEventPage(event: event)),
+                    );
+                  },
+                  child: const Text(">     Join Event     < ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                ),
+              ),
+            );
   }
 
   Padding eventLocation(EventsModel event) {

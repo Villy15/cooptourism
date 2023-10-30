@@ -5,6 +5,8 @@ import 'package:cooptourism/data/models/review.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/data/repositories/review_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
+import 'package:cooptourism/pages/market/customer/book_service.dart';
+import 'package:cooptourism/pages/market/customer/buy_product.dart';
 import 'package:cooptourism/providers/home_page_provider.dart';
 import 'package:cooptourism/providers/user_provider.dart';
 import 'package:cooptourism/widgets/bottom_nav_selected_listing.dart';
@@ -208,7 +210,7 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                                   const EdgeInsets.only(left: 10.0, top: 10.0),
                               child: ownerListing(listing: listing),
                             ),
-                          if (role == 'Customer') customerFunctions(context)
+                          if (role == 'Customer') customerFunctions(context, listing)
                         ],
                       ),
                     ),
@@ -225,9 +227,9 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
     );
   }
 
-  Padding customerFunctions(BuildContext context) {
+  Padding customerFunctions(BuildContext context, ListingModel listing) {
     return Padding(
-      padding: const EdgeInsets.only(top: 80.0),
+      padding: const EdgeInsets.only(top: 160.0),
       child: Align(
         alignment: Alignment.bottomCenter,
         child: Row(
@@ -263,13 +265,25 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
 
             const SizedBox(width: 10),
 
+
             ElevatedButton(
               onPressed: () {
-                // context.go("/booking_page/${listing.id}");
+                Navigator.push(context, 
+                  MaterialPageRoute(builder: (context) => listing.type == 
+                  // If service show book service page
+                  'Service' ? BookServicePage(listing: listing) 
+
+                  // If product show buy product page
+                  : BuyProductPage(listing: listing))
+                );
               },
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 16.0),
-                child: Text("Book Now", style: TextStyle(fontSize: 20)),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 16.0),
+                child: Text(
+                  // If type is Service then display "Book" else display "Rent"
+                  listing.type == 'Service' ? "Book Now" : "Buy Now"
+                  
+                  , style: const TextStyle(fontSize: 20)),
               ),
             ),
           ],

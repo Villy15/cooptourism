@@ -129,7 +129,8 @@ class ListingRepository {
   // Add a Message to Firestore
   Future<void> addMessage(
       MessageModel message, String listingId, String docId) async {
-    final exists = await listingsCollection
+    // final exists = await listingsCollection
+      await listingsCollection
         .doc(listingId)
         .collection('messages')
         .doc(docId)
