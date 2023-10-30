@@ -56,165 +56,172 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
     final user = ref.watch(userModelProvider);
     role = user?.role ?? 'Customer';
 
-    return Scaffold(
-      appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          leadingWidth: 45,
-          toolbarHeight: 35,
-          leading: LeadingBackButton(ref: ref)),
-      extendBodyBehindAppBar: true,
-      body: FutureBuilder<ListingModel>(
-        future: listings,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Text("Error: ${snapshot.error}");
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          final listing = snapshot.data!;
-
-          return StreamBuilder<List<ReviewModel>>(
-            stream: reviews,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
-
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              final reviews = snapshot.data!;
-              return ListView(
-                padding: const EdgeInsets.only(top: 0),
-                children: [
-                  ImageSlider(listing: listing),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 14.0),
-                          child: DisplayText(
-                              text: listing.title!,
-                              lines: 1,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              )),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 10.0),
-                          child: DisplayText(
-                              text: "₱${listing.price!.toStringAsFixed(2)}",
-                              lines: 1,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              )),
-                        ),
-                        DisplayText(
-                          text: "Type: ${listing.type!}",
-                          lines: 4,
-                          style: TextStyle(
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall
-                                  ?.fontSize),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20.0),
-                          child: DisplayText(
-                            text: "Desrciption: ${listing.description!}",
-                            lines: 5,
+    return WillPopScope (
+      onWillPop: () async {
+        ref.read(navBarVisibilityProvider.notifier).state = true;
+        ref.read(appBarVisibilityProvider.notifier).state = true;
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            leadingWidth: 45,
+            toolbarHeight: 35,
+            leading: LeadingBackButton(ref: ref)),
+        extendBodyBehindAppBar: true,
+        body: FutureBuilder<ListingModel>(
+          future: listings,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text("Error: ${snapshot.error}");
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+    
+            final listing = snapshot.data!;
+    
+            return StreamBuilder<List<ReviewModel>>(
+              stream: reviews,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+    
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+    
+                final reviews = snapshot.data!;
+                return ListView(
+                  padding: const EdgeInsets.only(top: 0),
+                  children: [
+                    ImageSlider(listing: listing),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 14.0),
+                            child: DisplayText(
+                                text: listing.title!,
+                                lines: 1,
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                )),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: DisplayText(
+                                text: "₱${listing.price!.toStringAsFixed(2)}",
+                                lines: 1,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                )),
+                          ),
+                          DisplayText(
+                            text: "Type: ${listing.type!}",
+                            lines: 4,
                             style: TextStyle(
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall
-                                  ?.fontSize,
-                            ),
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall
+                                    ?.fontSize),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20.0),
-                          child: DisplayText(
-                              text: "Rating",
-                              lines: 1,
-                              style:
-                                  Theme.of(context).textTheme.headlineSmall!),
-                        ),
-                        RatingBarIndicator(
-                          rating: listing.rating!.toDouble(),
-                          itemBuilder: (context, index) {
-                            return Icon(
-                              Icons.star_rounded,
-                              color: Theme.of(context).colorScheme.primary,
-                            );
-                          },
-                          itemCount: 5,
-                          itemSize: 25,
-                          direction: Axis.horizontal,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20.0),
-                          child: DisplayText(
-                            text: "Amenities",
-                            lines: 1,
-                            style: Theme.of(context).textTheme.headlineSmall!,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20.0),
-                          child: DisplayText(
-                            text: "Reviews",
-                            lines: 1,
-                            style: Theme.of(context).textTheme.headlineSmall!,
-                          ),
-                        ),
-                        ListView.builder(
-                          padding: const EdgeInsets.only(top: 0),
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: reviews.length,
-                          itemBuilder: (context, index) {
-                            final review = reviews[index];
-
-                            return ReviewCard(
-                              reviewModel: review,
-                            );
-                          },
-                        ),
-                        if (listing.ownerMember != null)
                           Padding(
                             padding: const EdgeInsets.only(top: 20.0),
                             child: DisplayText(
-                              text: "Owner Information",
+                              text: "Desrciption: ${listing.description!}",
+                              lines: 5,
+                              style: TextStyle(
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall
+                                    ?.fontSize,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: DisplayText(
+                                text: "Rating",
+                                lines: 1,
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall!),
+                          ),
+                          RatingBarIndicator(
+                            rating: listing.rating!.toDouble(),
+                            itemBuilder: (context, index) {
+                              return Icon(
+                                Icons.star_rounded,
+                                color: Theme.of(context).colorScheme.primary,
+                              );
+                            },
+                            itemCount: 5,
+                            itemSize: 25,
+                            direction: Axis.horizontal,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: DisplayText(
+                              text: "Amenities",
                               lines: 1,
                               style: Theme.of(context).textTheme.headlineSmall!,
                             ),
                           ),
-                        if (listing.ownerMember != null)
                           Padding(
-                            padding:
-                                const EdgeInsets.only(left: 10.0, top: 10.0),
-                            child: ownerListing(listing: listing),
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: DisplayText(
+                              text: "Reviews",
+                              lines: 1,
+                              style: Theme.of(context).textTheme.headlineSmall!,
+                            ),
                           ),
-                        if (role == 'Customer') customerFunctions(context)
-                      ],
+                          ListView.builder(
+                            padding: const EdgeInsets.only(top: 0),
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: reviews.length,
+                            itemBuilder: (context, index) {
+                              final review = reviews[index];
+    
+                              return ReviewCard(
+                                reviewModel: review,
+                              );
+                            },
+                          ),
+                          if (listing.ownerMember != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20.0),
+                              child: DisplayText(
+                                text: "Owner Information",
+                                lines: 1,
+                                style: Theme.of(context).textTheme.headlineSmall!,
+                              ),
+                            ),
+                          if (listing.ownerMember != null)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 10.0, top: 10.0),
+                              child: ownerListing(listing: listing),
+                            ),
+                          if (role == 'Customer') customerFunctions(context)
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              );
-            },
-          );
-        },
+                  ],
+                );
+              },
+            );
+          },
+        ),
+        bottomNavigationBar: role == 'Customer'
+            ? null
+            : BottomNavSelectedListing(listingId: widget.listingId),
       ),
-      bottomNavigationBar: role == 'Customer'
-          ? null
-          : BottomNavSelectedListing(listingId: widget.listingId),
     );
   }
 
