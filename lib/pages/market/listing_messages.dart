@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/models/message.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
+import 'package:cooptourism/providers/listing_provider.dart';
 import 'package:cooptourism/providers/user_provider.dart';
 import 'package:cooptourism/widgets/bottom_nav_selected_listing.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userModelProvider);
+    final currentListing = ref.watch(listingModelProvider);
     final ListingRepository listingRepository = ListingRepository();
     final Future<ListingModel> listing =
         listingRepository.getSpecificListing(widget.listingId);
@@ -61,9 +63,9 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
                 final messages = snapshot.data!;
 
                 return Scaffold(
-                  appBar: AppBar(
-                    backgroundColor: Colors.grey[800],
-                  ),
+                  // appBar: AppBar(
+                  //   backgroundColor: Colors.grey[800],
+                  // ),
                   body: Column(
                     children: [
                       Expanded(
@@ -123,10 +125,10 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
                             child: InkWell(
                               onTap: () {
                                 String receiverId = "";
-                                if(user!.uid == messages.first.senderId) {
-                                  receiverId = messages.first.receiverId!;
+                                if(user!.uid == widget.docId) {
+                                  receiverId = currentListing!.owner!;
                                 }else {
-                                  receiverId = messages.first.senderId!;
+                                  receiverId = widget.docId;
                                 }
                                 listingRepository.addMessage(
                                   MessageModel(

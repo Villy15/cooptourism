@@ -1,4 +1,5 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/models/review.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
@@ -127,7 +128,7 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                         Padding(
                           padding: const EdgeInsets.only(top: 20.0),
                           child: DisplayText(
-                            text: "Desciption: ${listing.description!}",
+                            text: "Desrciption: ${listing.description!}",
                             lines: 5,
                             style: TextStyle(
                               fontSize: Theme.of(context)

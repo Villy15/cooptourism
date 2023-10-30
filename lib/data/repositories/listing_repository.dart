@@ -146,8 +146,6 @@ class ListingRepository {
         ))
         .count()
         .get();
-  debugPrint("this is the exist count $message");
-    if (exists.count != 0) {
       try {
         listingsCollection
             .doc(listingId)
@@ -159,18 +157,5 @@ class ListingRepository {
         debugPrint('Error adding Listing to Firestore: $e');
         // You might want to handle errors more gracefully here
       }
-    } else {
-      try {
-        listingsCollection
-            .doc(listingId)
-            .collection('messages')
-            .doc()
-            .collection('chat')
-            .add(message.toMap());
-      } catch (e) {
-        debugPrint('Error adding Listing to Firestore: $e');
-        // You might want to handle errors more gracefully here
-      }
-    }
   }
 }

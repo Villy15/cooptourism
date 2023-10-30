@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/listing.dart';
+import 'package:cooptourism/providers/listing_provider.dart';
 import 'package:cooptourism/widgets/display_image.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,6 @@ class _ListingCardState extends ConsumerState<ListingCard> {
 
   @override
   Widget build(BuildContext context) {
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Container(
@@ -43,6 +43,9 @@ class _ListingCardState extends ConsumerState<ListingCard> {
             border: Border.all(color: Colors.grey[800]!, width: .25)),
         child: InkWell(
             onTap: () {
+              ref
+                  .read(listingModelProvider.notifier)
+                  .setListing(widget.listingModel);
               context.push('/market_page/${widget.listingModel.id}');
             },
             child: Column(
@@ -77,7 +80,8 @@ class _ListingCardState extends ConsumerState<ListingCard> {
                               DisplayText(
                                 text: widget.listingModel.title!,
                                 lines: 2,
-                                style: Theme.of(context).textTheme.headlineSmall!,
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall!,
                               ),
                               DisplayText(
                                 text: "₱${widget.listingModel.price}",

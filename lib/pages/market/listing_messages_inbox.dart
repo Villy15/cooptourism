@@ -29,7 +29,7 @@ class _ListingMessagesInboxState extends ConsumerState<ListingMessagesInbox> {
         listingRepository.getAllReceivedFrom(widget.listingId);
 
     return Scaffold(
-      appBar: AppBar(),
+      // appBar: AppBar(backgroundColor: Colors.grey[800],),
       body: StreamBuilder(
         stream: receivedFrom,
         builder: (context, snapshot) {
@@ -41,97 +41,107 @@ class _ListingMessagesInboxState extends ConsumerState<ListingMessagesInbox> {
           }
 
           final receivedFrom = snapshot.data!;
+          if (receivedFrom.isNotEmpty) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  final received = receivedFrom[index];
+                  final Stream<List<MessageModel>> messages =
+                      listingRepository.getReceivedFromMessages(
+                          widget.listingId, received.docId!);
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                final received = receivedFrom[index];
-                final Stream<List<MessageModel>> messages = listingRepository
-                    .getReceivedFromMessages(widget.listingId, received.docId!);
+                  return StreamBuilder(
+                    stream: messages,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Text("Error: ${snapshot.error}");
+                      }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      final messages = snapshot.data!;
+                      final sender =
+                          userRepository.getUser(messages.first.senderId!);
 
-                return StreamBuilder(
-                  stream: messages,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Text("Error: ${snapshot.error}");
-                    }
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    final messages = snapshot.data!;
-                    final sender =
-                        userRepository.getUser(messages.first.senderId!);
+                      return FutureBuilder(
+                        future: sender,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Text("Error: ${snapshot.error}");
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          final sender = snapshot.data!;
+                          final path =
+                              "${sender.uid}/images/${sender.profilePicture}";
+                          final time = TimeDifferenceCalculator(
+                              messages.first.timeStamp!);
 
-                    return FutureBuilder(
-                      future: sender,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Text("Error: ${snapshot.error}");
-                        }
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                        final sender = snapshot.data!;
-                        final path =
-                            "${sender.uid}/images/${sender.profilePicture}";
-                        final time =
-                            TimeDifferenceCalculator(messages.first.timeStamp!);
-
-                        return InkWell(
-                          onTap: () {
-                            context.push(
-                                '/market_page/${widget.listingId}/listing_messages_inbox/${received.docId}');
-                          },
-                          child: Row(
-                            children: [
-                              DisplayImage(
-                                  path: path,
-                                  height: 50,
-                                  width: 50,
-                                  radius: BorderRadius.circular(100)),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 10.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      DisplayText(
-                                          text:
-                                              "${sender.lastName} ${sender.firstName}",
-                                          lines: 1,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headlineSmall!),
-                                      DisplayText(
-                                          text: messages.first.content!,
-                                          lines: 1,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall!),
-                                    ],
+                          return InkWell(
+                            onTap: () {
+                              context.push(
+                                  '/market_page/${widget.listingId}/listing_messages_inbox/${received.docId}');
+                            },
+                            child: Row(
+                              children: [
+                                DisplayImage(
+                                    path: path,
+                                    height: 50,
+                                    width: 50,
+                                    radius: BorderRadius.circular(100)),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 10.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        DisplayText(
+                                            text:
+                                                "${sender.lastName} ${sender.firstName}",
+                                            lines: 1,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headlineSmall!),
+                                        DisplayText(
+                                            text: messages.first.content!,
+                                            lines: 1,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              DisplayText(
-                                  text: time.getTimeDifference(),
-                                  lines: 1,
-                                  style: Theme.of(context).textTheme.bodySmall!)
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                );
-              },
-              itemCount: receivedFrom.length,
-            ),
-          );
+                                DisplayText(
+                                    text: time.getTimeDifference(),
+                                    lines: 1,
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall!)
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+                itemCount: receivedFrom.length,
+              ),
+            );
+          } else {
+            return Center(
+              child: DisplayText(
+                  text: "No Messages",
+                  lines: 1,
+                  style: Theme.of(context).textTheme.headlineMedium!),
+            );
+          }
         },
       ),
       bottomNavigationBar:
