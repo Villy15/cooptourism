@@ -14,8 +14,7 @@ class ListingRepository {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) {
-        return ListingModel.fromMap(
-            doc.id, doc.data() as Map<String, dynamic>);
+        return ListingModel.fromMap(doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
@@ -28,8 +27,7 @@ class ListingRepository {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) {
-        return ListingModel.fromMap(
-            doc.id, doc.data() as Map<String, dynamic>);
+        return ListingModel.fromMap(doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
@@ -146,16 +144,21 @@ class ListingRepository {
         ))
         .count()
         .get();
-      try {
-        listingsCollection
-            .doc(listingId)
-            .collection('messages')
-            .doc(docId)
-            .collection('chat')
-            .add(message.toMap());
-      } catch (e) {
-        debugPrint('Error adding Listing to Firestore: $e');
-        // You might want to handle errors more gracefully here
-      }
+    try {
+      listingsCollection
+          .doc(listingId)
+          .collection('messages')
+          .doc(docId)
+          .set({"timeStamp": message.timeStamp}).then((value) =>
+              listingsCollection
+                  .doc(listingId)
+                  .collection('messages')
+                  .doc(docId)
+                  .collection('chat')
+                  .add(message.toMap()));
+    } catch (e) {
+      debugPrint('Error adding Listing to Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
   }
 }
