@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cooptourism/core/theme/dark_theme.dart';
+import 'package:cooptourism/data/models/locations.dart';
 import 'package:cooptourism/pages/customer/budget_results.dart';
+import 'package:cooptourism/pages/customer/home_page.dart';
 import 'package:cooptourism/widgets/leading_back_button.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -10,15 +12,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CityPage extends ConsumerStatefulWidget {
   final String? cityId;
-  const CityPage({Key? key, this.cityId}) : super(key: key);
+  final LocationModel? locationModel;
+
+  const CityPage({super.key, this.cityId, this.locationModel});
 
   @override
   ConsumerState<CityPage> createState() => _CityPageState();
 }
 
 class _CityPageState extends ConsumerState<CityPage> {
-   RangeValues currentRangeValues = const RangeValues(1000, 20000);
-   
+  RangeValues currentRangeValues = const RangeValues(1000, 20000);
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -28,30 +32,30 @@ class _CityPageState extends ConsumerState<CityPage> {
             leadingWidth: 45,
             toolbarHeight: 35,
             leading: LeadingBackButton(ref: ref)),
-            extendBodyBehindAppBar: true,
+        extendBodyBehindAppBar: true,
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const ImageSlider(),
+              ImageSlider(location: widget.locationModel!),
 
-              const Padding(
-                padding: EdgeInsets.all(8.0),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(top: 8.0),
-                      child: Text("Palawan",
-                          style: TextStyle(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(widget.locationModel!.city,
+                          style: const TextStyle(
                               fontSize: 22.0, fontWeight: FontWeight.bold)),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(bottom: 8.0),
-                      child: Text("Puerto Prinsesa",
-                          style: TextStyle(fontSize: 16.0)),
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(widget.locationModel!.province,
+                          style: const TextStyle(fontSize: 16.0)),
                     ),
                   ],
                 ),
@@ -81,7 +85,6 @@ class _CityPageState extends ConsumerState<CityPage> {
                         IconButton(
                           onPressed: () {
                             _showFilterByBudget(context);
-                          
                           },
                           icon: const Icon(Icons.filter_list,
                               color: primaryColor),
@@ -96,19 +99,19 @@ class _CityPageState extends ConsumerState<CityPage> {
               GridView.builder(
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(), // to disable GridView's scrolling
+                physics:
+                    const NeverScrollableScrollPhysics(), // to disable GridView's scrolling
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 0.85,
-
                 ),
                 itemCount: 10, // Change this to the number of items you have
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: Container( 
+                    child: Container(
                       color: Colors.white,
-                      child:  Column(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -116,18 +119,21 @@ class _CityPageState extends ConsumerState<CityPage> {
                             height: 150.0,
                             width: double.infinity,
                             color: primaryColor,
-              
                           ),
                           const Padding(
                             padding: EdgeInsets.only(top: 8.0),
-                            child: Text("8 days", style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400)),
+                            child: Text("8 days",
+                                style: TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.w400)),
                           ),
                           const Padding(
                             padding: EdgeInsets.only(top: 2.0),
-                            child: Text("Puerto Princesa Underground River", style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.bold)),
+                            child: Text("Puerto Princesa Underground River",
+                                style: TextStyle(
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.bold)),
                           )
-              
-              
                         ],
                       ),
                     ),
@@ -141,14 +147,15 @@ class _CityPageState extends ConsumerState<CityPage> {
     );
   }
 
-void _showFilterByBudget(BuildContext context) {
+  void _showFilterByBudget(BuildContext context) {
     double minBudget = 0;
     double maxBudget = 50000;
 
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return StatefulBuilder( // Using a StatefulBuilder to manage state inside the modal
+        return StatefulBuilder(
+          // Using a StatefulBuilder to manage state inside the modal
           builder: (BuildContext context, StateSetter setModalState) {
             return Container(
               height: 250,
@@ -168,16 +175,19 @@ void _showFilterByBudget(BuildContext context) {
                     max: maxBudget,
                     divisions: 50,
                     onChanged: (RangeValues values) {
-                      setModalState(() { // Use setModalState to update modal's internal state
+                      setModalState(() {
+                        // Use setModalState to update modal's internal state
                         currentRangeValues = values;
                       });
                     },
                   ),
-                   Padding(
+                  Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Row(
                       children: [
-                        Text("₱${currentRangeValues.start.round()}",),
+                        Text(
+                          "₱${currentRangeValues.start.round()}",
+                        ),
                         const Spacer(),
                         Text("₱${currentRangeValues.end.round()}"),
                       ],
@@ -188,8 +198,11 @@ void _showFilterByBudget(BuildContext context) {
                     onPressed: () {
                       // Use Navigator.pop to return the selected range values to the main page
                       // Navigator.pop(context, currentRangeValues);
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => BudgetResultPage(currentRangeValues: currentRangeValues)));
-
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BudgetResultPage(
+                                  currentRangeValues: currentRangeValues)));
                     },
                   ),
                 ],
@@ -234,7 +247,8 @@ void _showFilterByBudget(BuildContext context) {
 }
 
 class ImageSlider extends StatefulWidget {
-  const ImageSlider({super.key});
+  final LocationModel location;
+  const ImageSlider({super.key, required this.location});
 
   @override
   State<ImageSlider> createState() => _ImageSliderState();
@@ -246,19 +260,19 @@ class _ImageSliderState extends State<ImageSlider> {
 
   List<String>? imageUrls;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _fetchImageUrls();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    _fetchImageUrls();
+  }
 
-  // Future<void> _fetchImageUrls() async {
-  //   List<String> urls = await eventsRepository.getEventImageUrls(
-  //       widget.event.uid, widget.event.image!);
-  //   setState(() {
-  //     imageUrls = urls;
-  //   });
-  // }
+  Future<void> _fetchImageUrls() async {
+    List<String> urls = await locationRepository.getEventImageUrls(
+        widget.location.images!);
+    setState(() {
+      imageUrls = urls;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -271,9 +285,7 @@ class _ImageSliderState extends State<ImageSlider> {
       ),
       spacing: const EdgeInsets.all(2.5),
     );
-    int maxImageIndex = 2;
-
-    // int maxImageIndex = widget.event.image!.length;
+    int maxImageIndex = widget.location.images!.length;
     CarouselController carouselController = CarouselController();
 
     return Stack(
@@ -310,18 +322,7 @@ class _ImageSliderState extends State<ImageSlider> {
                       ),
                     )
                     .toList()
-                : [
-                    CachedNetworkImage(
-                      imageUrl: 'https://picsum.photos/250',
-                      height: 250,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) =>
-                          const CircularProgressIndicator(),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.error),
-                    ),
-                  ],
+                : [const Center(child: CircularProgressIndicator())],
           ),
         ),
         SizedBox(
