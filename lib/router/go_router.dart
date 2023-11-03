@@ -1,5 +1,7 @@
 import 'package:cooptourism/pages/coaching/coaching_messaging.dart';
 import 'package:cooptourism/pages/coaching/coaching_page.dart';
+import 'package:cooptourism/pages/customer/city_page.dart';
+import 'package:cooptourism/pages/customer/home_page.dart';
 import 'package:cooptourism/pages/events/events_page.dart';
 import 'package:cooptourism/pages/events/selected_events_page.dart';
 import 'package:cooptourism/pages/inbox/chat.dart';
@@ -298,6 +300,23 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     }),
               ],
             ),
+
+            GoRoute(
+              path: "/customer_home_page",
+              name: "Customer Home",
+              pageBuilder: (context, state) {
+                return NoTransitionPage(child: CustomerHomePage(key: state.pageKey));
+              },
+               routes: [
+                GoRoute(
+                    path: ':cityId',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return CityPage(
+                        cityId: state.pathParameters["cityId"]!,
+                      );
+                    }),
+              ],
+            ),
           ]),
           
     ],
@@ -315,7 +334,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       if (isSplash) {
         debugPrint(role);
         if (role == 'Customer') {
-          return isAuth ? "/market_page" : "/login";
+          return isAuth ? "/customer_home_page" : "/login";
         }
 
         if (role == 'Member') {
@@ -326,7 +345,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           return isAuth ? "/dashboard_page" : "/login";
         }
 
-        return isAuth ? "/market_page" : "/login";
+        return isAuth ? "/customer_home_page" : "/login";
       }
 
       final isLoggingIn = state.location == '/login';
