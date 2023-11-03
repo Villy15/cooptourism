@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cooptourism/core/theme/dark_theme.dart';
+import 'package:cooptourism/data/models/itineraries.dart';
 import 'package:cooptourism/data/models/locations.dart';
+import 'package:cooptourism/data/repositories/itinerary_repository.dart';
 import 'package:cooptourism/pages/customer/budget_results.dart';
 import 'package:cooptourism/pages/customer/home_page.dart';
 import 'package:cooptourism/widgets/leading_back_button.dart';
@@ -9,6 +11,8 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final ItineraryRepository itineraryRepository = ItineraryRepository();
 
 class CityPage extends ConsumerStatefulWidget {
   final String? cityId;
@@ -22,6 +26,13 @@ class CityPage extends ConsumerStatefulWidget {
 
 class _CityPageState extends ConsumerState<CityPage> {
   RangeValues currentRangeValues = const RangeValues(1000, 20000);
+
+  @override
+  void initState() {
+    super.initState();
+    // itineraryRepository.deleteAllItinerary();
+    // itineraryRepository.addItineraryManually();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +51,6 @@ class _CityPageState extends ConsumerState<CityPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ImageSlider(location: widget.locationModel!),
-
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -60,7 +70,6 @@ class _CityPageState extends ConsumerState<CityPage> {
                   ],
                 ),
               ),
-
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.0),
                 child: Divider(
@@ -68,7 +77,6 @@ class _CityPageState extends ConsumerState<CityPage> {
                   thickness: 1,
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: Row(
@@ -94,50 +102,73 @@ class _CityPageState extends ConsumerState<CityPage> {
                   ],
                 ),
               ),
-
-              // Add a 4x4 grid of container
-              GridView.builder(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                physics:
-                    const NeverScrollableScrollPhysics(), // to disable GridView's scrolling
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.85,
-                ),
-                itemCount: 10, // Change this to the number of items you have
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: Container(
-                      color: Colors.white,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: 150.0,
-                            width: double.infinity,
-                            color: primaryColor,
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(top: 8.0),
-                            child: Text("8 days",
-                                style: TextStyle(
-                                    fontSize: 14.0,
-                                    fontWeight: FontWeight.w400)),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(top: 2.0),
-                            child: Text("Puerto Princesa Underground River",
-                                style: TextStyle(
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.bold)),
-                          )
-                        ],
+              FutureBuilder(
+                future: itineraryRepository.filterCityFuture(widget.locationModel!.city),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator(); // show a loader while waiting for data
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Text('No Iteneraries available');
+                  } else {
+                    return GridView.builder(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      physics:
+                          const NeverScrollableScrollPhysics(), // to disable GridView's scrolling
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.85,
                       ),
-                    ),
-                  );
+                      itemCount: snapshot.data!
+                          .length, // Change this to the number of items you have
+                      itemBuilder: (context, index) {
+                        ItineraryModel itineraryModel = snapshot.data![index];
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: Container(
+                            color: Colors.white,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                            
+                                if (itineraryModel.images != null && itineraryModel.images!.isNotEmpty) ...[
+                                  itineraryImage(context, itineraryModel),
+                                ] else ...[
+                                  Container(
+                                    height: 150.0,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                  ),
+                                ],
+
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Text(
+                                      "${itineraryModel.days} days - ₱${itineraryModel.budget}",
+                                      style: const TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.w400)),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 2.0),
+                                  child: Text(itineraryModel.name,
+                                      style: const TextStyle(
+                                          fontSize: 12.0,
+                                          fontWeight: FontWeight.bold)),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
                 },
               ),
             ],
@@ -146,6 +177,46 @@ class _CityPageState extends ConsumerState<CityPage> {
       ),
     );
   }
+
+  FutureBuilder itineraryImage(BuildContext context, ItineraryModel itineraryModel) {
+    final storageRef = FirebaseStorage.instance.ref();
+    String imagePath = "itineraries/${itineraryModel.images?[0]}";
+
+    return FutureBuilder (
+      future: storageRef.child(imagePath).getDownloadURL(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(); // show a loader while waiting for data
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Text('No Events available');
+        } else {
+          String imageUrl = snapshot.data as String;
+          return Container(
+            height: 150.0,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
+              imageBuilder: (context, imageProvider) => Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              // placeholder: (context, url) => const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+            ),
+          );
+        }
+      },
+    );
+  }
+
 
   void _showFilterByBudget(BuildContext context) {
     double minBudget = 0;
@@ -197,7 +268,7 @@ class _CityPageState extends ConsumerState<CityPage> {
                     child: const Text('Apply Filter'),
                     onPressed: () {
                       // Use Navigator.pop to return the selected range values to the main page
-                      // Navigator.pop(context, currentRangeValues);
+                      Navigator.pop(context, currentRangeValues);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -267,8 +338,8 @@ class _ImageSliderState extends State<ImageSlider> {
   }
 
   Future<void> _fetchImageUrls() async {
-    List<String> urls = await locationRepository.getEventImageUrls(
-        widget.location.images!);
+    List<String> urls =
+        await locationRepository.getEventImageUrls(widget.location.images!);
     setState(() {
       imageUrls = urls;
     });

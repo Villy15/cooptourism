@@ -1,4 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cooptourism/data/models/itineraries.dart';
+import 'package:cooptourism/data/repositories/itinerary_repository.dart';
+// import 'package:cooptourism/pages/customer/city_page.dart';
 import 'package:cooptourism/providers/home_page_provider.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,6 +17,8 @@ class BudgetResultPage extends ConsumerStatefulWidget {
   ConsumerState<BudgetResultPage> createState() => _BudgetResultPageState();
 }
 
+final ItineraryRepository itineraryRepository = ItineraryRepository();
+
 class _BudgetResultPageState extends ConsumerState<BudgetResultPage> {
   late RangeValues currentRangeValues;
 
@@ -19,6 +26,7 @@ class _BudgetResultPageState extends ConsumerState<BudgetResultPage> {
   void initState() {
     super.initState();
     currentRangeValues = widget.currentRangeValues;
+    debugPrint("Curent range values: $currentRangeValues");
     Future.delayed(Duration.zero, () {
       ref.read(appBarVisibilityProvider.notifier).state = false;
       ref.read(navBarVisibilityProvider.notifier).state = false;
@@ -40,153 +48,186 @@ class _BudgetResultPageState extends ConsumerState<BudgetResultPage> {
             child: Column(
               children: [
                 resultsHeading(context),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 24.0, vertical: 8),
-                        child: Container(
-                          height: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.shade300,
-                                blurRadius: 10,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 120,
-                                color: Colors.red,
-                              ),
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 12.0, vertical: 12.0),
-                                      child: Text("3 days",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w400)),
-                                    ),
-                                    const Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 12.0),
-                                      child: Text("Scuba Diving Palawan",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold)),
-                                    ),
+                StreamBuilder<List<ItineraryModel>>(
+                  stream: itineraryRepository.filterBudget(currentRangeValues),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
+                    final itineraries = snapshot.data!;
 
-                                    const Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 12.0, vertical: 12.0),
-                                      child: Text(
-                                          "See plawanan chuchcu hcuhu c uhc hcu hcu hcuh cuh sssssssssssssshcu",
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400)),
-                                    ),
+                    // if empty
+                    if (itineraries.isEmpty) {
+                      return const Center(
+                        child: Text("No results found"),
+                      );
+                    }
 
-                                    const Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 12.0, vertical: 4.0),
-                                      child: Text("~₱5000",
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w400)),
-                                    ),
-
-                                    // Create tags for the location
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12.0, vertical: 12.0),
-                                      child: SingleChildScrollView (
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.grey.shade300,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: const Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 12.0,
-                                                    vertical: 6.0),
-                                                child: Text("Scuba Diving",
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w400)),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8.0),
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.grey.shade300,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: const Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 12.0,
-                                                    vertical: 6.0),
-                                                child: Text("Palawan",
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w400)),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8.0),
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.grey.shade300,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: const Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 12.0,
-                                                    vertical: 6.0),
-                                                child: Text("Palawan",
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w400)),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ));
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: itineraries.length,
+                      itemBuilder: (context, index) {
+                        return budgetCard(itineraries[index]);
+                      },
+                    );
                   },
                 ),
               ],
             ),
           )),
+    );
+  }
+
+  Padding budgetCard(ItineraryModel itinerary) {
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8),
+        child: Container(
+            height: 220,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade300,
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                if (itinerary.images != null &&
+                    itinerary.images!.isNotEmpty) ...[
+                  itineraryImage(context, itinerary),
+                ] else ...[
+                  Container(
+                    width: 120,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.grey.shade300,
+                    ),
+                  ),
+                ],
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 12.0),
+                        child: Text("${itinerary.days} days",
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w400)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: Text(itinerary.name,
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 12.0),
+                        child: Text(
+                            itinerary.description ?? "No description available",
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w400)),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 4.0),
+                        child: Text("~₱${itinerary.budget}",
+                            style: const TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w400)),
+                      ),
+
+                      const Spacer(),
+
+                      // Create tags for the location
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 12.0),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: itinerary.tags!
+                                .map((activity) => Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 8.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade300,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12.0, vertical: 6.0),
+                                          child: Text(activity,
+                                              style: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w400)),
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            )));
+  }
+
+  FutureBuilder itineraryImage(
+      BuildContext context, ItineraryModel itineraryModel) {
+    final storageRef = FirebaseStorage.instance.ref();
+    String imagePath = "itineraries/${itineraryModel.images?[0]}";
+
+    return FutureBuilder(
+      future: storageRef.child(imagePath).getDownloadURL(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(); // show a loader while waiting for data
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Text('No Events available');
+        } else {
+          String imageUrl = snapshot.data as String;
+          return Container(
+            width: 120,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
+              imageBuilder: (context, imageProvider) => Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              // placeholder: (context, url) => const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+            ),
+          );
+        }
+      },
     );
   }
 
@@ -226,7 +267,7 @@ class _BudgetResultPageState extends ConsumerState<BudgetResultPage> {
           // Using a StatefulBuilder to manage state inside the modal
           builder: (BuildContext context, StateSetter setModalState) {
             return Container(
-              height: 250,
+              height: 200,
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
@@ -265,12 +306,11 @@ class _BudgetResultPageState extends ConsumerState<BudgetResultPage> {
                     child: const Text('Apply Filter'),
                     onPressed: () {
                       // Use Navigator.pop to return the selected range values to the main page
-                      // Navigator.pop(context, currentRangeValues);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BudgetResultPage(
-                                  currentRangeValues: currentRangeValues)));
+                      Navigator.pop(context, currentRangeValues);
+                      // Change the state of the currentRangeValues
+                      setState(() {
+                        currentRangeValues = currentRangeValues;
+                      });
                     },
                   ),
                 ],

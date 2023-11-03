@@ -69,21 +69,21 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
         
               const Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text("Itenerary Ideas"),
+                child: Text("Tourism Ideas"),
               ),
         
               SizedBox(height: 100.0 ,child: listIteneraryIdeas()),
         
               const Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text("Browse"),
+                child: Text("Near You"),
               ),
 
               browseLocations(),
 
               const Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text("Browse"),
+                child: Text("Popular Destinations"),
               ),
 
 
