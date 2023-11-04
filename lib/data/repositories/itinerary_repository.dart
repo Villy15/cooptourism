@@ -99,49 +99,43 @@ class ItineraryRepository {
   Future<void> addItineraryManually() async {
     List<Map<String, dynamic>> itineraries = [
       {
-        'city': 'Puerto Princesa',
-        'province': 'Palawan',
+        'city': 'Mariveles',
+        'province': 'Bataan',
         'images': [
-          'pp_beach.png',
-          'pp_underground_river.png',
-          'pp_city_tour.png',
+          'Laki-Beach-Mariveles-1024x768.jpg',
         ],
         'days': 5,
-        'name': 'Puerto Princesa Adventure Week',
+        'name': 'Mariveles Historical and Adventure Tour',
         'description':
-            'Explore the natural wonders of Puerto Princesa with this adventure-packed itinerary. Visit the Underground River, go island hopping, and experience the vibrant city life.',
-        'budget': 15000,
-        'tags': ['adventure', 'nature', 'city tour'],
+            'Take a journey through history and nature in Mariveles, Bataan. Visit the Mount Samat National Shrine, walk along the Death March markers, and explore the stunning coves known as Five Fingers.',
+        'budget': 20000,
+        'tags': ['history', 'adventure', 'nature'],
       },
       {
-        'city': 'Puerto Princesa',
-        'province': 'Palawan',
+        'city': 'Mariveles',
+        'province': 'Bataan',
         'images': [
-          'pp_snorkeling.png',
-          'pp_firefly_watching.png',
-          'pp_cultural_tour.png',
+          'Camaya_waterfalls-3.jpg',
         ],
         'days': 3,
-        'name': 'Puerto Princesa Cultural Trip',
+        'name': 'Mariveles Nature and Wildlife Experience',
         'description':
-            'Dive into the culture and natural beauty of Puerto Princesa. Enjoy snorkeling, firefly watching, and learn about the local heritage.',
-        'budget': 8000,
-        'tags': ['culture', 'snorkeling', 'wildlife'],
+            'Connect with the serene beauty of Mariveles. Enjoy the view of Sisiman Bay, contribute to the conservation of Pawikan sea turtles, and refresh at the local waterfalls.',
+        'budget': 12000,
+        'tags': ['wildlife', 'conservation', 'scenic'],
       },
       {
-        'city': 'Puerto Princesa',
-        'province': 'Palawan',
+        'city': 'Mariveles',
+        'province': 'Bataan',
         'images': [
-          'pp_zipline.png',
-          'pp_mangrove_tour.png',
-          'pp_night_market.png',
+          '1mi3i12000c5pfn4n1A6E_W_400_0_R5_Q90.jpg',
         ],
         'days': 4,
-        'name': 'Puerto Princesa Eco Tour',
+        'name': 'Mariveles Coastal Retreat and History Tour',
         'description':
-            'Get close to nature with an eco-friendly tour of Puerto Princesa. Experience the thrill of ziplining, the serenity of the mangroves, and the local flavors at the night market.',
-        'budget': 12000,
-        'tags': ['ecotourism', 'adventure', 'food'],
+            'Relax on the pristine beaches of Camaya Coast, explore various hiking trails, and immerse yourself in the rich World War II history of Bataan at the local museum.',
+        'budget': 15000,
+        'tags': ['beach', 'hiking', 'history'],
       },
     ];
 
@@ -181,7 +175,8 @@ class ItineraryRepository {
   }
 
   // Add schedule
-  Future<void> addSchedule(String itineraryId, DaySchedModel daySchedule) async {
+  Future<void> addSchedule(
+      String itineraryId, DaySchedModel daySchedule) async {
     try {
       // Get a reference to the document for the specified itinerary
       final itineraryDoc = itneraryCollection.doc(itineraryId);
@@ -197,7 +192,6 @@ class ItineraryRepository {
       // You might want to handle errors more gracefully here
     }
   }
-  
 
   // Read schedule in stream
   Stream<List<DaySchedModel>> getScheduleStream(String itineraryId) {
@@ -227,8 +221,13 @@ class ItineraryRepository {
       rethrow;
     }
   }
+
   // Add activity
-   Future<bool> updateActivity(String? itineraryId, ActivityModel newActivity, int i, ) async {
+  Future<bool> updateActivity(
+    String? itineraryId,
+    ActivityModel newActivity,
+    int i,
+  ) async {
     try {
       // Get a reference to the document for the specified itinerary
       final itineraryDoc = itneraryCollection.doc(itineraryId);
@@ -240,8 +239,9 @@ class ItineraryRepository {
       final snapshot = await scheduleCollection.get();
 
       // Find which document has the same day number as the activity
-      final dayDoc = snapshot.docs.firstWhere((doc) => doc.data()['dayNumber'] == i); 
-      
+      final dayDoc =
+          snapshot.docs.firstWhere((doc) => doc.data()['dayNumber'] == i);
+
       // Update the activities array of the document by adding the new activity
       await dayDoc.reference.update({
         'activities': FieldValue.arrayUnion([newActivity.toMap()])
@@ -255,5 +255,4 @@ class ItineraryRepository {
       return false;
     }
   }
-
 }

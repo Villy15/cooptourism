@@ -1,0 +1,140 @@
+List<Map<String, dynamic>> itineraries = [
+      {
+        'city': 'Puerto Princesa',
+        'province': 'Palawan',
+        'images': [
+          'pp_beach.png',
+          'pp_underground_river.png',
+          'pp_city_tour.png',
+        ],
+        'days': 5,
+        'name': 'Puerto Princesa Adventure Week',
+        'description':
+            'Explore the natural wonders of Puerto Princesa with this adventure-packed itinerary. Visit the Underground River, go island hopping, and experience the vibrant city life.',
+        'budget': 15000,
+        'tags': ['adventure', 'nature', 'city tour'],
+      },
+      {
+        'city': 'Puerto Princesa',
+        'province': 'Palawan',
+        'images': [
+          'pp_snorkeling.png',
+          'pp_firefly_watching.png',
+          'pp_cultural_tour.png',
+        ],
+        'days': 3,
+        'name': 'Puerto Princesa Cultural Trip',
+        'description':
+            'Dive into the culture and natural beauty of Puerto Princesa. Enjoy snorkeling, firefly watching, and learn about the local heritage.',
+        'budget': 8000,
+        'tags': ['culture', 'snorkeling', 'wildlife'],
+      },
+      {
+        'city': 'Puerto Princesa',
+        'province': 'Palawan',
+        'images': [
+          'pp_zipline.png',
+          'pp_mangrove_tour.png',
+          'pp_night_market.png',
+        ],
+        'days': 4,
+        'name': 'Puerto Princesa Eco Tour',
+        'description':
+            'Get close to nature with an eco-friendly tour of Puerto Princesa. Experience the thrill of ziplining, the serenity of the mangroves, and the local flavors at the night market.',
+        'budget': 12000,
+        'tags': ['ecotourism', 'adventure', 'food'],
+      },
+    ];
+
+
+
+List<Map<String, dynamic>> itineraries = [
+    {
+      'city': 'Loay',
+      'province': 'Bohol',
+      'images': [
+        // 'bohol_chocolate_hills.png',
+        // 'bohol_tarsier.png',
+        // 'bohol_loboc_river.png',
+      ],
+      'days': 5,
+      'name': 'Loay Bohol Exploration',
+      'description':
+          'Discover the enchanting landscapes of Loay, Bohol. Marvel at the world-famous Chocolate Hills, encounter the tiny tarsiers, and enjoy a relaxing cruise along the Loboc River.',
+      'budget': 18000,
+      'tags': ['nature', 'wildlife', 'scenery'],
+    },
+    {
+      'city': 'Loay',
+      'province': 'Bohol',
+      'images': [
+        // 'bohol_diving.png',
+        // 'bohol_heritage.png',
+        // 'bohol_rice_terrace.png',
+      ],
+      'days': 3,
+      'name': 'Loay Bohol Cultural Heritage',
+      'description':
+          'Experience the rich cultural tapestry of Loay, Bohol. Dive into crystal-clear waters, visit ancient churches, and walk through the stunning rice terraces.',
+      'budget': 10000,
+      'tags': ['culture', 'diving', 'history'],
+    },
+    {
+      'city': 'Loay',
+      'province': 'Bohol',
+      'images': [
+        // 'bohol_adventure_park.png',
+        // 'bohol_bamboo_bridge.png',
+        // 'bohol_firefly_kayak.png',
+      ],
+      'days': 4,
+      'name': 'Loay Bohol Adventure Week',
+      'description':
+          'Embrace adventure in Loay, Bohol with a visit to an adventure park, a trek across a bamboo hanging bridge, and a magical firefly watching kayak trip at night.',
+      'budget': 15000,
+      'tags': ['adventure', 'ecotourism', 'nightlife'],
+    },
+  ];
+
+
+List<Map<String, dynamic>> itineraries = [
+      {
+        'city': 'Mariveles',
+        'province': 'Bataan',
+        'images': [
+          'Laki-Beach-Mariveles-1024x768.jpg',
+        ],
+        'days': 5,
+        'name': 'Mariveles Historical and Adventure Tour',
+        'description':
+            'Take a journey through history and nature in Mariveles, Bataan. Visit the Mount Samat National Shrine, walk along the Death March markers, and explore the stunning coves known as Five Fingers.',
+        'budget': 20000,
+        'tags': ['history', 'adventure', 'nature'],
+      },
+      {
+        'city': 'Mariveles',
+        'province': 'Bataan',
+        'images': [
+          'Camaya_waterfalls-3.jpg',
+        ],
+        'days': 3,
+        'name': 'Mariveles Nature and Wildlife Experience',
+        'description':
+            'Connect with the serene beauty of Mariveles. Enjoy the view of Sisiman Bay, contribute to the conservation of Pawikan sea turtles, and refresh at the local waterfalls.',
+        'budget': 12000,
+        'tags': ['wildlife', 'conservation', 'scenic'],
+      },
+      {
+        'city': 'Mariveles',
+        'province': 'Bataan',
+        'images': [
+          '1mi3i12000c5pfn4n1A6E_W_400_0_R5_Q90.jpg',
+        ],
+        'days': 4,
+        'name': 'Mariveles Coastal Retreat and History Tour',
+        'description':
+            'Relax on the pristine beaches of Camaya Coast, explore various hiking trails, and immerse yourself in the rich World War II history of Bataan at the local museum.',
+        'budget': 15000,
+        'tags': ['beach', 'hiking', 'history'],
+      },
+    ];
