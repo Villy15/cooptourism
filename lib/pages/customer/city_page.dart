@@ -6,6 +6,7 @@ import 'package:cooptourism/data/models/locations.dart';
 import 'package:cooptourism/data/repositories/itinerary_repository.dart';
 import 'package:cooptourism/pages/customer/budget_results.dart';
 import 'package:cooptourism/pages/customer/home_page.dart';
+import 'package:cooptourism/pages/customer/itenerary_page.dart';
 import 'package:cooptourism/widgets/leading_back_button.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -127,42 +128,54 @@ class _CityPageState extends ConsumerState<CityPage> {
                       itemBuilder: (context, index) {
                         ItineraryModel itineraryModel = snapshot.data![index];
 
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                          child: Container(
-                            color: Colors.white,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                            
-                                if (itineraryModel.images != null && itineraryModel.images!.isNotEmpty) ...[
-                                  itineraryImage(context, itineraryModel),
-                                ] else ...[
-                                  Container(
-                                    height: 150.0,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                  ),
-                                ],
-
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
-                                  child: Text(
-                                      "${itineraryModel.days} days - ₱${itineraryModel.budget}",
-                                      style: const TextStyle(
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.w400)),
+                        return GestureDetector (
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => IteneraryPage(
+                                  itinerary: itineraryModel
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 2.0),
-                                  child: Text(itineraryModel.name,
-                                      style: const TextStyle(
-                                          fontSize: 12.0,
-                                          fontWeight: FontWeight.bold)),
-                                )
-                              ],
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                            child: Container(
+                              color: Colors.white,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                              
+                                  if (itineraryModel.images != null && itineraryModel.images!.isNotEmpty) ...[
+                                    itineraryImage(context, itineraryModel),
+                                  ] else ...[
+                                    Container(
+                                      height: 150.0,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                      ),
+                                    ),
+                                  ],
+                        
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Text(
+                                        "${itineraryModel.days} days - ₱${itineraryModel.budget}",
+                                        style: const TextStyle(
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w400)),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 2.0),
+                                    child: Text(itineraryModel.name,
+                                        style: const TextStyle(
+                                            fontSize: 12.0,
+                                            fontWeight: FontWeight.bold)),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         );
