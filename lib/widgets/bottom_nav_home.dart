@@ -64,7 +64,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         } else if (role == 'Member') {
           context.go("/member_dashboard_page");
         } else if (role == 'Customer'){
-          context.go("/market_page");
+          context.go("/customer_home_page");
         }
 
         break;
@@ -74,7 +74,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         } else if (role == 'Member') {
           context.go("/wallet_page");
         } else if (role == 'Customer') {
-          context.go("/wallet_page");
+          context.go("/market_page");
         }
         break;
       case 2:
@@ -92,7 +92,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         } else if (role == 'Member') {
           context.go("/profile_page");
         } else if (role == 'Customer') {
-          context.go("/inbox_page");
+          context.go("/coops_page");
         }
         break;
       case 4:
@@ -165,14 +165,14 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
   List<BottomNavigationBarItem> _getCustomerItems() {
     return const <BottomNavigationBarItem>[
       BottomNavigationBarItem(
+        icon: Icon(Icons.home_outlined),
+        activeIcon: Icon(Icons.home_rounded),
+        label: 'Home',
+      ),
+      BottomNavigationBarItem(
         icon: Icon(Icons.store_mall_directory_outlined),
         activeIcon: Icon(Icons.store_mall_directory_rounded),
         label: 'Market',
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.account_balance_wallet_outlined),
-        activeIcon: Icon(Icons.account_balance_wallet_rounded),
-        label: 'Wallet',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.event_outlined),
@@ -180,9 +180,9 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         label: 'Events',
       ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.inbox_outlined),
-        activeIcon: Icon(Icons.inbox_rounded),
-        label: 'Inbox',
+        icon: Icon(Icons.group_outlined),
+        activeIcon: Icon(Icons.group_rounded),
+        label: 'Coops',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.menu_rounded),
