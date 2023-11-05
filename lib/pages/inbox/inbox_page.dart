@@ -30,7 +30,7 @@ class _InboxPageState extends ConsumerState<InboxPage> {
     _fetchMembers();
 
     Future.delayed(Duration.zero, () {
-      _updateNavBarAndAppBarVisibility(false);
+      _updateNavBarAndAppBarVisibility(true);
     });
   }
 
@@ -105,8 +105,8 @@ class _InboxPageState extends ConsumerState<InboxPage> {
         icon: const Icon(Icons.arrow_back),
         color: Theme.of(context).colorScheme.primary,
         onPressed: () {
-          // _updateNavBarAndAppBarVisibility(true);
-          // Navigator.of(context).pop();
+          GoRouter.of(context).go('/menu_page');
+          _updateNavBarAndAppBarVisibility(true);
         }
       ),
       actions: [

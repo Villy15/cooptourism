@@ -134,11 +134,11 @@ class PostRepository {
   try {
     // Add the post and get the reference
     DocumentReference postRef = await postsCollection.add({
-      'author': 'Iwahori Multipurpose Cooperative',  // fixed typo from 'author:' to 'author'
-      'authorId': 'sslvO5tgDoCHGBO82kxq',
-      'authorType': 'cooperative',
+      'author': 'Timothy Mendoza',  // fixed typo from 'author:' to 'author'
+      'authorId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+      'authorType': 'member',
       'comments': [],
-      'content': "Dear Members and Stakeholders 📢, We're excited to bring to your attention the upcoming elections focused on tourism cooperatives under the Iwahori Multipurpose Cooperative banner. This is a pivotal moment as we aim to strengthen our commitment to promoting sustainable tourism and fostering a collaborative environment for all our members. Your participation and vote will guide the future direction of our tourism initiatives and ensure that we continue to thrive and serve our community effectively.",
+      'content': "I am timoy.",
       'likes': [],
       'dislikes': [],
       'timestamp': DateTime.now(),

@@ -46,7 +46,7 @@ class _MyConsumerWidgetState extends ConsumerState<CoachingMessaging> {
 
   @override
   Widget build(BuildContext context) {
-    final Future<List<MessageModel>> chatRoom = messageRepository.getOneChatRoom(user!.uid, widget.coachId);
+    final Future<List<MessageModel>> chatRoom = messageRepository.getOneCoachingRoom(user!.uid, widget.coachId);
     return FutureBuilder(
       future: chatRoom,
       builder: (context, snapshot) {

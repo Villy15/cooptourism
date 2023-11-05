@@ -3,6 +3,7 @@ import 'package:cooptourism/pages/coaching/coaching_page.dart';
 import 'package:cooptourism/pages/events/events_page.dart';
 import 'package:cooptourism/pages/events/selected_events_page.dart';
 import 'package:cooptourism/pages/inbox/chat.dart';
+import 'package:cooptourism/pages/manager/member_profile.dart';
 import 'package:cooptourism/pages/market/add_listing.dart';
 import 'package:cooptourism/pages/market/listing_edit.dart';
 import 'package:cooptourism/pages/market/listing_messages.dart';
@@ -222,15 +223,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   return NoTransitionPage(
                       child: MembersPage(key: state.pageKey));
                 },
-                // routes: [ to be added later
-                //   GoRoute(
-                //       path: ':memberId',
-                //       builder: (BuildContext context, GoRouterState state) {
-                //         return ManagerProfileView(
-                //           memberId: state.pathParameters["memberId"]!,
-                //         );
-                //       }),
-                // ]
+                routes: [
+                  GoRoute(
+                      path: ':memberId',
+                      builder: (BuildContext context, GoRouterState state) {
+                        return ManagerProfileView(
+                          memberId: state.pathParameters["memberId"]!,
+                        );
+                      }),
+                ]
                 ),
             GoRoute(
                 path: "/reports_page",

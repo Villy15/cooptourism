@@ -2,12 +2,12 @@
 // import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
-import 'package:cooptourism/pages/manager/member_profile.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 // import 'package:cooptourism/pages/manager/member_profile.dart';
 // import 'package:cooptourism/pages/profile/profile_page.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class MembersPage extends StatefulWidget {
   const MembersPage({super.key});
@@ -74,10 +74,7 @@ class _MembersPageState extends State<MembersPage> {
             itemBuilder: (context, index) {
               return InkWell(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ManagerProfileView(member: _members[index])),
-                    );
+                    GoRouter.of(context).go('/members_page/${userUID[index]}');
                   },
                   child: FutureBuilder<UserModel>(
                   future: UserRepository().getUser(userUID[index]),
