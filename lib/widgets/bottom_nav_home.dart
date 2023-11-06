@@ -60,7 +60,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
     switch (index) {
       case 0:
         if (role == "Manager") {
-          context.go("/");
+          context.go("/manager_home_page");
         } else if (role == 'Member') {
           context.go("/member_dashboard_page");
         } else if (role == 'Customer'){

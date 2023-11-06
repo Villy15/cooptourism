@@ -69,6 +69,7 @@ dependencies:
 
   cached_network_image:
   flutter_image_compress:
+  shimmer: ^3.0.0
   # flutter_cache_manager:
 
 

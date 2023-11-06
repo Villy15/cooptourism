@@ -5,6 +5,7 @@ import 'package:cooptourism/pages/customer/home_page.dart';
 import 'package:cooptourism/pages/events/events_page.dart';
 import 'package:cooptourism/pages/events/selected_events_page.dart';
 import 'package:cooptourism/pages/inbox/chat.dart';
+import 'package:cooptourism/pages/manager/home_page.dart';
 import 'package:cooptourism/pages/manager/member_profile.dart';
 import 'package:cooptourism/pages/market/add_listing.dart';
 import 'package:cooptourism/pages/market/listing_edit.dart';
@@ -211,6 +212,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 ]
               ),
             // ADMIN ROUTES
+             GoRoute(
+                path: "/manager_home_page",
+                name: "Manager Home",
+                pageBuilder: (context, state) {
+                  return NoTransitionPage(
+                      child: ManagerHomePage(key: state.pageKey));
+                }),
             GoRoute(
                 path: "/dashboard_page",
                 name: "Dashboard",
@@ -343,14 +351,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         }
 
         if (role == 'Manager') {
-          return isAuth ? "/dashboard_page" : "/login";
+          return isAuth ? "/manager_home_page" : "/login";
         }
 
         return isAuth ? "/customer_home_page" : "/login";
       }
 
-      final isLoggingIn = state.location == '/login';
-      if (isLoggingIn) return isAuth ? '/member_dashboard_page' : null;
+      // final isLoggingIn = state.location == '/login';
+      // if (isLoggingIn) return isAuth ? '/member_dashboard_page' : null;
 
       return isAuth ? null : SplashPage.routeLocation;
     },
