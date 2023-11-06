@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class ItineraryModel {
   String? uid;
@@ -83,4 +85,103 @@ class ItineraryModel {
   String toString() {
     return 'ItineraryModel(uid: $uid, city: $city, province: $province, images: $images, days: $days, name: $name, description: $description, budget: $budget, tags: $tags)';
   }
+}
+
+
+class ActivityModel {
+  DateTime datetime;  // e.g., '9AM', '12PM'
+  String description;  // e.g., 'Breakfast at XYZ Cafe'
+  String location;
+  String activityType;  // e.g., 'Food', 'Transportation', 'Accommodation';
+  ActivityModel({
+    required this.datetime,
+    required this.description,
+    required this.location,
+    required this.activityType,
+  });
+  
+
+  ActivityModel copyWith({
+    DateTime? datetime,
+    String? description,
+    String? location,
+    String? activityType,
+  }) {
+    return ActivityModel(
+      datetime: datetime ?? this.datetime,
+      description: description ?? this.description,
+      location: location ?? this.location,
+      activityType: activityType ?? this.activityType,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'datetime': Timestamp.fromDate(datetime),
+      'description': description,
+      'location': location,
+      'activityType': activityType,
+    };
+  }
+
+  factory ActivityModel.fromMap(Map<String, dynamic> map) {
+    return ActivityModel(
+      datetime: (map['datetime'] as Timestamp).toDate(),
+      description: map['description'] as String,
+      location: map['location'] as String,
+      activityType: map['activityType'] as String,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory ActivityModel.fromJson(String source) => ActivityModel.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  @override
+  String toString() {
+    return 'ActivityModel(datetime: $datetime, description: $description, location: $location, activityType: $activityType)';
+  }
+
+}
+
+class DaySchedModel {
+  int dayNumber;
+  List <ActivityModel> activities;
+  DaySchedModel({
+    required this.dayNumber,
+    required this.activities,
+  });
+
+  DaySchedModel copyWith({
+    int? dayNumber,
+    List <ActivityModel>? activities,
+  }) {
+    return DaySchedModel(
+      dayNumber: dayNumber ?? this.dayNumber,
+      activities: activities ?? this.activities,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'dayNumber': dayNumber,
+      'activities': activities.map((activity) => activity.toMap()).toList(),
+    };
+  }
+
+  factory DaySchedModel.fromMap(Map<String, dynamic> map) {
+    return DaySchedModel(
+      dayNumber: map['dayNumber'] as int,
+      activities: List <ActivityModel>.from((map['activities'] as List<dynamic>).map((e) => ActivityModel.fromMap(e as Map<String, dynamic>))),
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory DaySchedModel.fromJson(String source) => DaySchedModel.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  @override
+  String toString() => 'DaySchedModel(dayNumber: $dayNumber, activities: $activities)';
+
+
 }

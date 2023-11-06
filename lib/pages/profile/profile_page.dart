@@ -1,11 +1,12 @@
 // import 'package:cooptourism/animations/slide_transition.dart';
 // import 'dart:ui';
-
 import 'package:cooptourism/data/models/user.dart';
+import 'package:cooptourism/data/repositories/coaching_repository.dart';
 // import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 // import 'package:cooptourism/widgets/display_featured.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
+import 'package:cooptourism/widgets/post_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 // import 'package:cooptourism/widgets/gnav_home.dart';
@@ -26,25 +27,42 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   int _selectedIndex = 0;
+  String userUID = "";
 
-  final List<String> _titles = [
+  final List<String> _titlesMember = [
     'Performance',
     'About',
     'Posts',
     'Coaching',
   ];
 
+  final List<String> _titlesManager = [
+    'Approvals',
+    'Posts',
+    'Features',
+    'Coaching Concerns'
+  ];
+
+  final List<String> _titlesCustomer = [
+
+  ];
+
 
   User? user;
 
   final userRepository = UserRepository();
+  final coachingRepository = CoachingRepository();
+
+  late UserModel specificUser;
 
   @override
   void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
-
+    userUID = user!.uid;
+    // postRepository.addDummyPost();
   }
+
 
 
   @override
@@ -76,9 +94,14 @@ class _ProfilePageState extends State<ProfilePage> {
   );
 }
   ListView listViewFilter() {
+
+    // use _titlesMember if user role is a member
+    // use _titlesManager if user role is a manager
+    // use _titlesCustomer if user role is a customer
     return ListView.builder(
       scrollDirection: Axis.horizontal,
-      itemCount: _titles.length,
+      // add other titles here as options 
+      itemCount: _titlesMember.length,
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -95,7 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 28.0, vertical: 10.0),
                 child: Text(
-                  _titles[index],
+                  _titlesMember[index],
                   style: TextStyle(
                     color: _selectedIndex == index
                         ? Theme.of(context).colorScheme.background
@@ -114,6 +137,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+
   StreamBuilder<UserModel> currentUserProfile(User user, int selectedIndex) {
     final String uidString = user.uid;
     return StreamBuilder(
@@ -123,7 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
             var userData = snapshot.data;
             debugPrint('user uid is ${user.uid}');
 
-            if (selectedIndex == 0) { // Perforrmance
+            if (selectedIndex == 0 && userData?.role == 'Member') { // Perforrmance
               return Column(
                 children: [
                   profile(context, userData!, uidString),
@@ -132,7 +156,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               );
             }
-            else if (selectedIndex == 1) { // About
+            else if (selectedIndex == 1 && userData?.role == 'Member') { // About
               return Column(
                 children: [
                   profile(context, userData!, uidString),
@@ -142,17 +166,18 @@ class _ProfilePageState extends State<ProfilePage> {
               );
             }
 
-            else if (selectedIndex == 2) { // Posts
+            else if (selectedIndex == 2 && userData?.role == 'Member') { // Posts
               return Column(
                 children: [
                   profile(context, userData!, uidString),
                   const SizedBox(height: 15),
+                  postSection(context, uidString)
                   
                 ],
               );
             }
             
-            else if (selectedIndex == 3) {
+            else if (selectedIndex == 3 && userData?.role == 'Member') {
               return Column(
                 children: [
                   profile(context, userData!, uidString),
@@ -205,7 +230,7 @@ class _ProfilePageState extends State<ProfilePage> {
       
     }
     return Container(
-      height: 290,
+      height: 250,
       width: 400,
       color: Theme.of(context).colorScheme.primary,
       child: Column(
@@ -254,30 +279,6 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 5),
               rowData(Icons.location_on_outlined, 'Location: ', user.location),
 
-              const SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10.0),
-                    child: InkWell(
-                      onTap: () {},
-                      child: Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.secondary,
-                          borderRadius: BorderRadius.circular(10)
-                        ),
-                        child: Icon(
-                          Icons.message,
-                          color: Theme.of(context).colorScheme.primary,
-                        )
-                      ),
-                    ),
-                  )
-                ],
-              )
             ],
           )
     );
@@ -584,7 +585,7 @@ class _ProfilePageState extends State<ProfilePage> {
           color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
         ),
 
-        const SizedBox(height: 10)
+        const SizedBox(height: 100)
       ]
     );
   }
@@ -790,7 +791,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   Padding(
                     padding: const EdgeInsets.only(top:16.0, bottom: 12),
                     child: Text(
-                      'Connect with a coach!',
+                      'Apply for coaching!',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.secondary,
                         fontWeight: FontWeight.bold
@@ -830,6 +831,41 @@ class _ProfilePageState extends State<ProfilePage> {
         const SizedBox(height: 70)
       ]
     );
+  }
+
+  Column postSection(BuildContext context, String userUID) {
+    return Column(
+      children: [
+        StreamBuilder(
+            stream: postRepository.getSpecificPosts(userUID),
+            builder:(context, snapshot) {
+              if (snapshot.hasData) {
+                final posts = snapshot.data!;
+                return ListView.builder(
+                    itemCount: posts.length,
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: ((context, index) {
+                      final post = posts[index];
+                      return PostCard(
+                        postModel: post                        
+                      );
+                    })
+                );
+              }
+
+              if (snapshot.hasError) {
+                return const Text("Error");
+              }
+
+              else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
+          )
+      ],
+    );
+    
   }
 
   AppBar _appBar(BuildContext context, String title) {

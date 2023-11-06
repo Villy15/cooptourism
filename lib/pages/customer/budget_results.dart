@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cooptourism/data/models/itineraries.dart';
 import 'package:cooptourism/data/repositories/itinerary_repository.dart';
+import 'package:cooptourism/pages/customer/itenerary_page.dart';
 // import 'package:cooptourism/pages/customer/city_page.dart';
 import 'package:cooptourism/providers/home_page_provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -72,7 +73,19 @@ class _BudgetResultPageState extends ConsumerState<BudgetResultPage> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: itineraries.length,
                       itemBuilder: (context, index) {
-                        return budgetCard(itineraries[index]);
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => IteneraryPage(
+                                  itinerary: itineraries[index],
+                                ),
+                              ),
+                            );
+                          },
+                          child: budgetCard(itineraries[index])
+                        );
                       },
                     );
                   },
