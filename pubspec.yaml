@@ -70,6 +70,7 @@ dependencies:
   cached_network_image:
   flutter_image_compress:
   shimmer: ^3.0.0
+  flutter_dropdown: ^1.0.1+hotfix.1
   # flutter_cache_manager:
 
 
