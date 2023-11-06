@@ -11,8 +11,6 @@ class TaskModel {
   List<ToDoItem> toDoList;
   String? type;
   String? referenceId;
-  String? proof;
-  String? taskType;
 
   TaskModel({
     this.uid,
@@ -22,8 +20,6 @@ class TaskModel {
     required this.toDoList,
     this.type,
     this.referenceId,
-    this.proof,
-    this.taskType,
   });
 
   TaskModel copyWith({
@@ -34,8 +30,6 @@ class TaskModel {
     List<ToDoItem>? toDoList,
     String? type,
     String? referenceId,
-    String? proof,
-    String? taskType,
     
     
   }) {
@@ -47,8 +41,6 @@ class TaskModel {
       toDoList: toDoList ?? this.toDoList,
       type: type ?? this.type,
       referenceId: referenceId ?? this.referenceId,
-      proof: proof ?? this.proof,
-      taskType: taskType ?? this.taskType,
     );
   }
 
@@ -61,8 +53,6 @@ class TaskModel {
       'toDoList': toDoList.map((x) => x.toMap()).toList(),
       'type': type,
       'referenceId': referenceId,
-      'proof': proof,
-      'taskType': taskType,
     };
   }
 
@@ -76,8 +66,6 @@ class TaskModel {
           map['toDoList']?.map((x) => ToDoItem.fromMap('', x)) as Iterable),
       type: map['type'] as String?,
       referenceId: map['referenceId'] as String?,
-      proof: map['proof'] as String?,
-      taskType: map['taskType'] as String?,
     );
   }
 
@@ -87,7 +75,7 @@ class TaskModel {
 
   @override
   String toString() {
-    return 'TaskModel(uid: $uid, title: $title, description: $description, progress: $progress, toDoList: $toDoList, type: $type , referenceId: $referenceId, proof: $proof , taskType: $taskType)';
+    return 'TaskModel(uid: $uid, title: $title, description: $description, progress: $progress, toDoList: $toDoList, type: $type , referenceId: $referenceId)';
   }
 }
 
@@ -95,10 +83,12 @@ class ToDoItem {
   String? uid;
   String title;
   bool isChecked;
+  String? proof;
   ToDoItem({
     this.uid,
     required this.title,
     required this.isChecked,
+    this.proof,
   });
 
   
@@ -107,11 +97,14 @@ class ToDoItem {
     String? uid,
     String? title,
     bool? isChecked,
+    String? proof,
   }) {
     return ToDoItem(
       uid: uid ?? this.uid,
       title: title ?? this.title,
       isChecked: isChecked ?? this.isChecked,
+      proof: proof ?? this.proof,
+
     );
   }
 
@@ -120,6 +113,7 @@ class ToDoItem {
       // 'uid': uid,
       'title': title,
       'isChecked': isChecked,
+      'proof': proof,
     };
   }
 
@@ -128,6 +122,7 @@ class ToDoItem {
       uid: id,
       title: map['title'] as String,
       isChecked: map['isChecked'] as bool,
+      proof: map['proof'] as String?,
     );
   }
 
@@ -136,18 +131,6 @@ class ToDoItem {
   factory ToDoItem.fromJson(String source) => ToDoItem.fromMap('', json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'ToDoItem(uid: $uid, title: $title, isChecked: $isChecked)';
+  String toString() => 'ToDoItem(uid: $uid, title: $title, isChecked: $isChecked , proof: $proof)';
 
-  @override
-  bool operator ==(covariant ToDoItem other) {
-    if (identical(this, other)) return true;
-  
-    return 
-      other.uid == uid &&
-      other.title == title &&
-      other.isChecked == isChecked;
-  }
-
-  @override
-  int get hashCode => uid.hashCode ^ title.hashCode ^ isChecked.hashCode;
 }

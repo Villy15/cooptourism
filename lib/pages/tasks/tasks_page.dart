@@ -75,8 +75,8 @@ class _TasksPageState extends State<TasksPage> {
 
             divider(),
 
-            tasksText(),
-            ...buildToDoList(task),
+            // tasksText(),
+            // ...buildToDoList(task),
           ],
         ),
       ),

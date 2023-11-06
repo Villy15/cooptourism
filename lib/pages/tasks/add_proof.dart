@@ -2,6 +2,7 @@ import 'package:cooptourism/core/file_picker.dart';
 import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:cooptourism/data/models/task.dart';
 import 'package:cooptourism/data/repositories/task_repository.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path_utils;
@@ -11,7 +12,8 @@ final TaskRepository taskRepository = TaskRepository();
 class AddTaskProofPage extends StatefulWidget {
   final ToDoItem item;
   final TaskModel task;
-  const AddTaskProofPage({Key? key, required this.item, required this.task})
+  final int index;
+  const AddTaskProofPage({Key? key, required this.item, required this.task, required this.index})
       : super(key: key);
 
   @override
@@ -24,6 +26,7 @@ class AddPostPageState extends State<AddTaskProofPage> {
   @override
   void initState() {
     super.initState();
+    debugPrint("Item title: ${widget.item.title}");
     filePickerUtility = FilePickerUtility(
       onImagePicked: _updateImageUI,
       onFilePicked: _updateFileUI,
@@ -34,7 +37,7 @@ class AddPostPageState extends State<AddTaskProofPage> {
 
   void _updateFileUI() => setState(() {});
 
-  Future<void> updateTask() async {
+  Future<void> updateTask(BuildContext context) async {
     try {
       final proofPath = _getProofPath();
 
@@ -44,15 +47,27 @@ class AddPostPageState extends State<AddTaskProofPage> {
       }
 
       await _updateTaskInDatabase(proofPath);
+      await _updateTaskInStorage(proofPath);
       _showSnackBar('Task updated successfully!');
+      if (mounted) {
+        Navigator.pop(context);
+      }
+      
     } catch (e) {
       _showSnackBar('Error updating task!');
     }
   }
-
+  // Find the index of the item in the list and update it
   Future<void> _updateTaskInDatabase(String proofPath) async {
-    TaskModel updatedTask = widget.task.copyWith(proof: proofPath);
-    await taskRepository.updateTask(widget.task.uid, updatedTask);
+    final task = widget.task;
+    final index = widget.index;
+    task.toDoList[index].proof = proofPath;
+    await taskRepository.updateTask(widget.task.uid, task);
+  }
+
+  Future<void> _updateTaskInStorage(String proofPath) async {
+    await taskRepository.uploadFile(
+        widget.task.uid, proofPath, filePickerUtility);
   }
 
   @override
@@ -105,7 +120,13 @@ class AddPostPageState extends State<AddTaskProofPage> {
       children: [
         _cancelButton(context, primaryColor),
         const SizedBox(width: 16),
-        _addRecordButton(primaryColor),
+
+        if (filePickerUtility.image != null ||
+            filePickerUtility.pickedFile != null || widget.item.proof == null)
+          _addRecordButton(primaryColor)
+        else ... [
+          _changeRecordButton(primaryColor)
+        ]
       ],
     );
   }
@@ -181,36 +202,71 @@ class AddPostPageState extends State<AddTaskProofPage> {
   }
 
   Widget _imagePlaceHolder(Color primaryColor) {
-    return Align(
-      alignment: Alignment.center,
-      child: GestureDetector(
-        onTap: () => _showImageSourceChoice(context),
-        child: Container(
-          width: 250,
-          height: 200,
-          decoration: BoxDecoration(
-            color: secondaryColor,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  spreadRadius: 3,
-                  blurRadius: 5)
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.add_a_photo, size: 40, color: Colors.grey[700]),
-              const SizedBox(height: 10),
-              Text('Add Proof',
-                  style: TextStyle(fontSize: 16, color: primaryColor)),
-            ],
-          ),
+  final storageRef = FirebaseStorage.instance.ref();
+  String imagePath = "tasks/${widget.item.proof}";
+
+  return FutureBuilder(
+    future: storageRef.child(imagePath).getDownloadURL(),
+    builder: (BuildContext context, AsyncSnapshot snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const CircularProgressIndicator(); // Show loading indicator while waiting
+      } else if (snapshot.hasError) {
+        return _buildPlaceholder(primaryColor); // Show placeholder if error occurred
+      } else {
+        return _buildImage(snapshot.data); // Show image if it exists
+      }
+    },
+  );
+}
+
+Widget _buildPlaceholder(Color primaryColor) {
+  return Align(
+    alignment: Alignment.center,
+    child: GestureDetector(
+      onTap: () => _showImageSourceChoice(context),
+      child: Container(
+        width: 250,
+        height: 200,
+        decoration: BoxDecoration(
+          color: secondaryColor,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                spreadRadius: 3,
+                blurRadius: 5)
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.add_a_photo, size: 40, color: Colors.grey[700]),
+            const SizedBox(height: 10),
+            Text('Add Proof',
+                style: TextStyle(fontSize: 16, color: primaryColor)),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+Widget _buildImage(String imageUrl) {
+  return Align(
+    alignment: Alignment.center,
+    child: Container(
+      width: 250,
+      height: 200,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          image: NetworkImage(imageUrl),
+        ),
+      ),
+    ),
+  );
+}
 
   
 
@@ -234,8 +290,20 @@ class AddPostPageState extends State<AddTaskProofPage> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      onPressed: updateTask,
+      onPressed: () => updateTask(context),
       child: const Text('Add record', style: TextStyle(fontSize: 16)),
+    );
+  }
+
+  Widget _changeRecordButton(Color primaryColor) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: primaryColor,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      onPressed: () => _showImageSourceChoice(context),
+      child: const Text('Change record', style: TextStyle(fontSize: 16)),
     );
   }
 

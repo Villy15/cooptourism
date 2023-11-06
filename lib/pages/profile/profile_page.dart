@@ -36,16 +36,16 @@ class _ProfilePageState extends State<ProfilePage> {
     'Coaching',
   ];
 
-  final List<String> _titlesManager = [
-    'Approvals',
-    'Posts',
-    'Features',
-    'Coaching Concerns'
-  ];
+  // final List<String> _titlesManager = [
+  //   'Approvals',
+  //   'Posts',
+  //   'Features',
+  //   'Coaching Concerns'
+  // ];
 
-  final List<String> _titlesCustomer = [
+  // final List<String> _titlesCustomer = [
 
-  ];
+  // ];
 
 
   User? user;
