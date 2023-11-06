@@ -1,6 +1,7 @@
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/widgets/listing_card.dart';
+import 'package:cooptourism/widgets/province_city_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,23 +14,57 @@ class MarketPage extends ConsumerStatefulWidget {
 }
 
 class _MarketPageState extends ConsumerState<MarketPage> {
-  final List<String> _tabTitles = ['Services', 'Products'];
-  final List<String> _type = ['Service', 'Product'];
+  final List<String> _tabTitles = ['Services']; //];
+  final List<String> _type = ['Service']; //, 'Product'];
+  String province = "Province";
+  String city = "City";
   int _selectedIndex = 0;
 
   // late ListingRepository _listingRepository = ListingRepository();
   // late Stream<List<ListingModel>> _listings;
+  void setProvince(String province) {
+    setState(() {
+      this.province = province;
+    });
+  }
+
+  void setCity(String city) {
+    setState(() {
+      this.city = city;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final ListingRepository listingRepository = ListingRepository();
-    final Stream<List<ListingModel>> listings0 = listingRepository.getListingsByType(_type[_selectedIndex]);
+    final Stream<List<ListingModel>> listings0 =
+        listingRepository.getListingsByType(_type[_selectedIndex]);
     return Scaffold(
         appBar: _appBar(context, "Market"),
         backgroundColor: Colors.white,
         body: Column(
           children: [
             listFilter(),
+            ProvinceCityPicker(
+                setProvince: setProvince, setCity: setCity),
+            Container(
+              height: 75,
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              child: const Expanded(
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('type of tourism'),
+                        Text('category'),
+                      ],
+                    ),
+                    Text('budget'),
+                  ],
+                ),
+              ),
+            ),
             // const SizedBox(height: 10),
             // searchFilter(context),
             Expanded(
@@ -37,19 +72,20 @@ class _MarketPageState extends ConsumerState<MarketPage> {
                 stream: listings0,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
-                    return Text('Error: ${snapshot. error}  ');
+                    return Text('Error: ${snapshot.error}  ');
                   }
 
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
+                  debugPrint("this is the main page test $province $city");
 
                   final listings = snapshot.data!;
 
                   return gridViewListings(listings);
                 },
               ),
-            )
+            ),
           ],
         ));
   }
@@ -165,20 +201,22 @@ class _MarketPageState extends ConsumerState<MarketPage> {
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
       toolbarHeight: 70,
-      title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+      title: Text(title,
+          style: TextStyle(
+              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: CircleAvatar(
-              backgroundColor: Colors.grey.shade300,
-              child: IconButton(
-                onPressed: () {
-                  context.push('/market_page/add_listing');
-                },
-                icon: const Icon(Icons.add, color: Colors.white),
-              ),
+            backgroundColor: Colors.grey.shade300,
+            child: IconButton(
+              onPressed: () {
+                context.push('/market_page/add_listing');
+              },
+              icon: const Icon(Icons.add, color: Colors.white),
             ),
+          ),
         ),
       ],
     );

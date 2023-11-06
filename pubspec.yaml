@@ -68,6 +68,7 @@ dependencies:
   path:
 
   cached_network_image:
+  flutter_dropdown: ^1.0.1+hotfix.1
   # flutter_cache_manager:
 
 
