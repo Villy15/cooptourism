@@ -1,18 +1,20 @@
 import 'package:cooptourism/data/models/task.dart';
 import 'package:cooptourism/data/repositories/task_repository.dart';
+import 'package:cooptourism/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 final TaskRepository taskRepository = TaskRepository();
 
-class TasksPage extends StatefulWidget {
+class TasksPage extends ConsumerStatefulWidget {
   const TasksPage({super.key});
 
   @override
-  State<TasksPage> createState() => _TasksPageState();
+  ConsumerState<TasksPage> createState() => _TasksPageState();
 }
 
-class _TasksPageState extends State<TasksPage> {
+class _TasksPageState extends ConsumerState<TasksPage> {
   // Comment out the initState() method to remove manual data input
   @override
   void initState() {
@@ -23,11 +25,14 @@ class _TasksPageState extends State<TasksPage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userModelProvider);
+    String uid = user!.uid!;
+
     return SingleChildScrollView (
           child: Column (
             children: [
               StreamBuilder(
-                stream: taskRepository.getAllTasks(),
+                stream: taskRepository.getAllTasksByUser(uid),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator(); // show a loader while waiting for data

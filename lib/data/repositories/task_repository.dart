@@ -21,6 +21,18 @@ class TaskRepository {
     });
   }
 
+  // Get all tasks from firestore that are assigned to a specific user
+  Stream<List<TaskModel>> getAllTasksByUser(String userId) {
+    return tasksColleciton
+        .where('assignedMember', isEqualTo: userId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return TaskModel.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // Add a Task to Firestore
   Future<void> addTask(TaskModel task) async {
     try {
