@@ -43,6 +43,30 @@ class TaskRepository {
     }
   }
 
+  // Get task by referenceId using Future
+  Future<TaskModel?> getTaskByReferenceId(String? referenceId, String userId) async {
+    try {
+      final doc = await tasksColleciton
+          .where('referenceId', isEqualTo: referenceId)
+          .where('assignedMember', isEqualTo: userId)
+          .get()
+          .then((snapshot) {
+        if (snapshot.docs.isNotEmpty) {
+          return TaskModel.fromMap(
+              snapshot.docs.first.id, snapshot.docs.first.data() as Map<String, dynamic>
+          );
+        }
+        return null;
+      });
+      return doc;
+    } catch (e) {
+      debugPrint('Error getting Task from Firestore: $e');
+      // You might want to handle errors more gracefully here
+      rethrow;
+    }
+  }
+  
+
   Stream<TaskModel?> streamSpecificTask(String taskId) {
     return tasksColleciton.doc(taskId).snapshots().map((snapshot) {
       if (snapshot.exists && snapshot.data() != null) {

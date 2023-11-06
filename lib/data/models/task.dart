@@ -11,6 +11,9 @@ class TaskModel {
   List<ToDoItem> toDoList;
   String? type;
   String? referenceId;
+  String? assignedMember;
+  bool? isManagerApproved;
+
 
   TaskModel({
     this.uid,
@@ -20,6 +23,8 @@ class TaskModel {
     required this.toDoList,
     this.type,
     this.referenceId,
+    this.assignedMember,
+    this.isManagerApproved,
   });
 
   TaskModel copyWith({
@@ -30,7 +35,8 @@ class TaskModel {
     List<ToDoItem>? toDoList,
     String? type,
     String? referenceId,
-    
+    String? assignedMember,
+    bool? isManagerApproved,
     
   }) {
     return TaskModel(
@@ -41,6 +47,8 @@ class TaskModel {
       toDoList: toDoList ?? this.toDoList,
       type: type ?? this.type,
       referenceId: referenceId ?? this.referenceId,
+      assignedMember: assignedMember ?? this.assignedMember,
+      isManagerApproved: isManagerApproved ?? this.isManagerApproved,
     );
   }
 
@@ -53,6 +61,8 @@ class TaskModel {
       'toDoList': toDoList.map((x) => x.toMap()).toList(),
       'type': type,
       'referenceId': referenceId,
+      'assignedMember': assignedMember,
+      'isManagerApproved': isManagerApproved,
     };
   }
 
@@ -66,6 +76,8 @@ class TaskModel {
           map['toDoList']?.map((x) => ToDoItem.fromMap('', x)) as Iterable),
       type: map['type'] as String?,
       referenceId: map['referenceId'] as String?,
+      assignedMember: map['assignedMember'] as String?,
+      isManagerApproved: map['isManagerApproved'] as bool?,
     );
   }
 
@@ -75,7 +87,7 @@ class TaskModel {
 
   @override
   String toString() {
-    return 'TaskModel(uid: $uid, title: $title, description: $description, progress: $progress, toDoList: $toDoList, type: $type , referenceId: $referenceId)';
+    return 'TaskModel(uid: $uid, title: $title, description: $description, progress: $progress, toDoList: $toDoList, type: $type , referenceId: $referenceId , assignedMember: $assignedMember , isManagerApproved: $isManagerApproved)';
   }
 }
 

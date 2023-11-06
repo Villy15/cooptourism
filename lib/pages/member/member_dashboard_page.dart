@@ -74,9 +74,6 @@ class _MemberDashboardPageState extends ConsumerState<MemberDashboardPage> {
         
         final listings = snapshot.data!;
 
-        debugPrint("Posts: ${listings.toString()}");
-        debugPrint("HELLO");
-
         return gridViewListings(listings);
       },
     );
