@@ -1,6 +1,8 @@
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
+import 'package:cooptourism/widgets/budget_slider.dart';
 import 'package:cooptourism/widgets/category_type_picker.dart';
+import 'package:cooptourism/widgets/display_text.dart';
 import 'package:cooptourism/widgets/listing_card.dart';
 import 'package:cooptourism/widgets/province_city_picker.dart';
 import 'package:flutter/material.dart';
@@ -17,38 +19,45 @@ class MarketPage extends ConsumerStatefulWidget {
 class _MarketPageState extends ConsumerState<MarketPage> {
   final List<String> _tabTitles = ['Services']; //];
   final List<String> _type = ['Service']; //, 'Product'];
-  String province = "";
-  String city = "";
-  String category = "";
-  String type = "";
+  String _province = "";
+  String _city = "";
+  String _category = "";
+  String _tourismType = "";
   int _selectedIndex = 0;
   // Define the range values
-  num _currentRangeStart = 100.0;
-  num _currentRangeEnd = 500.0;
-
+  num _currentStart = 10000.0;
+  num _currentEnd = 20000.0;
+  bool isFilterVisible = false;
   // late ListingRepository _listingRepository = ListingRepository();
   // late Stream<List<ListingModel>> _listings;
   void setProvince(String province) {
     setState(() {
-      this.province = province;
+      _province = province;
     });
   }
 
   void setCity(String city) {
     setState(() {
-      this.city = city;
+      _city = city;
     });
   }
 
   void setCategory(String category) {
     setState(() {
-      this.category = category;
+      _category = category;
     });
   }
 
   void setType(String type) {
     setState(() {
-      this.type = type;
+      _tourismType = type;
+    });
+  }
+
+  void setBudgetSlider(num currentStart, num currentEnd) {
+    setState(() {
+      _currentStart = currentStart;
+      _currentEnd = currentEnd;
     });
   }
 
@@ -62,27 +71,8 @@ class _MarketPageState extends ConsumerState<MarketPage> {
         backgroundColor: Colors.white,
         body: Column(
           children: [
-            listFilter(),
-            ProvinceCityPicker(setProvince: setProvince, setCity: setCity),
-            CategoryTypePicker(setCategory: setCategory, setType: setType),
-            RangeSlider(
-              values: RangeValues(
-                  _currentRangeStart as double, _currentRangeEnd as double),
-              min: 0.0, // Minimum value of the slider
-              max: 1000.0, // Maximum value of the slider
-              divisions:
-                  100, // The number of divisions in the slider (optional)
-              labels: RangeLabels(
-                '₹${_currentRangeStart.toStringAsFixed(0)}',
-                '₹${_currentRangeEnd.toStringAsFixed(0)}',
-              ),
-              onChanged: (RangeValues values) {
-                setState(() {
-                  _currentRangeStart = values.start;
-                  _currentRangeEnd = values.end;
-                });
-              },
-            ),
+            if (isFilterVisible) listingFilter(context),
+            // listFilter(),
             // const SizedBox(height: 10),
             // searchFilter(context),
             Expanded(
@@ -105,6 +95,23 @@ class _MarketPageState extends ConsumerState<MarketPage> {
             ),
           ],
         ));
+  }
+
+  Column listingFilter(BuildContext context) {
+    return Column(
+      children: [
+        DisplayText(
+          text: "Filter",
+          lines: 1,
+          style: Theme.of(context).textTheme.headlineLarge!,
+        ),
+        const SizedBox(height: 15),
+        ProvinceCityPicker(setProvince: setProvince, setCity: setCity),
+        const SizedBox(height: 5),
+        CategoryTypePicker(setCategory: setCategory, setType: setType),
+        BudgetSlider(setBudgetSlider: setBudgetSlider),
+      ],
+    );
   }
 
   GridView gridViewListings(List<ListingModel> listings) {
@@ -226,12 +233,32 @@ class _MarketPageState extends ConsumerState<MarketPage> {
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
+            backgroundColor: Colors.grey[800],
+            child: IconButton(
+              onPressed: () {
+                setState(() {
+                  isFilterVisible = !isFilterVisible;
+                });
+              },
+              icon: const Icon(
+                Icons.filter_alt_rounded,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: CircleAvatar(
+            backgroundColor: Colors.grey[800],
             child: IconButton(
               onPressed: () {
                 context.push('/market_page/add_listing');
               },
-              icon: const Icon(Icons.add, color: Colors.white),
+              icon: const Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
             ),
           ),
         ),
