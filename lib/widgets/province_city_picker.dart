@@ -1,3 +1,4 @@
+import 'package:cooptourism/widgets/display_text.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -106,15 +107,16 @@ class ProvinceCityPickerState extends State<ProvinceCityPicker> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Container(
-          // width: 150,
+          width: MediaQuery.sizeOf(context).width / 1.5,
           decoration: BoxDecoration(
             borderRadius:
-                BorderRadius.circular(30.0), // Create a circular shape
+                BorderRadius.circular(15), // Create a circular shape
             border: Border.all(color: Colors.grey, width: 1.5), // Add a border
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: DropdownButton<String>(
+              menuMaxHeight: 300,
               alignment: Alignment.center,
               value: selectedProvince,
               hint: const Text('Province'),
@@ -130,8 +132,13 @@ class ProvinceCityPickerState extends State<ProvinceCityPicker> {
               items: provinces.map<DropdownMenuItem<String>>(
                   (Map<String, dynamic> province) {
                 return DropdownMenuItem<String>(
+                  alignment: Alignment.center,
                   value: province["code"],
-                  child: Text(province["name"]),
+                  child: DisplayText(
+                    text: province["name"],
+                    lines: 1,
+                    style: Theme.of(context).textTheme.headlineSmall!,
+                  ),
                 );
               }).toList(),
               iconSize: 30.0,
@@ -142,16 +149,18 @@ class ProvinceCityPickerState extends State<ProvinceCityPicker> {
             ),
           ),
         ),
+        const SizedBox(height: 5),
         Container(
-          // width: 150,
+          width: MediaQuery.sizeOf(context).width / 1.5,
           decoration: BoxDecoration(
             borderRadius:
-                BorderRadius.circular(30.0), // Create a circular shape
+                BorderRadius.circular(15), // Create a circular shape
             border: Border.all(color: Colors.grey, width: 1.5), // Add a border
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: DropdownButton<String>(
+              menuMaxHeight: 300,
               alignment: Alignment.center,
               value: selectedCity,
               hint: const Text('City'),
@@ -163,8 +172,13 @@ class ProvinceCityPickerState extends State<ProvinceCityPicker> {
               },
               items: cities.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
+                  alignment: Alignment.center,
                   value: value,
-                  child: Text(value),
+                  child: DisplayText(
+                    text: value,
+                    lines: 1,
+                    style: Theme.of(context).textTheme.headlineSmall!,
+                  ),
                 );
               }).toList(),
               iconSize: 30.0,
