@@ -357,8 +357,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         return isAuth ? "/customer_home_page" : "/login";
       }
 
-      // final isLoggingIn = state.location == '/login';
-      // if (isLoggingIn) return isAuth ? '/member_dashboard_page' : null;
+      final isLoggingIn = state.location == '/login';
+      if (isLoggingIn) return isAuth ? '/customer_home_page' : null;
 
       return isAuth ? null : SplashPage.routeLocation;
     },
