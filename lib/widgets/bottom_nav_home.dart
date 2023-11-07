@@ -56,7 +56,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
 
   void _onTap(int index) {
     ref.read(homePageControllerProvider.notifier).setPosition(index);
-
+    final user = ref.read(userModelProvider);
     switch (index) {
       case 0:
         if (role == "Manager") {
@@ -90,7 +90,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         if (role == 'Manager') {
           context.go("/reports_page");
         } else if (role == 'Member') {
-          context.go("/profile_page");
+          context.go("/profile_page/${user!.uid}}");
         } else if (role == 'Customer') {
           context.go("/coops_page");
         }

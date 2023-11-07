@@ -19,7 +19,7 @@ class _CoachingPageState extends ConsumerState<CoachingPage> {
   final coachingRepository = CoachingRepository();
 
   final concernDescriptionController = TextEditingController();
-  final goalController = TextEditingController(); 
+  final goalController = TextEditingController();
 
   User? user;
   final List<String> _concerns = [
@@ -34,7 +34,6 @@ class _CoachingPageState extends ConsumerState<CoachingPage> {
 
   String dropdownValue = 'Tour Accommodation';
 
-
   @override
   void initState() {
     super.initState();
@@ -47,47 +46,41 @@ class _CoachingPageState extends ConsumerState<CoachingPage> {
     });
   }
 
-  Future<void> getName () async {
+  Future<void> getName() async {
     final userName = await userRepository.getUser(user!.uid);
 
     setState(() {
       firstName = userName.firstName!;
       lastName = userName.lastName!;
     });
-  } 
+  }
 
-  Future<void>? _submitFuture; 
+  Future<void>? _submitFuture;
 
   // get coaches from firestore
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-     onWillPop: () async {
+      onWillPop: () async {
         _updateNavBarAndAppBarVisibility(true);
         return true;
       },
       child: Scaffold(
-        appBar: _buildAppBar(context),
-        body: SingleChildScrollView(
-          child: Padding(
+          appBar: _buildAppBar(context),
+          body: SingleChildScrollView(
+              child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Center(
-                  child: Text(
-                    'Tell us about your coaching needs.',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary
-                    )
-                  )
-                ),
+                    child: Text('Tell us about your coaching needs.',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary))),
                 const SizedBox(height: 20),
-                const Text(
-                  'Choose your coaching focus: '
-                  ),
+                const Text('Choose your coaching focus: '),
                 const SizedBox(height: 10),
                 DropdownButton(
                   value: dropdownValue,
@@ -97,16 +90,13 @@ class _CoachingPageState extends ConsumerState<CoachingPage> {
                       debugPrint('dropdownValue: $dropdownValue');
                     });
                   },
-                  items: _concerns.map<DropdownMenuItem<String>>((String value) {
+                  items:
+                      _concerns.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary
-                        )
-                      )
-                    );
+                        value: value,
+                        child: Text(value,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary)));
                   }).toList(),
                 ),
                 const SizedBox(height: 20),
@@ -140,17 +130,43 @@ class _CoachingPageState extends ConsumerState<CoachingPage> {
                 const SizedBox(height: 20),
                 FutureBuilder<void>(
                   future: _submitFuture,
-                  builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                  builder:
+                      (BuildContext context, AsyncSnapshot<void> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       // If the Future is running, show a CircularProgressIndicator
                       return const CircularProgressIndicator();
-                    } else if (snapshot.connectionState == ConnectionState.done) {
+                    } else if (snapshot.connectionState ==
+                        ConnectionState.done) {
                       // If the Future is complete, show a success message
                       return const Text('Your form has been submitted!');
                     } else {
                       // If the Future hasn't started yet, show the submit button
                       return ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          final Stream<List<CoachingFormModel>> coachingForms =
+                              coachingRepository.getAllCoachingForms();
+
+                            bool hasCoachingForm = false; 
+                            List<CoachingFormModel> forms = await coachingForms.first;
+
+                            for (var form in forms) {
+                              if (form.userUID == user!.uid && form.concern == dropdownValue) {
+                                hasCoachingForm = true;
+                                break;
+                              }
+                            }
+
+                            if (hasCoachingForm) {
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('You already have a coaching form for this concern.'),
+                                ),
+                              );
+                              return;
+                            }
+
+
                           setState(() {
                             _submitFuture = addCoachingForm();
                           });
@@ -162,24 +178,20 @@ class _CoachingPageState extends ConsumerState<CoachingPage> {
                 ),
               ],
             ),
-          )
-        )
-      ),
+          ))),
     );
   }
 
   Future<void> addCoachingForm() async {
-    CoachingFormModel coachingForm = 
-    CoachingFormModel(
-      concern: dropdownValue,
-      concernDescription: concernDescriptionController.text,
-      goal: goalController.text,
-      userUID: user!.uid,
-      firstName: firstName, 
-      lastName: lastName,
-      status: 'Pending',
-      timestamp: DateTime.now()
-    );
+    CoachingFormModel coachingForm = CoachingFormModel(
+        concern: dropdownValue,
+        concernDescription: concernDescriptionController.text,
+        goal: goalController.text,
+        userUID: user!.uid,
+        firstName: firstName,
+        lastName: lastName,
+        status: 'Pending',
+        timestamp: DateTime.now());
 
     await coachingRepository.addCoachingForm(coachingForm);
   }

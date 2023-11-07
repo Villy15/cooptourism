@@ -1,5 +1,6 @@
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
+import 'package:cooptourism/widgets/category_type_picker.dart';
 import 'package:cooptourism/widgets/listing_card.dart';
 import 'package:cooptourism/widgets/province_city_picker.dart';
 import 'package:flutter/material.dart';
@@ -16,9 +17,14 @@ class MarketPage extends ConsumerStatefulWidget {
 class _MarketPageState extends ConsumerState<MarketPage> {
   final List<String> _tabTitles = ['Services']; //];
   final List<String> _type = ['Service']; //, 'Product'];
-  String province = "Province";
-  String city = "City";
+  String province = "";
+  String city = "";
+  String category = "";
+  String type = "";
   int _selectedIndex = 0;
+  // Define the range values
+  num _currentRangeStart = 100.0;
+  num _currentRangeEnd = 500.0;
 
   // late ListingRepository _listingRepository = ListingRepository();
   // late Stream<List<ListingModel>> _listings;
@@ -34,6 +40,18 @@ class _MarketPageState extends ConsumerState<MarketPage> {
     });
   }
 
+  void setCategory(String category) {
+    setState(() {
+      this.category = category;
+    });
+  }
+
+  void setType(String type) {
+    setState(() {
+      this.type = type;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final ListingRepository listingRepository = ListingRepository();
@@ -45,25 +63,25 @@ class _MarketPageState extends ConsumerState<MarketPage> {
         body: Column(
           children: [
             listFilter(),
-            ProvinceCityPicker(
-                setProvince: setProvince, setCity: setCity),
-            Container(
-              height: 75,
-              margin: const EdgeInsets.symmetric(horizontal: 10),
-              child: const Expanded(
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('type of tourism'),
-                        Text('category'),
-                      ],
-                    ),
-                    Text('budget'),
-                  ],
-                ),
+            ProvinceCityPicker(setProvince: setProvince, setCity: setCity),
+            CategoryTypePicker(setCategory: setCategory, setType: setType),
+            RangeSlider(
+              values: RangeValues(
+                  _currentRangeStart as double, _currentRangeEnd as double),
+              min: 0.0, // Minimum value of the slider
+              max: 1000.0, // Maximum value of the slider
+              divisions:
+                  100, // The number of divisions in the slider (optional)
+              labels: RangeLabels(
+                '₹${_currentRangeStart.toStringAsFixed(0)}',
+                '₹${_currentRangeEnd.toStringAsFixed(0)}',
               ),
+              onChanged: (RangeValues values) {
+                setState(() {
+                  _currentRangeStart = values.start;
+                  _currentRangeEnd = values.end;
+                });
+              },
             ),
             // const SizedBox(height: 10),
             // searchFilter(context),
@@ -78,7 +96,6 @@ class _MarketPageState extends ConsumerState<MarketPage> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  debugPrint("this is the main page test $province $city");
 
                   final listings = snapshot.data!;
 
