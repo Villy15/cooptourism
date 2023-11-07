@@ -1,5 +1,6 @@
 import 'package:cooptourism/providers/home_page_provider.dart';
-import 'package:cooptourism/widgets/category_type_picker.dart';
+import 'package:cooptourism/widgets/category_picket.dart';
+import 'package:cooptourism/widgets/type_picker.dart';
 import 'package:cooptourism/widgets/province_city_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,10 +14,10 @@ class AddListing extends ConsumerStatefulWidget {
 
 class _AddListingState extends ConsumerState<AddListing> {
   String listingType = "Service";
-  String _province = "";
-  String _city = "";
-  String _category = "";
-  String _tourismType = "";
+  // String _province = "";
+  // String _city = "";
+  // String _category = "";
+  // String _tourismType = "";
 
   @override
   void initState() {
@@ -24,30 +25,6 @@ class _AddListingState extends ConsumerState<AddListing> {
     Future.delayed(Duration.zero, () {
       ref.read(appBarVisibilityProvider.notifier).state = true;
       ref.read(navBarVisibilityProvider.notifier).state = false;
-    });
-  }
-
-  void setProvince(String province) {
-    setState(() {
-      _province = province;
-    });
-  }
-
-  void setCity(String city) {
-    setState(() {
-      _city = city;
-    });
-  }
-
-  void setCategory(String category) {
-    setState(() {
-      _category = category;
-    });
-  }
-
-  void setType(String type) {
-    setState(() {
-      _tourismType = type;
     });
   }
 
@@ -115,9 +92,11 @@ class _AddListingState extends ConsumerState<AddListing> {
                 ),
               ),
               const SizedBox(height: 10),
-              CategoryTypePicker(setCategory: setCategory, setType: setType),
+              const CategoryPicker(),
               const SizedBox(height: 5),
-              ProvinceCityPicker(setProvince: setProvince, setCity: setCity),
+              const TypePicker(),
+              const SizedBox(height: 5),
+              const ProvinceCityPicker(),
               const SizedBox(height: 10),
               Container(
                 padding: const EdgeInsets.symmetric(
