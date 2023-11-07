@@ -1,39 +1,32 @@
 import 'package:cooptourism/data/repositories/app_config_repository.dart';
+import 'package:cooptourism/providers/market_page_provider.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CategoryTypePicker extends StatefulWidget {
-  final Function setCategory;
-  final Function setType;
-
-  const CategoryTypePicker({
+class TypePicker extends ConsumerStatefulWidget {
+  const TypePicker({
     super.key,
-    required this.setCategory,
-    required this.setType,
   });
 
   @override
-  CategoryTypePickerState createState() => CategoryTypePickerState();
+  ConsumerState<TypePicker> createState() => _TypePickerState();
 }
 
-class CategoryTypePickerState extends State<CategoryTypePicker> {
+class _TypePickerState extends ConsumerState<TypePicker> {
   String? selectedCategory;
   String? selectedType;
-  // List<String> categories = [];
-  // List<String> types = [];
 
   @override
   Widget build(BuildContext context) {
     final AppConfigRepository appConfigRepository = AppConfigRepository();
-    final Future<List<String>> categories =
-        appConfigRepository.getTourismCategories();
     final Future<List<String>> types = appConfigRepository.getTourismTypes();
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         FutureBuilder<List<String>>(
-          future: categories, // your Future<List<String>> for categories
+          future: types, // your Future<List<String>> for categories
           builder:
               (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -43,34 +36,16 @@ class CategoryTypePickerState extends State<CategoryTypePicker> {
             } else {
               // snapshot.data now contains your List<String> for categories
               return buildDropdownButton(
-                  "Category", snapshot.data!, selectedCategory, (newValue) {
-                setState(() {
-                  selectedCategory = newValue;
-                });
+                  "Type", snapshot.data!, ref.watch(marketTypeProvider),
+                  (newValue) {
+                ref
+                    .read(marketTypeProvider.notifier)
+                    .setType(newValue!);
               });
             }
           },
         ),
         const SizedBox(height: 5), // To give some space between the dropdowns
-        FutureBuilder<List<String>>(
-          future: types, // your Future<List<String>> for types
-          builder:
-              (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator(); // show loader while waiting for data
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              // snapshot.data now contains your List<String> for types
-              return buildDropdownButton("Type", snapshot.data!, selectedType,
-                  (newValue) {
-                setState(() {
-                  selectedType = newValue;
-                });
-              });
-            }
-          },
-        ),
       ],
     );
   }

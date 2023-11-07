@@ -1,7 +1,8 @@
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/widgets/budget_slider.dart';
-import 'package:cooptourism/widgets/category_type_picker.dart';
+import 'package:cooptourism/widgets/category_picket.dart';
+import 'package:cooptourism/widgets/type_picker.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 import 'package:cooptourism/widgets/listing_card.dart';
 import 'package:cooptourism/widgets/province_city_picker.dart';
@@ -19,47 +20,16 @@ class MarketPage extends ConsumerStatefulWidget {
 class _MarketPageState extends ConsumerState<MarketPage> {
   final List<String> _tabTitles = ['Services']; //];
   final List<String> _type = ['Service']; //, 'Product'];
-  String _province = "";
-  String _city = "";
-  String _category = "";
-  String _tourismType = "";
+  // final String _province = "";
+  // final String _city = "";
+  // final String _category = "";
+  // final String _tourismType = "";
   int _selectedIndex = 0;
-  // Define the range values
-  num _currentStart = 10000.0;
-  num _currentEnd = 20000.0;
+  // final num _currentStart = 10000.0;
+  // final num _currentEnd = 20000.0;
   bool isFilterVisible = false;
   // late ListingRepository _listingRepository = ListingRepository();
   // late Stream<List<ListingModel>> _listings;
-  void setProvince(String province) {
-    setState(() {
-      _province = province;
-    });
-  }
-
-  void setCity(String city) {
-    setState(() {
-      _city = city;
-    });
-  }
-
-  void setCategory(String category) {
-    setState(() {
-      _category = category;
-    });
-  }
-
-  void setType(String type) {
-    setState(() {
-      _tourismType = type;
-    });
-  }
-
-  void setBudgetSlider(num currentStart, num currentEnd) {
-    setState(() {
-      _currentStart = currentStart;
-      _currentEnd = currentEnd;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,10 +76,13 @@ class _MarketPageState extends ConsumerState<MarketPage> {
           style: Theme.of(context).textTheme.headlineLarge!,
         ),
         const SizedBox(height: 15),
-        ProvinceCityPicker(setProvince: setProvince, setCity: setCity),
+        const ProvinceCityPicker(),
         const SizedBox(height: 5),
-        CategoryTypePicker(setCategory: setCategory, setType: setType),
-        BudgetSlider(setBudgetSlider: setBudgetSlider),
+        const CategoryPicker(),
+        const SizedBox(height: 5),
+        const TypePicker(),
+        const SizedBox(height: 5),
+        const BudgetSlider(),
       ],
     );
   }

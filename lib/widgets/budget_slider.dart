@@ -1,22 +1,22 @@
+import 'package:cooptourism/providers/market_page_provider.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class BudgetSlider extends StatefulWidget {
+class BudgetSlider extends ConsumerStatefulWidget {
   const BudgetSlider({
     super.key,
-    required this.setBudgetSlider,
   });
 
-  final Function setBudgetSlider;
-
   @override
-  State<BudgetSlider> createState() => _BudgetSliderState();
+  ConsumerState<BudgetSlider> createState() => _BudgetSliderState();
 }
 
 num currentStart = 10000.0;
 num currentEnd = 20000.0;
 
-class _BudgetSliderState extends State<BudgetSlider> {
+class _BudgetSliderState extends ConsumerState<BudgetSlider> {
+
   @override
   Widget build(BuildContext context) {
     return SliderTheme(
@@ -47,6 +47,8 @@ class _BudgetSliderState extends State<BudgetSlider> {
                 currentStart = values.start;
                 currentEnd = values.end;
               });
+              ref.watch(marketCurrentStartProvider.notifier).setCurrentStart(values.start);
+              ref.watch(marketCurrentEndProvider.notifier).setCurrentEnd(values.end);
             },
           )
         ],
