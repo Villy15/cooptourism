@@ -247,6 +247,8 @@ class _WalletPageState extends State<WalletPage> {
     );
   }
 
+  
+
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
       toolbarHeight: 70,
