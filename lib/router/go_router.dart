@@ -11,6 +11,7 @@ import 'package:cooptourism/pages/market/listing_edit.dart';
 import 'package:cooptourism/pages/market/listing_messages.dart';
 import 'package:cooptourism/pages/market/listing_messages_inbox.dart';
 import 'package:cooptourism/pages/member/member_dashboard_page.dart';
+import 'package:cooptourism/pages/profile/poll_profile_page.dart';
 // import 'package:cooptourism/pages/profile/poll_profile_page.dart';
 import 'package:cooptourism/pages/tasks/selected_task_page.dart';
 import 'package:cooptourism/providers/auth.dart';
@@ -177,20 +178,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ],
             ),
             GoRoute(
-                path: "/profile_page",
+                path: "/profile_page/:profileId",
                 name: "Profile",
                 pageBuilder: (context, state) {
+                  final profileId = state.pathParameters["profileId"]!;
                   return NoTransitionPage(
-                      child: ProfilePage(key: state.pageKey));
+                      child: ProfilePage(key: state.pageKey, profileId: profileId));
                 },
                 routes: [
-                  // GoRoute(
-                  //   path: ':profileId',
-                  //   builder: (BuildContext context, GoRouterState state) {
-                  //     return PollProfilePage(
-                  //       profileId: state.pathParameters["profileId"]!,
-                  //     );
-                  //   }),
+                  GoRoute(
+                    path: 'poll',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return PollProfilePage(
+                        profileId: state.pathParameters["profileId"]!,
+                      );
+                    }),
                   GoRoute(
                     path: "coaching_page",
                     name: "Coaching",

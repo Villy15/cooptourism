@@ -7,8 +7,6 @@ class UserRepository {
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('users');
 
-
-
   // Get all users from Firestore
   Stream<List<UserModel>> getAllUsers() {
     return usersCollection.snapshots().map((snapshot) {
@@ -18,7 +16,6 @@ class UserRepository {
     });
   }
 
-  
   // get users with role of Coach
   Stream<List<UserModel>> getAllCoaches() {
     return usersCollection
@@ -71,6 +68,7 @@ class UserRepository {
       final doc = await usersCollection.doc(userId).get();
       return UserModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
     } catch (e) {
+      debugPrint('the string user ID is still: $userId');
       debugPrint('Error getting user from Firestore: $e');
       // You might want to handle errors more gracefully here
       rethrow;

@@ -37,7 +37,7 @@ class CoachingFormModel {
   factory CoachingFormModel.fromJson(String uid, Map<String, dynamic> json) {
     return CoachingFormModel(
       uid: uid,
-      concern: json['coaching_concern'],
+      concern: json['coaching_focus'],
       concernDescription: json['concern_description'],
       goal: json['goal'],
       userUID: json['userUID'],
