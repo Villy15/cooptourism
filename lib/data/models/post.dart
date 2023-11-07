@@ -38,7 +38,7 @@ class PostModel {
       'likes': likes,
       'dislikes': dislikes,
       'comments': comments,
-      'timestamp': timestamp.toDate().toIso8601String(),
+      'timestamp': timestamp.toDate(),
       'images': images,
     };
   }

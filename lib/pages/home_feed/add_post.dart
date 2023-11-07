@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/post.dart';
+import 'package:cooptourism/data/models/user_chart.dart';
 import 'package:cooptourism/data/repositories/post_repository.dart';
+import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +18,8 @@ class AddPostPageState extends State<AddPostPage> {
   final _contentFocusNode = FocusNode();
   final _postRepository = PostRepository();
 
+  late final userPosting;
+
   @override
   void dispose() {
     _contentController.dispose();
@@ -27,21 +31,31 @@ class AddPostPageState extends State<AddPostPage> {
     super.initState();
     // Request focus when the page is initially loaded
     _contentFocusNode.requestFocus();
+    getUser();
+  }
+
+  Future<void> getUser() async {
+    final user = FirebaseAuth.instance.currentUser;
+    final userRepository = UserRepository();
+    final userName = await userRepository.getUser(user!.uid);
+
+    setState(() {
+      userPosting = userName;
+      debugPrint('user uid is: ${userPosting.uid}');
+    });
   }
 
   void _submitForm() async {
-    final user = FirebaseAuth.instance.currentUser;
-    final author = user?.displayName ?? 'Anonymous';
+    final author = userPosting.firstName! + ' ' + userPosting.lastName!;
     final content = _contentController.text.trim();
     final timestamp = Timestamp.now();
-
     if (content.isNotEmpty) {
       try {
         final post = PostModel(
           uid: '',
           author: author,
-          authorId: "",
-          authorType: "",
+          authorId: userPosting.uid,
+          authorType: userPosting.role,
           content: content,
           likes: [],
           dislikes: [],
@@ -51,7 +65,7 @@ class AddPostPageState extends State<AddPostPage> {
         );
 
         await _postRepository.addPost(post);
-        
+
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -61,7 +75,6 @@ class AddPostPageState extends State<AddPostPage> {
 
           FocusScope.of(context).unfocus();
           Navigator.of(context).pop();
-
         }
 
         // Navigate back to the home feed page
@@ -73,7 +86,6 @@ class AddPostPageState extends State<AddPostPage> {
             ),
           );
         }
-
       } finally {
         // Clear the text field
         _contentController.clear();
@@ -117,7 +129,7 @@ class AddPostPageState extends State<AddPostPage> {
                     size: 40, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  'Adrian Villanueva',
+                  userPosting.firstName! + ' ' + userPosting.lastName!,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

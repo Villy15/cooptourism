@@ -40,9 +40,8 @@ class _ProfilePageState extends State<ProfilePage> {
   ];
 
   final List<String> _titlesManager = [
-    'Approvals',
-    'Coaching Concerns',
-    'Features'
+    'Submitted Documents',
+    'Arrange Coaching Sessions',
   ];
 
   final List<String> _titlesCustomer = [];
@@ -210,6 +209,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: listViewFilter(userData),
                       ),
                       const SizedBox(height: 15),
+                      arrangeCoachingSection(context, userData, profileId)
                     ],
                   );
                 } else if (selectedIndex == 2 && userData?.role == 'Manager') {
@@ -815,7 +815,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
             if (snapshot.hasError) {
               return const Text("Error");
-            } else {
+            } 
+            
+            else {
               return const Center(child: CircularProgressIndicator());
             }
           },
@@ -988,6 +990,26 @@ class _ProfilePageState extends State<ProfilePage> {
           },
         )
       ],
+    );
+  }
+
+  Column arrangeCoachingSection(BuildContext context, UserModel user, String userUID) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "Arrange the cooperative members here based on their needs!",
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary),
+              ),
+          ),
+        )
+      ]
     );
   }
 

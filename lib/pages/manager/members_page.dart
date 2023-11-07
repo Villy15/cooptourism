@@ -25,6 +25,14 @@ class MembersPage extends StatefulWidget {
 
 class _MembersPageState extends State<MembersPage> {
   final List<String> _tabTitles = ['Members', 'Features'];
+
+  final List<String> _featuredMember = [
+    'Bronze',
+    'Silver',
+    'Gold',
+    'Platinum',
+    'Diamond'
+  ];
   int _selectedIndex = 0;
 
   @override
