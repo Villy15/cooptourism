@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cooptourism/data/models/events.dart';
 import 'package:cooptourism/data/repositories/events_repository.dart';
+import 'package:cooptourism/data/repositories/task_repository.dart';
 import 'package:cooptourism/pages/events/contribute_event.dart';
 import 'package:cooptourism/pages/events/join_event.dart';
 import 'package:cooptourism/providers/user_provider.dart';
@@ -9,9 +10,11 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 final EventsRepository eventsRepository = EventsRepository();
+final TaskRepository taskRepository = TaskRepository();
 
 class SelectedEventsPage extends ConsumerStatefulWidget {
   final String eventId;
@@ -91,23 +94,77 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
     );
   }
 
-   Padding memberFunctions(EventsModel event) {
-    return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Push to the contribute event page use native 
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ContributeEventPage(event: event)),
-                    );
-                  },
-                  child: const Text(">     Contribute Event     < ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                ),
-              ),
-            );
+   Widget memberFunctions(EventsModel event) {
+    debugPrint("Event members: ${event.participants!}");
+    final user = ref.watch(userModelProvider);
+    final userId = user?.uid ?? 'null';
+
+    // Check if uid is in the list of participants
+    bool isMember = event.participants!.contains(userId);
+    debugPrint("Is member: $isMember");
+
+    // Check tasks collection for the event
+
+    return FutureBuilder(
+      future: taskRepository.getTaskByReferenceId(event.uid, userId),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final task = snapshot.data;
+
+        debugPrint("Task: ${task?.uid}");
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: () {
+                // Push to the contribute event page use native
+                if (!isMember) {
+                  Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ContributeEventPage(event: event)),
+                  );
+                } else {
+                  context.go('/member_dashboard_page/tasks_page/${task?.uid}');
+                }
+              },
+              child: isMember ? const Text(">     Check Tasks     < ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)) : const Text(">     Contribute Event     < ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              // child: const Text(">     Contribute Event     < ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+            ),
+          ),
+        );
+        
+      },
+    );
+
+    // return Padding(
+    //           padding: const EdgeInsets.symmetric(horizontal: 16.0),
+    //           child: SizedBox(
+    //             width: double.infinity,
+    //             height: 50,
+    //             child: ElevatedButton(
+    //               onPressed: () {
+    //                 // Push to the contribute event page use native
+    //                 if (!isMember) {
+    //                   Navigator.push(context,
+    //                     MaterialPageRoute(builder: (context) => ContributeEventPage(event: event)),
+    //                   );
+    //                 } else {
+    //                   context.go('/member_dashboard_page/tasks_page/ewBh7JJqkpe0XwYRMiAsRwuw0in1');
+    //                 }
+    //               },
+    //               child: isMember ? const Text(">     Check Tasks     < ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)) : const Text(">     Contribute Event     < ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+    //               // child: const Text(">     Contribute Event     < ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+    //             ),
+    //           ),
+    //         );
   }
 
   Padding customerFunctions(EventsModel event) {

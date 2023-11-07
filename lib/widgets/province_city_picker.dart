@@ -102,11 +102,11 @@ class ProvinceCityPickerState extends State<ProvinceCityPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Container(
-          width: 150,
+          // width: 150,
           decoration: BoxDecoration(
             borderRadius:
                 BorderRadius.circular(30.0), // Create a circular shape
@@ -143,7 +143,7 @@ class ProvinceCityPickerState extends State<ProvinceCityPicker> {
           ),
         ),
         Container(
-          width: 150,
+          // width: 150,
           decoration: BoxDecoration(
             borderRadius:
                 BorderRadius.circular(30.0), // Create a circular shape

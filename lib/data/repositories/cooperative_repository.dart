@@ -20,6 +20,22 @@ class CooperativesRepository {
     // get Cooperative data
   }
 
+  // Get members subcollection of a cooperative from Firestore as Future and get their UIDs
+  Future<List<String>> getCooperativeMembers(String coopId) async {
+    try {
+      final doc = await cooperativesCollection
+          .doc(coopId)
+          .collection('members')
+          .get();
+      return doc.docs.map((doc) => doc.id).toList();
+    } catch (e) {
+      debugPrint('Error getting cooperative members from Firestore: $e');
+      // You might want to handle errors more gracefully here
+      rethrow;
+    }
+  }
+  
+
   // Add cooperative
   Future<void> addCooperative(CooperativesModel cooperative) async {
     try {
