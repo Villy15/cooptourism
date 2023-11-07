@@ -71,6 +71,7 @@ dependencies:
   flutter_image_compress:
   shimmer: ^3.0.0
   flutter_dropdown: ^1.0.1+hotfix.1
+  syncfusion_flutter_charts: ^23.1.44
   # flutter_cache_manager:
 
 
