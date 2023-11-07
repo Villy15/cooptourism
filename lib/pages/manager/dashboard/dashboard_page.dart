@@ -2,6 +2,7 @@ import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -11,48 +12,56 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  final List<String> _tabTitles = ['Cooperative', 'Business'];
+  final List<String> _tabTitles = ['Business', 'Cooperative'];
   int _selectedIndex = 0;
 
+  final List<String> _filterTypes = ['Day', 'Week', 'Month', 'Year'];
+  String _selectedFilterType = 'Month';
+  DateTime _selectedDate = DateTime.now();
+  PickerDateRange _selectedDateRange = PickerDateRange(DateTime.now(), DateTime.now().add(const Duration(days: 7)));
+
   final List<SalesData> chartData = [
-    SalesData(DateTime(2023, 5), 10000),
-    SalesData(DateTime(2023, 6), 2000),
-    SalesData(DateTime(2023, 7), 4000),
-    SalesData(DateTime(2023, 8), 6000),
-    SalesData(DateTime(2023, 9), 5000)
+    SalesData(DateTime(2023, 11, 5, 15, 30), 4000),
+    SalesData(DateTime(2023, 11, 3, 16, 40), 7000),
+    SalesData(DateTime(2023, 11, 4, 10, 30), 6000),
+    SalesData(DateTime(2023, 11, 5, 10, 30), 5000),
+    SalesData(DateTime(2023, 11, 8, 16, 30), 10000),
+    SalesData(DateTime(2023, 11, 8, 19, 30), 2000),
   ];
 
   final List<SalesData> chartData2 = [
-    SalesData(DateTime(2023, 5), 6000),
-    SalesData(DateTime(2023, 6), 4000),
-    SalesData(DateTime(2023, 7), 1000),
-    SalesData(DateTime(2023, 8), 14000),
-    SalesData(DateTime(2023, 9), 12000)
+    // SalesData(DateTime(2023, 5, 1), 6000),
+    // SalesData(DateTime(2023, 6, 1), 4000),
+    // SalesData(DateTime(2023, 7, 1), 1000),
+    // SalesData(DateTime(2023, 8, 1), 14000),
+    // SalesData(DateTime(2023, 9, 1), 12000)
   ];
 
   final List<SalesData> chartData3 = [
-    SalesData(DateTime(2023, 5), 1500),
-    SalesData(DateTime(2023, 6), 7000),
-    SalesData(DateTime(2023, 7), 4000),
-    SalesData(DateTime(2023, 8), 2000),
-    SalesData(DateTime(2023, 9), 1000)
+    // SalesData(DateTime(2023, 5, 1), 1500),
+    // SalesData(DateTime(2023, 6, 1), 7000),
+    // SalesData(DateTime(2023, 7, 1), 4000),
+    // SalesData(DateTime(2023, 8, 1), 2000),
+    // SalesData(DateTime(2023, 9, 1), 1000)
   ];
 
   final List<SalesData> chartData4 = [
-    SalesData(DateTime(2023, 5), 4000),
-    SalesData(DateTime(2023, 6), 500),
-    SalesData(DateTime(2023, 7), 13000),
-    SalesData(DateTime(2023, 8), 7000),
-    SalesData(DateTime(2023, 9), 6000)
+    // SalesData(DateTime(2023, 5, 1), 4000),
+    // SalesData(DateTime(2023, 6, 1), 500),
+    // SalesData(DateTime(2023, 7, 1), 13000),
+    // SalesData(DateTime(2023, 8, 1), 7000),
+    // SalesData(DateTime(2023, 9, 1), 6000)
   ];
 
   final List<SalesData> chartData5 = [
-    SalesData(DateTime(2023, 5), 3000),
-    SalesData(DateTime(2023, 6), 4000),
-    SalesData(DateTime(2023, 7), 9500),
-    SalesData(DateTime(2023, 8), 11000),
-    SalesData(DateTime(2023, 9), 20000)
+    // SalesData(DateTime(2023, 5, 1), 3000),
+    // SalesData(DateTime(2023, 6, 1), 4000),
+    // SalesData(DateTime(2023, 7, 1), 9500),
+    // SalesData(DateTime(2023, 8, 1), 11000),
+    // SalesData(DateTime(2023, 9, 1), 20000)
   ];
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +77,29 @@ class _DashboardPageState extends State<DashboardPage> {
             SizedBox(
               height: 40,
               child: listViewFilter(),
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildDropdownButton(),
+                Row(
+                  children: [
+                    // Add Icon of date
+                    const Icon(Icons.calendar_today, color: primaryColor),
+                    TextButton(
+                      onPressed: () => _selectDate(context),
+                      child: Text(_selectedFilterType == 'Week'
+                          ? '${DateFormat('MM/dd/yyyy').format(_selectedDate)} - ${DateFormat('MM/dd/yyyy').format(_selectedDate.add(const Duration(days: 7)))}'
+                          : _selectedFilterType == 'Month'
+                              ? DateFormat.yMMM().format(_selectedDate)
+                              : _selectedFilterType == 'Year'
+                                  ? DateFormat.y().format(_selectedDate)
+                                  : DateFormat.yMd().format(_selectedDate)),
+                    ),
+                  ],
+                ),
+              ],
             ),
 
             // Sales Dashboard
@@ -118,6 +150,46 @@ class _DashboardPageState extends State<DashboardPage> {
       'Touring': Colors.purple,
     };
 
+    // Filter the data based on _selectedFilterType
+    chartDataMap = chartDataMap.map((key, value) {
+      List<SalesData> filteredData = [];
+      switch (_selectedFilterType) {
+        case 'Day':
+      filteredData = value
+          .where((element) =>
+              element.year.day == _selectedDate.day &&
+              element.year.month == _selectedDate.month &&
+              element.year.year == _selectedDate.year)
+              .toList();
+          break;
+        case 'Week':
+          DateTime startWeek = _selectedDate;
+          DateTime endWeek = _selectedDate.add(const Duration(days: 7));
+          filteredData = value
+              .where((element) =>
+                  (element.year.isAtSameMomentAs(startWeek) ||
+                      element.year.isAfter(startWeek)) &&
+                  element.year.isBefore(endWeek))
+              .toList();
+          break;
+        case 'Month':
+          filteredData = value
+              .where((element) =>
+                  element.year.month == _selectedDate.month &&
+              element.year.year == _selectedDate.year)
+          .toList();
+      break;
+    case 'Year':
+      filteredData = value
+          .where((element) => element.year.year == _selectedDate.year)
+          .toList();
+      break;
+      }
+      // Sort the filtered data by date in ascending order
+      filteredData.sort((a, b) => a.year.compareTo(b.year));
+      return MapEntry(key, filteredData);
+    });
+
     List<LineSeries<SalesData, DateTime>> createSeries() {
       return chartDataMap.entries.map((entry) {
         return LineSeries<SalesData, DateTime>(
@@ -126,7 +198,7 @@ class _DashboardPageState extends State<DashboardPage> {
           yValueMapper: (SalesData sales, _) => sales.sales,
           color: colorMap[entry.key],
           legendItemText: entry.key,
-          // markerSettings: const MarkerSettings(isVisible: true),
+          markerSettings: const MarkerSettings(isVisible: true),
         );
       }).toList();
     }
@@ -141,7 +213,9 @@ class _DashboardPageState extends State<DashboardPage> {
           isVisible: true,
           alignment: ChartAlignment.center,
           position: LegendPosition.bottom),
-      primaryXAxis: DateTimeAxis(),
+      primaryXAxis: DateTimeAxis(
+        dateFormat: _selectedFilterType == 'Week' ? DateFormat.MMMd() : null,
+      ),
       primaryYAxis: NumericAxis(
         numberFormat: NumberFormat('₱#,##0'),
         // in maximum, get the maximum of the all SalesData in chartDatas
@@ -160,6 +234,101 @@ class _DashboardPageState extends State<DashboardPage> {
       series: createSeries(),
     );
   }
+
+  void _selectDateMonthYear(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+      initialDatePickerMode: _selectedFilterType == 'Month'
+          ? DatePickerMode.year
+          : _selectedFilterType == 'Year'
+              ? DatePickerMode.year
+              : DatePickerMode.day,
+    );
+    if (picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked!;
+      });
+    }
+  }
+
+  void _selectDate(BuildContext context) {
+    DateTime tempDate = _selectedDate;
+    PickerDateRange tempDateRange = _selectedDateRange;
+    showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        child: SizedBox(
+          height: 350, // Increase the height to accommodate the buttons
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: SfDateRangePicker(
+              onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+                if (args.value is PickerDateRange) {
+                  tempDateRange = args.value as PickerDateRange;
+                  tempDate = tempDateRange.startDate!;
+                } else if (args.value is DateTime) {
+                  tempDate = args.value as DateTime;
+                }
+              },
+              // selectionMode: DateRangePickerSelectionMode.range,
+              selectionMode: DateRangePickerSelectionMode.single,
+              view: _selectedFilterType == 'Day'
+                  ? DateRangePickerView.month
+                  : _selectedFilterType == 'Week'
+                      ? DateRangePickerView.month
+                      : _selectedFilterType == 'Month'
+                          ? DateRangePickerView.month
+                          : DateRangePickerView.year,
+              showActionButtons: true, // Enable the confirm and cancel buttons
+              onSubmit: (Object? value) {
+                setState(() {
+                  _selectedDate = tempDate;
+                  _selectedDateRange = tempDateRange;
+                });
+                Navigator.pop(context);
+              },
+              onCancel: () {
+                // Pop the dialog without updating _selectedDate
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+
+  DropdownButton<String> _buildDropdownButton() {
+    return DropdownButton<String>(
+      value: _selectedFilterType,
+      icon: const Icon(Icons.arrow_downward),
+      iconSize: 24,
+      elevation: 16,
+      style: const TextStyle(color: primaryColor),
+      underline: Container(
+        height: 2,
+        color: primaryColor,
+      ),
+      onChanged: (String? newValue) {
+        setState(() {
+          _selectedFilterType = newValue!;
+        });
+      },
+      items: _filterTypes.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
+  }
+
 
   ListView listViewFilter() {
     return ListView.builder(
