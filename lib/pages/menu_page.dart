@@ -57,7 +57,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
       _gridItems.removeWhere((element) => element['name'] == 'Wallet');
       _gridItems.removeWhere((element) => element['name'] == 'Reports');
       _gridItems.removeWhere((element) => element['name'] == 'Members');
-      _gridItems.removeWhere((element) => element['name'] == 'Feed');
+      // _gridItems.removeWhere((element) => element['name'] == 'Feed');
     }
     
     return Scaffold(

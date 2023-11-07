@@ -1,6 +1,8 @@
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
+import 'package:cooptourism/widgets/category_type_picker.dart';
 import 'package:cooptourism/widgets/listing_card.dart';
+import 'package:cooptourism/widgets/province_city_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,23 +15,74 @@ class MarketPage extends ConsumerStatefulWidget {
 }
 
 class _MarketPageState extends ConsumerState<MarketPage> {
-  final List<String> _tabTitles = ['Services', 'Products'];
-  final List<String> _type = ['Service', 'Product'];
+  final List<String> _tabTitles = ['Services']; //];
+  final List<String> _type = ['Service']; //, 'Product'];
+  String province = "";
+  String city = "";
+  String category = "";
+  String type = "";
   int _selectedIndex = 0;
+  // Define the range values
+  num _currentRangeStart = 100.0;
+  num _currentRangeEnd = 500.0;
 
   // late ListingRepository _listingRepository = ListingRepository();
   // late Stream<List<ListingModel>> _listings;
+  void setProvince(String province) {
+    setState(() {
+      this.province = province;
+    });
+  }
+
+  void setCity(String city) {
+    setState(() {
+      this.city = city;
+    });
+  }
+
+  void setCategory(String category) {
+    setState(() {
+      this.category = category;
+    });
+  }
+
+  void setType(String type) {
+    setState(() {
+      this.type = type;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final ListingRepository listingRepository = ListingRepository();
-    final Stream<List<ListingModel>> listings0 = listingRepository.getListingsByType(_type[_selectedIndex]);
+    final Stream<List<ListingModel>> listings0 =
+        listingRepository.getListingsByType(_type[_selectedIndex]);
     return Scaffold(
         appBar: _appBar(context, "Market"),
         backgroundColor: Colors.white,
         body: Column(
           children: [
             listFilter(),
+            ProvinceCityPicker(setProvince: setProvince, setCity: setCity),
+            CategoryTypePicker(setCategory: setCategory, setType: setType),
+            RangeSlider(
+              values: RangeValues(
+                  _currentRangeStart as double, _currentRangeEnd as double),
+              min: 0.0, // Minimum value of the slider
+              max: 1000.0, // Maximum value of the slider
+              divisions:
+                  100, // The number of divisions in the slider (optional)
+              labels: RangeLabels(
+                '₹${_currentRangeStart.toStringAsFixed(0)}',
+                '₹${_currentRangeEnd.toStringAsFixed(0)}',
+              ),
+              onChanged: (RangeValues values) {
+                setState(() {
+                  _currentRangeStart = values.start;
+                  _currentRangeEnd = values.end;
+                });
+              },
+            ),
             // const SizedBox(height: 10),
             // searchFilter(context),
             Expanded(
@@ -37,7 +90,7 @@ class _MarketPageState extends ConsumerState<MarketPage> {
                 stream: listings0,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
-                    return Text('Error: ${snapshot. error}  ');
+                    return Text('Error: ${snapshot.error}  ');
                   }
 
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -49,7 +102,7 @@ class _MarketPageState extends ConsumerState<MarketPage> {
                   return gridViewListings(listings);
                 },
               ),
-            )
+            ),
           ],
         ));
   }
@@ -165,20 +218,22 @@ class _MarketPageState extends ConsumerState<MarketPage> {
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
       toolbarHeight: 70,
-      title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+      title: Text(title,
+          style: TextStyle(
+              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: CircleAvatar(
-              backgroundColor: Colors.grey.shade300,
-              child: IconButton(
-                onPressed: () {
-                  context.push('/market_page/add_listing');
-                },
-                icon: const Icon(Icons.add, color: Colors.white),
-              ),
+            backgroundColor: Colors.grey.shade300,
+            child: IconButton(
+              onPressed: () {
+                context.push('/market_page/add_listing');
+              },
+              icon: const Icon(Icons.add, color: Colors.white),
             ),
+          ),
         ),
       ],
     );

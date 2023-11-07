@@ -182,19 +182,20 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                               style: Theme.of(context).textTheme.headlineSmall!,
                             ),
                           ),
-                          ListView.builder(
-                            padding: const EdgeInsets.only(top: 0),
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: reviews.length,
-                            itemBuilder: (context, index) {
-                              final review = reviews[index];
-    
-                              return ReviewCard(
-                                reviewModel: review,
-                              );
-                            },
-                          ),
+                          reviews.isEmpty
+                              ? const Center(child: Text('No reviews'))
+                              : ListView.builder(
+                                  padding: const EdgeInsets.only(top: 0),
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: reviews.length,
+                                  itemBuilder: (context, index) {
+                                    final review = reviews[index];
+                                    return ReviewCard(
+                                      reviewModel: review,
+                                    );
+                                  },
+                                ),
                           if (listing.ownerMember != null)
                             Padding(
                               padding: const EdgeInsets.only(top: 20.0),

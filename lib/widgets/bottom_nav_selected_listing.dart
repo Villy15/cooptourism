@@ -20,6 +20,9 @@ class _BottomNavSelectedListingState
   Widget build(BuildContext context) {
     int position = ref.watch(bottomNavSelectedListingControllerProvider);
 
+    // int newMessagesCount = ref.watch(newMessagesCountProvider);
+    int newMessagesCount = 1;
+
     return BottomNavigationBar(
       elevation: 0,
       showUnselectedLabels: true,
@@ -35,16 +38,51 @@ class _BottomNavSelectedListingState
       backgroundColor: Theme.of(context).colorScheme.background,
       currentIndex: position,
       onTap: (value) => _onTap(value, position),
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(
-            Icons.chat_bubble_outline_outlined,
-            size: 22.5,
-            // color: Colors.white,
+          icon: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment
+                .center, // Aligns all children which are not positioned
+            children: [
+              const Icon(
+                Icons.chat_bubble_outline_outlined,
+                size: 22.5,
+              ),
+              if (newMessagesCount >
+                  0) // Conditionally display the notification badge
+                Positioned(
+                  top:
+                      -2, // Adjust the top and right values to position the badge as needed
+                  right: -2,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.all(2), // Adjust the padding as needed
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: const BoxConstraints(
+                      // This ensures the container stays small
+                      minWidth: 12,
+                      minHeight: 12,
+                    ),
+                    child: Text(
+                      '$newMessagesCount', // Display the actual number of new messages
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 8, // Adjust the font size as needed
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
           ),
           label: "Messages",
         ),
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
           icon: Icon(
             Icons.remove_red_eye_outlined,
             size: 22.5,
@@ -52,7 +90,7 @@ class _BottomNavSelectedListingState
           ),
           label: "View Listing",
         ),
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
           icon: Icon(
             Icons.create_outlined,
             size: 22.5,

@@ -1,26 +1,35 @@
+import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/models/post.dart';
+import 'package:cooptourism/data/models/user.dart';
+import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/data/repositories/post_repository.dart';
 import 'package:cooptourism/pages/tasks/tasks_page.dart';
+import 'package:cooptourism/providers/user_provider.dart';
+import 'package:cooptourism/widgets/listing_card.dart';
 import 'package:cooptourism/widgets/post_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final PostRepository _postRepository = PostRepository();
+final ListingRepository listingRepository = ListingRepository();
 
-class MemberDashboardPage extends StatefulWidget {
+class MemberDashboardPage extends ConsumerStatefulWidget {
   const MemberDashboardPage({super.key});
 
   @override
-  State<MemberDashboardPage> createState() => _MemberDashboardPageState();
+  ConsumerState<MemberDashboardPage> createState() => _MemberDashboardPageState();
 }
 
-class _MemberDashboardPageState extends State<MemberDashboardPage> {
-  final List<String> _tabTitles = ['Tasks', 'Announcements'];
+class _MemberDashboardPageState extends ConsumerState<MemberDashboardPage> {
+  final List<String> _tabTitles = ['Tasks', 'Services', 'Announcements'];
   int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userModelProvider);
+    
     return Scaffold(
-        appBar: _appBar(context, "Dashboard"),
+        appBar: _appBar(context, "Home"),
         backgroundColor: Theme.of(context).colorScheme.background,
         body: SingleChildScrollView(
           child: Column(
@@ -32,11 +41,74 @@ class _MemberDashboardPageState extends State<MemberDashboardPage> {
               if (_selectedIndex == 0) ...[
                 const TasksPage(),
               ] else if (_selectedIndex == 1) ...[
+                servicesMethod(user!),
+              ] else if (_selectedIndex == 2) ...[
                 announcementsMethod(),
               ]
             ],
           ),
         ));
+  }
+
+  StreamBuilder<List<dynamic>> servicesMethod(UserModel user) {
+    return StreamBuilder<List<ListingModel>>(
+      stream: listingRepository.getListingsByUID(user.uid!),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        // If empty show no listings
+        if (snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text(
+              'No listings found',
+              style: TextStyle(fontSize: 20),
+            ),
+          );
+        }
+
+        
+        final listings = snapshot.data!;
+
+        return gridViewListings(listings);
+      },
+    );
+  }
+
+  GridView gridViewListings(List<ListingModel> listings) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 1,
+        childAspectRatio: 1,
+        mainAxisSpacing: 10,
+        mainAxisExtent: 300,
+      ),
+      itemCount: listings.length,
+      itemBuilder: (context, index) {
+        final listing = listings[index];
+        return ListingCard(
+          listingModel: ListingModel(
+            id: listing.id,
+            owner: listing.owner,
+            title: listing.title,
+            description: listing.description,
+            rating: listing.rating,
+            amenities: listing.amenities,
+            price: listing.price,
+            type: listing.type,
+            postDate: listing.postDate,
+            images: listing.images,
+            visits: listing.visits,
+          ),
+        );
+      },
+    );
   }
 
   StreamBuilder<List<dynamic>> announcementsMethod() {
@@ -130,7 +202,7 @@ class _MemberDashboardPageState extends State<MemberDashboardPage> {
             ),
 
             // Only show the notification badge on the "Announcements" tab
-          if (_tabTitles[index] == "Announcements")
+          if (_tabTitles[index] == "Announcements" || _tabTitles[index] == "Services")
             Positioned(
               top: 0,
               right: 0,

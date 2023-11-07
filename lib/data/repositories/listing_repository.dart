@@ -32,6 +32,19 @@ class ListingRepository {
     });
   }
 
+  // Get listing by UID
+  Stream<List<ListingModel>> getListingsByUID(String uid) {
+    return listingsCollection
+        .where('owner', isEqualTo: uid)
+        // .orderBy('postDate', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return ListingModel.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // Add a Listing to Firestore
   Future<void> addListing(ListingModel listing) async {
     try {

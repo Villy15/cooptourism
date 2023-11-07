@@ -51,7 +51,7 @@ dependencies:
   google_nav_bar: ^5.0.6
   google_maps_flutter: 
 
-  fl_chart: ^0.63.0
+  fl_chart: ^0.64.0
   percent_indicator: ^4.2.3
   
   intl: ^0.18.1
@@ -65,9 +65,12 @@ dependencies:
 
   file_picker:
   image_picker:
-  path:
+  path: ^1.8.3
 
   cached_network_image:
+  flutter_image_compress:
+  shimmer: ^3.0.0
+  flutter_dropdown: ^1.0.1+hotfix.1
   # flutter_cache_manager:
 
 

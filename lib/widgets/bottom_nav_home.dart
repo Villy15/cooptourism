@@ -60,7 +60,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
     switch (index) {
       case 0:
         if (role == "Manager") {
-          context.go("/");
+          context.go("/manager_home_page");
         } else if (role == 'Member') {
           context.go("/member_dashboard_page");
         } else if (role == 'Customer'){
@@ -115,7 +115,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         label: 'Dashboard',
       ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.people_outline_rounded),
+        icon: Icon(Icons.people_outline_rounded), 
         activeIcon: Icon(Icons.people_rounded),
         label: 'Members',
       ),
@@ -135,9 +135,9 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
   List<BottomNavigationBarItem> _getMemberItems() {
     return const <BottomNavigationBarItem>[
       BottomNavigationBarItem(
-        icon: Icon(Icons.dashboard_outlined),
-        activeIcon: Icon(Icons.dashboard_rounded),
-        label: 'Dashboard',
+        icon: Icon(Icons.home_outlined),
+        activeIcon: Icon(Icons.home_rounded),
+        label: 'Home',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.account_balance_wallet_outlined),

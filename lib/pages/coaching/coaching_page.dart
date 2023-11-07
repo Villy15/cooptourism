@@ -1,13 +1,11 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cooptourism/data/models/user.dart';
+import 'package:cooptourism/data/models/coaching_form.dart';
+import 'package:cooptourism/data/repositories/coaching_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/providers/home_page_provider.dart';
-import 'package:cooptourism/widgets/display_profile_picture.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 class CoachingPage extends ConsumerStatefulWidget {
   const CoachingPage({super.key});
@@ -18,29 +16,49 @@ class CoachingPage extends ConsumerStatefulWidget {
 
 class _CoachingPageState extends ConsumerState<CoachingPage> {
   final userRepository = UserRepository();
-  User? user;
+  final coachingRepository = CoachingRepository();
 
-  final List<UserModel> _coaches = [];
+  final concernDescriptionController = TextEditingController();
+  final goalController = TextEditingController(); 
+
+  User? user;
+  final List<String> _concerns = [
+    'Tour Accommodation',
+    'Driving Skills',
+    'Tour Guide',
+    'Credit Loans',
+  ];
+
+  String firstName = "";
+  String lastName = "";
+
+  String dropdownValue = 'Tour Accommodation';
+
 
   @override
   void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
-    _fetchCoaches();
     // userRepository.addMessageManually();
+
+    getName();
     Future.delayed(Duration.zero, () {
       _updateNavBarAndAppBarVisibility(false);
     });
   }
 
-  // get coaches from firestore
-  Future<void> _fetchCoaches() async {
-    final coaches = await userRepository.getUsersByRole('Coach');
+  Future<void> getName () async {
+    final userName = await userRepository.getUser(user!.uid);
 
     setState(() {
-      _coaches.addAll(coaches);
+      firstName = userName.firstName!;
+      lastName = userName.lastName!;
     });
-  }
+  } 
+
+  Future<void>? _submitFuture; 
+
+  // get coaches from firestore
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -51,74 +69,124 @@ class _CoachingPageState extends ConsumerState<CoachingPage> {
       child: Scaffold(
         appBar: _buildAppBar(context),
         body: SingleChildScrollView(
-          child: ListView.builder(
-            itemCount: _coaches.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            // display coach full name
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: Container(
-                  height: 50, 
-                  width: 50,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondary,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: _coaches[index].profilePicture != null && _coaches[index].profilePicture!.isNotEmpty 
-                           ? DisplayProfilePicture(
-                            storageRef: FirebaseStorage.instance.ref(), 
-                            coopId: _coaches[index].uid!,
-                            data: _coaches[index].profilePicture, 
-                            height: 50, 
-                            width: 50) : Icon (Icons.person, size: 50, color: Theme.of(context).colorScheme.primary),
-                ),
-                title: Text(
-                  '${_coaches[index].firstName} ${_coaches[index].lastName}',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Text(
+                    'Tell us about your coaching needs.',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary
+                    )
                   )
                 ),
-                subtitle: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          '${_coaches[index].userAccomplishment}', 
-                          style: const TextStyle(
-                            color: Colors.white, 
-                            fontSize: 14
-                          )
-                        ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Choose your coaching focus: '
+                  ),
+                const SizedBox(height: 10),
+                DropdownButton(
+                  value: dropdownValue,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      dropdownValue = newValue!;
+                      debugPrint('dropdownValue: $dropdownValue');
+                    });
+                  },
+                  items: _concerns.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary
+                        )
                       )
-                    ),
-                    
-                    const SizedBox(width: 10),
-                  ],
+                    );
+                  }).toList(),
                 ),
-                onTap: () {
-                  context.go('/profile_page/coaching_page/${_coaches[index].uid}');
-                },
-              );
-            },
+                const SizedBox(height: 20),
+                const Text('Describe your concern: '),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: TextFormField(
+                    controller: concernDescriptionController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter your concern here...',
+                    ),
+                    maxLines: 5,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text('What do you wish to accomplish?'),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: TextFormField(
+                    controller: goalController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter your goal here...',
+                    ),
+                    maxLines: 5,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                FutureBuilder<void>(
+                  future: _submitFuture,
+                  builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      // If the Future is running, show a CircularProgressIndicator
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.connectionState == ConnectionState.done) {
+                      // If the Future is complete, show a success message
+                      return const Text('Your form has been submitted!');
+                    } else {
+                      // If the Future hasn't started yet, show the submit button
+                      return ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _submitFuture = addCoachingForm();
+                          });
+                        },
+                        child: const Text('Submit'),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
           )
         )
       ),
     );
   }
 
+  Future<void> addCoachingForm() async {
+    CoachingFormModel coachingForm = 
+    CoachingFormModel(
+      concern: dropdownValue,
+      concernDescription: concernDescriptionController.text,
+      goal: goalController.text,
+      userUID: user!.uid,
+      firstName: firstName, 
+      lastName: lastName,
+      status: 'Pending',
+      timestamp: DateTime.now()
+    );
 
+    await coachingRepository.addCoachingForm(coachingForm);
+  }
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      title: const Text('Available Coaches'),
+      title: const Text('Coaching Application Form'),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
         color: Theme.of(context).colorScheme.primary,

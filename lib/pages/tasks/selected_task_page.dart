@@ -64,6 +64,8 @@ class _SelectedTaskPageState extends State<SelectedTaskPage> {
     List<Widget> toDoList = [];
 
     for (ToDoItem item in task.toDoList) {
+      int index = task.toDoList.indexWhere((i) => i == item);
+
       toDoList.add(
         Row(
           children: [
@@ -88,7 +90,7 @@ class _SelectedTaskPageState extends State<SelectedTaskPage> {
               iconSize: 20,
               color: Theme.of(context).colorScheme.primary,
               onPressed: () {
-                showAddProofPage(context, item, task);             
+                showAddProofPage(context, item, task, index);             
               },
             ),
           ],
@@ -209,11 +211,11 @@ class _SelectedTaskPageState extends State<SelectedTaskPage> {
     );
   }
 
-  void showAddProofPage(BuildContext context, ToDoItem item, TaskModel task) {
+  void showAddProofPage(BuildContext context, ToDoItem item, TaskModel task, int index) {
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) {
-          return AddTaskProofPage(item: item, task: task);
+          return AddTaskProofPage(item: item, task: task, index: index);
         },
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransitionAnimation(

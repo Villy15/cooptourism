@@ -61,7 +61,16 @@ class HomeFeedPageState extends State<HomeFeedPage> {
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
-                      return PostCard(postModel: posts[index]);
+                      if (index == posts.length - 1) {
+                        // Check if this is the last post
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                              bottom: 60.0), // Add some space at the bottom
+                          child: PostCard(postModel: posts[index]),
+                        );
+                      } else {
+                        return PostCard(postModel: posts[index]);
+                      }
                     },
                     childCount: posts.length,
                   ),

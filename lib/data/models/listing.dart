@@ -8,6 +8,10 @@ class ListingModel {
   String? owner;
   String? title;
   String? description;
+  String? cooperativeOwned;
+  String? city;
+  String? province;
+  Map? categories;
   num? rating;
   Map? amenities;
   num? price;
