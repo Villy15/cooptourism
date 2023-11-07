@@ -5,7 +5,7 @@ import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/coaching_repository.dart';
 // import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
-import 'package:cooptourism/providers/user_provider.dart';
+// import 'package:cooptourism/providers/user_provider.dart';
 // import 'package:cooptourism/widgets/display_featured.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
 import 'package:cooptourism/widgets/post_card.dart';
@@ -197,7 +197,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: listViewFilter(userData),
                     ),
                     const SizedBox(height: 15),
-                    approvalSection(context, userData!, userUID)
+                    approvalSection(context, userData, userUID)
                   ]);
                 } else if (selectedIndex == 1 && userData?.role == 'Manager') {
                   return Column(
@@ -867,7 +867,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ])),
                                   actions: <Widget>[
                                     TextButton(
-                                      child: Text('Approve'),
+                                      child: const Text('Approve'),
                                       onPressed: () {
                                         coachingForm.status = 'Approved';
                                         coachingRepository
@@ -876,7 +876,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       },
                                     ),
                                     TextButton(
-                                      child: Text('Decline'),
+                                      child: const Text('Decline'),
                                       onPressed: () {
                                         coachingForm.status = 'Declined';
                                         coachingRepository
@@ -885,7 +885,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       },
                                     ),
                                     TextButton(
-                                      child: Text('Close'),
+                                      child: const Text('Close'),
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },

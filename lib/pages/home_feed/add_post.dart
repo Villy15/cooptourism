@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/post.dart';
-import 'package:cooptourism/data/models/user_chart.dart';
+import 'package:cooptourism/data/models/user.dart';
+// import 'package:cooptourism/data/models/user_chart.dart';
 import 'package:cooptourism/data/repositories/post_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,7 +19,8 @@ class AddPostPageState extends State<AddPostPage> {
   final _contentFocusNode = FocusNode();
   final _postRepository = PostRepository();
 
-  late final userPosting;
+  // Add type anotation
+  late final UserModel userPosting;
 
   @override
   void dispose() {
@@ -46,7 +48,7 @@ class AddPostPageState extends State<AddPostPage> {
   }
 
   void _submitForm() async {
-    final author = userPosting.firstName! + ' ' + userPosting.lastName!;
+    final author = '${userPosting.firstName!} ${userPosting.lastName!}';
     final content = _contentController.text.trim();
     final timestamp = Timestamp.now();
     if (content.isNotEmpty) {
@@ -129,7 +131,7 @@ class AddPostPageState extends State<AddPostPage> {
                     size: 40, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  userPosting.firstName! + ' ' + userPosting.lastName!,
+                  '${userPosting.firstName!} ${userPosting.lastName!}',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

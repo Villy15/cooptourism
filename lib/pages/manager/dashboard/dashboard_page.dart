@@ -38,6 +38,22 @@ class _DashboardPageState extends State<DashboardPage> {
     SalesData(DateTime(2023, 9), 1000)
   ];
 
+  final List<SalesData> chartData4 = [
+    SalesData(DateTime(2023, 5), 4000),
+    SalesData(DateTime(2023, 6), 500),
+    SalesData(DateTime(2023, 7), 13000),
+    SalesData(DateTime(2023, 8), 7000),
+    SalesData(DateTime(2023, 9), 6000)
+  ];
+
+  final List<SalesData> chartData5 = [
+    SalesData(DateTime(2023, 5), 3000),
+    SalesData(DateTime(2023, 6), 4000),
+    SalesData(DateTime(2023, 7), 9500),
+    SalesData(DateTime(2023, 8), 11000),
+    SalesData(DateTime(2023, 9), 20000)
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,13 +105,17 @@ class _DashboardPageState extends State<DashboardPage> {
     Map<String, List<SalesData>> chartDataMap = {
       'Accomodation': chartData,
       'Transportation': chartData2,
-      'Activities': chartData3,
+      'Food Service': chartData3,
+      'Entertainment': chartData4,
+      'Touring': chartData5,
     };
 
     Map<String, Color> colorMap = {
       'Accomodation': primaryColor,
       'Transportation': Colors.red,
       'Activities': Colors.green,
+      'Food Service': Colors.blue,
+      'Touring': Colors.purple,
     };
 
     List<LineSeries<SalesData, DateTime>> createSeries() {
@@ -106,7 +126,7 @@ class _DashboardPageState extends State<DashboardPage> {
           yValueMapper: (SalesData sales, _) => sales.sales,
           color: colorMap[entry.key],
           legendItemText: entry.key,
-          markerSettings: const MarkerSettings(isVisible: true),
+          // markerSettings: const MarkerSettings(isVisible: true),
         );
       }).toList();
     }
