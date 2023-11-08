@@ -268,7 +268,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
     return SfCartesianChart(
       title: ChartTitle(
-          text: 'Sales Trend from Services',
+          text: 'Sales Trend by Service Category',
           textStyle: const TextStyle(
               color: primaryColor, fontSize: 16, fontWeight: FontWeight.bold)),
       plotAreaBorderColor: Colors.transparent,
@@ -342,7 +342,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
     return SfCircularChart(
       title: ChartTitle(
-          text: 'Sales Participation from Services',
+          text: 'Sales Participation by Service Category',
           textStyle: const TextStyle(
               color: primaryColor, fontSize: 16, fontWeight: FontWeight.bold)),
       legend: const Legend(

@@ -7,6 +7,7 @@ import 'package:cooptourism/pages/events/selected_events_page.dart';
 import 'package:cooptourism/pages/inbox/chat.dart';
 import 'package:cooptourism/pages/manager/home_page.dart';
 import 'package:cooptourism/pages/manager/member_profile.dart';
+import 'package:cooptourism/pages/manager/vote_page.dart';
 import 'package:cooptourism/pages/market/add_listing.dart';
 import 'package:cooptourism/pages/market/listing_edit.dart';
 import 'package:cooptourism/pages/market/listing_messages.dart';
@@ -259,6 +260,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 pageBuilder: (context, state) {
                   return NoTransitionPage(
                       child: WalletPage(key: state.pageKey));
+                }),
+            GoRoute(
+                path: "/vote_page",
+                name: "Vote",
+                pageBuilder: (context, state) {
+                  return NoTransitionPage(
+                      child: VotePage(key: state.pageKey));
                 }),
             GoRoute(
               path: "/inbox_page",
