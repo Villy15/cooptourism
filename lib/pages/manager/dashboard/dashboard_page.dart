@@ -65,8 +65,23 @@ class _DashboardPageState extends State<DashboardPage> {
 
                 final List<SalesData> sales = snapshot.data as List<SalesData>;
 
+                // Filtered sales
+                final filteredSales = sales
+                    .where((element) => filterDataBasedOnSelection(element))
+                    .toList();
+
+                // Total sales
+                final totalSales = filteredSales.fold<num>(0,
+                    (previousValue, element) => previousValue + element.sales);
+
+                // Average sales
+                final averageSales = totalSales / filteredSales.length;
+
                 return Column(
                   children: [
+                    // Summary Cards
+                    _buildSummaryCards(totalSales, averageSales),
+
                     // Line Chart
                     lineChartContainer(sales),
 
@@ -79,6 +94,40 @@ class _DashboardPageState extends State<DashboardPage> {
 
             const SizedBox(height: 20),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSummaryCards(num totalSales, double averageSales) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildSummaryCard('Total Sales', '₱${totalSales.toStringAsFixed(2)}'),
+          _buildSummaryCard(
+              'Average Sales', '₱${averageSales.toStringAsFixed(2)}'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryCard(String title, String value) {
+    return Expanded(
+      child: Card(
+        elevation: 2,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(title,
+                  style: const TextStyle(
+                      color: primaryColor, fontWeight: FontWeight.bold)),
+              Text(value, style: const TextStyle(color: primaryColor)),
+            ],
+          ),
         ),
       ),
     );
@@ -173,79 +222,76 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   SfCartesianChart lineChart(List<SalesData> sales) {
-    // Group and filter the data by category.
-    final chartDataByCategory =
-        sales.fold<Map<String, List<SalesData>>>({}, (previousValue, element) {
-      if (previousValue.containsKey(element.category)) {
-        previousValue[element.category]!.add(element);
-      } else {
-        previousValue[element.category] = [element];
-      }
-      return previousValue;
-    });
+  // Filter the data based on selection.
+  final filteredSales = sales.where((element) => filterDataBasedOnSelection(element)).toList();
 
-    chartDataByCategory.forEach((key, value) {
-      chartDataByCategory[key] = value.where((element) {
-        return filterDataBasedOnSelection(element);
-      }).toList();
-    });
-
-    // Print the length
-    chartDataByCategory.forEach((key, value) {
-      debugPrint('$key: ${value.length}');
-    });
-
-    // Create a line series for each category.
-    List<LineSeries<SalesData, DateTime>> createSeries() {
-      return chartDataByCategory.entries.map((entry) {
-        return LineSeries<SalesData, DateTime>(
-          dataSource: entry.value,
-          xValueMapper: (SalesData sales, _) => sales.date,
-          yValueMapper: (SalesData sales, _) => sales.sales,
-          name: entry.key, // Use the category name here.
-          color: getColorForCategory(entry.key),
-          markerSettings: const MarkerSettings(isVisible: true),
-        );
-      }).toList();
+  // Group the filtered data by category.
+  final chartDataByCategory =
+      filteredSales.fold<Map<String, List<SalesData>>>({}, (previousValue, element) {
+    if (previousValue.containsKey(element.category)) {
+      previousValue[element.category]!.add(element);
+    } else {
+      previousValue[element.category] = [element];
     }
+    return previousValue;
+  });
 
-    // Get the maximum sales value from all categories.
-    num maxSales = chartDataByCategory.values
-        .expand((i) => i)
-        .reduce((curr, next) => curr.sales > next.sales ? curr : next)
-        .sales;
-
-    return SfCartesianChart(
-      title: ChartTitle(
-          text: 'Sales Trend from Services',
-          textStyle: const TextStyle(
-              color: primaryColor, fontSize: 16, fontWeight: FontWeight.bold)),
-      plotAreaBorderColor: Colors.transparent,
-      legend: const Legend(
-          isVisible: true,
-          alignment: ChartAlignment.center,
-          position: LegendPosition.bottom),
-      primaryXAxis: DateTimeAxis(
-        dateFormat: _selectedFilterType == 'Week' ? DateFormat.MMMd() : null,
-      ),
-      primaryYAxis: NumericAxis(
-        numberFormat: NumberFormat('₱#,##0'),
-        maximum: maxSales.toDouble(),
-        interval: 1000,
-      ),
-      tooltipBehavior: TooltipBehavior(
-        enable: true,
-        header: '',
-        canShowMarker: false,
-        format: 'point.x : point.y',
-      ),
-      series: createSeries(),
-    );
+  // Create a line series for each category.
+  List<LineSeries<SalesData, DateTime>> createSeries() {
+    return chartDataByCategory.entries.map((entry) {
+      return LineSeries<SalesData, DateTime>(
+        dataSource: entry.value,
+        xValueMapper: (SalesData sales, _) => sales.date,
+        yValueMapper: (SalesData sales, _) => sales.sales,
+        name: entry.key, // Use the category name here.
+        color: getColorForCategory(entry.key),
+        markerSettings: const MarkerSettings(isVisible: true),
+      );
+    }).toList();
   }
 
+  // Get the maximum sales value from all categories.
+  num maxSales = chartDataByCategory.values
+      .expand((i) => i)
+      .reduce((curr, next) => curr.sales > next.sales ? curr : next)
+      .sales;
+
+  return SfCartesianChart(
+    title: ChartTitle(
+        text: 'Sales Trend from Services',
+        textStyle: const TextStyle(
+            color: primaryColor, fontSize: 16, fontWeight: FontWeight.bold)),
+    plotAreaBorderColor: Colors.transparent,
+    legend: const Legend(
+        isVisible: true,
+        alignment: ChartAlignment.center,
+        position: LegendPosition.bottom),
+    primaryXAxis: DateTimeAxis(
+      dateFormat: _selectedFilterType == 'Week' ? DateFormat.MMMd() : null,
+    ),
+    primaryYAxis: NumericAxis(
+      numberFormat: NumberFormat('₱#,##0'),
+      maximum: maxSales.toDouble(),
+      interval: 1000,
+    ),
+    tooltipBehavior: TooltipBehavior(
+      enable: true,
+      header: '',
+      canShowMarker: false,
+      format: 'point.x : point.y',
+    ),
+    series: createSeries(),
+  );
+}
+
   SfCircularChart pieChart(List<SalesData> sales) {
+    // Filter the data based on selection.
+    final filteredSales =
+        sales.where((element) => filterDataBasedOnSelection(element)).toList();
+
+    // Aggregate the filtered data by category.
     final aggregatedChartData =
-        sales.fold<Map<String, num>>({}, (previousValue, element) {
+        filteredSales.fold<Map<String, num>>({}, (previousValue, element) {
       if (previousValue.containsKey(element.category)) {
         previousValue[element.category] =
             previousValue[element.category]! + element.sales;
@@ -253,15 +299,6 @@ class _DashboardPageState extends State<DashboardPage> {
         previousValue[element.category] = element.sales;
       }
       return previousValue;
-    });
-
-    // Filter base on date
-    aggregatedChartData.forEach((key, value) {
-      aggregatedChartData[key] = sales
-          .where((element) =>
-              element.category == key && filterDataBasedOnSelection(element))
-          .fold<num>(
-              0, (previousValue, element) => previousValue + element.sales);
     });
 
     List<PieSeries<SalesData, String>> createSeries() {
