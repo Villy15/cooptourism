@@ -1,22 +1,18 @@
+import 'package:cooptourism/providers/market_page_provider.dart';
+import 'package:cooptourism/widgets/display_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class ProvinceCityPicker extends StatefulWidget {
-  final Function setProvince;
-  final Function setCity;
-
-  const ProvinceCityPicker({
-    super.key,
-    required this.setProvince,
-    required this.setCity,
-  });
+class ProvinceCityPicker extends ConsumerStatefulWidget {
+  const ProvinceCityPicker({super.key});
 
   @override
-  ProvinceCityPickerState createState() => ProvinceCityPickerState();
+  ConsumerState<ProvinceCityPicker> createState() => _ProvinceCityPickerState();
 }
 
-class ProvinceCityPickerState extends State<ProvinceCityPicker> {
+class _ProvinceCityPickerState extends ConsumerState<ProvinceCityPicker> {
   String? selectedProvince;
   String? selectedCity;
   List<Map<String, dynamic>> provinces = [];
@@ -106,32 +102,36 @@ class ProvinceCityPickerState extends State<ProvinceCityPicker> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Container(
-          // width: 150,
+          width: MediaQuery.sizeOf(context).width / 1.5,
           decoration: BoxDecoration(
-            borderRadius:
-                BorderRadius.circular(30.0), // Create a circular shape
+            borderRadius: BorderRadius.circular(15), // Create a circular shape
             border: Border.all(color: Colors.grey, width: 1.5), // Add a border
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: DropdownButton<String>(
+              menuMaxHeight: 300,
               alignment: Alignment.center,
-              value: selectedProvince,
+              value: ref.watch(marketProvinceProvider),
               hint: const Text('Province'),
               onChanged: (newValue) {
-                setState(() {
-                  selectedProvince = newValue;
-                  cities.clear();
-                  selectedCity = null;
-                  widget.setProvince(selectedProvince);
-                  fetchCities(selectedProvince!);
-                });
+                cities.clear();
+                ref.read(marketCityProvider.notifier).setCity("");
+                ref
+                    .read(marketProvinceProvider.notifier)
+                    .setProvince(newValue!);
+                fetchCities(selectedProvince!);
               },
               items: provinces.map<DropdownMenuItem<String>>(
                   (Map<String, dynamic> province) {
                 return DropdownMenuItem<String>(
+                  alignment: Alignment.center,
                   value: province["code"],
-                  child: Text(province["name"]),
+                  child: DisplayText(
+                    text: province["name"],
+                    lines: 1,
+                    style: Theme.of(context).textTheme.headlineSmall!,
+                  ),
                 );
               }).toList(),
               iconSize: 30.0,
@@ -142,29 +142,32 @@ class ProvinceCityPickerState extends State<ProvinceCityPicker> {
             ),
           ),
         ),
+        const SizedBox(height: 5),
         Container(
-          // width: 150,
+          width: MediaQuery.sizeOf(context).width / 1.5,
           decoration: BoxDecoration(
-            borderRadius:
-                BorderRadius.circular(30.0), // Create a circular shape
+            borderRadius: BorderRadius.circular(15), // Create a circular shape
             border: Border.all(color: Colors.grey, width: 1.5), // Add a border
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: DropdownButton<String>(
+              menuMaxHeight: 300,
               alignment: Alignment.center,
-              value: selectedCity,
+              value: ref.watch(marketCityProvider),
               hint: const Text('City'),
               onChanged: (newValue) {
-                setState(() {
-                  selectedCity = newValue;
-                  widget.setCity(selectedCity);
-                });
+                ref.read(marketCityProvider.notifier).setCity(newValue!);
               },
               items: cities.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
+                  alignment: Alignment.center,
                   value: value,
-                  child: Text(value),
+                  child: DisplayText(
+                    text: value,
+                    lines: 1,
+                    style: Theme.of(context).textTheme.headlineSmall!,
+                  ),
                 );
               }).toList(),
               iconSize: 30.0,
