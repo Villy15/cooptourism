@@ -1,8 +1,12 @@
 import 'package:cooptourism/core/theme/dark_theme.dart';
+import 'package:cooptourism/data/models/manager_dashboard.dart/sales.dart';
+import 'package:cooptourism/data/repositories/manager_dashboard/sales_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+
+final SalesRepository salesRepository = SalesRepository();
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -18,53 +22,16 @@ class _DashboardPageState extends State<DashboardPage> {
   final List<String> _filterTypes = ['Day', 'Week', 'Month', 'Year'];
   String _selectedFilterType = 'Month';
   DateTime _selectedDate = DateTime.now();
-  PickerDateRange _selectedDateRange = PickerDateRange(DateTime.now(), DateTime.now().add(const Duration(days: 7)));
 
-  final List<SalesData> chartData = [
-    SalesData(DateTime(2023, 11, 5, 15, 30), 4000),
-    SalesData(DateTime(2023, 11, 3, 16, 40), 7000),
-    SalesData(DateTime(2023, 11, 4, 10, 30), 6000),
-    SalesData(DateTime(2023, 11, 5, 10, 30), 5000),
-    SalesData(DateTime(2023, 11, 8, 16, 30), 10000),
-    SalesData(DateTime(2023, 11, 8, 19, 30), 2000),
-  ];
-
-  final List<SalesData> chartData2 = [
-    // SalesData(DateTime(2023, 5, 1), 6000),
-    // SalesData(DateTime(2023, 6, 1), 4000),
-    // SalesData(DateTime(2023, 7, 1), 1000),
-    // SalesData(DateTime(2023, 8, 1), 14000),
-    // SalesData(DateTime(2023, 9, 1), 12000)
-  ];
-
-  final List<SalesData> chartData3 = [
-    // SalesData(DateTime(2023, 5, 1), 1500),
-    // SalesData(DateTime(2023, 6, 1), 7000),
-    // SalesData(DateTime(2023, 7, 1), 4000),
-    // SalesData(DateTime(2023, 8, 1), 2000),
-    // SalesData(DateTime(2023, 9, 1), 1000)
-  ];
-
-  final List<SalesData> chartData4 = [
-    // SalesData(DateTime(2023, 5, 1), 4000),
-    // SalesData(DateTime(2023, 6, 1), 500),
-    // SalesData(DateTime(2023, 7, 1), 13000),
-    // SalesData(DateTime(2023, 8, 1), 7000),
-    // SalesData(DateTime(2023, 9, 1), 6000)
-  ];
-
-  final List<SalesData> chartData5 = [
-    // SalesData(DateTime(2023, 5, 1), 3000),
-    // SalesData(DateTime(2023, 6, 1), 4000),
-    // SalesData(DateTime(2023, 7, 1), 9500),
-    // SalesData(DateTime(2023, 8, 1), 11000),
-    // SalesData(DateTime(2023, 9, 1), 20000)
-  ];
-
-
+  @override
+  void initState() {
+    super.initState();
+    // salesRepository.addSaleManually();
+  }
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("Date: $_selectedDate");
     return Scaffold(
       appBar: _appBar(context, "Dashboard"),
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -79,51 +46,35 @@ class _DashboardPageState extends State<DashboardPage> {
               child: listViewFilter(),
             ),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildDropdownButton(),
-                Row(
-                  children: [
-                    // Add Icon of date
-                    const Icon(Icons.calendar_today, color: primaryColor),
-                    TextButton(
-                      onPressed: () => _selectDate(context),
-                      child: Text(_selectedFilterType == 'Week'
-                          ? '${DateFormat('MM/dd/yyyy').format(_selectedDate)} - ${DateFormat('MM/dd/yyyy').format(_selectedDate.add(const Duration(days: 7)))}'
-                          : _selectedFilterType == 'Month'
-                              ? DateFormat.yMMM().format(_selectedDate)
-                              : _selectedFilterType == 'Year'
-                                  ? DateFormat.y().format(_selectedDate)
-                                  : DateFormat.yMd().format(_selectedDate)),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+            dashBoardFunctions(context),
 
-            // Sales Dashboard
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white, // Change this color to match your design
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(
-                          0.2), // Change this color to match your design
-                      spreadRadius: 5,
-                      blurRadius: 7,
-                      offset: const Offset(0, 3), // changes position of shadow
-                    ),
+            StreamBuilder(
+              stream: salesRepository.getAllSales(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text('Something went wrong'),
+                  );
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                final List<SalesData> sales = snapshot.data as List<SalesData>;
+
+                return Column(
+                  children: [
+                    // Line Chart
+                    lineChartContainer(sales),
+
+                    // Pie Chart
+                    pieChartContainer(sales),
                   ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: lineChart(),
-                ),
-              ),
+                );
+              },
             ),
 
             const SizedBox(height: 20),
@@ -133,79 +84,140 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  SfCartesianChart lineChart() {
-    Map<String, List<SalesData>> chartDataMap = {
-      'Accomodation': chartData,
-      'Transportation': chartData2,
-      'Food Service': chartData3,
-      'Entertainment': chartData4,
-      'Touring': chartData5,
-    };
+  Padding pieChartContainer(List<SalesData> sales) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white, // Change this color to match your design
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey
+                  .withOpacity(0.2), // Change this color to match your design
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: const Offset(0, 3), // changes position of shadow
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: pieChart(sales),
+        ),
+      ),
+    );
+  }
 
-    Map<String, Color> colorMap = {
-      'Accomodation': primaryColor,
-      'Transportation': Colors.red,
-      'Activities': Colors.green,
-      'Food Service': Colors.blue,
-      'Touring': Colors.purple,
-    };
+  Padding lineChartContainer(List<SalesData> sales) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white, // Change this color to match your design
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey
+                  .withOpacity(0.2), // Change this color to match your design
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: const Offset(0, 3), // changes position of shadow
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: lineChart(sales),
+        ),
+      ),
+    );
+  }
 
-    // Filter the data based on _selectedFilterType
-    chartDataMap = chartDataMap.map((key, value) {
-      List<SalesData> filteredData = [];
-      switch (_selectedFilterType) {
-        case 'Day':
-      filteredData = value
-          .where((element) =>
-              element.year.day == _selectedDate.day &&
-              element.year.month == _selectedDate.month &&
-              element.year.year == _selectedDate.year)
-              .toList();
-          break;
-        case 'Week':
-          DateTime startWeek = _selectedDate;
-          DateTime endWeek = _selectedDate.add(const Duration(days: 7));
-          filteredData = value
-              .where((element) =>
-                  (element.year.isAtSameMomentAs(startWeek) ||
-                      element.year.isAfter(startWeek)) &&
-                  element.year.isBefore(endWeek))
-              .toList();
-          break;
-        case 'Month':
-          filteredData = value
-              .where((element) =>
-                  element.year.month == _selectedDate.month &&
-              element.year.year == _selectedDate.year)
-          .toList();
-      break;
-    case 'Year':
-      filteredData = value
-          .where((element) => element.year.year == _selectedDate.year)
-          .toList();
-      break;
+  Row dashBoardFunctions(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            _buildDropdownButton(),
+            // Add a today button
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _selectedDate = DateTime.now();
+                });
+              },
+              child: const Text('Today?'),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            // Add Icon of date
+            const Icon(Icons.calendar_today, color: primaryColor),
+            TextButton(
+              onPressed: () => _selectDate(context),
+              child: Text(_selectedFilterType == 'Week'
+                  ? '${DateFormat('MM/dd/yyyy').format(_selectedDate)} - ${DateFormat('MM/dd/yyyy').format(_selectedDate.add(const Duration(days: 6)))}'
+                  : _selectedFilterType == 'Month'
+                      ? DateFormat.yMMM().format(_selectedDate)
+                      : _selectedFilterType == 'Year'
+                          ? DateFormat.y().format(_selectedDate)
+                          : DateFormat.yMd().format(_selectedDate)),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  SfCartesianChart lineChart(List<SalesData> sales) {
+    // Group and filter the data by category.
+    final chartDataByCategory =
+        sales.fold<Map<String, List<SalesData>>>({}, (previousValue, element) {
+      if (previousValue.containsKey(element.category)) {
+        previousValue[element.category]!.add(element);
+      } else {
+        previousValue[element.category] = [element];
       }
-      // Sort the filtered data by date in ascending order
-      filteredData.sort((a, b) => a.year.compareTo(b.year));
-      return MapEntry(key, filteredData);
+      return previousValue;
     });
 
+    chartDataByCategory.forEach((key, value) {
+      chartDataByCategory[key] = value.where((element) {
+        return filterDataBasedOnSelection(element);
+      }).toList();
+    });
+
+    // Print the length
+    chartDataByCategory.forEach((key, value) {
+      debugPrint('$key: ${value.length}');
+    });
+
+    // Create a line series for each category.
     List<LineSeries<SalesData, DateTime>> createSeries() {
-      return chartDataMap.entries.map((entry) {
+      return chartDataByCategory.entries.map((entry) {
         return LineSeries<SalesData, DateTime>(
           dataSource: entry.value,
-          xValueMapper: (SalesData sales, _) => sales.year,
+          xValueMapper: (SalesData sales, _) => sales.date,
           yValueMapper: (SalesData sales, _) => sales.sales,
-          color: colorMap[entry.key],
-          legendItemText: entry.key,
+          name: entry.key, // Use the category name here.
+          color: getColorForCategory(entry.key),
           markerSettings: const MarkerSettings(isVisible: true),
         );
       }).toList();
     }
 
+    // Get the maximum sales value from all categories.
+    num maxSales = chartDataByCategory.values
+        .expand((i) => i)
+        .reduce((curr, next) => curr.sales > next.sales ? curr : next)
+        .sales;
+
     return SfCartesianChart(
       title: ChartTitle(
-          text: 'Sales from Services',
+          text: 'Sales Trend from Services',
           textStyle: const TextStyle(
               color: primaryColor, fontSize: 16, fontWeight: FontWeight.bold)),
       plotAreaBorderColor: Colors.transparent,
@@ -218,12 +230,8 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
       primaryYAxis: NumericAxis(
         numberFormat: NumberFormat('₱#,##0'),
-        // in maximum, get the maximum of the all SalesData in chartDatas
-        maximum: [...chartData, ...chartData2, ...chartData3]
-            .reduce((curr, next) => curr.sales > next.sales ? curr : next)
-            .sales,
+        maximum: maxSales.toDouble(),
         interval: 1000,
-        // in minimum, get the minimum of the all SalesData in chartDatas
       ),
       tooltipBehavior: TooltipBehavior(
         enable: true,
@@ -235,74 +243,149 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  void _selectDateMonthYear(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime(2015, 8),
-      lastDate: DateTime(2101),
-      initialDatePickerMode: _selectedFilterType == 'Month'
-          ? DatePickerMode.year
-          : _selectedFilterType == 'Year'
-              ? DatePickerMode.year
-              : DatePickerMode.day,
-    );
-    if (picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked!;
-      });
+  SfCircularChart pieChart(List<SalesData> sales) {
+    final aggregatedChartData =
+        sales.fold<Map<String, num>>({}, (previousValue, element) {
+      if (previousValue.containsKey(element.category)) {
+        previousValue[element.category] =
+            previousValue[element.category]! + element.sales;
+      } else {
+        previousValue[element.category] = element.sales;
+      }
+      return previousValue;
+    });
+
+    // Filter base on date
+    aggregatedChartData.forEach((key, value) {
+      aggregatedChartData[key] = sales
+          .where((element) =>
+              element.category == key && filterDataBasedOnSelection(element))
+          .fold<num>(
+              0, (previousValue, element) => previousValue + element.sales);
+    });
+
+    List<PieSeries<SalesData, String>> createSeries() {
+      return [
+        PieSeries<SalesData, String>(
+          dataSource: aggregatedChartData.entries.map((entry) {
+            return SalesData(
+              date: DateTime.now(),
+              sales: entry.value,
+              category: entry.key,
+            );
+          }).toList(),
+          xValueMapper: (SalesData data, _) => data.category,
+          yValueMapper: (SalesData data, _) => data.sales,
+          dataLabelMapper: (SalesData data, _) =>
+              '₱${data.sales.toStringAsFixed(2)}',
+          dataLabelSettings: const DataLabelSettings(
+            isVisible: true,
+            labelPosition: ChartDataLabelPosition.outside,
+            connectorLineSettings:
+                ConnectorLineSettings(type: ConnectorType.line),
+            textStyle: TextStyle(color: primaryColor, fontSize: 12),
+            labelIntersectAction: LabelIntersectAction.shift,
+          ),
+          pointColorMapper: (SalesData data, _) =>
+              getColorForCategory(data.category),
+          // Position the legends to the bottom
+        )
+      ];
     }
+
+    return SfCircularChart(
+      title: ChartTitle(
+          text: 'Sales Participation from Services',
+          textStyle: const TextStyle(
+              color: primaryColor, fontSize: 16, fontWeight: FontWeight.bold)),
+      legend: const Legend(
+          isVisible: true,
+          overflowMode: LegendItemOverflowMode.wrap,
+          position: LegendPosition.bottom),
+      series: createSeries(),
+    );
+  }
+
+  bool filterDataBasedOnSelection(SalesData data) {
+    switch (_selectedFilterType) {
+      case 'Day':
+        return data.date.day == _selectedDate.day &&
+            data.date.month == _selectedDate.month &&
+            data.date.year == _selectedDate.year;
+      case 'Week':
+        DateTime startWeek =
+            _selectedDate.subtract(Duration(days: _selectedDate.weekday - 1));
+        DateTime endWeek = startWeek.add(const Duration(days: 7));
+        return data.date.isAfter(startWeek) &&
+            data.date.isBefore(endWeek.add(const Duration(days: 1)));
+      case 'Month':
+        return data.date.month == _selectedDate.month &&
+            data.date.year == _selectedDate.year;
+      case 'Year':
+        return data.date.year == _selectedDate.year;
+      default:
+        return true;
+    }
+  }
+
+// Helper function to get color for category.
+  Color getColorForCategory(String category) {
+    // Define your color mapping here
+    Map<String, Color> colorMap = {
+      'Accomodation': Colors.blue.shade200,
+      'Transportation': Colors.red.shade200,
+      'Food Service': Colors.green.shade200,
+      'Entertainment': Colors.yellow.shade200,
+      'Touring': Colors.purple.shade200,
+    };
+    return colorMap[category] ?? Colors.black; // Default color if not found.
   }
 
   void _selectDate(BuildContext context) {
     DateTime tempDate = _selectedDate;
-    PickerDateRange tempDateRange = _selectedDateRange;
+
     showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        child: SizedBox(
-          height: 350, // Increase the height to accommodate the buttons
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: SfDateRangePicker(
-              onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
-                if (args.value is PickerDateRange) {
-                  tempDateRange = args.value as PickerDateRange;
-                  tempDate = tempDateRange.startDate!;
-                } else if (args.value is DateTime) {
-                  tempDate = args.value as DateTime;
-                }
-              },
-              // selectionMode: DateRangePickerSelectionMode.range,
-              selectionMode: DateRangePickerSelectionMode.single,
-              view: _selectedFilterType == 'Day'
-                  ? DateRangePickerView.month
-                  : _selectedFilterType == 'Week'
-                      ? DateRangePickerView.month
-                      : _selectedFilterType == 'Month'
-                          ? DateRangePickerView.month
-                          : DateRangePickerView.year,
-              showActionButtons: true, // Enable the confirm and cancel buttons
-              onSubmit: (Object? value) {
-                setState(() {
-                  _selectedDate = tempDate;
-                  _selectedDateRange = tempDateRange;
-                });
-                Navigator.pop(context);
-              },
-              onCancel: () {
-                // Pop the dialog without updating _selectedDate
-                Navigator.pop(context);
-              },
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: SizedBox(
+            height: 350, // Increase the height to accommodate the buttons
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: SfDateRangePicker(
+                onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+                  if (args.value is DateTime) {
+                    tempDate = args.value as DateTime;
+                  }
+                },
+                // selectionMode: DateRangePickerSelectionMode.range,
+                selectionMode: DateRangePickerSelectionMode.single,
+                view: _selectedFilterType == 'Day'
+                    ? DateRangePickerView.month
+                    : _selectedFilterType == 'Week'
+                        ? DateRangePickerView.month
+                        : _selectedFilterType == 'Month'
+                            ? DateRangePickerView.month
+                            : DateRangePickerView.year,
+                showActionButtons:
+                    true, // Enable the confirm and cancel buttons
+                onSubmit: (Object? value) {
+                  setState(() {
+                    _selectedDate = tempDate;
+                  });
+                  Navigator.pop(context);
+                },
+                onCancel: () {
+                  // Pop the dialog without updating _selectedDate
+                  Navigator.pop(context);
+                },
+              ),
             ),
           ),
-        ),
-      );
-    },
-  );
-}
-
+        );
+      },
+    );
+  }
 
   DropdownButton<String> _buildDropdownButton() {
     return DropdownButton<String>(
@@ -318,6 +401,7 @@ class _DashboardPageState extends State<DashboardPage> {
       onChanged: (String? newValue) {
         setState(() {
           _selectedFilterType = newValue!;
+          updateSelectedDate();
         });
       },
       items: _filterTypes.map<DropdownMenuItem<String>>((String value) {
@@ -329,6 +413,25 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  void updateSelectedDate() {
+    if (_selectedFilterType == 'Week') {
+      setState(() {
+        _selectedDate = DateTime.now().subtract(const Duration(days: 7));
+      });
+    } else if (_selectedFilterType == 'Day') {
+      setState(() {
+        _selectedDate = DateTime.now();
+      });
+    } else if (_selectedFilterType == 'Month') {
+      setState(() {
+        _selectedDate = DateTime.now();
+      });
+    } else if (_selectedFilterType == 'Year') {
+      setState(() {
+        _selectedDate = DateTime.now();
+      });
+    }
+  }
 
   ListView listViewFilter() {
     return ListView.builder(
@@ -391,10 +494,4 @@ class _DashboardPageState extends State<DashboardPage> {
       ],
     );
   }
-}
-
-class SalesData {
-  SalesData(this.year, this.sales);
-  final DateTime year;
-  final double sales;
 }
