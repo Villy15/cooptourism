@@ -31,7 +31,6 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("Date: $_selectedDate");
     return Scaffold(
       appBar: _appBar(context, "Dashboard"),
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -48,54 +47,64 @@ class _DashboardPageState extends State<DashboardPage> {
 
             dashBoardFunctions(context),
 
-            StreamBuilder(
-              stream: salesRepository.getAllSales(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return const Center(
-                    child: Text('Something went wrong'),
-                  );
-                }
-
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                final List<SalesData> sales = snapshot.data as List<SalesData>;
-
-                // Filtered sales
-                final filteredSales = sales
-                    .where((element) => filterDataBasedOnSelection(element))
-                    .toList();
-
-                // Total sales
-                final totalSales = filteredSales.fold<num>(0,
-                    (previousValue, element) => previousValue + element.sales);
-
-                // Average sales
-                final averageSales = totalSales / filteredSales.length;
-
-                return Column(
-                  children: [
-                    // Summary Cards
-                    _buildSummaryCards(totalSales, averageSales),
-
-                    // Line Chart
-                    lineChartContainer(sales),
-
-                    // Pie Chart
-                    pieChartContainer(sales),
-                  ],
-                );
-              },
-            ),
+            if (_selectedIndex == 0) ...[
+              // Business
+              businessDashboard(),
+            ] else if (_selectedIndex == 1) ...[
+              // Cooperative
+              const Text('Cooperative Dashboard'),
+            ],
 
             const SizedBox(height: 20),
           ],
         ),
       ),
+    );
+  }
+
+  StreamBuilder<List<SalesData>> businessDashboard() {
+    return StreamBuilder(
+      stream: salesRepository.getAllSales(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Center(
+            child: Text('Something went wrong'),
+          );
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        final List<SalesData> sales = snapshot.data as List<SalesData>;
+
+        // Filtered sales
+        final filteredSales = sales
+            .where((element) => filterDataBasedOnSelection(element))
+            .toList();
+
+        // Total sales
+        final totalSales = filteredSales.fold<num>(
+            0, (previousValue, element) => previousValue + element.sales);
+
+        // Average sales
+        final averageSales = totalSales / filteredSales.length;
+
+        return Column(
+          children: [
+            // Summary Cards
+            _buildSummaryCards(totalSales, averageSales),
+
+            // Line Chart
+            lineChartContainer(sales),
+
+            // Pie Chart
+            pieChartContainer(sales),
+          ],
+        );
+      },
     );
   }
 
@@ -222,67 +231,68 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   SfCartesianChart lineChart(List<SalesData> sales) {
-  // Filter the data based on selection.
-  final filteredSales = sales.where((element) => filterDataBasedOnSelection(element)).toList();
+    // Filter the data based on selection.
+    final filteredSales =
+        sales.where((element) => filterDataBasedOnSelection(element)).toList();
 
-  // Group the filtered data by category.
-  final chartDataByCategory =
-      filteredSales.fold<Map<String, List<SalesData>>>({}, (previousValue, element) {
-    if (previousValue.containsKey(element.category)) {
-      previousValue[element.category]!.add(element);
-    } else {
-      previousValue[element.category] = [element];
+    // Group the filtered data by category.
+    final chartDataByCategory = filteredSales
+        .fold<Map<String, List<SalesData>>>({}, (previousValue, element) {
+      if (previousValue.containsKey(element.category)) {
+        previousValue[element.category]!.add(element);
+      } else {
+        previousValue[element.category] = [element];
+      }
+      return previousValue;
+    });
+
+    // Create a line series for each category.
+    List<LineSeries<SalesData, DateTime>> createSeries() {
+      return chartDataByCategory.entries.map((entry) {
+        return LineSeries<SalesData, DateTime>(
+          dataSource: entry.value,
+          xValueMapper: (SalesData sales, _) => sales.date,
+          yValueMapper: (SalesData sales, _) => sales.sales,
+          name: entry.key, // Use the category name here.
+          color: getColorForCategory(entry.key),
+          markerSettings: const MarkerSettings(isVisible: true),
+        );
+      }).toList();
     }
-    return previousValue;
-  });
 
-  // Create a line series for each category.
-  List<LineSeries<SalesData, DateTime>> createSeries() {
-    return chartDataByCategory.entries.map((entry) {
-      return LineSeries<SalesData, DateTime>(
-        dataSource: entry.value,
-        xValueMapper: (SalesData sales, _) => sales.date,
-        yValueMapper: (SalesData sales, _) => sales.sales,
-        name: entry.key, // Use the category name here.
-        color: getColorForCategory(entry.key),
-        markerSettings: const MarkerSettings(isVisible: true),
-      );
-    }).toList();
+    // Get the maximum sales value from all categories.
+    num maxSales = chartDataByCategory.values
+        .expand((i) => i)
+        .reduce((curr, next) => curr.sales > next.sales ? curr : next)
+        .sales;
+
+    return SfCartesianChart(
+      title: ChartTitle(
+          text: 'Sales Trend from Services',
+          textStyle: const TextStyle(
+              color: primaryColor, fontSize: 16, fontWeight: FontWeight.bold)),
+      plotAreaBorderColor: Colors.transparent,
+      legend: const Legend(
+          isVisible: true,
+          alignment: ChartAlignment.center,
+          position: LegendPosition.bottom),
+      primaryXAxis: DateTimeAxis(
+        dateFormat: _selectedFilterType == 'Week' ? DateFormat.MMMd() : null,
+      ),
+      primaryYAxis: NumericAxis(
+        numberFormat: NumberFormat('₱#,##0'),
+        maximum: maxSales.toDouble(),
+        interval: 1000,
+      ),
+      tooltipBehavior: TooltipBehavior(
+        enable: true,
+        header: '',
+        canShowMarker: false,
+        format: 'point.x : point.y',
+      ),
+      series: createSeries(),
+    );
   }
-
-  // Get the maximum sales value from all categories.
-  num maxSales = chartDataByCategory.values
-      .expand((i) => i)
-      .reduce((curr, next) => curr.sales > next.sales ? curr : next)
-      .sales;
-
-  return SfCartesianChart(
-    title: ChartTitle(
-        text: 'Sales Trend from Services',
-        textStyle: const TextStyle(
-            color: primaryColor, fontSize: 16, fontWeight: FontWeight.bold)),
-    plotAreaBorderColor: Colors.transparent,
-    legend: const Legend(
-        isVisible: true,
-        alignment: ChartAlignment.center,
-        position: LegendPosition.bottom),
-    primaryXAxis: DateTimeAxis(
-      dateFormat: _selectedFilterType == 'Week' ? DateFormat.MMMd() : null,
-    ),
-    primaryYAxis: NumericAxis(
-      numberFormat: NumberFormat('₱#,##0'),
-      maximum: maxSales.toDouble(),
-      interval: 1000,
-    ),
-    tooltipBehavior: TooltipBehavior(
-      enable: true,
-      header: '',
-      canShowMarker: false,
-      format: 'point.x : point.y',
-    ),
-    series: createSeries(),
-  );
-}
 
   SfCircularChart pieChart(List<SalesData> sales) {
     // Filter the data based on selection.
