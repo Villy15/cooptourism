@@ -31,10 +31,9 @@ class VoteModel {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'uid': uid,
       'title': title,
       'description': description,
-      'date': date.millisecondsSinceEpoch,
+      'date': Timestamp.fromDate(date),
     };
   }
 

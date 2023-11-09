@@ -24,14 +24,22 @@ class VoteRepository {
   }
 
   // Add Vote
-  Future<void> addVote(VoteModel vote) async {
+  Future<void> addVote(VoteModel vote, List<PollModel> polls) async {
     try {
-      await voteCollection.add(vote.toMap());
+      // Add the vote to the voteCollection and get the DocumentReference
+      DocumentReference voteDocRef = await voteCollection.add(vote.toMap());
+
+      // Loop through the polls list and add each poll to the polls subcollection
+      for (var poll in polls) {
+        debugPrint("poll: ${poll.toString()}");
+        await voteDocRef.collection('polls').add(poll.toMap());
+      }
     } catch (e) {
       debugPrint('Error adding vote to Firestore: $e');
       // You might want to handle errors more gracefully here
     }
   }
+
 
   Stream<List<PollModel>> getAllPolls(String? voteId) {
     return getPollSubCollection(voteId!).snapshots().map((snapshot) {

@@ -1,7 +1,9 @@
 import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:cooptourism/data/models/manager_dashboard.dart/votes.dart';
 import 'package:cooptourism/data/repositories/manager_dashboard/votes_repository.dart';
+import 'package:cooptourism/pages/manager/dashboard/add_vote_page.dart';
 import 'package:cooptourism/pages/manager/selected_vote_page.dart';
+import 'package:cooptourism/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -77,6 +79,8 @@ class _VotePageState extends ConsumerState<VotePage> {
   }
 
   AppBar _appBar(BuildContext context, String title) {
+    final user = ref.watch(userModelProvider);
+
     return AppBar(
       // Style the icons
       iconTheme: const IconThemeData(color: primaryColor),
@@ -87,15 +91,17 @@ class _VotePageState extends ConsumerState<VotePage> {
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
+          child: user?.role == 'Manager' ? CircleAvatar(
             backgroundColor: Colors.grey.shade300,
             child: IconButton(
               onPressed: () {
+                Navigator.push(context, 
+                  MaterialPageRoute(builder: (context) => const AddVotePage()));
                 
               },
               icon: const Icon(Icons.add, color: Colors.white),
             ),
-          ),
+          ) : Container(),
         ),
       ],
     );
