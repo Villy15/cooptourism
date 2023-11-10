@@ -12,45 +12,47 @@ class CategoryPicker extends ConsumerStatefulWidget {
 }
 
 class _CategoryPickerState extends ConsumerState<CategoryPicker> {
-
   @override
   Widget build(BuildContext context) {
-          final AppConfigRepository appConfigRepository = AppConfigRepository();
+    final AppConfigRepository appConfigRepository = AppConfigRepository();
     final Future<List<String>> categories =
         appConfigRepository.getTourismCategories();
     return FutureBuilder<List<String>>(
-            future: categories, // your Future<List<String>> for types
-            builder:
-                (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator(); // show loader while waiting for data
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                // snapshot.data now contains your List<String> for types
-                return buildDropdownButton("Category", snapshot.data!, ref.watch(marketCategoryProvider),
-                    (newValue) {
-                  ref.read(marketCategoryProvider.notifier).setCategory(newValue!);
-                });
-              }
-            },
-          );
+      future: categories, // your Future<List<String>> for types
+      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(); // show loader while waiting for data
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          // snapshot.data now contains your List<String> for types
+          return buildDropdownButton(
+              snapshot.data!, ref.watch(marketCategoryProvider), (newValue) {
+            ref.read(marketCategoryProvider.notifier).setCategory(newValue!);
+          });
+        }
+      },
+    );
   }
-   Widget buildDropdownButton(String title, List<String> items,
-      String? selectedValue, ValueChanged<String?> onChanged) {
+
+  Widget buildDropdownButton(List<String> items, String? selectedValue,
+      ValueChanged<String?> onChanged) {
     return Container(
-      width: MediaQuery.sizeOf(context).width / 1.5,
+      // width: MediaQuery.sizeOf(context).width / 1.5,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15), // Create a circular shape
-        border: Border.all(color: Colors.grey, width: 1.5), // Add a border
+        border: Border.all(color: Colors.grey, width: 1), // Add a border
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: DropdownButton<String>(
+        child: DropdownButtonFormField<String>(
+          decoration: const InputDecoration(
+            labelText: "Category",
+            border: InputBorder.none,
+          ),
           menuMaxHeight: 300,
           alignment: Alignment.center,
           value: selectedValue,
-          hint: Text(title),
           onChanged: onChanged,
           items: items.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
@@ -65,9 +67,6 @@ class _CategoryPickerState extends ConsumerState<CategoryPicker> {
           }).toList(),
           iconSize: 30.0,
           isExpanded: true,
-          underline: Container(
-            height: 0,
-          ),
         ),
       ),
     );

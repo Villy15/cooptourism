@@ -89,7 +89,7 @@ class _MembersPageState extends State<MembersPage> {
                         // return inkWell(context, user);
                         return Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 8.0),
+                              horizontal: 8.0, vertical: 0.0),
                           child: Column(
                             children: [
                               ListTile(

@@ -46,6 +46,11 @@ class _MenuPageState extends ConsumerState<MenuPage> {
       'name': 'Members',
       'route': '/members_page'
     },
+    {
+      'logo': Icons.how_to_vote_outlined,
+      'name': 'Vote',
+      'route': '/vote_page'
+    }
   ];
 
   @override

@@ -68,30 +68,47 @@ class _ProvinceCityPickerState extends ConsumerState<ProvinceCityPicker> {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-
         if (data.isNotEmpty) {
           List<String> cityNames = [];
           for (var e in data) {
             cityNames.add(e['name']);
           }
 
+          ref.read(marketCityProvider.notifier).setCity(cityNames[0]);
           setState(() {
             cities = cityNames;
           });
         } else {
           // Handle the case when the API returns an empty list
           debugPrint('No cities data found for province $province');
+          setState(() {
+            cities.clear();
+
+            cities.add("");
+          });
+          ref.read(marketCityProvider.notifier).setCity("");
           // You may want to update your UI accordingly
         }
       } else {
         // Handle the case when the server returns a non-200 status code
         debugPrint(
             'Failed to load cities data for province $province: ${response.statusCode}');
+        setState(() {
+          cities.clear();
+          cities.add("");
+        });
+        ref.read(marketCityProvider.notifier).setCity("");
+
         // You may want to show an error message to the user
       }
     } catch (e) {
       // Handle any errors that occur during the fetch
       debugPrint('Error fetching cities data for province $province: $e');
+      setState(() {
+          cities.clear();
+          cities.add("");
+        });
+        ref.read(marketCityProvider.notifier).setCity("");
       // You may want to show an error message to the user
     }
   }
@@ -102,25 +119,25 @@ class _ProvinceCityPickerState extends ConsumerState<ProvinceCityPicker> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Container(
-          width: MediaQuery.sizeOf(context).width / 1.5,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15), // Create a circular shape
-            border: Border.all(color: Colors.grey, width: 1.5), // Add a border
+            border: Border.all(color: Colors.grey, width: 1), // Add a border
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: DropdownButton<String>(
+            child: DropdownButtonFormField<String>(
+              decoration: const InputDecoration(
+                labelText: "Province",
+                border: InputBorder.none,
+              ),
               menuMaxHeight: 300,
               alignment: Alignment.center,
               value: ref.watch(marketProvinceProvider),
-              hint: const Text('Province'),
               onChanged: (newValue) {
-                cities.clear();
-                ref.read(marketCityProvider.notifier).setCity("");
                 ref
                     .read(marketProvinceProvider.notifier)
                     .setProvince(newValue!);
-                fetchCities(selectedProvince!);
+                fetchCities(newValue);
               },
               items: provinces.map<DropdownMenuItem<String>>(
                   (Map<String, dynamic> province) {
@@ -136,26 +153,25 @@ class _ProvinceCityPickerState extends ConsumerState<ProvinceCityPicker> {
               }).toList(),
               iconSize: 30.0,
               isExpanded: true,
-              underline: Container(
-                height: 0,
-              ),
             ),
           ),
         ),
         const SizedBox(height: 5),
         Container(
-          width: MediaQuery.sizeOf(context).width / 1.5,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15), // Create a circular shape
-            border: Border.all(color: Colors.grey, width: 1.5), // Add a border
+            border: Border.all(color: Colors.grey, width: 1), // Add a border
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: DropdownButton<String>(
+            child: DropdownButtonFormField<String>(
+              decoration: const InputDecoration(
+                labelText: "City",
+                border: InputBorder.none,
+              ),
               menuMaxHeight: 300,
               alignment: Alignment.center,
               value: ref.watch(marketCityProvider),
-              hint: const Text('City'),
               onChanged: (newValue) {
                 ref.read(marketCityProvider.notifier).setCity(newValue!);
               },
@@ -172,9 +188,6 @@ class _ProvinceCityPickerState extends ConsumerState<ProvinceCityPicker> {
               }).toList(),
               iconSize: 30.0,
               isExpanded: true,
-              underline: Container(
-                height: 0,
-              ),
             ),
           ),
         ),
