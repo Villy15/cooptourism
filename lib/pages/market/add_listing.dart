@@ -47,14 +47,15 @@ class _AddListingState extends ConsumerState<AddListing> {
 
       if (result != null) {
         // This is a list of all selected files
-        // List<PlatformFile> files = result.files;
-        PlatformFile file = result.files.first;
+        List<PlatformFile> files = result.files;
+        // PlatformFile file = result.files.first;
 
         // Use the files
         // For example, you could update the state to display the images
         setState(() {
-          // uploadedImages = files.map((file) => File(file.path!)).toList();
-          uploadedImages.add(File(file.path!));
+          uploadedImages.addAll(files.map((file) => File(file.path!)));
+          // uploadedImages = files.map((file) => File(file.path!)).toList(); 
+          // uploadedImages.add(File(file.path!));
         });
       } else {
         // User canceled the picker
