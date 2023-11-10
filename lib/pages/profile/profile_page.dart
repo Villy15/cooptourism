@@ -41,18 +41,34 @@ class _ProfilePageState extends State<ProfilePage> {
   ];
 
   final List<String> _titlesManager = [
-    'Submitted Forms',
+    'Coaching Concerns',
     'Arrange Coaching Sessions',
     'Features'
   ];
 
-  final List<String> _titlesCustomer = [];
+  final List<String> _titlesCustomer = [
+    // temporary for now
+    'My Itinerary',
+    'My Bookings',
+    'My Reviews',
+  ];
 
   final List<String> _coachingFocus = [
     'Tour Accommodation',
     'Driving Skills',
     'Tour Guide',
     'Credit Loans',
+  ];
+
+  final List<String> _titlesCoach = [
+    'Performance Review',
+    'About',
+    'Posts',
+    'Coaching Sessions'
+  ];
+
+  final List<String> _titlesNoCooperativeRole = [
+    'Get Started',
   ];
 
   User? user;
@@ -86,7 +102,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return ListView.builder(
       scrollDirection: Axis.horizontal,
       // add other title members here,
-      itemCount: user.role == 'Member' 
+      itemCount: user.role == 'Member'
           ? _titlesMember.length
           : user.role == 'Manager'
               ? _titlesManager.length
@@ -1589,11 +1605,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                                       ),
                                                     ]);
                                               });
-                                          
                                         }
                                       });
-
-                                      
                                     },
                                     child: const Text('Yes'),
                                   ),
