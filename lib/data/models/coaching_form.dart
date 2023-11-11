@@ -4,6 +4,7 @@ class CoachingFormModel {
   String? concernDescription;
   String? goal;
   String? userUID;
+  String? coachUID;
   String? firstName;
   String? lastName;
   String? status;
@@ -15,6 +16,7 @@ class CoachingFormModel {
     this.concernDescription,
     this.goal,
     this.userUID,
+    this.coachUID,
     this.firstName,
     this.lastName,
     this.status,
@@ -27,6 +29,7 @@ class CoachingFormModel {
       'concern_description': concernDescription,
       'goal': goal,
       'userUID': userUID,
+      'coachUID': coachUID,
       'first_name': firstName,
       'last_name': lastName,
       'status': status,
@@ -41,6 +44,7 @@ class CoachingFormModel {
       concernDescription: json['concern_description'],
       goal: json['goal'],
       userUID: json['userUID'],
+      coachUID: json['coachUID'],
       firstName: json['first_name'],
       lastName: json['last_name'],
       status: json['status'],
@@ -54,6 +58,7 @@ class CoachingFormModel {
     String? concernDescription,
     String? goal,
     String? userUID,
+    String? coachUID,
     String? firstName,
     String? lastName,
     String? status,
@@ -65,6 +70,7 @@ class CoachingFormModel {
       concernDescription: concernDescription ?? this.concernDescription,
       goal: goal ?? this.goal,
       userUID: userUID ?? this.userUID,
+      coachUID: coachUID ?? this.coachUID,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       status: status ?? this.status,
