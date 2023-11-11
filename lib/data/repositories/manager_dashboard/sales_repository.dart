@@ -18,6 +18,29 @@ class SalesRepository {
     });
   }
 
+  // Get all sales by ownerId
+  Stream<List<SalesData>> getAllSalesByOwnerId(String ownerId) {
+    return salesCollection
+        .where('ownerId', isEqualTo: ownerId)
+        // .orderBy('date', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return SalesData.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+  // Delete all
+  Future<void> deleteAllSales() async {
+    final batch = FirebaseFirestore.instance.batch();
+    final querySnapshot = await salesCollection.get();
+    for (var doc in querySnapshot.docs) {
+      batch.delete(doc.reference);
+    }
+    return batch.commit();
+  }
+
 
 
   // Add manually a sale to Firestore
@@ -27,10 +50,31 @@ class SalesRepository {
         'date': DateTime(2023, 11, 6, 17, 30),
         'sales': 4200,
         'category': 'Accomodation',
-        'customerid': 'customerid',
-        'cooperativeId': 'cooperativeId',
-        'ownerId': 'ownerId',
-        'listingId': 'listingId',
+        'customerid': 'Q5XDgYklDNU02Wc4cGp4n3Kv8cH3',
+        'cooperativeId': 'sslvO5tgDoCHGBO82kxq',
+        'ownerId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+        'listingId': 'fQv3jlai7aETmy8Q0E3S',
+        'listingName': 'ツ The Darwin Delight ツ'
+      },
+      {
+        'date': DateTime(2023, 11, 5, 17, 30),
+        'sales': 4200,
+        'category': 'Accomodation',
+        'customerid': 'Q5XDgYklDNU02Wc4cGp4n3Kv8cH3',
+        'cooperativeId': 'sslvO5tgDoCHGBO82kxq',
+        'ownerId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+        'listingId': 'jBg8MlxWLllJPSu8r00o',
+        'listingName': 'Hotel Iwahori'
+      },
+      {
+        'date': DateTime(2023, 11, 6, 10, 30),
+        'sales': 4200,
+        'category': 'Accomodation',
+        'customerid': 'Q5XDgYklDNU02Wc4cGp4n3Kv8cH3',
+        'cooperativeId': 'sslvO5tgDoCHGBO82kxq',
+        'ownerId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+        'listingId': 'tt3CBIByj5TJIShyZ8id',
+        'listingName': 'Hotel Magenta'
       },
       {
         'date': DateTime(2023, 11, 4, 18, 40),
@@ -39,7 +83,8 @@ class SalesRepository {
         'customerid': 'customerid',
         'cooperativeId': 'cooperativeId',
         'ownerId': 'ownerId',
-        'listingId': 'listingId',
+        'listingId': 'listingId', 
+
       },
       {
         'date': DateTime(2023, 11, 5, 12, 30),
@@ -78,9 +123,34 @@ class SalesRepository {
         'listingId': 'listingId',
       },
       {
-        'date': DateTime(2023, 11, 6, 17, 30),
+        'date': DateTime(2023, 11, 7, 17, 30),
         'sales': 4200,
         'category': 'Accomodation',
+        'customerid': 'Q5XDgYklDNU02Wc4cGp4n3Kv8cH3',
+        'cooperativeId': 'sslvO5tgDoCHGBO82kxq',
+        'ownerId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+        'listingId': 'fQv3jlai7aETmy8Q0E3S',
+        'listingName': 'ツ The Darwin Delight ツ'
+      },
+      {
+        'date': DateTime(2023, 11, 7, 12, 30),
+        'sales': 8200,
+        'category': 'Accomodation',
+        'customerid': 'Q5XDgYklDNU02Wc4cGp4n3Kv8cH3',
+        'cooperativeId': 'sslvO5tgDoCHGBO82kxq',
+        'ownerId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+        'listingId': 'jBg8MlxWLllJPSu8r00o',
+        'listingName': 'Hotel Iwahori'
+      },
+      {
+        'date': DateTime(2023, 11, 8, 10, 30),
+        'sales': 8200,
+        'category': 'Accomodation',
+        'customerid': 'Q5XDgYklDNU02Wc4cGp4n3Kv8cH3',
+        'cooperativeId': 'sslvO5tgDoCHGBO82kxq',
+        'ownerId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+        'listingId': 'tt3CBIByj5TJIShyZ8id',
+        'listingName': 'Hotel Magenta'
       },
       {
         'date': DateTime(2023, 11, 4, 18, 40),
@@ -111,6 +181,31 @@ class SalesRepository {
         'date': DateTime(2023, 11, 7, 18, 30),
         'sales': 1400,
         'category': 'Accomodation',
+        'customerid': 'Q5XDgYklDNU02Wc4cGp4n3Kv8cH3',
+        'cooperativeId': 'sslvO5tgDoCHGBO82kxq',
+        'ownerId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+        'listingId': 'fQv3jlai7aETmy8Q0E3S',
+        'listingName': 'ツ The Darwin Delight ツ'
+      },
+      {
+        'date': DateTime(2023, 11, 9, 17, 30),
+        'sales': 4200,
+        'category': 'Accomodation',
+        'customerid': 'Q5XDgYklDNU02Wc4cGp4n3Kv8cH3',
+        'cooperativeId': 'sslvO5tgDoCHGBO82kxq',
+        'ownerId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+        'listingId': 'jBg8MlxWLllJPSu8r00o',
+        'listingName': 'Hotel Iwahori'
+      },
+      {
+        'date': DateTime(2023, 11, 10, 10, 30),
+        'sales': 4200,
+        'category': 'Accomodation',
+        'customerid': 'Q5XDgYklDNU02Wc4cGp4n3Kv8cH3',
+        'cooperativeId': 'sslvO5tgDoCHGBO82kxq',
+        'ownerId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+        'listingId': 'tt3CBIByj5TJIShyZ8id',
+        'listingName': 'Hotel Magenta'
       },
       {
         'date': DateTime(2023, 11, 5, 19, 40),
@@ -141,6 +236,31 @@ class SalesRepository {
         'date': DateTime(2023, 11, 8, 19, 30),
         'sales': 5600,
         'category': 'Accomodation',
+        'customerid': 'Q5XDgYklDNU02Wc4cGp4n3Kv8cH3',
+        'cooperativeId': 'sslvO5tgDoCHGBO82kxq',
+        'ownerId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+        'listingId': 'fQv3jlai7aETmy8Q0E3S',
+        'listingName': 'ツ The Darwin Delight ツ'
+      },
+      {
+        'date': DateTime(2023, 11, 11, 17, 30),
+        'sales': 4200,
+        'category': 'Accomodation',
+        'customerid': 'Q5XDgYklDNU02Wc4cGp4n3Kv8cH3',
+        'cooperativeId': 'sslvO5tgDoCHGBO82kxq',
+        'ownerId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+        'listingId': 'jBg8MlxWLllJPSu8r00o',
+        'listingName': 'Hotel Iwahori'
+      },
+      {
+        'date': DateTime(2023, 11, 12, 10, 30),
+        'sales': 4200,
+        'category': 'Accomodation',
+        'customerid': 'Q5XDgYklDNU02Wc4cGp4n3Kv8cH3',
+        'cooperativeId': 'sslvO5tgDoCHGBO82kxq',
+        'ownerId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+        'listingId': 'tt3CBIByj5TJIShyZ8id',
+        'listingName': 'Hotel Magenta'
       },
       {
         'date': DateTime(2023, 11, 6, 20, 40),

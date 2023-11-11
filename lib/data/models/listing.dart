@@ -34,6 +34,7 @@ class ListingModel {
     this.images,
     this.visits,
     this.ownerMember,
+    this.city,
   });
 
 
@@ -51,6 +52,7 @@ class ListingModel {
     List<String>? images,
     int? visits,
     String? ownerMember,
+    String? city,
   }) {
     return ListingModel(
       id: id ?? this.id,
@@ -65,6 +67,7 @@ class ListingModel {
       images: images ?? this.images,
       visits: visits ?? this.visits,
       ownerMember: ownerMember ?? this.ownerMember,
+      city: city ?? this.city,
     );
   }
 
@@ -81,6 +84,7 @@ class ListingModel {
       'images': images,
       'visits': visits,
       'ownerMember': ownerMember,
+      'city': city,
     };
   }
 
@@ -98,6 +102,7 @@ class ListingModel {
       images: map['images'] != null ? List<String>.from(map['images'].map((e) => e.toString())) : null,
       visits: map['visits'] != null ? map['visits'] as int : null,
       ownerMember: map['ownerMember'] != null ? map['ownerMember'] as String : null,
+      city: map['city'] != null ? map['city'] as String : null,
     );
   }
 
@@ -107,6 +112,6 @@ class ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(id: $id, owner: $owner, title: $title, description: $description, rating: $rating, amenities: $amenities, price: $price, type: $type, postDate: $postDate, images: $images, visits: $visits, ownerMember: $ownerMember)';
+    return 'ListingModel(id: $id, owner: $owner, title: $title, description: $description, rating: $rating, amenities: $amenities, price: $price, type: $type, postDate: $postDate, images: $images, visits: $visits, ownerMember: $ownerMember city: $city)';
   }
 }

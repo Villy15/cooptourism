@@ -50,6 +50,12 @@ class _MenuPageState extends ConsumerState<MenuPage> {
       'logo': Icons.how_to_vote_outlined,
       'name': 'Vote',
       'route': '/vote_page'
+    }, 
+    {
+      // Dashboard
+      'logo': Icons.dashboard_outlined,
+      'name': 'Dashboard',
+      'route': '/member_charts'
     }
   ];
 
@@ -66,6 +72,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
       _gridItems.removeWhere((element) => element['name'] == 'Cooperatives');
       _gridItems.removeWhere((element) => element['name'] == 'Events');
       _gridItems.removeWhere((element) => element['name'] == 'Marketplace');
+      _gridItems.removeWhere((element) => element['name'] == 'Dashboard');
     } else if (role == 'Member') {
       // _gridItems.removeWhere((element) => element['name'] == 'Cooperatives');
       _gridItems.removeWhere((element) => element['name'] == 'Marketplace');
@@ -77,6 +84,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
       _gridItems.removeWhere((element) => element['name'] == 'Wallet');
       _gridItems.removeWhere((element) => element['name'] == 'Reports');
       _gridItems.removeWhere((element) => element['name'] == 'Members');
+      _gridItems.removeWhere((element) => element['name'] == 'Dashboard');
       // _gridItems.removeWhere((element) => element['name'] == 'Feed');
     }
 
