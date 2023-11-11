@@ -3,14 +3,14 @@ import 'package:cooptourism/data/models/message.dart';
 import 'package:flutter/material.dart';
 
 class MessageRepository {
-    final CollectionReference coachingMsgCollection =
+  final CollectionReference coachingMsgCollection =
       FirebaseFirestore.instance.collection('coaching_messages');
-    final CollectionReference inboxMsgCollection = 
+  final CollectionReference inboxMsgCollection =
       FirebaseFirestore.instance.collection('inbox_messages');
 
-  
   // get one chat room from firestore with chatRoomId
-  Future<List<MessageModel>> getOneCoachingRoom(String userId, String receiverId) async {
+  Future<List<MessageModel>> getOneCoachingRoom(
+      String userId, String receiverId) async {
     String chatRoomId = '';
     List<String> combineIds = [userId, receiverId];
     combineIds.sort();
@@ -30,11 +30,11 @@ class MessageRepository {
       // You might want to handle errors more gracefully here
       return [];
     }
-    
   }
 
   // get one chat room from firestore with chatRoomId
-  Future<List<MessageModel>> getOneChatRoom(String userId, String receiverId) async {
+  Future<List<MessageModel>> getOneChatRoom(
+      String userId, String receiverId) async {
     String chatRoomId = '';
     List<String> combineIds = [userId, receiverId];
     combineIds.sort();
@@ -46,18 +46,18 @@ class MessageRepository {
           .collection('messages')
           .orderBy('timeStamp', descending: false)
           .get();
-        return snapshot.docs.map((doc) {
-          return MessageModel.fromMap(doc.id, doc.data());
-        }).toList();
+      return snapshot.docs.map((doc) {
+        return MessageModel.fromMap(doc.id, doc.data());
+      }).toList();
     } catch (e) {
       debugPrint('Error getting chat room from Firestore $e');
       return [];
     }
   }
-  
+
   // get messages from firestore
   Stream<List<MessageModel>> getAllCoachingMsgs(
-    String senderId, String receiverId) {
+      String senderId, String receiverId) {
     List<String> ids = [senderId, receiverId];
     ids.sort();
     String coachMsgId = ids.join('_');
@@ -78,35 +78,36 @@ class MessageRepository {
     });
   }
 
-  Stream<List<MessageModel>> getAllInboxMsgs(String senderId, String receiverId) {
+  Stream<List<MessageModel>> getAllInboxMsgs(
+      String senderId, String receiverId) {
     List<String> ids = [senderId, receiverId];
     ids.sort();
     String inboxMsgId = ids.join('_');
 
     return inboxMsgCollection
-          .doc(inboxMsgId)
-          .collection('messages')
-          .where(Filter.and(
+        .doc(inboxMsgId)
+        .collection('messages')
+        .where(Filter.and(
             Filter.or(Filter('senderId', isEqualTo: senderId),
                 Filter('senderId', isEqualTo: receiverId)),
             Filter.or(Filter('receiverId', isEqualTo: senderId),
                 Filter('receiverId', isEqualTo: receiverId))))
-          .orderBy('timeStamp', descending: false)
-          .snapshots()
-          .map((snapshot) {
-            return snapshot.docs.map((doc) {
-              return MessageModel.fromMap(doc.id, doc.data());
-            }).toList();
-          });
+        .orderBy('timeStamp', descending: false)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return MessageModel.fromMap(doc.id, doc.data());
+      }).toList();
+    });
   }
 
-   // Add a message to Firestore
-  Future<void> addCoachMsg(MessageModel message, String userId, String receiverId) async {
+  // Add a message to Firestore
+  Future<void> addCoachMsg(
+      MessageModel message, String userId, String receiverId) async {
     try {
-
       List<String> ids = [userId, receiverId];
       ids.sort();
-      String coachMsgId = ids.join('_'); 
+      String coachMsgId = ids.join('_');
       await coachingMsgCollection
           .doc(coachMsgId)
           .collection('messages')
@@ -115,10 +116,10 @@ class MessageRepository {
       debugPrint('Error adding Listing to Firestore: $e');
       // You might want to handle errors more gracefully here
     }
-
   }
 
-  Future<void> addInboxMsg(MessageModel message, String userId, String receiverId) async {
+  Future<void> addInboxMsg(
+      MessageModel message, String userId, String receiverId) async {
     try {
       List<String> ids = [userId, receiverId];
       ids.sort();
@@ -133,7 +134,26 @@ class MessageRepository {
     }
   }
 
-      // add manually
+  // create chat room for a group chat
+  Future<void> createGroupChat(List<String> userId, String coachId) async {
+    List<String> combineIds = userId;
+    combineIds.add(coachId);
+    combineIds.sort();
+    String chatRoomId = combineIds.join('_');
+
+    try {
+      await coachingMsgCollection.doc(chatRoomId).set({
+        'chatRoomId': chatRoomId,
+        'userIds': userId,
+        'coachId': coachId,
+      });
+    } catch (e) {
+      debugPrint('Error adding event to Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
+    
+  }
+  // add manually
   Future<void> addCoachMessageManually() async {
     List<Map<String, dynamic>> events = [
       {
@@ -150,7 +170,10 @@ class MessageRepository {
       }
     ];
 
-    List<String> combineIds = ['ewBh7JJqkpe0XwYRMiAsRwuw0in1', 'Vy4YiXQBhuNZu3sHeSel'];
+    List<String> combineIds = [
+      'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+      'Vy4YiXQBhuNZu3sHeSel'
+    ];
     combineIds.sort();
     String chatRoomId = combineIds.join('_');
 
@@ -183,7 +206,10 @@ class MessageRepository {
       }
     ];
 
-    List<String> combineIds = ['ewBh7JJqkpe0XwYRMiAsRwuw0in1', 'zGcuP5yECrdmX3Qns58MIxaWn9Q2'];
+    List<String> combineIds = [
+      'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+      'zGcuP5yECrdmX3Qns58MIxaWn9Q2'
+    ];
     combineIds.sort();
     String chatRoomId = combineIds.join('_');
 

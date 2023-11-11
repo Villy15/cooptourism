@@ -78,7 +78,11 @@ class EventsRepository {
       'description': 'Take a step back in time and discover the rich history of the Philippines with our guided walk in Intramuros, the Walled City of Manila.',
       'location': 'Intramuros, Manila',
       'participants': ['John Doe', 'Jane Doe'],
-      'image': ['https://picsum.photos/200/300?random=1', 'https://picsum.photos/200/300?random=2', 'https://picsum.photos/200/300?random=3']
+        'image': [
+          'https://picsum.photos/200/300?random=1',
+          'https://picsum.photos/200/300?random=2',
+          'https://picsum.photos/200/300?random=3'
+        ]
     },
     {
       'title': 'Mount Apo Trekking Experience',

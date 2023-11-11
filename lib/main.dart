@@ -54,7 +54,6 @@ class _MyAppState extends ConsumerState<MyApp> {
       future: userFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          debugPrint("Building app with user data");
           return _buildApp(router);
         }
         return _buildApp(router);

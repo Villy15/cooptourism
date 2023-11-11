@@ -36,15 +36,40 @@ class _ProfilePageState extends State<ProfilePage> {
     'Performance',
     'About',
     'Posts',
-    'Coaching',
+    'Application for Coaching',
+    'Coaching Sessions'
   ];
 
   final List<String> _titlesManager = [
-    'Submitted Documents',
+    'Coaching Concerns',
     'Arrange Coaching Sessions',
+    'Features'
   ];
 
-  final List<String> _titlesCustomer = [];
+  final List<String> _titlesCustomer = [
+    // temporary for now
+    'My Itinerary',
+    'My Bookings',
+    'My Reviews',
+  ];
+
+  final List<String> _coachingFocus = [
+    'Tour Accommodation',
+    'Driving Skills',
+    'Tour Guide',
+    'Credit Loans',
+  ];
+
+  final List<String> _titlesCoach = [
+    'Performance Review',
+    'About',
+    'Posts',
+    'Coaching Sessions'
+  ];
+
+  final List<String> _titlesNoCooperativeRole = [
+    'Get Started',
+  ];
 
   User? user;
 
@@ -766,7 +791,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                       child: const Text('Apply'),
                                       onPressed: () {
                                         // showAddCoachingFormPage(context);
-                                        GoRouter.of(context).go('/profile_page/$userUID/coaching_page');
+                                        GoRouter.of(context).go(
+                                            '/profile_page/$userUID/coaching_page');
                                         Navigator.of(context).pop();
                                       },
                                     ),
@@ -815,9 +841,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
             if (snapshot.hasError) {
               return const Text("Error");
-            } 
-            
-            else {
+            } else {
               return const Center(child: CircularProgressIndicator());
             }
           },
@@ -828,78 +852,779 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Column approvalSection(BuildContext context, UserModel user, String userUID) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Text(
+            'Pending Forms',
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary),
+          ),
+        ),
+        const SizedBox(height: 15),
         // use coachRepository to get coaching forms
-        StreamBuilder(
-          stream: coachingRepository.getAllCoachingForms(),
+        pendingCoachingForms(),
+
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Text(
+            'Approved Forms',
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary),
+          ),
+        ),
+
+        const SizedBox(height: 15),
+
+        approvedCoachingForms(),
+
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Text(
+            'Declined Forms',
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary),
+          ),
+        ),
+        const SizedBox(height: 15),
+        declinedCoachingForms(),
+        const SizedBox(height: 100),
+      ],
+    );
+  }
+
+  StreamBuilder<List<CoachingFormModel>> pendingCoachingForms() {
+    return StreamBuilder(
+      stream: coachingRepository.getAllPendingCoachingForms(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final coachingForms = snapshot.data!;
+
+          if (coachingForms.isEmpty) {
+            return Column(
+              children: [
+                Center(
+                    child: Text(
+                  'No pending forms at the moment.',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context).colorScheme.primary),
+                )),
+                const SizedBox(height: 15),
+              ],
+            );
+          }
+
+          // sort coaching forms by date
+          coachingForms.sort((a, b) => b.timestamp!.compareTo(a.timestamp!));
+          return ListView.separated(
+              itemCount: coachingForms.length,
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: ((context, index) {
+                final coachingForm = coachingForms[index];
+                return InkWell(
+                  onTap: () {
+                    debugPrint("Tap tap tap!");
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                              title: Text(
+                                'Coaching Form Details',
+                                style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                              ),
+                              content: SingleChildScrollView(
+                                  child: ListBody(children: <Widget>[
+                                Text(
+                                    'Name: ${coachingForm.firstName} ${coachingForm.lastName}'),
+                                const SizedBox(height: 15),
+                                Text('Concern: ${coachingForm.concern}'),
+                                Text("User's Goal: ${coachingForm.goal}"),
+                                Text('Status: ${coachingForm.status}'),
+                              ])),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('Approve'),
+                                  onPressed: () {
+                                    coachingForm.status = 'Approved';
+                                    coachingRepository
+                                        .updateCoachingForm(coachingForm);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text('Decline'),
+                                  onPressed: () {
+                                    coachingForm.status = 'Declined';
+                                    coachingRepository
+                                        .updateCoachingForm(coachingForm);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text('Close'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ]);
+                        });
+                  },
+                  child: SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: Column(children: [
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                        width: 2)),
+                                child: Icon(
+                                  coachingForm.concern == 'Credit Loans'
+                                      ? Icons.money
+                                      : coachingForm.concern == 'Driving Skills'
+                                          ? Icons.car_rental
+                                          : coachingForm.concern ==
+                                                  'Tour Accommodation'
+                                              ? Icons.house
+                                              : Icons.help,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 24,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    '${coachingForm.firstName} ${coachingForm.lastName}',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary)),
+                                Text('${coachingForm.concern}',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary))
+                              ],
+                            ),
+                            Expanded(
+                              child: Container(),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 12.0),
+                              child: Icon(
+                                coachingForm.status == 'Pending'
+                                    ? Icons.pending_actions
+                                    : coachingForm.status == 'Approved'
+                                        ? Icons.check_circle
+                                        : coachingForm.status == 'Declined'
+                                            ? Icons.cancel
+                                            : Icons.help,
+                                color: coachingForm.status == 'Pending'
+                                    ? Theme.of(context).colorScheme.primary
+                                    : coachingForm.status == 'Approved'
+                                        ? Theme.of(context).colorScheme.primary
+                                        : coachingForm.status == 'Declined'
+                                            ? Colors.red
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                size: 24,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ])),
+                );
+              }));
+        }
+
+        if (snapshot.hasError) {
+          return const Text("Error");
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
+  StreamBuilder<List<CoachingFormModel>> declinedCoachingForms() {
+    return StreamBuilder(
+      stream: coachingRepository.getAllRejectedCoachingForms(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final coachingForms = snapshot.data!;
+
+          if (coachingForms.isEmpty) {
+            return Column(
+              children: [
+                Center(
+                    child: Text(
+                  'No declined forms at the moment.',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context).colorScheme.primary),
+                )),
+                const SizedBox(height: 15)
+              ],
+            );
+          }
+
+          // sort coaching forms by date
+          coachingForms.sort((a, b) => b.timestamp!.compareTo(a.timestamp!));
+          return ListView.separated(
+              itemCount: coachingForms.length,
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: ((context, index) {
+                final coachingForm = coachingForms[index];
+                return InkWell(
+                  onTap: () {
+                    debugPrint("Tap tap tap!");
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                              title: Text(
+                                'Coaching Form Details',
+                                style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                              ),
+                              content: SingleChildScrollView(
+                                  child: ListBody(children: <Widget>[
+                                Text(
+                                    'Name: ${coachingForm.firstName} ${coachingForm.lastName}'),
+                                const SizedBox(height: 15),
+                                Text('Concern: ${coachingForm.concern}'),
+                                Text("User's Goal: ${coachingForm.goal}"),
+                                Text('Status: ${coachingForm.status}'),
+                              ])),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('Approve'),
+                                  onPressed: () {
+                                    coachingForm.status = 'Approved';
+                                    coachingRepository
+                                        .updateCoachingForm(coachingForm);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text('Decline'),
+                                  onPressed: () {
+                                    coachingForm.status = 'Declined';
+                                    coachingRepository
+                                        .updateCoachingForm(coachingForm);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text('Close'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ]);
+                        });
+                  },
+                  child: SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: Column(children: [
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                        width: 2)),
+                                child: Icon(
+                                  coachingForm.concern == 'Credit Loans'
+                                      ? Icons.money
+                                      : coachingForm.concern == 'Driving Skills'
+                                          ? Icons.car_rental
+                                          : coachingForm.concern ==
+                                                  'Tour Accommodation'
+                                              ? Icons.house
+                                              : Icons.help,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 24,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    '${coachingForm.firstName} ${coachingForm.lastName}',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary)),
+                                Text('${coachingForm.concern}',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary))
+                              ],
+                            ),
+                            Expanded(
+                              child: Container(),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 12.0),
+                              child: Icon(
+                                coachingForm.status == 'Pending'
+                                    ? Icons.pending_actions
+                                    : coachingForm.status == 'Approved'
+                                        ? Icons.check_circle
+                                        : coachingForm.status == 'Declined'
+                                            ? Icons.cancel
+                                            : Icons.help,
+                                color: coachingForm.status == 'Pending'
+                                    ? Theme.of(context).colorScheme.primary
+                                    : coachingForm.status == 'Approved'
+                                        ? Theme.of(context).colorScheme.primary
+                                        : coachingForm.status == 'Declined'
+                                            ? Colors.red
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                size: 24,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ])),
+                );
+              }));
+        }
+
+        if (snapshot.hasError) {
+          return const Text("Error");
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
+  StreamBuilder<List<CoachingFormModel>> approvedCoachingForms() {
+    return StreamBuilder(
+      stream: coachingRepository.getAllApprovedCoachingForms(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final coachingForms = snapshot.data!;
+
+          if (coachingForms.isEmpty) {
+            return Column(
+              children: [
+                Center(
+                    child: Text(
+                  'No approved forms at the moment.',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context).colorScheme.primary),
+                )),
+                const SizedBox(height: 15)
+              ],
+            );
+          }
+
+          // sort coaching forms by date
+          coachingForms.sort((a, b) => b.timestamp!.compareTo(a.timestamp!));
+          return ListView.separated(
+              itemCount: coachingForms.length,
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: ((context, index) {
+                final coachingForm = coachingForms[index];
+                return InkWell(
+                  onTap: () {
+                    debugPrint("Tap tap tap!");
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                              title: Text(
+                                'Coaching Form Details',
+                                style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                              ),
+                              content: SingleChildScrollView(
+                                  child: ListBody(children: <Widget>[
+                                Text(
+                                    'Name: ${coachingForm.firstName} ${coachingForm.lastName}'),
+                                const SizedBox(height: 15),
+                                Text('Concern: ${coachingForm.concern}'),
+                                Text("User's Goal: ${coachingForm.goal}"),
+                                Text('Status: ${coachingForm.status}'),
+                              ])),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('Approve'),
+                                  onPressed: () {
+                                    coachingForm.status = 'Approved';
+                                    coachingRepository
+                                        .updateCoachingForm(coachingForm);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text('Decline'),
+                                  onPressed: () {
+                                    coachingForm.status = 'Declined';
+                                    coachingRepository
+                                        .updateCoachingForm(coachingForm);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text('Close'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ]);
+                        });
+                  },
+                  child: SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: Column(children: [
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                        width: 2)),
+                                child: Icon(
+                                  coachingForm.concern == 'Credit Loans'
+                                      ? Icons.money
+                                      : coachingForm.concern == 'Driving Skills'
+                                          ? Icons.car_rental
+                                          : coachingForm.concern ==
+                                                  'Tour Accommodation'
+                                              ? Icons.house
+                                              : Icons.help,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 24,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    '${coachingForm.firstName} ${coachingForm.lastName}',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary)),
+                                Text('${coachingForm.concern}',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary))
+                              ],
+                            ),
+                            Expanded(
+                              child: Container(),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 12.0),
+                              child: Icon(
+                                coachingForm.status == 'Pending'
+                                    ? Icons.pending_actions
+                                    : coachingForm.status == 'Approved'
+                                        ? Icons.check_circle
+                                        : coachingForm.status == 'Declined'
+                                            ? Icons.cancel
+                                            : Icons.help,
+                                color: coachingForm.status == 'Pending'
+                                    ? Theme.of(context).colorScheme.primary
+                                    : coachingForm.status == 'Approved'
+                                        ? Theme.of(context).colorScheme.primary
+                                        : coachingForm.status == 'Declined'
+                                            ? Colors.red
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                size: 24,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ])),
+                );
+              }));
+        }
+
+        if (snapshot.hasError) {
+          return const Text("Error");
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
+  Column arrangeCoachingSection(
+      BuildContext context, UserModel user, String userUID) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(
+        padding: const EdgeInsets.only(left: 16.0),
+        child: Text(
+          'Available Coaches:',
+          style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary),
+        ),
+      ),
+      const SizedBox(height: 15),
+      StreamBuilder(
+          stream: userRepository.getAllCoaches(),
           builder: (context, snapshot) {
+            final List<UserModel> coaches = snapshot.data as List<UserModel>;
+
             if (snapshot.hasData) {
-              final coachingForms = snapshot.data!;
               return ListView.separated(
-                  itemCount: coachingForms.length,
+                  itemCount: coaches.length,
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: ((context, index) {
-                    final coachingForm = coachingForms[index];
                     return InkWell(
                       onTap: () {
-                        debugPrint("Tap tap tap!");
+                        // show a pop up when tapped
                         showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                  title: Text(
-                                    'Coaching Form Details',
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary),
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                                title: Text(
+                                  'Arrange Coaching Group Chat',
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                content: SingleChildScrollView(
+                                    child: ListBody(children: <Widget>[
+                                  Text(
+                                      'Assign the approved cooperative members to ${coaches[index].firstName} ${coaches[index].lastName}?'),
+                                ])),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      // get all approved coaching forms and assign them to the coach
+                                      Map<String, String> mapping = {
+                                        'Tour Driver': 'Driving Skills',
+                                        'Tour Guide': 'Tour Guide',
+                                        'Tour Accommodation':
+                                            'Tour Accommodation',
+                                        'Credit Loans': 'Credit Loans'
+                                      };
+                                      // Get the corresponding coaching_focus for the coach's userAccomplishment
+                                      String coachingFocus = mapping[
+                                          coaches[index].userAccomplishment]!;
+
+                                      coachingRepository
+                                          .getAllApprovedCoachingForms()
+                                          .listen((approvedForms) {
+                                        // Filter the forms that match the coachingFocus
+                                        List<CoachingFormModel> matchingForms =
+                                            approvedForms
+                                                .where((form) =>
+                                                    form.concern ==
+                                                    coachingFocus)
+                                                .toList();
+
+                                        // add another pop up if there are no matching forms
+                                        if (matchingForms.isEmpty) {
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                    title: Text(
+                                                      'No matching forms',
+                                                      style: TextStyle(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary),
+                                                    ),
+                                                    content:
+                                                        SingleChildScrollView(
+                                                            child: ListBody(
+                                                                children: <Widget>[
+                                                          Text(
+                                                              'There are no approved forms that match the coaching focus of ${coaches[index].firstName} ${coaches[index].lastName}.'),
+                                                        ])),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        child:
+                                                            const Text('Close'),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                    ]);
+                                              });
+                                          return;
+                                        }
+                                        // if the length is less than or equal to 1, notify the manager that there are no other members to be assigned
+                                        else if (matchingForms.length <= 1) {
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                    title: Text(
+                                                      'No other members to be assigned',
+                                                      style: TextStyle(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary),
+                                                    ),
+                                                    content:
+                                                        SingleChildScrollView(
+                                                            child: ListBody(
+                                                                children: <Widget>[
+                                                          Text(
+                                                              'There are no other approved forms that match the coaching focus of ${coaches[index].firstName} ${coaches[index].lastName}. There should be at least 2 or more cooperative members to have a session.'),
+                                                        ])),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        child:
+                                                            const Text('Close'),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                    ]);
+                                              });
+                                          return;
+                                        } else {
+                                          // Assign the matching forms to the coach
+                                          List<String> groupMembers = [];
+                                          for (var form in matchingForms) {
+                                            form.coachUID = coaches[index].uid;
+                                            coachingRepository
+                                                .updateCoachingForm(form);
+                                            // store the uid of the assigned members
+                                            groupMembers.add(form.userUID!);
+                                          }
+
+                                          // show a pop up that the members have been assigned
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                    title: Text(
+                                                      'Members assigned',
+                                                      style: TextStyle(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary),
+                                                    ),
+                                                    content:
+                                                        SingleChildScrollView(
+                                                            child: ListBody(
+                                                                children: <Widget>[
+                                                          Text(
+                                                              'The approved cooperative members have been assigned to ${coaches[index].firstName} ${coaches[index].lastName}'),
+                                                        ])),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        child:
+                                                            const Text('Close'),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                    ]);
+                                              });
+                                        }
+                                      });
+                                    },
+                                    child: const Text('Yes'),
                                   ),
-                                  content: SingleChildScrollView(
-                                      child: ListBody(children: <Widget>[
-                                    Text(
-                                        'Name: ${coachingForm.firstName} ${coachingForm.lastName}'),
-                                    const SizedBox(height: 15),
-                                    Text('Concern: ${coachingForm.concern}'),
-                                    Text("User's Goal: ${coachingForm.goal}"),
-                                    Text('Status: ${coachingForm.status}'),
-                                  ])),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: const Text('Approve'),
-                                      onPressed: () {
-                                        coachingForm.status = 'Approved';
-                                        coachingRepository
-                                            .updateCoachingForm(coachingForm);
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                    TextButton(
-                                      child: const Text('Decline'),
-                                      onPressed: () {
-                                        coachingForm.status = 'Declined';
-                                        coachingRepository
-                                            .updateCoachingForm(coachingForm);
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                    TextButton(
-                                      child: const Text('Close'),
+                                  TextButton(
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
-                                    ),
-                                  ]);
-                            });
+                                      child: const Text('No'))
+                                ]);
+                          },
+                        );
                       },
                       child: SizedBox(
                           height: 50,
                           width: 50,
-                          child: Column(children: [
-                            // display photo and name of user, then display its concern
-                            Row(
-                              children: [
+                          child: Column(
+                            children: [
+                              Row(children: [
                                 Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Container(
@@ -912,20 +1637,23 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 .colorScheme
                                                 .secondary,
                                             width: 2)),
-                                    child: Icon(
-                                      coachingForm.concern == 'Credit Loans'
-                                          ? Icons.money
-                                          : coachingForm.concern ==
-                                                  'Driving Skills'
-                                              ? Icons.car_rental
-                                              : coachingForm.concern ==
-                                                      'Tour Accommodation'
-                                                  ? Icons.house
-                                                  : Icons.help,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      size: 24,
-                                    ),
+                                    child: coaches[index].profilePicture !=
+                                                null &&
+                                            coaches[index]
+                                                .profilePicture!
+                                                .isNotEmpty
+                                        ? DisplayProfilePicture(
+                                            storageRef:
+                                                FirebaseStorage.instance.ref(),
+                                            coopId: coaches[index].uid!,
+                                            data: coaches[index].profilePicture,
+                                            height: 40,
+                                            width: 40)
+                                        : Icon(Icons.person,
+                                            size: 24,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary),
                                   ),
                                 ),
                                 const SizedBox(width: 10),
@@ -933,14 +1661,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                        '${coachingForm.firstName} ${coachingForm.lastName}',
+                                        '${coaches[index].firstName} ${coaches[index].lastName}',
                                         style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
                                             color: Theme.of(context)
                                                 .colorScheme
                                                 .primary)),
-                                    Text('${coachingForm.concern}',
+                                    Text('${coaches[index].userAccomplishment}',
                                         style: TextStyle(
                                             fontSize: 12,
                                             color: Theme.of(context)
@@ -948,36 +1676,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 .primary))
                                   ],
                                 ),
-                                Expanded(
-                                  child: Container(),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 12.0),
-                                  child: Icon(
-                                    coachingForm.status == 'Pending'
-                                        ? Icons.pending_actions
-                                        : coachingForm.status == 'Approved'
-                                            ? Icons.check_circle
-                                            : coachingForm.status == 'Declined'
-                                                ? Icons.cancel
-                                                : Icons.help,
-                                    color: coachingForm.status == 'Pending'
-                                        ? Theme.of(context).colorScheme.primary
-                                        : coachingForm.status == 'Approved'
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                            : coachingForm.status == 'Declined'
-                                                ? Colors.red
-                                                : Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                    size: 24,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ])),
+                              ])
+                            ],
+                          )),
                     );
                   }));
             }
@@ -987,30 +1688,8 @@ class _ProfilePageState extends State<ProfilePage> {
             } else {
               return const Center(child: CircularProgressIndicator());
             }
-          },
-        )
-      ],
-    );
-  }
-
-  Column arrangeCoachingSection(BuildContext context, UserModel user, String userUID) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "Arrange the cooperative members here based on their needs!",
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary),
-              ),
-          ),
-        )
-      ]
-    );
+          })
+    ]);
   }
 
   AppBar _appBar(BuildContext context, String title) {

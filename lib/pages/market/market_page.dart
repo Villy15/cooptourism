@@ -1,5 +1,6 @@
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
+import 'package:cooptourism/providers/home_page_provider.dart';
 import 'package:cooptourism/widgets/budget_slider.dart';
 import 'package:cooptourism/widgets/category_picket.dart';
 import 'package:cooptourism/widgets/type_picker.dart';
@@ -67,23 +68,26 @@ class _MarketPageState extends ConsumerState<MarketPage> {
         ));
   }
 
-  Column listingFilter(BuildContext context) {
-    return Column(
-      children: [
-        DisplayText(
-          text: "Filter",
-          lines: 1,
-          style: Theme.of(context).textTheme.headlineLarge!,
-        ),
-        const SizedBox(height: 15),
-        const ProvinceCityPicker(),
-        const SizedBox(height: 5),
-        const CategoryPicker(),
-        const SizedBox(height: 5),
-        const TypePicker(),
-        const SizedBox(height: 5),
-        const BudgetSlider(),
-      ],
+  SizedBox listingFilter(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.sizeOf(context).width / 1.5,
+      child: Column(
+        children: [
+          DisplayText(
+            text: "Filter",
+            lines: 1,
+            style: Theme.of(context).textTheme.headlineLarge!,
+          ),
+          const SizedBox(height: 15),
+          const ProvinceCityPicker(),
+          const SizedBox(height: 5),
+          const CategoryPicker(),
+          const SizedBox(height: 5),
+          const TypePicker(),
+          const SizedBox(height: 5),
+          const BudgetSlider(),
+        ],
+      ),
     );
   }
 

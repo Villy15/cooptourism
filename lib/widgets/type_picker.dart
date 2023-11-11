@@ -22,9 +22,7 @@ class _TypePickerState extends ConsumerState<TypePicker> {
     final AppConfigRepository appConfigRepository = AppConfigRepository();
     final Future<List<String>> types = appConfigRepository.getTourismTypes();
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
+    return 
         FutureBuilder<List<String>>(
           future: types, // your Future<List<String>> for categories
           builder:
@@ -36,7 +34,7 @@ class _TypePickerState extends ConsumerState<TypePicker> {
             } else {
               // snapshot.data now contains your List<String> for categories
               return buildDropdownButton(
-                  "Type", snapshot.data!, ref.watch(marketTypeProvider),
+                  snapshot.data!, ref.watch(marketTypeProvider),
                   (newValue) {
                 ref
                     .read(marketTypeProvider.notifier)
@@ -44,27 +42,27 @@ class _TypePickerState extends ConsumerState<TypePicker> {
               });
             }
           },
-        ),
-        const SizedBox(height: 5), // To give some space between the dropdowns
-      ],
-    );
+        );
   }
 
-  Widget buildDropdownButton(String title, List<String> items,
+  Widget buildDropdownButton(List<String> items,
       String? selectedValue, ValueChanged<String?> onChanged) {
     return Container(
-      width: MediaQuery.sizeOf(context).width / 1.5,
+      // width: MediaQuery.sizeOf(context).width / 1.5,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15), // Create a circular shape
-        border: Border.all(color: Colors.grey, width: 1.5), // Add a border
+        border: Border.all(color: Colors.grey, width: 1), // Add a border
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: DropdownButton<String>(
+        child: DropdownButtonFormField<String>(
+          decoration: const InputDecoration(
+            labelText: "Type",
+            border: InputBorder.none,
+          ),
           menuMaxHeight: 300,
           alignment: Alignment.center,
           value: selectedValue,
-          hint: Text(title),
           onChanged: onChanged,
           items: items.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
@@ -79,9 +77,6 @@ class _TypePickerState extends ConsumerState<TypePicker> {
           }).toList(),
           iconSize: 30.0,
           isExpanded: true,
-          underline: Container(
-            height: 0,
-          ),
         ),
       ),
     );
