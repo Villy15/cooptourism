@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:cooptourism/core/file_picker.dart';
 import 'package:cooptourism/providers/home_page_provider.dart';
-import 'package:cooptourism/widgets/category_picket.dart';
+import 'package:cooptourism/widgets/category_picker.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 import 'package:cooptourism/widgets/type_picker.dart';
 import 'package:cooptourism/widgets/province_city_picker.dart';
@@ -67,7 +67,7 @@ class _AddListingState extends ConsumerState<AddListing> {
 
   @override
   Widget build(BuildContext context) {
-    final storageRef = FirebaseStorage.instance.ref();
+    // final storageRef = FirebaseStorage.instance.ref();
 
     return WillPopScope(
         onWillPop: () async {

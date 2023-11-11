@@ -2,7 +2,7 @@ import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/providers/home_page_provider.dart';
 import 'package:cooptourism/widgets/budget_slider.dart';
-import 'package:cooptourism/widgets/category_picket.dart';
+import 'package:cooptourism/widgets/category_picker.dart';
 import 'package:cooptourism/widgets/type_picker.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 import 'package:cooptourism/widgets/listing_card.dart';
