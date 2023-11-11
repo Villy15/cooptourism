@@ -142,8 +142,6 @@ class _CustomerHomePageState extends ConsumerState<CustomerHomePage> {
 
   Widget buildNonSearchingView() {
     final user = ref.watch(userModelProvider);
-    debugPrint("User Location: ${user?.location}");
-    debugPrint("isSearching $isSearching");
 
   return Column(
     mainAxisAlignment: MainAxisAlignment.start,

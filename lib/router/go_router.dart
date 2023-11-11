@@ -11,7 +11,8 @@ import 'package:cooptourism/pages/market/add_listing.dart';
 import 'package:cooptourism/pages/market/listing_edit.dart';
 import 'package:cooptourism/pages/market/listing_messages.dart';
 import 'package:cooptourism/pages/market/listing_messages_inbox.dart';
-import 'package:cooptourism/pages/member/member_dashboard_page.dart';
+import 'package:cooptourism/pages/member/dashboard.dart';
+import 'package:cooptourism/pages/member/member_landing.dart';
 import 'package:cooptourism/pages/profile/poll_profile_page.dart';
 // import 'package:cooptourism/pages/profile/poll_profile_page.dart';
 import 'package:cooptourism/pages/tasks/selected_task_page.dart';
@@ -111,6 +112,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 name: "Menu",
                 pageBuilder: (context, state) {
                   return NoTransitionPage(child: MenuPage(key: state.pageKey));
+                }),
+            GoRoute(
+                path: "/member_charts",
+                name: "Member Charts",
+                pageBuilder: (context, state) {
+                  return NoTransitionPage(child: MemberChartsPage(key: state.pageKey));
                 }),
 
             // MEMBER ROUTES

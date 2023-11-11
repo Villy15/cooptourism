@@ -12,6 +12,7 @@ class SalesData {
   String? cooperativeId;
   String? ownerId;
   String? listingId;
+  String? listingName;
   SalesData({
     this.uid,
     required this.date,
@@ -21,6 +22,7 @@ class SalesData {
     this.cooperativeId,
     this.ownerId,
     this.listingId,
+    this.listingName,
   });
 
 
@@ -33,6 +35,7 @@ class SalesData {
     String? cooperativeId,
     String? ownerId,
     String? listingId,
+    String? listingName,
   }) {
     return SalesData(
       uid: uid ?? this.uid,
@@ -43,6 +46,7 @@ class SalesData {
       cooperativeId: cooperativeId ?? this.cooperativeId,
       ownerId: ownerId ?? this.ownerId,
       listingId: listingId ?? this.listingId,
+      listingName: listingName ?? this.listingName,
     );
   }
 
@@ -56,6 +60,7 @@ class SalesData {
       'cooperativeId': cooperativeId,
       'ownerId': ownerId,
       'listingId': listingId,
+      'listingName': listingName,
     };
   }
 
@@ -69,6 +74,7 @@ class SalesData {
       cooperativeId: map['cooperativeId'] != null ? map['cooperativeId'] as String : null,
       ownerId: map['ownerId'] != null ? map['ownerId'] as String : null,
       listingId: map['listingId'] != null ? map['listingId'] as String : null,
+      listingName: map['listingName'] != null ? map['listingName'] as String : null,
     );
   }
 
@@ -76,35 +82,10 @@ class SalesData {
 
   factory SalesData.fromJson(String source) => SalesData.fromMap('', json.decode(source) as Map<String, dynamic>);
 
+
+
   @override
   String toString() {
-    return 'SalesData(uid: $uid, date: $date, sales: $sales, category: $category, customerid: $customerid, cooperativeId: $cooperativeId, ownerId: $ownerId, listingId: $listingId)';
-  }
-
-  @override
-  bool operator ==(covariant SalesData other) {
-    if (identical(this, other)) return true;
-  
-    return 
-      other.uid == uid &&
-      other.date == date &&
-      other.sales == sales &&
-      other.category == category &&
-      other.customerid == customerid &&
-      other.cooperativeId == cooperativeId &&
-      other.ownerId == ownerId &&
-      other.listingId == listingId;
-  }
-
-  @override
-  int get hashCode {
-    return uid.hashCode ^
-      date.hashCode ^
-      sales.hashCode ^
-      category.hashCode ^
-      customerid.hashCode ^
-      cooperativeId.hashCode ^
-      ownerId.hashCode ^
-      listingId.hashCode;
+    return 'SalesData(uid: $uid, date: $date, sales: $sales, category: $category, customerid: $customerid, cooperativeId: $cooperativeId, ownerId: $ownerId, listingId: $listingId, listingName: $listingName)';
   }
 }
