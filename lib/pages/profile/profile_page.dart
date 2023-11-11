@@ -1,5 +1,6 @@
 // import 'package:cooptourism/animations/slide_transition.dart';
 // import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/coaching_form.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/coaching_repository.dart';
@@ -48,28 +49,25 @@ class _ProfilePageState extends State<ProfilePage> {
 
   final List<String> _titlesCustomer = [
     // temporary for now
-    'My Itinerary',
-    'My Bookings',
-    'My Reviews',
   ];
 
-  final List<String> _coachingFocus = [
-    'Tour Accommodation',
-    'Driving Skills',
-    'Tour Guide',
-    'Credit Loans',
-  ];
+  // final List<String> _coachingFocus = [
+  //   'Tour Accommodation',
+  //   'Driving Skills',
+  //   'Tour Guide',
+  //   'Credit Loans',
+  // ];
 
-  final List<String> _titlesCoach = [
-    'Performance Review',
-    'About',
-    'Posts',
-    'Coaching Sessions'
-  ];
+  // final List<String> _titlesCoach = [
+  //   'Performance Review',
+  //   'About',
+  //   'Posts',
+  //   'Coaching Sessions'
+  // ];
 
-  final List<String> _titlesNoCooperativeRole = [
-    'Get Started',
-  ];
+  // final List<String> _titlesNoCooperativeRole = [
+  //   'Get Started',
+  // ];
 
   User? user;
 
@@ -251,7 +249,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   );
                 }
 
-                return profile(context, userData!, profileId);
+                return Column(
+                  children: [
+                    profile(context, userData!, profileId),
+                    const SizedBox(height: 15),
+                    customerSection(context, userData, userUID)
+                  ],
+                );
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {
@@ -259,6 +263,168 @@ class _ProfilePageState extends State<ProfilePage> {
               }
             }),
       ],
+    );
+  }
+
+  Column customerSection(BuildContext context, UserModel user, String userUID) {
+    return  Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+            'Do you wish to enroll your cooperative?',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontSize: 21,
+              fontWeight: FontWeight.bold,
+            )
+          ),
+        const SizedBox(height: 7),
+        Text(
+          'Manage your cooperative with ease through the app!',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: 16.3,
+          )
+        ),
+
+        const SizedBox(height: 15),
+        
+        Padding(
+        padding: const EdgeInsets.only(left: 12.0, right: 8.0),
+        child: RichText(
+          text: TextSpan(
+              style: TextStyle(
+                  fontSize: 17.0, color: Theme.of(context).colorScheme.primary),
+              children: const <TextSpan>[
+                TextSpan(
+                    text: 'Q:', style: TextStyle(fontWeight: FontWeight.bold)),
+                TextSpan(text: ' How will this be of help in my cooperative and our current operations?')
+              ]),
+        ),
+      ),
+
+      const SizedBox(height: 10),
+      Padding(
+        padding: const EdgeInsets.only(left: 16.0, right: 12.0),
+        child: Text(
+            "The app will help you manage your cooperative operations by providing you with a platform to post your listings, manage your members, and communicate with your members.",
+            style: TextStyle(
+                fontSize: 15, color: Theme.of(context).colorScheme.primary)),
+      ),
+
+      const SizedBox(height: 15),
+
+      Padding(
+        padding: const EdgeInsets.only(left: 12.0),
+        child: RichText(
+          text: TextSpan(
+              style: TextStyle(
+                  fontSize: 17.0, color: Theme.of(context).colorScheme.primary),
+              children: const <TextSpan>[
+                TextSpan(
+                    text: 'Q:', style: TextStyle(fontWeight: FontWeight.bold)),
+                TextSpan(text: ' How do I then enroll my cooperative in the application?')
+              ]),
+        ),
+      ),
+
+      const SizedBox(height: 10),
+
+      Padding(
+        padding: const EdgeInsets.only(left: 16.0, right: 12.0),
+        child: Text(
+            "First, you will need to create a profile for yourself. Once you have created your profile, you will be able to enroll your cooperative. To complete your profile, press the 'Edit Profile' button and fill out the form.",
+            style: TextStyle(
+                fontSize: 15, color: Theme.of(context).colorScheme.primary)),
+      ),
+
+      const SizedBox(height: 35),
+      Padding(
+        padding: const EdgeInsets.only(left: 16.0, right: 12.0),
+        child: Text(
+            "To enroll your cooperative, click the 'Enroll Now' button below and fill out the form. Once you have submitted the form, you are given access to the features of the app that will help you manage your cooperative operations.",
+            style: TextStyle(
+                fontSize: 15, color: Theme.of(context).colorScheme.primary)),
+      ),
+      
+
+        const SizedBox(height: 25),
+        // add a container that acts as a clickable button to direct the user in the enrollment page
+        
+        StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance.collection('users').doc(widget.profileId).snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              Map<String, dynamic> userData = snapshot.data!.data() as Map<String, dynamic>;
+              String firstName = userData['first_name'];
+              bool canNavigate = firstName != 'Customer';
+
+              return InkWell( 
+                onTap: canNavigate ? () {
+                  GoRouter.of(context).go('/profile_page/$userUID/enroll_cooperative');
+                } : () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text(
+                          'Edit Profile Required.',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold
+                          )
+                        ),
+                        content: Text(
+                          'Please give your personal details first before enrolling your cooperative.',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary
+                          )
+                        ),
+                        actions: <Widget> [
+                          TextButton(
+                            child: Text(
+                              'OK',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary
+                              )
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            }
+                          ),
+                        ] 
+                      );
+                    }
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Theme.of(context).colorScheme.primary),
+                    borderRadius: BorderRadius.circular(10),
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  child: 
+                      Text(
+                        'Enroll Now!', 
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Theme.of(context).colorScheme.secondary,
+                          fontWeight: FontWeight.bold,
+                        )
+                      ),
+                  ),
+              );
+            }
+            else {
+              return const CircularProgressIndicator();
+            
+            }
+          }
+        ),
+
+        const SizedBox(height: 85)
+      ]
     );
   }
 
@@ -1706,7 +1872,7 @@ class _ProfilePageState extends State<ProfilePage> {
             backgroundColor: Colors.grey.shade300,
             child: IconButton(
               onPressed: () {
-                // showAddPostPage(context);
+                GoRouter.of(context).go('/profile_page/$userUID/edit_profile');
               },
               icon: const Icon(Icons.edit, color: Colors.white),
             ),

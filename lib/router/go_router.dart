@@ -1,6 +1,7 @@
 import 'package:cooptourism/pages/coaching/coaching_messaging.dart';
 import 'package:cooptourism/pages/coaching/coaching_page.dart';
 import 'package:cooptourism/pages/customer/city_page.dart';
+import 'package:cooptourism/pages/customer/enroll_coop_page.dart';
 import 'package:cooptourism/pages/customer/home_page.dart';
 import 'package:cooptourism/pages/events/events_page.dart';
 import 'package:cooptourism/pages/events/selected_events_page.dart';
@@ -12,6 +13,7 @@ import 'package:cooptourism/pages/market/listing_edit.dart';
 import 'package:cooptourism/pages/market/listing_messages.dart';
 import 'package:cooptourism/pages/market/listing_messages_inbox.dart';
 import 'package:cooptourism/pages/member/member_dashboard_page.dart';
+import 'package:cooptourism/pages/profile/edit_profile.dart';
 import 'package:cooptourism/pages/profile/poll_profile_page.dart';
 // import 'package:cooptourism/pages/profile/poll_profile_page.dart';
 import 'package:cooptourism/pages/tasks/selected_task_page.dart';
@@ -194,6 +196,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                         profileId: state.pathParameters["profileId"]!,
                       );
                     }),
+
+                  GoRoute(
+                    path: 'enroll_cooperative',
+                    builder: (BuildContext context, state) {
+                      final profileId = state.pathParameters["profileId"]!;
+                      return EnrollCoopPage(key: state.pageKey, profileId: profileId);
+                    } // enable navigation to enroll_coop_page.dart
+                  ),
+                  GoRoute(
+                    path: 'edit_profile',
+                    builder:(context, state) {
+                      final profileId = state.pathParameters["profileId"]!;
+                      return EditProfilePage(key: state.pageKey, profileId: profileId);
+                    },
+                  ),
                   GoRoute(
                     path: "coaching_page",
                     name: "Coaching",

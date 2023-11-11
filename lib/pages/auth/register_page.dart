@@ -3,7 +3,7 @@ import 'package:cooptourism/widgets/button.dart';
 import 'package:cooptourism/widgets/text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:intl/intl.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
@@ -45,20 +45,21 @@ class _RegisterPageState extends State<RegisterPage> {
         Navigator.pop(context);
       }
 
+      // current date
+      DateTime now = DateTime.now();
+
+      // Formate the date as a string
+      String dateJoined = DateFormat('MMMM dd, yyyy').format(now);
+
       // Add to firestore database w/ UID
       await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .set({
         'email': emailTextController.text,
-        'first_name': 'Adrian',
-        'last_name': 'Villanueva',
-        'profilePicture': 'villy.jpg',
-        'role': 'Manager',
-        'status': 'active',
-        'user_accomplishment': "Tour Driver",
-        'user_rating': 'Great',
-        'user_trust': 'Trust',
+        'first_name': 'Customer',
+        'role': 'Customer',
+        'date_joined' : dateJoined
       });
       
 
