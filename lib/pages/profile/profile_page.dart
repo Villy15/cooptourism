@@ -49,6 +49,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   final List<String> _titlesCustomer = [
     // temporary for now
+    'Enroll Cooperative',
+    'Register as a Member'
   ];
 
   // final List<String> _coachingFocus = [
@@ -101,10 +103,10 @@ class _ProfilePageState extends State<ProfilePage> {
       scrollDirection: Axis.horizontal,
       // add other title members here,
       itemCount: user.role == 'Member'
-          ? _titlesMember.length
-          : user.role == 'Manager'
-              ? _titlesManager.length
-              : _titlesCustomer.length,
+                  ? _titlesMember.length
+                  : user.role == 'Manager'
+                  ? _titlesManager.length
+                  : user.role == 'Customer' ?_titlesCustomer.length : _titlesCustomer.length,
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -125,7 +127,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       ? _titlesMember[index]
                       : user.role == 'Manager'
                           ? _titlesManager[index]
-                          : _titlesCustomer[index],
+                          : user.role == 'Customer' 
+                          ?_titlesCustomer[index] : _titlesCustomer[index],
                   style: TextStyle(
                     color: _selectedIndex == index
                         ? Theme.of(context).colorScheme.background
@@ -249,13 +252,37 @@ class _ProfilePageState extends State<ProfilePage> {
                   );
                 }
 
-                return Column(
-                  children: [
-                    profile(context, userData!, profileId),
-                    const SizedBox(height: 15),
-                    customerSection(context, userData, userUID)
-                  ],
-                );
+                else if (selectedIndex == 0 && userData?.role == 'Customer') {
+                  return Column(
+                    children: [
+                      profile(context, userData!, profileId),
+                      const SizedBox(height: 15),
+                      SizedBox(
+                        height: 40,
+                        child: listViewFilter(userData),
+                      ),
+                      const SizedBox(height: 15),
+                      enrollCoop(context, userData, profileId)
+                    ],
+                  );
+                }
+                
+                else if (selectedIndex == 1 && userData?.role == 'Customer') {
+                  return Column(
+                    children: [
+                      profile(context, userData!, profileId),
+                      const SizedBox(height: 15),
+                      SizedBox(
+                        height: 40,
+                        child: listViewFilter(userData),
+                      ),
+                      const SizedBox(height: 15),
+                      registerAsMemberSection(context, userData, profileId)
+                    ],
+                  );
+                }
+
+                return profile(context, userData!, profileId);
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {
@@ -266,7 +293,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Column customerSection(BuildContext context, UserModel user, String userUID) {
+  Column enrollCoop(BuildContext context, UserModel user, String userUID) {
     return  Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -425,6 +452,92 @@ class _ProfilePageState extends State<ProfilePage> {
 
         const SizedBox(height: 85)
       ]
+    );
+  }
+
+  Column registerAsMemberSection(BuildContext context, UserModel user, String userUID) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+            'Do you wish to become a cooperative member?',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontSize: 19,
+              fontWeight: FontWeight.bold,
+            )
+          ),
+        const SizedBox(height: 7),
+        Text(
+          'Be sure to submit the documents needed prior to joining!',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: 15,
+          )
+        ),
+
+        const SizedBox(height: 15),
+        
+        Padding(
+        padding: const EdgeInsets.only(left: 12.0, right: 8.0),
+        child: RichText(
+          text: TextSpan(
+              style: TextStyle(
+                  fontSize: 17.0, color: Theme.of(context).colorScheme.primary),
+              children: const <TextSpan>[
+                TextSpan(
+                    text: 'Q:', style: TextStyle(fontWeight: FontWeight.bold)),
+                TextSpan(text: ' How do I join as a cooperative member of a cooperative?')
+              ]),
+        ),
+      ),
+
+      const SizedBox(height: 10),
+      Padding(
+        padding: const EdgeInsets.only(left: 16.0, right: 12.0),
+        child: Text(
+            "Press the 'Coops' icon on the bottom navigation bar. You will be directed to the list of cooperatives that are currently enrolled in the application. Select the cooperative you wish to join and press the 'Join' button.",
+            style: TextStyle(
+                fontSize: 15, color: Theme.of(context).colorScheme.primary)),
+      ),
+
+      const SizedBox(height: 15),
+
+      Padding(
+        padding: const EdgeInsets.only(left: 12.0, right: 8.0),
+        child: RichText(
+          text: TextSpan(
+              style: TextStyle(
+                  fontSize: 17.0, color: Theme.of(context).colorScheme.primary),
+              children: const <TextSpan>[
+                TextSpan(
+                    text: 'Q:', style: TextStyle(fontWeight: FontWeight.bold)),
+                TextSpan(text: ' What are the documents needed before joining a cooperative?')
+              ]),
+        ),
+      ),
+
+      const SizedBox(height: 10),
+
+      Padding(
+        padding: const EdgeInsets.only(left: 16.0, right: 12.0),
+        child: Text(
+            "It will vary depending on the cooperative you wish to join. Please contact the cooperative you wish to join for more information.",
+            style: TextStyle(
+                fontSize: 15, color: Theme.of(context).colorScheme.primary)),
+      ),
+
+      const SizedBox(height: 15),
+      Padding(
+        padding: const EdgeInsets.only(left: 16.0, right: 12.0),
+        child: Text(
+            "Do note that you are not restricted to joining only one cooperative. You can join as many cooperatives as you wish. Also, prior to joining, we wish that you would complete your profile first. This will help the cooperative you wish to join to know more about you.",
+            style: TextStyle(
+                fontSize: 15, color: Theme.of(context).colorScheme.primary)),
+      ),
+
+      const SizedBox(height: 65),
+      ],
     );
   }
 
