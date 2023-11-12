@@ -36,6 +36,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('Building MyApp');
     final router = ref.watch(goRouterProvider);
     final userAsyncValue = ref.watch(authProvider);
     
@@ -53,9 +54,9 @@ class _MyAppState extends ConsumerState<MyApp> {
     return FutureBuilder<UserModel?>(
       future: userFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return _buildApp(router);
-        }
+        // if (snapshot.connectionState == ConnectionState.waiting) {
+        //   return const CircularProgressIndicator(); // Show loading indicator
+        // }
         return _buildApp(router);
       },
     );
