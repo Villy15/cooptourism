@@ -5,7 +5,7 @@ import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/data/repositories/post_repository.dart';
 import 'package:cooptourism/pages/tasks/tasks_page.dart';
 import 'package:cooptourism/providers/user_provider.dart';
-import 'package:cooptourism/widgets/listing_card.dart';
+//import 'package:cooptourism/widgets/listing_card.dart';
 import 'package:cooptourism/widgets/post_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -50,66 +50,80 @@ class _MemberDashboardPageState extends ConsumerState<MemberDashboardPage> {
         ));
   }
 
-  StreamBuilder<List<dynamic>> servicesMethod(UserModel user) {
-    return StreamBuilder<List<ListingModel>>(
-      stream: listingRepository.getListingsByUID(user.uid!),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
 
-        // If empty show no listings
-        if (snapshot.data!.isEmpty) {
-          return const Center(
-            child: Text(
-              'No listings found',
-              style: TextStyle(fontSize: 20),
-            ),
-          );
-        }
+StreamBuilder<List<ListingModel>> servicesMethod(UserModel user) {
+  return StreamBuilder<List<ListingModel>>(
+    stream: listingRepository.getListingsByUID(user.uid!),
+    builder: (context, snapshot) {
+      if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      }
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+      }
 
-        
-        final listings = snapshot.data!;
+      final listings = snapshot.data!;
 
-        return gridViewListings(listings);
-      },
-    );
-  }
-
-  GridView gridViewListings(List<ListingModel> listings) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 1,
-        childAspectRatio: 1,
-        mainAxisSpacing: 10,
-        mainAxisExtent: 300,
-      ),
-      itemCount: listings.length,
-      itemBuilder: (context, index) {
-        final listing = listings[index];
-        return ListingCard(
-          listingModel: ListingModel(
-            id: listing.id,
-            owner: listing.owner,
-            title: listing.title,
-            description: listing.description,
-            rating: listing.rating,
-            amenities: listing.amenities,
-            price: listing.price,
-            type: listing.type,
-            postDate: listing.postDate,
-            images: listing.images,
-            visits: listing.visits,
+      if (listings.isEmpty) {
+        return const Center(
+          child: Text(
+            'No listings found for this user.',
+            style: TextStyle(fontSize: 20),
           ),
         );
-      },
-    );
-  }
+      } else {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(left: 20.0, top: 30.0),
+              child: Text('Today', style: TextStyle(fontSize: 20)),
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: listings.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1.0),
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    title: const Text(
+                      'The Darwin Delight',
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                    subtitle: const Text(
+                      'Nov 12 - 13 | 2 Pax',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.message),
+                      onPressed: () {
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+            const Divider(
+              thickness: 2.0,
+            ),
+          ],
+        );
+      }
+    },
+  );
+}
+
+
 
   StreamBuilder<List<dynamic>> announcementsMethod() {
     return StreamBuilder<List<PostModel>>(
