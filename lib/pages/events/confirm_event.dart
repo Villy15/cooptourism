@@ -1,18 +1,22 @@
 import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:cooptourism/data/models/events.dart';
+import 'package:cooptourism/pages/events/add_event.dart';
+import 'package:cooptourism/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class ConfirmEventPage extends StatefulWidget {
+class ConfirmEventPage extends ConsumerStatefulWidget {
   final EventsModel event;
   const ConfirmEventPage({super.key, required this.event});
 
   @override
-  State<ConfirmEventPage> createState() => _ContributeEventPageState();
+  ConsumerState<ConfirmEventPage> createState() => _ContributeEventPageState();
 }
 
-class _ContributeEventPageState extends State<ConfirmEventPage> {
+class _ContributeEventPageState extends ConsumerState<ConfirmEventPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +30,54 @@ class _ContributeEventPageState extends State<ConfirmEventPage> {
           _eventDay(context, widget.event),
           _qrCode(context, widget.event),
           _showQrCode(context, widget.event),
+          _leaveEvent(context, widget.event),
         ],
+      ),
+    );
+  }
+
+  Widget _leaveEvent(BuildContext context, EventsModel event) {
+    final user = ref.watch(userModelProvider);
+    return Card (
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            const Text(
+              'If you wish to leave this event, please click the button below.',
+              style: TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20), // Add some spacing
+            ElevatedButton(
+              // Make it larger
+              style: ElevatedButton.styleFrom(
+                // Color
+                backgroundColor: Colors.red.shade700,
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              // Color
+              onPressed: () {
+                // Delete current id to the list of participants 
+                // eventsRepository.updateEventParticipants(widget.event.uid, user?.uid);
+                eventsRepository.removeEventParticipants(widget.event.uid, user?.uid);
+
+                // show snackBar
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('You have left the event'),
+                  ),
+                );
+
+                context.pushReplacement('/events_page/${event.uid}');
+              },
+              child: const Text('Leave Event'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -279,6 +330,12 @@ class _ContributeEventPageState extends State<ConfirmEventPage> {
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
       // automaticallyImplyLeading: false,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
+          context.pushReplacement('/events_page/${widget.event.uid}');
+        },
+      ),
       toolbarHeight: 70,
       title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),

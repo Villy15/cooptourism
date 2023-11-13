@@ -76,6 +76,16 @@ class EventsRepository {
     }
   }
 
+  // Update an event to remove an id to the partcipants
+  Future<void> removeEventParticipants(String? eventId, String? userId) async {
+    try {
+      await eventsCollection.doc(eventId).update({'participants': FieldValue.arrayRemove([userId])});
+    } catch (e) {
+      debugPrint('Error updating event in Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
+  }
+
   // Delete an event
   Future<void> deleteEvent(String eventId) async {
     try {

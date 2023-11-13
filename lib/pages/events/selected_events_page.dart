@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cooptourism/data/models/events.dart';
@@ -55,6 +57,9 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
         }
 
         final event = snapshot.data!;
+        // bool isContributor = event.contributors!.contains(user?.uid);
+        bool isParticipant = event.participants!.contains(user?.uid);
+
 
         return SingleChildScrollView(
           child: Column(
@@ -107,7 +112,11 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
               // Create a button that spans the entire width and has a height of 50
               if (role == 'Customer') customerFunctions(event),
 
-              if (role == 'Member') memberFunctions(event),
+              if (role == 'Member') ... [
+
+                isParticipant ? const SizedBox(height: 0) : memberFunctions(event),
+                customerFunctions(event)
+              ],
 
               const SizedBox(height: 10),
             ],
@@ -198,36 +207,53 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
     //         );
   }
 
-  Padding customerFunctions(EventsModel event) {
+  Widget customerFunctions(EventsModel event) {
     final user = ref.watch(userModelProvider);
 
     bool isUserParticipant = event.participants!.contains(user?.uid);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: SizedBox(
-        width: double.infinity,
-        height: 50,
-        child: ElevatedButton(
-          onPressed: () {
-            // Push to the contribute event page use native
-            isUserParticipant ? Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ConfirmEventPage(event: event)),
-            ) : Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => JoinEventPage(event: event)));
-          },
-          child: Text(
-              isUserParticipant
-                  ? ">     Check Event Details     < "
-                  : ">     Join Event     < ",
-              style:
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+    return Column(
+      children: [
+       isUserParticipant
+            ? const SizedBox(height: 0)
+            : const Column(
+                children: [
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 16.0, horizontal: 16),
+                    child: Text(
+                        "Do you wish to join the event only instead of contributing?"),
+                  )
+                ],
+              ),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: () {
+                // Push to the contribute event page use native
+                isUserParticipant ? Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ConfirmEventPage(event: event)),
+                ) : Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => JoinEventPage(event: event)));
+              },
+              child: Text(
+                  isUserParticipant
+                      ? ">     Check Event Details     < "
+                      : ">     Join Event     < ",
+                  style:
+                      const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 
