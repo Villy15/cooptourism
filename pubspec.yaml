@@ -42,6 +42,16 @@ dependencies:
   fl_chart: ^0.64.0
   flutter:
     sdk: flutter
+
+  file_picker:
+  image_picker:
+  path: ^1.8.3
+
+  email_otp: ^2.1.1
+
+  cached_network_image:
+  flutter_image_compress:
+  shimmer: ^3.0.0
   flutter_dropdown: ^1.0.1+hotfix.1
   flutter_image_compress: null
   flutter_rating_bar: ^4.0.1

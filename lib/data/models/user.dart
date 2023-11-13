@@ -25,6 +25,7 @@ class UserModel {
   String? totalSales;
   Timestamp? joinedAt;
   List<String>? cooperativesJoined;
+  String? emailStatus;
   
 
   UserModel({
@@ -50,6 +51,7 @@ class UserModel {
     this.totalSales,
     this.joinedAt,
     this.cooperativesJoined,
+    this.emailStatus
   });
 
   factory UserModel.fromJson(String docId, Map<String, dynamic> json) {
@@ -76,6 +78,7 @@ class UserModel {
       totalSales: json['totalSales'] ?? '',
       joinedAt: json['joined_at'] != null ? json['joined_at'] as Timestamp : null,
       cooperativesJoined: json['cooperativesJoined'] != null ? List<String>.from(json['cooperativesJoined']) : [],
+      emailStatus: json['emailStatus'] ?? ''
     );
   }
 
@@ -102,6 +105,7 @@ class UserModel {
       'totalSales': totalSales ?? '',
       'joinedAt': joinedAt,
       'cooperativesJoined': cooperativesJoined ?? [],
+      'emailStatus': emailStatus ?? ''
     };
   }
 
@@ -131,10 +135,11 @@ class UserModel {
     annualProfit = user.annualProfit;
     totalSales = user.totalSales;
     joinedAt = user.joinedAt;
+    cooperativesJoined = user.cooperativesJoined;
   }
 
   @override
   String toString() {
-    return 'UserModel(uid: $uid, email: $email, firstName: $firstName, lastName: $lastName, status: $status, userAccomplishment: $userAccomplishment, userRating: $userRating, userTrust: $userTrust, role: $role, profilePicture: $profilePicture, bio: $bio, location: $location, skills: $skills, featuredImgs: $featuredImgs, dateJoined: $dateJoined, memberType: $memberType, currentListings: $currentListings, monthlySales: $monthlySales, annualProfit: $annualProfit, totalSales: $totalSales, joinedAt: $joinedAt, cooperativesJoined: $cooperativesJoined)';
+    return 'UserModel(uid: $uid, email: $email, firstName: $firstName, lastName: $lastName, status: $status, userAccomplishment: $userAccomplishment, userRating: $userRating, userTrust: $userTrust, role: $role, profilePicture: $profilePicture, bio: $bio, location: $location, skills: $skills, featuredImgs: $featuredImgs, dateJoined: $dateJoined, memberType: $memberType, currentListings: $currentListings, monthlySales: $monthlySales, annualProfit: $annualProfit, totalSales: $totalSales, joinedAt: $joinedAt, cooperativesJoined: $cooperativesJoined, emailStatus: $emailStatus)';
   }
 }
