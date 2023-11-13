@@ -140,7 +140,6 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(uid: $uid, email: $email, firstName: $firstName, lastName: $lastName, status: $status, userAccomplishment: $userAccomplishment, userRating: $userRating, userTrust: $userTrust, role: $role, profilePicture: $profilePicture, bio: $bio, location: $location, skills: $skills, featuredImgs: $featuredImgs, dateJoined: $dateJoined, memberType: $memberType, currentListings: $currentListings, monthlySales: $monthlySales, annualProfit: $annualProfit, totalSales: $totalSales, joinedAt: $joinedAt, cooperativesJoined: $cooperativesJoined)';
     return 'UserModel(uid: $uid, email: $email, firstName: $firstName, lastName: $lastName, status: $status, userAccomplishment: $userAccomplishment, userRating: $userRating, userTrust: $userTrust, role: $role, profilePicture: $profilePicture, bio: $bio, location: $location, skills: $skills, featuredImgs: $featuredImgs, dateJoined: $dateJoined, memberType: $memberType, currentListings: $currentListings, monthlySales: $monthlySales, annualProfit: $annualProfit, totalSales: $totalSales, joinedAt: $joinedAt, cooperativesJoined: $cooperativesJoined, emailStatus: $emailStatus)';
   }
 }
