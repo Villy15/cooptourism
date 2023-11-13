@@ -48,8 +48,6 @@ dependencies:
 
   email_otp: ^2.1.1
 
-  cached_network_image:
-  flutter_image_compress:
   shimmer: ^3.0.0
   flutter_dropdown: ^1.0.1+hotfix.1
   flutter_image_compress: null
@@ -60,12 +58,9 @@ dependencies:
   google_maps_flutter: null
   google_nav_bar: ^5.0.6
   http: ^1.1.0
-  image_picker: null
   intl: ^0.18.1
-  path: ^1.8.3
   percent_indicator: ^4.2.3
   qr_flutter: ^4.1.0
-  shimmer: ^3.0.0
   source_gen: null
   syncfusion_flutter_charts: ^23.1.44
   syncfusion_flutter_datepicker: ^23.1.44
