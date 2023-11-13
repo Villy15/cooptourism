@@ -76,7 +76,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final userRepository = UserRepository();
   final coachingRepository = CoachingRepository();
 
-  late UserModel specificUser;
 
   @override
   void initState() {
@@ -84,6 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
     // postRepository.addDummyPost();
     userUID = widget.profileId.replaceAll(RegExp(r'}+$'), '');
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -1972,26 +1972,40 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   AppBar _appBar(BuildContext context, String title) {
-    return AppBar(
-      toolbarHeight: 70,
-      title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
-      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
-            child: IconButton(
-              onPressed: () {
-                GoRouter.of(context).go('/profile_page/$userUID/edit_profile');
-              },
-              icon: const Icon(Icons.edit, color: Colors.white),
-            ),
-          ),
+  return AppBar(
+    toolbarHeight: 70,
+    title: Text(title,
+        style: TextStyle(
+            fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+    iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
+    actions: [
+      Padding(
+        padding: const EdgeInsets.only(right: 16.0),
+        child: StreamBuilder<UserModel>(
+          stream: userRepository.getUser(userUID).asStream(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              UserModel user = snapshot.data!;
+              return CircleAvatar(
+                backgroundColor: Colors.grey.shade300,
+                child: IconButton(
+                  onPressed: () {
+                    if (user.emailStatus == 'Not Verified') {
+                      GoRouter.of(context).go('/profile_page/$userUID/email_verification');
+                    } else if (user.emailStatus == 'Verified') {
+                      GoRouter.of(context).go('/profile_page/$userUID/edit_profile');
+                    }
+                  },
+                  icon: const Icon(Icons.edit, color: Colors.white),
+                ),
+              );
+            } else {
+              return const CircularProgressIndicator();
+            }
+          },
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 }

@@ -16,6 +16,7 @@ import 'package:cooptourism/pages/market/listing_messages_inbox.dart';
 import 'package:cooptourism/pages/member/dashboard.dart';
 import 'package:cooptourism/pages/profile/edit_profile.dart';
 import 'package:cooptourism/pages/member/member_landing.dart';
+import 'package:cooptourism/pages/profile/email_verification.dart';
 import 'package:cooptourism/pages/profile/poll_profile_page.dart';
 // import 'package:cooptourism/pages/profile/poll_profile_page.dart';
 import 'package:cooptourism/pages/tasks/selected_task_page.dart';
@@ -217,6 +218,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     builder:(context, state) {
                       final profileId = state.pathParameters["profileId"]!;
                       return EditProfilePage(key: state.pageKey, profileId: profileId);
+                    },
+                  ),
+                  GoRoute(
+                    path: 'email_verification',
+                    builder: (context, state) {
+                      final profileId = state.pathParameters["profileId"]!;
+                      return EmailVerificationPage(key: state.pageKey, profileId: profileId);
                     },
                   ),
                   GoRoute(

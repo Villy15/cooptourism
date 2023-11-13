@@ -3,11 +3,12 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
-import 'package:email_auth/email_auth.dart';
+import 'package:email_otp/email_otp.dart';
 
 class EditProfilePage extends ConsumerStatefulWidget {
   final String profileId;
@@ -29,39 +30,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   final userRepository = UserRepository();
   File? _image;
   final picker = ImagePicker();
-  EmailAuth emailAuth = EmailAuth(sessionName: "Email Verification");
+  EmailOTP emailAuth = EmailOTP();
 
-  @override
-  void initState() {
-    super.initState();
-    
-  }
-
-
-  void sendOTP() async {
-    var res = await emailAuth.sendOtp(
-      recipientMail: _emailController.value.text,
-      otpLength: 6,
-    );
-
-    if (res) {
-      debugPrint('OTP sent');
-    }
-    else {
-      debugPrint('OTP not sent');
-    }
-  }
-
-  void verifyOTP() async {
-    var res = emailAuth.validateOtp(recipientMail: _emailController.value.text, userOtp: _otpController.value.text);
-
-    if (res) {
-      debugPrint('OTP verified');
-    }
-    else {
-      debugPrint('OTP not verified');
-    }
-  }
 
   Future getImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -90,81 +60,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   final user = snapshot.data;
                   debugPrint('user is $user');
                   if (user?.firstName == 'Customer' && user?.role == 'Customer') {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 15),
-                          Center(
-                            child: Container(
-                              width: 120,
-                              height: 120,
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Icon(
-                                Icons.mark_email_read,
-                                size: 70,
-                                color: Theme.of(context).colorScheme.secondary
-                              )
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Center(
-                            child: Text(
-                              'Email Verification',
-                              style: TextStyle(
-                                fontSize: 22,
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            'We need to verify your email address to continue. We will send you an email with a link to verify your email address.',
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            'This is to ensure that you will be of service to the cooperative/s you will be enrolling to. We respect your privacy and will not share your email address with anyone.',
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                          const SizedBox(height: 45),
-                          Text(
-                            'Enter your email address: ',
-                            style: TextStyle(
-                              fontSize: 19,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.9,
-                            child: TextFormField(
-                              controller: _emailController,
-                              decoration: InputDecoration(
-                                border: const OutlineInputBorder(),
-                                hintText: 'Email Address...',
-                                suffixIcon: TextButton(
-                                  onPressed: sendOTP,
-                                  child: const Text('Send OTP'),
-                                )
-                              ),
-                              maxLines: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
+                    debugPrint(user?.emailStatus);
+                    return customerSignUp(context, user!);
                   }
                   else {
                     return const Column();
@@ -180,7 +77,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     );
   }
 
-  Padding customerSignUp(BuildContext context) {
+  Padding customerSignUp(BuildContext context, UserModel user) {
     return Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
@@ -247,7 +144,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                         const SizedBox(height: 20),
                         Center(
                           child: Text(
-                            'Email Verification',
+                            'Enter Personal Information',
                             style: TextStyle(
                               fontSize: 22,
                               color: Theme.of(context).colorScheme.primary,
@@ -256,13 +153,17 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                           ),
                         ),
                         const SizedBox(height: 15),
-                        Text(
-                          'Enter your email address: ',
-                          style: TextStyle(
-                            fontSize: 19,
-                            color: Theme.of(context).colorScheme.primary,
+                        Center(
+                          child: Text(
+                            'We wish to know you better. Please enter your personal information below. This is for the sole purpose of the cooperative/s you will be enrolling to. We respect your privacy and will not share your personal information with anyone.',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                           ),
                         ),
+
+                        const SizedBox(height: 15),
 
                         Text(
                           'Enter your first name:',
@@ -337,18 +238,51 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                         Center(
                           child: ElevatedButton(
                             onPressed: () async {
-                              final UserModel newUser = UserModel(
+                              if (_lastNameController != null) {
+                                final UserModel newUser = UserModel(
                                 firstName: _firstNameController.text,
                                 lastName: _lastNameController.text,
                                 bio: _profileBioController.text,
                                 location: _locationController.text,
-                              );
+                                email: user.email,
+                                emailStatus: user.emailStatus,
+                                role: user.role,
+                                profilePicture: path.basename(_image!.path),
+                                                              );
                               await userRepository.updateUser(widget.profileId, newUser);
+
+                              firebase_storage.Reference reference = firebase_storage.FirebaseStorage.instance
+                              .ref('${widget.profileId}}/images/${path.basename(_image!.path)}');
+
+                              firebase_storage.UploadTask uploadTask = reference.putFile(_image!);
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Personal information updated successfully!'),
+                                ),
+                                
+                              );
+
                               Navigator.pop(context);
+                              }
+                              else {
+                                debugPrint('All fields are not filled');
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('All fields are not filled!'),
+                                  ),
+                                );
+                              }
+                              
+
+                              
                             },
                             child: const Text('Save'),
                           ),
                         ),
+
+                        const SizedBox(height: 90)
                       ],
                     ),
                   );
