@@ -1,24 +1,24 @@
 import 'package:cooptourism/core/theme/dark_theme.dart';
+import 'package:cooptourism/providers/user_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:cooptourism/data/models/manager_dashboard.dart/sales.dart';
 import 'package:cooptourism/data/repositories/manager_dashboard/sales_repository.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 final SalesRepository salesRepository = SalesRepository();
 
-class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
+class MemberChartsPage extends ConsumerStatefulWidget {
+  const MemberChartsPage({super.key});
 
   @override
-  State<DashboardPage> createState() => _DashboardPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _AddVotePageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
-  final List<String> _tabTitles = ['Business', 'Cooperative'];
-  int _selectedIndex = 0;
-
+class _AddVotePageState extends ConsumerState<MemberChartsPage> {
   final List<String> _filterTypes = ['Day', 'Week', 'Month', 'Year'];
   String _selectedFilterType = 'Month';
   DateTime _selectedDate = DateTime.now();
@@ -26,45 +26,35 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
+    // salesRepository.deleteAllSales();
     // salesRepository.addSaleManually();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(context, "Dashboard"),
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: ListView(
-          scrollDirection: Axis.vertical,
-          children: [
-            // Lists Filter
-            SizedBox(
-              height: 40,
-              child: listViewFilter(),
-            ),
-
-            dashBoardFunctions(context),
-
-            if (_selectedIndex == 0) ...[
-              // Business
+      appBar: _appBar(context, 'Dashboard'),
+      body: SingleChildScrollView (
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              dashBoardFunctions(context),
               businessDashboard(),
-            ] else if (_selectedIndex == 1) ...[
-              // Cooperative
-              const Text('Cooperative Dashboard'),
-            ],
+              const SizedBox(height: 60),
 
-            const SizedBox(height: 20),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
   StreamBuilder<List<SalesData>> businessDashboard() {
+    final user = ref.watch(userModelProvider);
+
     return StreamBuilder(
-      stream: salesRepository.getAllSales(),
+      stream: salesRepository.getAllSalesByOwnerId(user!.uid!),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const Center(
@@ -79,9 +69,10 @@ class _DashboardPageState extends State<DashboardPage> {
         }
 
         final List<SalesData> sales = snapshot.data as List<SalesData>;
-      
+
+        // Filter sales by date descending
         sales.sort((a, b) => b.date.compareTo(a.date));
-        
+
         // Filtered sales
         final filteredSales = sales
             .where((element) => filterDataBasedOnSelection(element))
@@ -240,10 +231,10 @@ class _DashboardPageState extends State<DashboardPage> {
     // Group the filtered data by category.
     final chartDataByCategory = filteredSales
         .fold<Map<String, List<SalesData>>>({}, (previousValue, element) {
-      if (previousValue.containsKey(element.category)) {
-        previousValue[element.category]!.add(element);
+      if (previousValue.containsKey(element.listingName)) {
+        previousValue[element.listingName]!.add(element);
       } else {
-        previousValue[element.category] = [element];
+        previousValue[element.listingName!] = [element];
       }
       return previousValue;
     });
@@ -251,12 +242,13 @@ class _DashboardPageState extends State<DashboardPage> {
     // Create a line series for each category.
     List<LineSeries<SalesData, DateTime>> createSeries() {
       return chartDataByCategory.entries.map((entry) {
+        int index = chartDataByCategory.keys.toList().indexOf(entry.key);
         return LineSeries<SalesData, DateTime>(
           dataSource: entry.value,
           xValueMapper: (SalesData sales, _) => sales.date,
           yValueMapper: (SalesData sales, _) => sales.sales,
           name: entry.key, // Use the category name here.
-          color: getColorForCategory(entry.key),
+          color: getColorForCategory(index),
           markerSettings: const MarkerSettings(isVisible: true),
         );
       }).toList();
@@ -270,7 +262,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
     return SfCartesianChart(
       title: ChartTitle(
-          text: 'Sales Trend by Service Category',
+          text: 'Sales Trend by Service Name',
           textStyle: const TextStyle(
               color: primaryColor, fontSize: 16, fontWeight: FontWeight.bold)),
       plotAreaBorderColor: Colors.transparent,
@@ -304,11 +296,11 @@ class _DashboardPageState extends State<DashboardPage> {
     // Aggregate the filtered data by category.
     final aggregatedChartData =
         filteredSales.fold<Map<String, num>>({}, (previousValue, element) {
-      if (previousValue.containsKey(element.category)) {
-        previousValue[element.category] =
-            previousValue[element.category]! + element.sales;
+      if (previousValue.containsKey(element.listingName)) {
+        previousValue[element.listingName!] =
+            previousValue[element.listingName]! + element.sales;
       } else {
-        previousValue[element.category] = element.sales;
+        previousValue[element.listingName!] = element.sales;
       }
       return previousValue;
     });
@@ -320,10 +312,11 @@ class _DashboardPageState extends State<DashboardPage> {
             return SalesData(
               date: DateTime.now(),
               sales: entry.value,
-              category: entry.key,
+              category: '',
+              listingName: entry.key,
             );
           }).toList(),
-          xValueMapper: (SalesData data, _) => data.category,
+          xValueMapper: (SalesData data, _) => data.listingName,
           yValueMapper: (SalesData data, _) => data.sales,
           dataLabelMapper: (SalesData data, _) =>
               '₱${data.sales.toStringAsFixed(2)}',
@@ -336,7 +329,7 @@ class _DashboardPageState extends State<DashboardPage> {
             labelIntersectAction: LabelIntersectAction.shift,
           ),
           pointColorMapper: (SalesData data, _) =>
-              getColorForCategory(data.category),
+            getColorForCategory(aggregatedChartData.keys.toList().indexOf(data.listingName!)),
           // Position the legends to the bottom
         )
       ];
@@ -344,7 +337,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
     return SfCircularChart(
       title: ChartTitle(
-          text: 'Sales Participation by Service Category',
+          text: 'Sales Participation by Service Name',
           textStyle: const TextStyle(
               color: primaryColor, fontSize: 16, fontWeight: FontWeight.bold)),
       legend: const Legend(
@@ -377,18 +370,24 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
+  List<Color> colors = [
+    Colors.blue.shade200,
+    Colors.red.shade200,
+    Colors.green.shade200,
+    Colors.yellow.shade200,
+    Colors.purple.shade200,
+    Colors.orange.shade200,
+    Colors.pink.shade200,
+    Colors.brown.shade200,
+    Colors.cyan.shade200,
+    Colors.lime.shade200,
+  ];
+
 // Helper function to get color for category.
-  Color getColorForCategory(String category) {
-    // Define your color mapping here
-    Map<String, Color> colorMap = {
-      'Accomodation': Colors.blue.shade200,
-      'Transportation': Colors.red.shade200,
-      'Food Service': Colors.green.shade200,
-      'Entertainment': Colors.yellow.shade200,
-      'Touring': Colors.purple.shade200,
-    };
-    return colorMap[category] ?? Colors.black; // Default color if not found.
+  Color getColorForCategory(int index) {
+    return colors[index % colors.length];
   }
+
 
   void _selectDate(BuildContext context) {
     DateTime tempDate = _selectedDate;
@@ -482,47 +481,9 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
-  ListView listViewFilter() {
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: _tabTitles.length,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: GestureDetector(
-            onTap: () => setState(() => _selectedIndex = index),
-            child: Container(
-              decoration: BoxDecoration(
-                color: _selectedIndex == index
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.secondary,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 28.0, vertical: 10.0),
-                child: Text(
-                  _tabTitles[index],
-                  style: TextStyle(
-                    color: _selectedIndex == index
-                        ? Theme.of(context).colorScheme.background
-                        : Theme.of(context).colorScheme.primary,
-                    fontWeight: _selectedIndex == index
-                        ? FontWeight.bold
-                        : FontWeight.w400,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  AppBar _appBar(BuildContext context, String title) {
+   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
+      iconTheme: const IconThemeData(color: primaryColor),
       toolbarHeight: 70,
       title: Text(title,
           style: TextStyle(

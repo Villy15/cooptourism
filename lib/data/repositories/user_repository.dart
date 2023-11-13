@@ -75,6 +75,14 @@ class UserRepository {
     }
   }
 
+  // Get user streamr
+  Stream<UserModel> getUserStream(String userId) {
+    return usersCollection.doc(userId).snapshots().map((snapshot) {
+      return UserModel.fromJson(snapshot.id, snapshot.data() as Map<String, dynamic>);
+    });
+  }
+  
+
   // get users by user role, return a UserModel with its uid
   Future<List<UserModel>> getAllUsersByRole(String role) async {
     try {

@@ -4,24 +4,24 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ListingModel {
-  String? id = "";
-  String? owner = "";
-  String? title = "";
-  String? description = "";
-  String? cooperativeOwned = "";
-  String? city = "";
-  String? province = "";
-  String? category = "";
-  num? rating = 0;
-  Map<String, dynamic>? amenities = {};
-  Map<String, List<dynamic>>? roles = {};
-  Map<String, List<dynamic>>? tasks = {};
-  num? price = 0;
-  String? type = "";
-  Timestamp? postDate = Timestamp.now();
-  List<dynamic>? images = [];
-  int? visits = 0;
-  String? ownerMember = "";
+  String? id;
+  String? owner;
+  String? title;
+  String? description;
+  String? cooperativeOwned;
+  String? city;
+  String? province;
+  String? category;
+  num? rating;
+  Map<String, dynamic>? amenities;
+  Map<String, List<dynamic>>? roles;
+  Map<String, List<dynamic>>? tasks;
+  num? price;
+  String? type;
+  Timestamp? postDate;
+  List<dynamic>? images;
+  int? visits;
+  String? ownerMember;
   ListingModel({
     this.id,
     this.owner,
@@ -41,9 +41,7 @@ class ListingModel {
     this.images,
     this.visits,
     this.ownerMember,
-    this.city,
   });
-  
 
   ListingModel copyWith({
     String? id,
@@ -64,7 +62,6 @@ class ListingModel {
     List<dynamic>? images,
     int? visits,
     String? ownerMember,
-    String? city,
   }) {
     return ListingModel(
       id: id ?? this.id,
@@ -85,7 +82,6 @@ class ListingModel {
       images: images ?? this.images,
       visits: visits ?? this.visits,
       ownerMember: ownerMember ?? this.ownerMember,
-      city: city ?? this.city,
     );
   }
 
@@ -109,13 +105,12 @@ class ListingModel {
       'images': images,
       'visits': visits,
       'ownerMember': ownerMember,
-      'city': city,
     };
   }
 
-  factory ListingModel.fromMap(String id, Map<String, dynamic> map) {
+  factory ListingModel.fromMap(Map<String, dynamic> map) {
     return ListingModel(
-      id: id,
+      id: map['id'] != null ? map['id'] as String : null,
       owner: map['owner'] != null ? map['owner'] as String : null,
       title: map['title'] != null ? map['title'] as String : null,
       description: map['description'] != null ? map['description'] as String : null,
@@ -133,17 +128,15 @@ class ListingModel {
       images: map['images'] != null ? List<dynamic>.from((map['images'] as List<dynamic>)) : null,
       visits: map['visits'] != null ? map['visits'] as int : null,
       ownerMember: map['ownerMember'] != null ? map['ownerMember'] as String : null,
-      city: map['city'] != null ? map['city'] as String : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory ListingModel.fromJson(String source) => ListingModel.fromMap("", json.decode(source) as Map<String, dynamic>);
+  factory ListingModel.fromJson(String source) => ListingModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
     return 'ListingModel(id: $id, owner: $owner, title: $title, description: $description, cooperativeOwned: $cooperativeOwned, city: $city, province: $province, category: $category, rating: $rating, amenities: $amenities, roles: $roles, tasks: $tasks, price: $price, type: $type, postDate: $postDate, images: $images, visits: $visits, ownerMember: $ownerMember)';
   }
-
 }

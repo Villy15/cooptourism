@@ -1,6 +1,7 @@
 import 'package:cooptourism/pages/coaching/coaching_messaging.dart';
 import 'package:cooptourism/pages/coaching/coaching_page.dart';
 import 'package:cooptourism/pages/customer/city_page.dart';
+import 'package:cooptourism/pages/customer/enroll_coop_page.dart';
 import 'package:cooptourism/pages/customer/home_page.dart';
 import 'package:cooptourism/pages/events/events_page.dart';
 import 'package:cooptourism/pages/events/selected_events_page.dart';
@@ -11,7 +12,11 @@ import 'package:cooptourism/pages/market/add_listing.dart';
 import 'package:cooptourism/pages/market/listing_edit.dart';
 import 'package:cooptourism/pages/market/listing_messages.dart';
 import 'package:cooptourism/pages/market/listing_messages_inbox.dart';
-import 'package:cooptourism/pages/member/member_dashboard_page.dart';
+
+import 'package:cooptourism/pages/member/dashboard.dart';
+import 'package:cooptourism/pages/profile/edit_profile.dart';
+import 'package:cooptourism/pages/member/member_landing.dart';
+import 'package:cooptourism/pages/profile/email_verification.dart';
 import 'package:cooptourism/pages/profile/poll_profile_page.dart';
 // import 'package:cooptourism/pages/profile/poll_profile_page.dart';
 import 'package:cooptourism/pages/tasks/selected_task_page.dart';
@@ -41,13 +46,48 @@ import 'package:go_router/go_router.dart';
 // import 'package:cooptourism/pages/inbox/chat.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
-final GlobalKey<NavigatorState> _shellNavigator =
-    GlobalKey(debugLabel: 'shell');
+final GlobalKey<NavigatorState> _shellNavigator = GlobalKey<NavigatorState>(debugLabel: 'shell');
+
+    
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
   final user = ref.watch(userModelProvider);
   String role = user?.role ?? 'Customer';
+
+  // Simplified redirect logic
+  String? determineRedirectPath(GoRouterState state) {
+    final isAuth = authState.valueOrNull != null;
+    final isSplash = state.location == SplashPage.routeLocation;
+    final isLoggingIn = state.location == '/login';
+
+    if (authState.isLoading || authState.hasError) {
+      // Loading or error state, no redirect
+      return null;
+    }
+
+    if (!isAuth) {
+      // Not authenticated
+      return isLoggingIn ? null : '/login';
+    }
+
+    // Authenticated
+    if (isSplash || isLoggingIn) {
+      switch (role) {
+        case 'Customer':
+          return '/customer_home_page';
+        case 'Member':
+          return '/member_dashboard_page';
+        case 'Manager':
+          return '/manager_home_page';
+        default:
+          return '/'; // Fallback for unexpected roles
+      }
+    }
+
+    // Already in correct route, no redirect needed
+    return null;
+  }
 
   return GoRouter(
     navigatorKey: _rootNavigator,
@@ -111,6 +151,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 name: "Menu",
                 pageBuilder: (context, state) {
                   return NoTransitionPage(child: MenuPage(key: state.pageKey));
+                }),
+            GoRoute(
+                path: "/member_charts",
+                name: "Member Charts",
+                pageBuilder: (context, state) {
+                  return NoTransitionPage(child: MemberChartsPage(key: state.pageKey));
                 }),
 
             // MEMBER ROUTES
@@ -194,6 +240,28 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                         profileId: state.pathParameters["profileId"]!,
                       );
                     }),
+
+                  GoRoute(
+                    path: 'enroll_cooperative',
+                    builder: (BuildContext context, state) {
+                      final profileId = state.pathParameters["profileId"]!;
+                      return EnrollCoopPage(key: state.pageKey, profileId: profileId);
+                    } // enable navigation to enroll_coop_page.dart
+                  ),
+                  GoRoute(
+                    path: 'edit_profile',
+                    builder:(context, state) {
+                      final profileId = state.pathParameters["profileId"]!;
+                      return EditProfilePage(key: state.pageKey, profileId: profileId);
+                    },
+                  ),
+                  GoRoute(
+                    path: 'email_verification',
+                    builder: (context, state) {
+                      final profileId = state.pathParameters["profileId"]!;
+                      return EmailVerificationPage(key: state.pageKey, profileId: profileId);
+                    },
+                  ),
                   GoRoute(
                     path: "coaching_page",
                     name: "Coaching",
@@ -339,37 +407,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           
     ],
     redirect: (context, state) {
-      // If our async state is loading, don't perform redirects, yet
       if (authState.isLoading || authState.hasError) return null;
-
-      // Here we guarantee that hasData == true, i.e. we have a readable value
-
-      // This has to do with how the FirebaseAuth SDK handles the "log-in" state
-      // Returning `null` means "we are not authorized"
-      final isAuth = authState.valueOrNull != null;
-
-      final isSplash = state.location == SplashPage.routeLocation;
-      if (isSplash) {
-        debugPrint(role);
-        if (role == 'Customer') {
-          return isAuth ? "/customer_home_page" : "/login";
-        }
-
-        if (role == 'Member') {
-          return isAuth ? "/member_dashboard_page" : "/login";
-        }
-
-        if (role == 'Manager') {
-          return isAuth ? "/manager_home_page" : "/login";
-        }
-
-        return isAuth ? "/customer_home_page" : "/login";
-      }
-
-      final isLoggingIn = state.location == '/login';
-      if (isLoggingIn) return isAuth ? '/customer_home_page' : null;
-
-      return isAuth ? null : SplashPage.routeLocation;
+      return determineRedirectPath(state);
     },
     errorBuilder: (context, state) => RouteErrorScreen(
       errorMsg: state.error.toString(),

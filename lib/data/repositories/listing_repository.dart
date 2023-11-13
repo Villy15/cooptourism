@@ -32,6 +32,17 @@ class ListingRepository {
     });
   }
 
+  // get listing by city using Future
+  Future<List<ListingModel>> getListingsByCity(String city) async {
+    final snapshot = await listingsCollection
+        .where('city', isEqualTo: city)
+        // .orderBy('postDate', descending: true)
+        .get();
+    return snapshot.docs.map((doc) {
+      return ListingModel.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+    }).toList();
+  }
+
   // Get listing by UID
   Stream<List<ListingModel>> getListingsByUID(String uid) {
     return listingsCollection
