@@ -33,14 +33,14 @@ class EventsRepository {
 
 // Add image to storage
   Future<String> addImageToStorage(String? uid, XFile imageFile) async {
-  final storageRef = FirebaseStorage.instance.ref();
-  String fileName = path.basename(imageFile.path);
-  String fullPath = '$uid/$fileName';
-  final uploadTask = storageRef.child(fullPath).putFile(File(imageFile.path));
-  final snapshot = await uploadTask.whenComplete(() => null);
-  final downloadUrl = await snapshot.ref.getDownloadURL();
-  return downloadUrl;
-}
+    final storageRef = FirebaseStorage.instance.ref();
+    String fileName = path.basename(imageFile.path);
+    String fullPath = '$uid/$fileName';
+    final uploadTask = storageRef.child(fullPath).putFile(File(imageFile.path));
+    final snapshot = await uploadTask.whenComplete(() => null);
+    final downloadUrl = await snapshot.ref.getDownloadURL();
+    return downloadUrl;
+  }
 
   
 

@@ -29,6 +29,8 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
   DateTime endDate = DateTime.now().add(const Duration(days: 1));
   XFile? image;
 
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
