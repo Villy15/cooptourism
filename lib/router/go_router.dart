@@ -42,8 +42,7 @@ import 'package:go_router/go_router.dart';
 // import 'package:cooptourism/pages/inbox/chat.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
-final GlobalKey<NavigatorState> _shellNavigator =
-    GlobalKey(debugLabel: 'shell');
+final GlobalKey<NavigatorState> _shellNavigator = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
     
 

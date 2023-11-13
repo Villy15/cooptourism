@@ -79,7 +79,9 @@ class _DashboardPageState extends State<DashboardPage> {
         }
 
         final List<SalesData> sales = snapshot.data as List<SalesData>;
-
+      
+        sales.sort((a, b) => b.date.compareTo(a.date));
+        
         // Filtered sales
         final filteredSales = sales
             .where((element) => filterDataBasedOnSelection(element))

@@ -39,11 +39,9 @@ class _MyAppState extends ConsumerState<MyApp> {
     debugPrint('Building MyApp');
     final router = ref.watch(goRouterProvider);
     final userAsyncValue = ref.watch(authProvider);
-    
+
     User? user = userAsyncValue.maybeWhen(
-      data: (userData) => userData,
-      orElse: () => null
-    );
+        data: (userData) => userData, orElse: () => null);
 
     _checkAndUpdateUserData(user);
 

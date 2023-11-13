@@ -4,6 +4,7 @@ import 'package:cooptourism/data/models/events.dart';
 import 'package:cooptourism/data/repositories/events_repository.dart';
 import 'package:cooptourism/data/repositories/task_repository.dart';
 import 'package:cooptourism/pages/events/contribute_event.dart';
+import 'package:cooptourism/pages/events/edit_event.dart';
 import 'package:cooptourism/pages/events/join_event.dart';
 import 'package:cooptourism/providers/user_provider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
@@ -42,6 +43,7 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
   }
 
   FutureBuilder<EventsModel> eventFutureBuilder() {
+    final user = ref.watch(userModelProvider);
     return FutureBuilder(
       future: eventsRepository.getSpecificEvent(widget.eventId),
       builder: (context, snapshot) {
@@ -64,7 +66,25 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
                 const SizedBox(height: 10),
               ],
                   
-              eventDurationBar(event),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  eventDurationBar(event),
+                  // Edit Text button
+                  user?.role == 'Manager' ? IconButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      Navigator.push(context, 
+                        MaterialPageRoute(builder: (context) => EditEventPage(event: event)),
+                      );
+                    },
+                    icon: const Padding(
+                      padding: EdgeInsets.only(top: 12.0),
+                      child: Icon(Icons.edit, color: Colors.grey),
+                    ),
+                  ) : const SizedBox(width: 10),
+                ],
+              ),
               eventTitle(event),
               eventsParticipant(event),
               eventDescription(event),
