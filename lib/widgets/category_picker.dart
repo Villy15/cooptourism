@@ -27,8 +27,9 @@ class _CategoryPickerState extends ConsumerState<CategoryPicker> {
         } else {
           // snapshot.data now contains your List<String> for types
           return buildDropdownButton(
-              snapshot.data!, ref.watch(marketCategoryProvider), (newValue) {
-            ref.read(marketCategoryProvider.notifier).setCategory(newValue!);
+              // snapshot.data!, ref.watch(marketCategoryProvider), (newValue) {
+              snapshot.data!, ref.watch(marketAddListingProvider)!.category, (newValue) {
+            ref.read(marketAddListingProvider.notifier).setAddListing(ref.watch(marketAddListingProvider)!.copyWith(category: newValue));
           });
         }
       },

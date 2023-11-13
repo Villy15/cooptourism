@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
@@ -23,6 +24,8 @@ class UserModel {
   String? annualProfit;
   String? totalSales;
   Timestamp? joinedAt;
+  List<String>? cooperativesJoined;
+  
 
   UserModel({
     this.uid,
@@ -46,6 +49,7 @@ class UserModel {
     this.annualProfit,
     this.totalSales,
     this.joinedAt,
+    this.cooperativesJoined,
   });
 
   factory UserModel.fromJson(String docId, Map<String, dynamic> json) {
@@ -71,6 +75,7 @@ class UserModel {
       annualProfit: json['annualProfit'] ?? '',
       totalSales: json['totalSales'] ?? '',
       joinedAt: json['joined_at'] != null ? json['joined_at'] as Timestamp : null,
+      cooperativesJoined: json['cooperativesJoined'] != null ? List<String>.from(json['cooperativesJoined']) : [],
     );
   }
 
@@ -96,6 +101,7 @@ class UserModel {
       'annualProfit': annualProfit ?? '',
       'totalSales': totalSales ?? '',
       'joinedAt': joinedAt,
+      'cooperativesJoined': cooperativesJoined ?? [],
     };
   }
 
@@ -127,9 +133,8 @@ class UserModel {
     joinedAt = user.joinedAt;
   }
 
-  // Generate toString
   @override
   String toString() {
-    return 'UserModel{uid: $uid, email: $email, firstName: $firstName, lastName: $lastName, status: $status, userAccomplishment: $userAccomplishment, userRating: $userRating, userTrust: $userTrust, role: $role, profilePicture: $profilePicture, location: $location, skills: $skills, featuredImgs: $featuredImgs, dateJoined: $dateJoined, bio: $bio, memberType: $memberType, currentListings: $currentListings, monthlySales: $monthlySales, annualProfit: $annualProfit, totalSales: $totalSales, joinedAt: $joinedAt}';
+    return 'UserModel(uid: $uid, email: $email, firstName: $firstName, lastName: $lastName, status: $status, userAccomplishment: $userAccomplishment, userRating: $userRating, userTrust: $userTrust, role: $role, profilePicture: $profilePicture, bio: $bio, location: $location, skills: $skills, featuredImgs: $featuredImgs, dateJoined: $dateJoined, memberType: $memberType, currentListings: $currentListings, monthlySales: $monthlySales, annualProfit: $annualProfit, totalSales: $totalSales, joinedAt: $joinedAt, cooperativesJoined: $cooperativesJoined)';
   }
 }

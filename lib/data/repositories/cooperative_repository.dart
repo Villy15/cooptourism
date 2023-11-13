@@ -21,12 +21,37 @@ class CooperativesRepository {
   }
 
   // Get members subcollection of a cooperative from Firestore as Future and get their UIDs
+  Future<List<String>> getCooperativeNames(List<String> coopIds) async {
+    List<String> cooperativeNames = [];
+    try {
+      for (var coopId in coopIds) {
+        final querySnapshot = await cooperativesCollection
+            .where(FieldPath.documentId, isEqualTo: coopId)
+            .get();
+
+        for (var doc in querySnapshot.docs) {
+          var data = doc.data()
+              as Map<String, dynamic>; // Cast to Map<String, dynamic>
+
+          // Check if 'data' contains the 'name' key
+          if (data.containsKey('name')) {
+            cooperativeNames
+                .add(data['name'].toString()); // Add the name to the list
+          }
+        }
+      }
+      return cooperativeNames;
+    } catch (e) {
+      debugPrint('Error getting cooperative names from Firestore: $e');
+      rethrow;
+    }
+  }
+
+  // Get members subcollection of a cooperative from Firestore as Future and get their UIDs
   Future<List<String>> getCooperativeMembers(String coopId) async {
     try {
-      final doc = await cooperativesCollection
-          .doc(coopId)
-          .collection('members')
-          .get();
+      final doc =
+          await cooperativesCollection.doc(coopId).collection('members').get();
       return doc.docs.map((doc) => doc.id).toList();
     } catch (e) {
       debugPrint('Error getting cooperative members from Firestore: $e');
@@ -34,7 +59,21 @@ class CooperativesRepository {
       rethrow;
     }
   }
-  
+
+  Future<List<String>> getCooperativeMembersNames(String coopId) async {
+    try {
+      final doc = await cooperativesCollection
+          .doc(coopId)
+          .collection('members')
+          .get()
+          .then((value) => value.docs.map((e) => e.data()));
+      return doc.map((doc) => doc.values.toString()).toList();
+    } catch (e) {
+      debugPrint('Error getting cooperative members from Firestore: $e');
+      // You might want to handle errors more gracefully here
+      rethrow;
+    }
+  }
 
   // Add cooperative
   Future<void> addCooperative(CooperativesModel cooperative) async {
