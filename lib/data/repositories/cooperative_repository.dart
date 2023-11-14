@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/cooperatives.dart';
 import 'package:flutter/material.dart';
@@ -9,23 +8,25 @@ class CooperativesRepository {
 
   // Get cooperative from Firestore
   Future<CooperativesModel> getCooperative(String coopId) async {
-  try {
-    final doc = await cooperativesCollection.doc(coopId).get();
-    if (doc.exists) {
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      List<dynamic> managersDynamic = data['managers'];
-      List<DocumentReference> managers = managersDynamic.map((item) => item as DocumentReference).toList();
-      data['managers'] = managers; // Replace the 'managers' field with the converted list
-      return CooperativesModel.fromJson(doc.id, data);
-    } else {
-      debugPrint('Document does not exist on the database');
-      throw Exception('Document does not exist on the database');
+    try {
+      final doc = await cooperativesCollection.doc(coopId).get();
+      if (doc.exists) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        List<dynamic> managersDynamic = data['managers'];
+        List<DocumentReference> managers =
+            managersDynamic.map((item) => item as DocumentReference).toList();
+        data['managers'] =
+            managers; // Replace the 'managers' field with the converted list
+        return CooperativesModel.fromJson(doc.id, data);
+      } else {
+        debugPrint('Document does not exist on the database');
+        throw Exception('Document does not exist on the database');
+      }
+    } catch (e) {
+      debugPrint('Error getting cooperative from Firestore: $e');
+      rethrow;
     }
-  } catch (e) {
-    debugPrint('Error getting cooperative from Firestore: $e');
-    rethrow;
   }
-}
 
   // Get members subcollection of a cooperative from Firestore as Future and get their UIDs
   Future<List<String>> getCooperativeNames(List<String> coopIds) async {
@@ -67,23 +68,34 @@ class CooperativesRepository {
     }
   }
 
-  Future<List<String>> getCooperativeMembersNames(String coopId) async {
-    try {
-      final doc = await cooperativesCollection
-          .doc(coopId)
-          .collection('members')
-          .get()
-          .then((value) => value.docs.map((e) => e.data()));
-      return doc.map((doc) => doc.values.toString()).toList();
-    } catch (e) {
-      debugPrint('Error getting cooperative members from Firestore: $e');
-      // You might want to handle errors more gracefully here
-      rethrow;
+Future<Map<String, dynamic>> getCooperativeMembersNames(String coopId) async {
+  try {
+    final querySnapshot = await cooperativesCollection
+        .doc(coopId)
+        .collection('members')
+        .get();
+
+    Map<String, dynamic> memberNames = {};
+
+    for (var doc in querySnapshot.docs) {
+      var data = doc.data();
+      String fullName = "${data['last_name']} ${data['first_name']}";
+      memberNames[doc.id] = fullName;
     }
+
+    return memberNames;
+  } catch (e) {
+    debugPrint('Error getting cooperative members from Firestore: $e');
+    rethrow;
   }
+}
+
+
+
 
   // Add cooperative
-  Future<DocumentReference> addCooperative(CooperativesModel cooperative) async {
+  Future<DocumentReference> addCooperative(
+      CooperativesModel cooperative) async {
     try {
       return await cooperativesCollection.add(cooperative.toJson());
     } catch (e) {
@@ -120,7 +132,8 @@ class CooperativesRepository {
   Stream<List<CooperativesModel>> getAllCooperatives() {
     return cooperativesCollection.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        return CooperativesModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
+        return CooperativesModel.fromJson(
+            doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }

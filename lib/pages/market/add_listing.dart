@@ -30,7 +30,10 @@ class _AddListingState extends ConsumerState<AddListing> {
   Map<String, dynamic> amenities = {};
   int roles = 0;
   Map<String, List<dynamic>> tasks = {};
-  Map<String, List<dynamic>> roleMemberPair = {};
+  Map<String, dynamic> roleMemberPair = {};
+  List<String> memberNames = [];
+  List<String> selectedMemberName = [];
+  List<TextEditingController> roleController = [];
   int activeStep = 0;
   int upperBound = 5;
   // String _province = "";
@@ -44,6 +47,12 @@ class _AddListingState extends ConsumerState<AddListing> {
     Future.delayed(Duration.zero, () {
       ref.read(appBarVisibilityProvider.notifier).state = true;
       ref.read(navBarVisibilityProvider.notifier).state = false;
+    });
+  }
+
+  void setMemberNames(List<String> names) {
+    setState(() {
+      memberNames = names;
     });
   }
 
@@ -276,13 +285,15 @@ class _AddListingState extends ConsumerState<AddListing> {
       case 3:
         final CooperativesRepository cooperativesRepository =
             CooperativesRepository();
-        Future<List<String>> getCooperativeMembers;
+        Future<Map<String, dynamic>> getCooperativeMembersNames;
         if (ref.watch(marketAddListingProvider)!.cooperativeOwned == null) {
-          getCooperativeMembers = cooperativesRepository.getCooperativeMembers(
-              ref.watch(userModelProvider)!.cooperativesJoined![0]);
+          getCooperativeMembersNames =
+              cooperativesRepository.getCooperativeMembersNames(
+                  ref.watch(userModelProvider)!.cooperativesJoined![0]);
         } else {
-          getCooperativeMembers = cooperativesRepository.getCooperativeMembers(
-              ref.watch(marketAddListingProvider)!.cooperativeOwned!);
+          getCooperativeMembersNames =
+              cooperativesRepository.getCooperativeMembersNames(
+                  ref.watch(marketAddListingProvider)!.cooperativeOwned!);
         }
 
         return Column(
@@ -292,39 +303,77 @@ class _AddListingState extends ConsumerState<AddListing> {
                 shrinkWrap: true,
                 itemCount: roles,
                 itemBuilder: (context, index) {
-                  final roleController = TextEditingController();
-                  // This function builds each widget
+                  roleController.add(TextEditingController());
                   return Container(
                     height: 75,
                     margin: const EdgeInsets.only(bottom: 5),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Expanded(
-                          child: ListingDropdown(
-                            title: "Assigned To",
-                            future: getCooperativeMembers,
-                            selectedValue: ref
-                                .watch(marketAddListingProvider)!
-                                .roles
-                                ?.keys
-                                .elementAt(roles - 1)
-                                .toString(),
-                            onValueChange: (newValue) {
-                              Map<String, List<dynamic>> rolePair = {
-                                newValue!: []
-                              };
-                              ref
-                                  .read(marketAddListingProvider.notifier)
-                                  .setAddListing(ref
-                                      .watch(marketAddListingProvider)!
-                                      .copyWith(roles: rolePair));
-                            },
-                          ),
+                        FutureBuilder(
+                          future: getCooperativeMembersNames,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const CircularProgressIndicator(); // show loader while waiting for data
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              return Expanded(
+                                child: Container(
+                                  // width: MediaQuery.sizeOf(context).width / 1.5,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                        15), // Create a circular shape
+                                    border: Border.all(
+                                        color: Colors.grey,
+                                        width: 1), // Add a border
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10.0),
+                                    child: DropdownButtonFormField<String>(
+                                      decoration: const InputDecoration(
+                                        labelText: "Assigned To",
+                                        border: InputBorder.none,
+                                      ),
+                                      menuMaxHeight: 300,
+                                      alignment: Alignment.center,
+                                      value: selectedMemberName[index],
+                                      onChanged: (newValue) {
+                                        selectedMemberName[index] = newValue!;
+                                        roleMemberPair.addEntries(
+                                          {selectedMemberName[index]: ""}.entries,
+                                        );
+                                      },
+                                      items: snapshot.data!.values
+                                          .map<DropdownMenuItem<String>>(
+                                              (dynamic value) {
+                                        return DropdownMenuItem<String>(
+                                          alignment: Alignment.centerLeft,
+                                          value: value,
+                                          child: DisplayText(
+                                            text: value,
+                                            lines: 2,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headlineSmall!,
+                                          ),
+                                        );
+                                      }).toList(),
+                                      iconSize: 30.0,
+                                      isExpanded: true,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                          },
                         ),
                         const SizedBox(width: 5),
                         Container(
-                          width: MediaQuery.sizeOf(context).width / 3,
+                          width: MediaQuery.sizeOf(context).width / 1.7,
                           padding: const EdgeInsets.only(left: 15),
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -333,19 +382,25 @@ class _AddListingState extends ConsumerState<AddListing> {
                           ),
                           child: Form(
                             child: TextFormField(
-                              controller: roleController,
-                              onEditingComplete: () {
-                                ref
-                                    .read(marketAddListingProvider.notifier)
-                                    .setAddListing(
-                                      ref
-                                          .watch(marketAddListingProvider)!
-                                          .copyWith(roles: roleMemberPair),
-                                    );
+                              controller: roleController[index],
+                              onChanged: (textValue) {
+                                roleMemberPair.update(selectedMemberName[index],
+                                    (value) => textValue);
+                                // setState(() {
+                                //   roleMemberPair.addEntries(rolePair.entries);
+                                // });
+                                // ref
+                                //     .read(marketAddListingProvider.notifier)
+                                //     .setAddListing(
+                                //       ref
+                                //           .watch(marketAddListingProvider)!
+                                //           .copyWith(roles: roleMemberPair),
+                                //     );
+                                debugPrint(roleMemberPair.toString());
                               },
                               maxLines: null,
                               decoration: const InputDecoration(
-                                label: Text("Role Name"),
+                                label: Text("Role"),
                                 border: InputBorder.none, // Removes underline
                               ),
                               validator: (value) {
@@ -365,9 +420,28 @@ class _AddListingState extends ConsumerState<AddListing> {
             const SizedBox(height: 10),
             InkWell(
               onTap: () {
-                    setState(() {
-                      roles = roles + 1;
-                    });
+                setState(() {
+                  roles = roles + 1;
+                  selectedMemberName.add(
+                    "${ref.watch(userModelProvider)!.lastName} ${ref.watch(userModelProvider)!.firstName}",
+                  );
+                  roleMemberPair
+                      .addEntries({selectedMemberName.last: ""}.entries);
+                  ref.read(marketAddListingProvider.notifier).setAddListing(
+                        ref
+                            .watch(marketAddListingProvider)!
+                            .copyWith(roles: {selectedMemberName.last: ""}),
+                      );
+                });
+                if (roles > 0) {
+                  ref.read(marketAddListingProvider.notifier).setAddListing(
+                        ref
+                            .watch(marketAddListingProvider)!
+                            .copyWith(roles: roleMemberPair),
+                      );
+                }
+                debugPrint(
+                    ref.watch(marketAddListingProvider)!.roles.toString());
               },
               child: Container(
                 height: MediaQuery.sizeOf(context).height / 10,
@@ -387,7 +461,7 @@ class _AddListingState extends ConsumerState<AddListing> {
                     ),
                     const SizedBox(width: 20),
                     DisplayText(
-                        text: "Add and Assign a role",
+                        text: "Add and Assign a Task",
                         lines: 1,
                         style: Theme.of(context).textTheme.bodyMedium!),
                   ],

@@ -8,7 +8,7 @@ import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/providers/market_page_provider.dart';
-import 'package:cooptourism/widgets/province_city_picker.dart';
+import 'package:cooptourism/widgets/listing_province_city_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -159,7 +159,7 @@ class _EnrollCoopPageState extends ConsumerState<EnrollCoopPage> {
                 ),
               ),
               const SizedBox(height: 10),
-              const ProvinceCityPicker(),
+              const ListingProvinceCityPicker(),
               const SizedBox(height: 20),
               // add submit button
               Center(

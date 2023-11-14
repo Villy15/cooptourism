@@ -14,7 +14,7 @@ class ListingModel {
   String? category = "";
   num? rating = 0;
   Map<String, dynamic>? amenities = {};
-  Map<String, List<dynamic>>? roles = {};
+  Map<String, dynamic>? roles = {};
   Map<String, List<dynamic>>? tasks = {};
   num? price = 0;
   String? type = "";
@@ -55,7 +55,7 @@ class ListingModel {
     String? category,
     num? rating,
     Map<String, dynamic>? amenities,
-    Map<String, List<dynamic>>? roles,
+    Map<String, dynamic>? roles,
     Map<String, List<dynamic>>? tasks,
     num? price,
     String? type,
@@ -121,7 +121,7 @@ class ListingModel {
       category: map['category'] != null ? map['category'] as String : null,
       rating: map['rating'] != null ? map['rating'] as num : null,
       amenities: map['amenities'] != null ? Map<String, dynamic>.from((map['amenities'] as Map<String, dynamic>)) : null,
-      roles: map['roles'] != null ? Map<String, List<dynamic>>.from((map['roles'] as Map<String, List<dynamic>>)) : null,
+      roles: map['roles'] != null ? Map<String, dynamic>.from((map['roles'] as Map<String, dynamic>)) : null,
       tasks: map['tasks'] != null ? Map<String, List<dynamic>>.from((map['tasks'] as Map<String, List<dynamic>>)) : null,
       price: map['price'] != null ? map['price'] as num : null,
       type: map['type'] != null ? map['type'] as String : null,

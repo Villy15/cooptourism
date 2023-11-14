@@ -60,11 +60,11 @@ class _ListingDropdownState extends ConsumerState<ListingDropdown> {
           onChanged: widget.onValueChange,
           items: items.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
-              alignment: Alignment.center,
+              alignment: Alignment.centerLeft,
               value: value,
               child: DisplayText(
                 text: value,
-                lines: 1,
+                lines: 2,
                 style: Theme.of(context).textTheme.headlineSmall!,
               ),
             );
