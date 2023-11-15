@@ -92,7 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: _appBar(context, "Profile"),
+        appBar: _appBar(context, "Profiles"),
         backgroundColor: Theme.of(context).colorScheme.background,
         body: RefreshIndicator(
             onRefresh: () async {

@@ -488,20 +488,20 @@ class _AddVotePageState extends ConsumerState<MemberChartsPage> {
       title: Text(title,
           style: TextStyle(
               fontSize: 28, color: Theme.of(context).colorScheme.primary)),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
-            child: IconButton(
-              onPressed: () {
-                // showAddPostPage(context);
-              },
-              icon: const Icon(Icons.settings, color: Colors.white),
-            ),
-          ),
-        ),
-      ],
+      // actions: [
+      //   Padding(
+      //     padding: const EdgeInsets.only(right: 16.0),
+      //     child: CircleAvatar(
+      //       backgroundColor: Colors.grey.shade300,
+      //       child: IconButton(
+      //         onPressed: () {
+      //           // showAddPostPage(context);
+      //         },
+      //         icon: const Icon(Icons.settings, color: Colors.white),
+      //       ),
+      //     ),
+      //   ),
+      // ],
     );
   }
 }

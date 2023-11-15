@@ -1,8 +1,8 @@
-// ignore_for_file: use_build_context_synchronously, unused_local_variable
+// ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/widgets/display_image.dart';
@@ -570,7 +570,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                 ),
                                 
                               );
-                              
+
                               context.go('/profile_page/${user.uid}');
                               
                               }

@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 
 class EventsModel {
   String? uid;
@@ -10,6 +9,7 @@ class EventsModel {
   DateTime endDate;
   String description;
   String location;
+  List<String>? contributors;
   List<String>? participants;
   List<String>? tags;
   List<String>? image;
@@ -21,6 +21,7 @@ class EventsModel {
     required this.endDate,
     required this.description,
     required this.location,
+    this.contributors,
     this.participants,
     this.tags,
     this.image,
@@ -33,6 +34,7 @@ class EventsModel {
     DateTime? endDate,
     String? description,
     String? location,
+    List<String>? contributors,
     List<String>? participants,
     List<String>? tags,
     List<String>? image,
@@ -44,6 +46,7 @@ class EventsModel {
       endDate: endDate ?? this.endDate,
       description: description ?? this.description,
       location: location ?? this.location,
+      contributors: contributors ?? this.contributors,
       participants: participants ?? this.participants,
       tags: tags ?? this.tags,
       image: image ?? this.image,
@@ -58,6 +61,7 @@ class EventsModel {
       'endDate': endDate.millisecondsSinceEpoch,
       'description': description,
       'location': location,
+      'contributors': contributors,
       'participants': participants,
       'tags': tags,
       'image': image,
@@ -72,6 +76,7 @@ class EventsModel {
       endDate: DateTime.fromMillisecondsSinceEpoch(map['endDate'] as int),
       description: map['description'] as String,
       location: map['location'] as String,
+      contributors: map['contributors'] != null ? List<String>.from(map['contributors'] as List<dynamic>).cast<String>() : null,
       participants: map['participants'] != null ? List<String>.from(map['participants'] as List<dynamic>).cast<String>() : null,
       tags: map['tags'] != null ? List<String>.from(map['tags'] as List<dynamic>).cast<String>() : null,
       image: map['image'] != null ? List<String>.from(map['image'] as List<dynamic>).cast<String>() : null,
@@ -84,35 +89,6 @@ class EventsModel {
 
   @override
   String toString() {
-    return 'EventsModel(uid: $uid, title: $title, startDate: $startDate, endDate: $endDate, description: $description, location: $location, participants: $participants, tags: $tags, image: $image)';
-  }
-
-  @override
-  bool operator ==(covariant EventsModel other) {
-    if (identical(this, other)) return true;
-  
-    return 
-      other.uid == uid &&
-      other.title == title &&
-      other.startDate == startDate &&
-      other.endDate == endDate &&
-      other.description == description &&
-      other.location == location &&
-      listEquals(other.participants, participants) &&
-      listEquals(other.tags, tags) &&
-      listEquals(other.image, image);
-  }
-
-  @override
-  int get hashCode {
-    return uid.hashCode ^
-      title.hashCode ^
-      startDate.hashCode ^
-      endDate.hashCode ^
-      description.hashCode ^
-      location.hashCode ^
-      participants.hashCode ^
-      tags.hashCode ^
-      image.hashCode;
+    return 'EventsModel(uid: $uid, title: $title, startDate: $startDate, endDate: $endDate, description: $description, location: $location, contributors: $contributors,  participants: $participants, tags: $tags, image: $image)';
   }
 }

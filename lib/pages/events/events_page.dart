@@ -1,20 +1,23 @@
 import 'package:cooptourism/data/models/events.dart';
 import 'package:cooptourism/data/repositories/events_repository.dart';
+import 'package:cooptourism/pages/events/add_event.dart';
+import 'package:cooptourism/providers/user_provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 final EventsRepository eventsRepository = EventsRepository();
 
-class EventsPage extends StatefulWidget {
+class EventsPage extends ConsumerStatefulWidget {
   const EventsPage({super.key});
 
   @override
-  State<EventsPage> createState() => _EventsPageState();
+  ConsumerState<EventsPage> createState() => _EventsPageState();
 }
 
-class _EventsPageState extends State<EventsPage> {
+class _EventsPageState extends ConsumerState<EventsPage> {
   final List<String> _tabTitles = ['All', 'Workshop', 'Sports', 'Music'];
   int _selectedIndex = 0;
 
@@ -27,6 +30,7 @@ class _EventsPageState extends State<EventsPage> {
 
   @override
   Widget build(BuildContext context) {
+   
     return Scaffold(
       appBar: _appBar(context, "Events"),
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -143,12 +147,16 @@ class _EventsPageState extends State<EventsPage> {
         child: FutureBuilder(
           future: storageRef.child(imagePath).getDownloadURL(),
           builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            }
-
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              // Rebuild the widget in case of any error
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                setState(() {});
+              });
+              return Container();
             }
 
             final imageUrl = snapshot.data!;
@@ -227,23 +235,27 @@ class _EventsPageState extends State<EventsPage> {
   }
 
    AppBar _appBar(BuildContext context, String title) {
+    final user = ref.watch(userModelProvider);
+
     return AppBar(
       toolbarHeight: 70,
       title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       actions: [
-        Padding(
+        user?.role == "Manager" ? Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: CircleAvatar(
               backgroundColor: Colors.grey.shade300,
               child: IconButton(
                 onPressed: () {
-                  // showAddPostPage(context);
+                  Navigator.push(context, 
+                    MaterialPageRoute(builder: (context) => const AddEventPage())
+                  );
                 },
                 icon: const Icon(Icons.add, color: Colors.white),
               ),
             ),
-        ),
+        ) : Container(),
       ],
     );
   }

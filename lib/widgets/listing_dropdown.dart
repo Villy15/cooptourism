@@ -1,24 +1,29 @@
-import 'package:cooptourism/data/repositories/app_config_repository.dart';
-import 'package:cooptourism/providers/market_page_provider.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CategoryPicker extends ConsumerStatefulWidget {
-  const CategoryPicker({super.key});
+class ListingDropdown extends ConsumerStatefulWidget {
+  final String title;
+  final dynamic future;
+  final String? selectedValue;
+  final ValueChanged<String?> onValueChange;
+  const ListingDropdown({
+    super.key,
+    required this.title,
+    required this.future,
+    required this.selectedValue,
+    required this.onValueChange,
+  });
 
   @override
-  ConsumerState<CategoryPicker> createState() => _CategoryPickerState();
+  ConsumerState<ListingDropdown> createState() => _ListingDropdownState();
 }
 
-class _CategoryPickerState extends ConsumerState<CategoryPicker> {
+class _ListingDropdownState extends ConsumerState<ListingDropdown> {
   @override
   Widget build(BuildContext context) {
-    final AppConfigRepository appConfigRepository = AppConfigRepository();
-    final Future<List<String>> categories =
-        appConfigRepository.getTourismCategories();
     return FutureBuilder<List<String>>(
-      future: categories, // your Future<List<String>> for types
+      future: widget.future, // your Future<List<String>> for types
       builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator(); // show loader while waiting for data
@@ -27,16 +32,15 @@ class _CategoryPickerState extends ConsumerState<CategoryPicker> {
         } else {
           // snapshot.data now contains your List<String> for types
           return buildDropdownButton(
-              snapshot.data!, ref.watch(marketCategoryProvider), (newValue) {
-            ref.read(marketCategoryProvider.notifier).setCategory(newValue!);
-          });
+            // snapshot.data!, ref.watch(marketCategoryProvider), (newValue) {
+            snapshot.data!,
+          );
         }
       },
     );
   }
 
-  Widget buildDropdownButton(List<String> items, String? selectedValue,
-      ValueChanged<String?> onChanged) {
+  Widget buildDropdownButton(List<String> items) {
     return Container(
       // width: MediaQuery.sizeOf(context).width / 1.5,
       decoration: BoxDecoration(
@@ -46,21 +50,21 @@ class _CategoryPickerState extends ConsumerState<CategoryPicker> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: DropdownButtonFormField<String>(
-          decoration: const InputDecoration(
-            labelText: "Category",
+          decoration: InputDecoration(
+            labelText: widget.title,
             border: InputBorder.none,
           ),
           menuMaxHeight: 300,
           alignment: Alignment.center,
-          value: selectedValue,
-          onChanged: onChanged,
+          value: widget.selectedValue,
+          onChanged: widget.onValueChange,
           items: items.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
-              alignment: Alignment.center,
+              alignment: Alignment.centerLeft,
               value: value,
               child: DisplayText(
                 text: value,
-                lines: 1,
+                lines: 2,
                 style: Theme.of(context).textTheme.headlineSmall!,
               ),
             );

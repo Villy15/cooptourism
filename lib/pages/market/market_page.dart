@@ -1,12 +1,12 @@
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
-import 'package:cooptourism/providers/home_page_provider.dart';
+import 'package:cooptourism/providers/market_page_provider.dart';
 import 'package:cooptourism/widgets/budget_slider.dart';
-import 'package:cooptourism/widgets/category_picket.dart';
+import 'package:cooptourism/widgets/category_picker.dart';
 import 'package:cooptourism/widgets/type_picker.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 import 'package:cooptourism/widgets/listing_card.dart';
-import 'package:cooptourism/widgets/province_city_picker.dart';
+import 'package:cooptourism/widgets/listing_province_city_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -79,7 +79,7 @@ class _MarketPageState extends ConsumerState<MarketPage> {
             style: Theme.of(context).textTheme.headlineLarge!,
           ),
           const SizedBox(height: 15),
-          const ProvinceCityPicker(),
+          const ListingProvinceCityPicker(),
           const SizedBox(height: 5),
           const CategoryPicker(),
           const SizedBox(height: 5),
@@ -230,6 +230,8 @@ class _MarketPageState extends ConsumerState<MarketPage> {
             backgroundColor: Colors.grey[800],
             child: IconButton(
               onPressed: () {
+                ref.invalidate(marketProvinceProvider);
+                ref.invalidate(marketCitiesProvider);
                 context.push('/market_page/add_listing');
               },
               icon: const Icon(

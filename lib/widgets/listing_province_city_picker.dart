@@ -5,16 +5,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class ProvinceCityPicker extends ConsumerStatefulWidget {
-  const ProvinceCityPicker({super.key});
+class ListingProvinceCityPicker extends ConsumerStatefulWidget {
+  const ListingProvinceCityPicker({super.key});
 
   @override
-  ConsumerState<ProvinceCityPicker> createState() => _ProvinceCityPickerState();
+  ConsumerState<ListingProvinceCityPicker> createState() =>
+      _ListingProvinceCityPickerState();
 }
 
-class _ProvinceCityPickerState extends ConsumerState<ProvinceCityPicker> {
-  String? selectedProvince;
-  String? selectedCity;
+class _ListingProvinceCityPickerState
+    extends ConsumerState<ListingProvinceCityPicker> {
   List<Map<String, dynamic>> provinces = [];
   List<String> cities = [];
 
@@ -41,9 +41,9 @@ class _ProvinceCityPickerState extends ConsumerState<ProvinceCityPicker> {
           initProvinces.sort(
               (a, b) => (a['name'] as String).compareTo(b['name'] as String));
 
-          setState(() {
-            provinces = initProvinces;
-          });
+          ref
+              .read(marketProvincesProvider.notifier)
+              .setProvinces(initProvinces);
         } else {
           // Handle the case when the API returns an empty list
           debugPrint('No provinces data found');
@@ -73,42 +73,34 @@ class _ProvinceCityPickerState extends ConsumerState<ProvinceCityPicker> {
           for (var e in data) {
             cityNames.add(e['name']);
           }
-
-          ref.read(marketCityProvider.notifier).setCity(cityNames[0]);
-          setState(() {
-            cities = cityNames;
-          });
+          ref.read(marketAddListingProvider.notifier).setAddListing(ref
+              .watch(marketAddListingProvider)!
+              .copyWith(city: cityNames[0]));
+          ref.read(marketCitiesProvider.notifier).setCities(cityNames);
         } else {
           // Handle the case when the API returns an empty list
           debugPrint('No cities data found for province $province');
-          setState(() {
-            cities.clear();
-
-            cities.add("");
-          });
-          ref.read(marketCityProvider.notifier).setCity("");
+          ref.read(marketCitiesProvider.notifier).setCities([""]);
+          ref.read(marketAddListingProvider.notifier).setAddListing(
+              ref.watch(marketAddListingProvider)!.copyWith(city: ""));
           // You may want to update your UI accordingly
         }
       } else {
         // Handle the case when the server returns a non-200 status code
         debugPrint(
             'Failed to load cities data for province $province: ${response.statusCode}');
-        setState(() {
-          cities.clear();
-          cities.add("");
-        });
-        ref.read(marketCityProvider.notifier).setCity("");
+        ref.read(marketCitiesProvider.notifier).setCities([""]);
+        ref.read(marketAddListingProvider.notifier).setAddListing(
+            ref.watch(marketAddListingProvider)!.copyWith(city: ""));
 
         // You may want to show an error message to the user
       }
     } catch (e) {
       // Handle any errors that occur during the fetch
       debugPrint('Error fetching cities data for province $province: $e');
-      setState(() {
-          cities.clear();
-          cities.add("");
-        });
-        ref.read(marketCityProvider.notifier).setCity("");
+      ref.read(marketCitiesProvider.notifier).setCities([""]);
+      ref.read(marketAddListingProvider.notifier).setAddListing(
+          ref.watch(marketAddListingProvider)!.copyWith(city: ""));
       // You may want to show an error message to the user
     }
   }
@@ -134,13 +126,24 @@ class _ProvinceCityPickerState extends ConsumerState<ProvinceCityPicker> {
               alignment: Alignment.center,
               value: ref.watch(marketProvinceProvider),
               onChanged: (newValue) {
+                List<Map<String, dynamic>> provinces =
+                    ref.watch(marketProvincesProvider);
                 ref
                     .read(marketProvinceProvider.notifier)
                     .setProvince(newValue!);
+                ref.read(marketAddListingProvider.notifier).setAddListing(
+                      ref.watch(marketAddListingProvider)!.copyWith(
+                            province: provinces[provinces.indexWhere(
+                                    (element) => element["code"] == newValue)]
+                                ["name"],
+                          ),
+                    );
                 fetchCities(newValue);
               },
-              items: provinces.map<DropdownMenuItem<String>>(
-                  (Map<String, dynamic> province) {
+              items: ref
+                  .watch(marketProvincesProvider)
+                  .map<DropdownMenuItem<String>>(
+                      (Map<String, dynamic> province) {
                 return DropdownMenuItem<String>(
                   alignment: Alignment.center,
                   value: province["code"],
@@ -171,11 +174,15 @@ class _ProvinceCityPickerState extends ConsumerState<ProvinceCityPicker> {
               ),
               menuMaxHeight: 300,
               alignment: Alignment.center,
-              value: ref.watch(marketCityProvider),
+              value: ref.watch(marketAddListingProvider)!.city,
               onChanged: (newValue) {
-                ref.read(marketCityProvider.notifier).setCity(newValue!);
+                ref.read(marketAddListingProvider.notifier).setAddListing(ref
+                    .watch(marketAddListingProvider)!
+                    .copyWith(city: newValue));
               },
-              items: cities.map<DropdownMenuItem<String>>((String value) {
+              items: ref
+                  .watch(marketCitiesProvider)
+                  .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   alignment: Alignment.center,
                   value: value,

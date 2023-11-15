@@ -4,39 +4,32 @@ import 'package:cooptourism/widgets/display_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TypePicker extends ConsumerStatefulWidget {
-  const TypePicker({
-    super.key,
-  });
+class CategoryPicker extends ConsumerStatefulWidget {
+  const CategoryPicker({super.key});
 
   @override
-  ConsumerState<TypePicker> createState() => _TypePickerState();
+  ConsumerState<CategoryPicker> createState() => _CategoryPickerState();
 }
 
-class _TypePickerState extends ConsumerState<TypePicker> {
-  String? selectedCategory;
-  String? selectedType;
-
+class _CategoryPickerState extends ConsumerState<CategoryPicker> {
   @override
   Widget build(BuildContext context) {
     final AppConfigRepository appConfigRepository = AppConfigRepository();
-    final Future<List<String>> types = appConfigRepository.getTourismTypes();
-
+    final Future<List<String>> categories =
+        appConfigRepository.getTourismCategories();
     return FutureBuilder<List<String>>(
-      future: types, // your Future<List<String>> for categories
+      future: categories, // your Future<List<String>> for types
       builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator(); // show loader while waiting for data
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          // snapshot.data now contains your List<String> for categories
+          // snapshot.data now contains your List<String> for types
           return buildDropdownButton(
-              // snapshot.data!, ref.watch(marketTypeProvider), (newValue) {
-              snapshot.data!, ref.watch(marketAddListingProvider)!.type, (newValue) {
-            ref
-                .read(marketAddListingProvider.notifier)
-                .setAddListing(ref.watch(marketAddListingProvider)!.copyWith(type: newValue));
+              // snapshot.data!, ref.watch(marketCategoryProvider), (newValue) {
+              snapshot.data!, ref.watch(marketAddListingProvider)!.category, (newValue) {
+            ref.read(marketAddListingProvider.notifier).setAddListing(ref.watch(marketAddListingProvider)!.copyWith(category: newValue));
           });
         }
       },
@@ -55,7 +48,7 @@ class _TypePickerState extends ConsumerState<TypePicker> {
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: DropdownButtonFormField<String>(
           decoration: const InputDecoration(
-            labelText: "Type",
+            labelText: "Category",
             border: InputBorder.none,
           ),
           menuMaxHeight: 300,
