@@ -241,13 +241,13 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
       children: [
        isUserParticipant
             ? const SizedBox(height: 0)
-            : const Column(
+            : Column(
                 children: [
                   Padding(
                     padding:
-                        EdgeInsets.symmetric(vertical: 16.0, horizontal: 16),
-                    child: Text(
-                        "Do you wish to join the event only instead of contributing?"),
+                        const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16),
+                    child: user?.role == 'Member' ? const Text(
+                        "Do you wish to join the event only instead of contributing?") : Container(),
                   )
                 ],
               ),
