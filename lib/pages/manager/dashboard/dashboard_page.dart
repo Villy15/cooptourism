@@ -79,7 +79,9 @@ class _DashboardPageState extends State<DashboardPage> {
         }
 
         final List<SalesData> sales = snapshot.data as List<SalesData>;
-
+      
+        sales.sort((a, b) => b.date.compareTo(a.date));
+        
         // Filtered sales
         final filteredSales = sales
             .where((element) => filterDataBasedOnSelection(element))
@@ -525,20 +527,20 @@ class _DashboardPageState extends State<DashboardPage> {
       title: Text(title,
           style: TextStyle(
               fontSize: 28, color: Theme.of(context).colorScheme.primary)),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
-            child: IconButton(
-              onPressed: () {
-                // showAddPostPage(context);
-              },
-              icon: const Icon(Icons.settings, color: Colors.white),
-            ),
-          ),
-        ),
-      ],
+      // actions: [
+      //   Padding(
+      //     padding: const EdgeInsets.only(right: 16.0),
+      //     child: CircleAvatar(
+      //       backgroundColor: Colors.grey.shade300,
+      //       child: IconButton(
+      //         onPressed: () {
+      //           // showAddPostPage(context);
+      //         },
+      //         icon: const Icon(Icons.settings, color: Colors.white),
+      //       ),
+      //     ),
+      //   ),
+      // ],
     );
   }
 }

@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // Dart Data Class Generator
@@ -96,11 +98,14 @@ class ToDoItem {
   String title;
   bool isChecked;
   String? proof;
+  Timestamp? date;
+
   ToDoItem({
     this.uid,
     required this.title,
     required this.isChecked,
     this.proof,
+    this.date,
   });
 
   
@@ -110,13 +115,14 @@ class ToDoItem {
     String? title,
     bool? isChecked,
     String? proof,
+    Timestamp? date,
   }) {
     return ToDoItem(
       uid: uid ?? this.uid,
       title: title ?? this.title,
       isChecked: isChecked ?? this.isChecked,
       proof: proof ?? this.proof,
-
+      date: date ?? this.date,
     );
   }
 
@@ -126,6 +132,7 @@ class ToDoItem {
       'title': title,
       'isChecked': isChecked,
       'proof': proof,
+      'date': date,
     };
   }
 
@@ -135,6 +142,7 @@ class ToDoItem {
       title: map['title'] as String,
       isChecked: map['isChecked'] as bool,
       proof: map['proof'] as String?,
+      date: map['date'] as Timestamp?,
     );
   }
 
@@ -143,6 +151,5 @@ class ToDoItem {
   factory ToDoItem.fromJson(String source) => ToDoItem.fromMap('', json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'ToDoItem(uid: $uid, title: $title, isChecked: $isChecked , proof: $proof)';
-
+  String toString() => 'ToDoItem(uid: $uid, title: $title, isChecked: $isChecked , proof: $proof , date: $date)';
 }

@@ -75,7 +75,7 @@ class UserRepository {
     }
   }
 
-  // Get user stream
+  // Get user streamr
   Stream<UserModel> getUserStream(String userId) {
     return usersCollection.doc(userId).snapshots().map((snapshot) {
       return UserModel.fromJson(snapshot.id, snapshot.data() as Map<String, dynamic>);

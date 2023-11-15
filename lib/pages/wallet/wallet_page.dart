@@ -367,20 +367,20 @@ Container loansWidget(BuildContext context, double maxLoan) {
       toolbarHeight: 70,
       title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-              backgroundColor: Colors.grey.shade300,
-              child: IconButton(
-                onPressed: () {
-                  // showAddPostPage(context);
-                },
-                icon: const Icon(Icons.add, color: Colors.white),
-              ),
-            ),
-        ),
-      ],
+      // actions: [
+      //   Padding(
+      //     padding: const EdgeInsets.only(right: 16.0),
+      //     child: CircleAvatar(
+      //         backgroundColor: Colors.grey.shade300,
+      //         child: IconButton(
+      //           onPressed: () {
+      //             // showAddPostPage(context);
+      //           },
+      //           icon: const Icon(Icons.add, color: Colors.white),
+      //         ),
+      //       ),
+      //   ),
+      // ],
     );
   }
 }

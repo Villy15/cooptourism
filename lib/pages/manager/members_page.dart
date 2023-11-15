@@ -54,6 +54,7 @@ class _MembersPageState extends State<MembersPage> {
           FutureBuilder(
             future: cooperativesRepository
                 .getCooperativeMembers("sslvO5tgDoCHGBO82kxq"),
+            // TODO Dont use hardcoded coopId
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return const Text('Error loading data');
@@ -322,20 +323,20 @@ class _MembersPageState extends State<MembersPage> {
           style: TextStyle(
               fontSize: 28, color: Theme.of(context).colorScheme.primary)),
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
-            child: IconButton(
-              onPressed: () {
-                // showAddPostPage(context);
-              },
-              icon: const Icon(Icons.add, color: Colors.white),
-            ),
-          ),
-        ),
-      ],
+      // actions: [
+      //   Padding(
+      //     padding: const EdgeInsets.only(right: 16.0),
+      //     child: CircleAvatar(
+      //       backgroundColor: Colors.grey.shade300,
+      //       child: IconButton(
+      //         onPressed: () {
+      //           // showAddPostPage(context);
+      //         },
+      //         icon: const Icon(Icons.add, color: Colors.white),
+      //       ),
+      //     ),
+      //   ),
+      // ],
     );
   }
 }

@@ -31,4 +31,16 @@ class AppConfigRepository {
     }
   }
 
+  Future<Map<String, dynamic>> getAmenities() async {
+    try {
+      final doc = await appConfigCollection.doc("tourism_services").get();
+      final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      return Map<String, dynamic>.from(data["amenities"]);
+    } catch (e) {
+      debugPrint('Error getting cooperative from Firestore: $e');
+      // You might want to handle errors more gracefully here
+      rethrow;
+    }
+  }
+
 }

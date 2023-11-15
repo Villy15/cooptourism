@@ -3,8 +3,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cooptourism/data/models/events.dart';
 import 'package:cooptourism/data/repositories/events_repository.dart';
 import 'package:cooptourism/data/repositories/task_repository.dart';
+import 'package:cooptourism/pages/events/confirm_event.dart';
 import 'package:cooptourism/pages/events/contribute_event.dart';
+import 'package:cooptourism/pages/events/edit_event.dart';
 import 'package:cooptourism/pages/events/join_event.dart';
+import 'package:cooptourism/pages/events/manager_tasks.dart';
 import 'package:cooptourism/providers/user_provider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -26,7 +29,6 @@ class SelectedEventsPage extends ConsumerStatefulWidget {
 
 class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
   String? role;
-  
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +44,7 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
   }
 
   FutureBuilder<EventsModel> eventFutureBuilder() {
+    final user = ref.watch(userModelProvider);
     return FutureBuilder(
       future: eventsRepository.getSpecificEvent(widget.eventId),
       builder: (context, snapshot) {
@@ -53,6 +56,9 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
         }
 
         final event = snapshot.data!;
+        // bool isContributor = event.contributors!.contains(user?.uid);
+        bool isParticipant = event.participants!.contains(user?.uid);
+
 
         return SingleChildScrollView(
           child: Column(
@@ -63,8 +69,31 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
               ] else ...[
                 const SizedBox(height: 10),
               ],
-                  
-              eventDurationBar(event),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  eventDurationBar(event),
+                  // Edit Text button
+                  user?.role == 'Manager'
+                      ? IconButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      EditEventPage(event: event)),
+                            );
+                          },
+                          icon: const Padding(
+                            padding: EdgeInsets.only(top: 12.0),
+                            child: Icon(Icons.edit, color: Colors.grey),
+                          ),
+                        )
+                      : const SizedBox(width: 10),
+                ],
+              ),
               eventTitle(event),
               eventsParticipant(event),
               eventDescription(event),
@@ -76,15 +105,21 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
               ],
 
               eventLocation(event),
-              
+
               const SizedBox(height: 10),
 
               // Create a button that spans the entire width and has a height of 50
-              if (role == 'Customer')
-              customerFunctions(event),
+              if (role == 'Customer') customerFunctions(event),
 
-              if (role == 'Member')
-              memberFunctions(event),
+              if (role == 'Member') ... [
+
+                isParticipant ? const SizedBox(height: 0) : memberFunctions(event),
+                customerFunctions(event)
+              ],
+
+              if (role == 'Manager') ... [
+                managerFunctions(event)
+              ],
 
               const SizedBox(height: 10),
             ],
@@ -94,7 +129,29 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
     );
   }
 
-   Widget memberFunctions(EventsModel event) {
+  Widget managerFunctions (EventsModel event) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: SizedBox(
+        width: double.infinity,
+        height: 50,
+        child: ElevatedButton(
+          onPressed: () {
+            // Push to the contribute event page use native
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ManagerTasksPage(event: event)),
+            );
+          },
+          child: const Text(">     Check Event Details     < ",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+        ),
+      ),
+    );
+  }
+
+  Widget memberFunctions(EventsModel event) {
     debugPrint("Event members: ${event.participants!}");
     final user = ref.watch(userModelProvider);
     final userId = user?.uid ?? 'null';
@@ -128,19 +185,27 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
               onPressed: () {
                 // Push to the contribute event page use native
                 if (!isMember) {
-                  Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ContributeEventPage(event: event)),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ContributeEventPage(event: event)),
                   );
                 } else {
                   context.go('/member_dashboard_page/tasks_page/${task?.uid}');
                 }
               },
-              child: isMember ? const Text(">     Check Tasks     < ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)) : const Text(">     Contribute Event     < ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              child: isMember
+                  ? const Text(">     Check Tasks     < ",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500))
+                  : const Text(">     Contribute Event     < ",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
               // child: const Text(">     Contribute Event     < ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
             ),
           ),
         );
-        
       },
     );
 
@@ -167,23 +232,54 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
     //         );
   }
 
-  Padding customerFunctions(EventsModel event) {
-    return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Push to the contribute event page use native 
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => JoinEventPage(event: event)),
-                    );
-                  },
-                  child: const Text(">     Join Event     < ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                ),
+  Widget customerFunctions(EventsModel event) {
+    final user = ref.watch(userModelProvider);
+
+    bool isUserParticipant = event.participants!.contains(user?.uid);
+
+    return Column(
+      children: [
+       isUserParticipant
+            ? const SizedBox(height: 0)
+            : Column(
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16),
+                    child: user?.role == 'Member' ? const Text(
+                        "Do you wish to join the event only instead of contributing?") : Container(),
+                  )
+                ],
               ),
-            );
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: () {
+                // Push to the contribute event page use native
+                isUserParticipant ? Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ConfirmEventPage(event: event)),
+                ) : Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => JoinEventPage(event: event)));
+              },
+              child: Text(
+                  isUserParticipant
+                      ? ">     Check Event Details     < "
+                      : ">     Join Event     < ",
+                  style:
+                      const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Padding eventLocation(EventsModel event) {
@@ -201,24 +297,22 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
               ),
               const SizedBox(width: 10),
               Text(event.location,
-                  style:
-                      const TextStyle(fontWeight: FontWeight.normal, fontSize: 14)),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.normal, fontSize: 14)),
             ],
           ),
-
-          
-        const SizedBox(height: 16.0),  
-        Container(
-          width: 350, 
-          height: 200, 
-          color: Colors.grey[300],  
-          child: Center(
-            child: Text(
-              "Map Placeholder",
-              style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+          const SizedBox(height: 16.0),
+          Container(
+            width: 350,
+            height: 200,
+            color: Colors.grey[300],
+            child: Center(
+              child: Text("Map Placeholder",
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.primary)),
             ),
           ),
-        const SizedBox(height: 16.0),  
+          const SizedBox(height: 16.0),
         ],
       ),
     );
@@ -235,7 +329,6 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
   }
 
   ListView listViewFilter(EventsModel event) {
-
     return ListView.builder(
       scrollDirection: Axis.horizontal,
       itemCount: event.tags!.length,
@@ -248,8 +341,8 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 28.0, vertical: 10.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 28.0, vertical: 10.0),
               child: Text(
                 event.tags![index],
                 style: TextStyle(
@@ -294,9 +387,10 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
           ),
           const SizedBox(width: 10),
           // if length is null, print 0 else print the length
-          Text(event.participants != null
-              ? "${event.participants!.length} Participants"
-              : "0 participants",
+          Text(
+              event.participants != null
+                  ? "${event.participants!.length} Participants"
+                  : "0 participants",
               style:
                   const TextStyle(fontWeight: FontWeight.normal, fontSize: 14)),
         ],
@@ -381,7 +475,7 @@ class _ImageSliderState extends State<ImageSlider> {
       imageUrls = urls;
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final decorator = DotsDecorator(
@@ -444,14 +538,14 @@ class _ImageSliderState extends State<ImageSlider> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(25)),
                 child: Padding(
-                    padding: const EdgeInsets.all(2.5),
-                    child: DotsIndicator(
-                      key: ValueKey(currentImageIndex),
-                      dotsCount: maxImageIndex,
-                      position: currentImageIndex,
-                      decorator: decorator,
-                    ),
-                    ),
+                  padding: const EdgeInsets.all(2.5),
+                  child: DotsIndicator(
+                    key: ValueKey(currentImageIndex),
+                    dotsCount: maxImageIndex,
+                    position: currentImageIndex,
+                    decorator: decorator,
+                  ),
+                ),
               ),
             ),
           ),
@@ -460,4 +554,3 @@ class _ImageSliderState extends State<ImageSlider> {
     );
   }
 }
-

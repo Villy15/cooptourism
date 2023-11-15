@@ -59,7 +59,13 @@ class _RegisterPageState extends State<RegisterPage> {
         'email': emailTextController.text,
         'first_name': 'Customer',
         'role': 'Customer',
-        'date_joined' : dateJoined
+        'date_joined' : dateJoined,
+        'emailStatus': 'Not Verified',
+        'joinedAt': DateTime.now(),
+        'status': "",
+        'user_accomplishment': "",
+        'user_rating': "",
+        'user_trust': ""
       });
       
 

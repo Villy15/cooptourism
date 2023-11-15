@@ -2,10 +2,13 @@
 // import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/coaching_form.dart';
+import 'package:cooptourism/data/models/coop_application.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/coaching_repository.dart';
+import 'package:cooptourism/data/repositories/coopjoin_repository.dart';
 // import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
+import 'package:cooptourism/widgets/display_image.dart';
 // import 'package:cooptourism/providers/user_provider.dart';
 // import 'package:cooptourism/widgets/display_featured.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
@@ -42,9 +45,9 @@ class _ProfilePageState extends State<ProfilePage> {
   ];
 
   final List<String> _titlesManager = [
-    'Coaching Concerns',
-    'Arrange Coaching Sessions',
-    'Features'
+    'Application Forms',
+    'About',
+    'Posts'
   ];
 
   final List<String> _titlesCustomer = [
@@ -75,8 +78,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   final userRepository = UserRepository();
   final coachingRepository = CoachingRepository();
+  final joinCooperativeRepository = JoinCooperativeRepository();
 
-  late UserModel specificUser;
 
   @override
   void initState() {
@@ -85,10 +88,11 @@ class _ProfilePageState extends State<ProfilePage> {
     userUID = widget.profileId.replaceAll(RegExp(r'}+$'), '');
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: _appBar(context, "Profile"),
+        appBar: _appBar(context, "Profiles"),
         backgroundColor: Theme.of(context).colorScheme.background,
         body: RefreshIndicator(
             onRefresh: () async {
@@ -223,7 +227,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: listViewFilter(userData),
                     ),
                     const SizedBox(height: 15),
-                    approvalSection(context, userData, userUID)
+                    appFormSection(context, userData, profileId)
                   ]);
                 } else if (selectedIndex == 1 && userData?.role == 'Manager') {
                   return Column(
@@ -235,7 +239,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: listViewFilter(userData),
                       ),
                       const SizedBox(height: 15),
-                      arrangeCoachingSection(context, userData, profileId)
+                      aboutSection(context, userData, profileId)
                     ],
                   );
                 } else if (selectedIndex == 2 && userData?.role == 'Manager') {
@@ -544,7 +548,8 @@ class _ProfilePageState extends State<ProfilePage> {
   Container profile(BuildContext context, UserModel user, String userUID) {
     Color borderColor = Theme.of(context).colorScheme.secondary;
 
-    debugPrint(user.memberType);
+    debugPrint("${widget.profileId} werhwerhweoh");
+
 
     switch (user.memberType) {
       case 'Bronze':
@@ -586,17 +591,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     border: Border.all(color: borderColor, width: 3.5)),
                 child: user.profilePicture != null &&
                         user.profilePicture!.isNotEmpty
-                    ? DisplayProfilePicture(
-                        storageRef: FirebaseStorage.instance.ref(),
-                        coopId: userUID,
-                        data: user.profilePicture,
-                        height: 70,
-                        width: 70)
+                    ? DisplayImage(path: '$userUID/images/${user.profilePicture}', height: 70, width: 70, radius: BorderRadius.circular(60))
                     : Icon(Icons.person,
                         size: 50,
                         color: Theme.of(context).colorScheme.secondary),
               ),
             ),
+
             const SizedBox(height: 7),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
@@ -1129,6 +1130,26 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Column appFormSection(BuildContext context, UserModel user, String userUID) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Text(
+            'Pending Forms',
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary),
+            ),
+        ),
+          const SizedBox(height: 15),
+          pendingAppForms()
+      ]
+    );
+  }
+
   Column approvalSection(BuildContext context, UserModel user, String userUID) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1145,7 +1166,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         const SizedBox(height: 15),
         // use coachRepository to get coaching forms
-        pendingCoachingForms(),
+        pendingAppForms(),
 
         Padding(
           padding: const EdgeInsets.only(left: 16.0),
@@ -1179,14 +1200,14 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  StreamBuilder<List<CoachingFormModel>> pendingCoachingForms() {
+  StreamBuilder<List<CooperativeAppFormModel>> pendingAppForms() {
     return StreamBuilder(
-      stream: coachingRepository.getAllPendingCoachingForms(),
+      stream: joinCooperativeRepository.getAllPendingCoopApplications(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          final coachingForms = snapshot.data!;
+          final coopApplications = snapshot.data!;
 
-          if (coachingForms.isEmpty) {
+          if (coopApplications.isEmpty) {
             return Column(
               children: [
                 Center(
@@ -1203,63 +1224,17 @@ class _ProfilePageState extends State<ProfilePage> {
           }
 
           // sort coaching forms by date
-          coachingForms.sort((a, b) => b.timestamp!.compareTo(a.timestamp!));
+          coopApplications.sort((a, b) => b.timestamp!.compareTo(a.timestamp!));
           return ListView.separated(
-              itemCount: coachingForms.length,
+              itemCount: coopApplications.length,
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
               separatorBuilder: (context, index) => const Divider(),
               itemBuilder: ((context, index) {
-                final coachingForm = coachingForms[index];
+                final coopApplication = coopApplications[index];
                 return InkWell(
                   onTap: () {
-                    debugPrint("Tap tap tap!");
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                              title: Text(
-                                'Coaching Form Details',
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary),
-                              ),
-                              content: SingleChildScrollView(
-                                  child: ListBody(children: <Widget>[
-                                Text(
-                                    'Name: ${coachingForm.firstName} ${coachingForm.lastName}'),
-                                const SizedBox(height: 15),
-                                Text('Concern: ${coachingForm.concern}'),
-                                Text("User's Goal: ${coachingForm.goal}"),
-                                Text('Status: ${coachingForm.status}'),
-                              ])),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: const Text('Approve'),
-                                  onPressed: () {
-                                    coachingForm.status = 'Approved';
-                                    coachingRepository
-                                        .updateCoachingForm(coachingForm);
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                                TextButton(
-                                  child: const Text('Decline'),
-                                  onPressed: () {
-                                    coachingForm.status = 'Declined';
-                                    coachingRepository
-                                        .updateCoachingForm(coachingForm);
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                                TextButton(
-                                  child: const Text('Close'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ]);
-                        });
+                    GoRouter.of(context).go('/profile_page/${widget.profileId}/verify_form/${coopApplication.uid}');
                   },
                   child: SizedBox(
                       height: 50,
@@ -1280,14 +1255,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             .secondary,
                                         width: 2)),
                                 child: Icon(
-                                  coachingForm.concern == 'Credit Loans'
-                                      ? Icons.money
-                                      : coachingForm.concern == 'Driving Skills'
-                                          ? Icons.car_rental
-                                          : coachingForm.concern ==
-                                                  'Tour Accommodation'
-                                              ? Icons.house
-                                              : Icons.help,
+                                  Icons.file_copy_outlined,
                                   color: Theme.of(context).colorScheme.primary,
                                   size: 24,
                                 ),
@@ -1298,14 +1266,14 @@ class _ProfilePageState extends State<ProfilePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                    '${coachingForm.firstName} ${coachingForm.lastName}',
+                                    '${coopApplication.firstName} ${coopApplication.lastName}',
                                     style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: Theme.of(context)
                                             .colorScheme
                                             .primary)),
-                                Text('${coachingForm.concern}',
+                                Text('${coopApplication.coopName}',
                                     style: TextStyle(
                                         fontSize: 12,
                                         color: Theme.of(context)
@@ -1319,23 +1287,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             Padding(
                               padding: const EdgeInsets.only(right: 12.0),
                               child: Icon(
-                                coachingForm.status == 'Pending'
-                                    ? Icons.pending_actions
-                                    : coachingForm.status == 'Approved'
-                                        ? Icons.check_circle
-                                        : coachingForm.status == 'Declined'
-                                            ? Icons.cancel
-                                            : Icons.help,
-                                color: coachingForm.status == 'Pending'
-                                    ? Theme.of(context).colorScheme.primary
-                                    : coachingForm.status == 'Approved'
-                                        ? Theme.of(context).colorScheme.primary
-                                        : coachingForm.status == 'Declined'
-                                            ? Colors.red
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .primary,
+                                Icons.pending_actions,
                                 size: 24,
+                                color: Theme.of(context).colorScheme.primary
                               ),
                             ),
                           ],
@@ -1972,26 +1926,40 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   AppBar _appBar(BuildContext context, String title) {
-    return AppBar(
-      toolbarHeight: 70,
-      title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
-      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
-            child: IconButton(
-              onPressed: () {
-                GoRouter.of(context).go('/profile_page/$userUID/edit_profile');
-              },
-              icon: const Icon(Icons.edit, color: Colors.white),
-            ),
-          ),
+  return AppBar(
+    toolbarHeight: 70,
+    title: Text(title,
+        style: TextStyle(
+            fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+    iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
+    actions: [
+      Padding(
+        padding: const EdgeInsets.only(right: 16.0),
+        child: StreamBuilder<UserModel>(
+          stream: userRepository.getUser(userUID).asStream(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              UserModel user = snapshot.data!;
+              return CircleAvatar(
+                backgroundColor: Colors.grey.shade300,
+                child: IconButton(
+                  onPressed: () {
+                    if (user.emailStatus == 'Not Verified') {
+                      GoRouter.of(context).go('/profile_page/$userUID/email_verification');
+                    } else  {
+                      GoRouter.of(context).go('/profile_page/$userUID/edit_profile');
+                    }
+                  },
+                  icon: const Icon(Icons.edit, color: Colors.white),
+                ),
+              );
+            } else {
+              return const CircularProgressIndicator();
+            }
+          },
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 }

@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/events.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path/path.dart' as path;
 
 class EventsRepository {
   final CollectionReference eventsCollection =
@@ -17,14 +21,28 @@ class EventsRepository {
   }
 
   // Add an event
-  Future<void> addEvent(EventsModel event) async {
+  Future<void> addEvent(EventsModel event, XFile imageFile) async {
     try {
-      await eventsCollection.add(event.toMap());
+      DocumentReference docRef = await eventsCollection.add(event.toMap());
+      await addImageToStorage(docRef.id, imageFile);
     } catch (e) {
       debugPrint('Error adding event to Firestore: $e');
       // You might want to handle errors more gracefully here
     }
   }
+
+// Add image to storage
+  Future<String> addImageToStorage(String? uid, XFile imageFile) async {
+    final storageRef = FirebaseStorage.instance.ref();
+    String fileName = path.basename(imageFile.path);
+    String fullPath = '$uid/$fileName';
+    final uploadTask = storageRef.child(fullPath).putFile(File(imageFile.path));
+    final snapshot = await uploadTask.whenComplete(() => null);
+    final downloadUrl = await snapshot.ref.getDownloadURL();
+    return downloadUrl;
+  }
+
+  
 
   // Read an event
   Future<EventsModel> getSpecificEvent(String eventId) async {
@@ -42,6 +60,26 @@ class EventsRepository {
   Future<void> updateEvent(String? eventId, EventsModel event) async {
     try {
       await eventsCollection.doc(eventId).update(event.toMap());
+    } catch (e) {
+      debugPrint('Error updating event in Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
+  }
+
+  // Update an event to add an id to the partcipants 
+  Future<void> updateEventParticipants(String? eventId, String? userId) async {
+    try {
+      await eventsCollection.doc(eventId).update({'participants': FieldValue.arrayUnion([userId])});
+    } catch (e) {
+      debugPrint('Error updating event in Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
+  }
+
+  // Update an event to remove an id to the partcipants
+  Future<void> removeEventParticipants(String? eventId, String? userId) async {
+    try {
+      await eventsCollection.doc(eventId).update({'participants': FieldValue.arrayRemove([userId])});
     } catch (e) {
       debugPrint('Error updating event in Firestore: $e');
       // You might want to handle errors more gracefully here
