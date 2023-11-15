@@ -41,6 +41,38 @@ class CooperativesRepository {
       rethrow;
     }
   }
+
+  // get a specific member from the members subcollection of a cooperative from Firestore
+  Future<DocumentSnapshot> getCooperativeMember(
+      String coopId, String memberId) async {
+    try {
+      return await cooperativesCollection
+          .doc(coopId)
+          .collection('members')
+          .doc(memberId)
+          .get();
+    } catch (e) {
+      debugPrint('Error getting cooperative member from Firestore: $e');
+      // You might want to handle errors more gracefully here
+      rethrow;
+    }
+  }
+
+  // add a member to the members subcollection of a cooperative from Firestore
+  Future<void> addCooperativeMember(
+      String coopId, String memberId) async {
+    try {
+      await cooperativesCollection
+          .doc(coopId)
+          .collection('members')
+          .doc(memberId)
+          .set({});
+    } catch (e) {
+      debugPrint('Error adding cooperative member to Firestore: $e');
+      // You might want to handle errors more gracefully here
+      rethrow;
+    }
+  }
   
 
   // Add cooperative

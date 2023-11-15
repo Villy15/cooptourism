@@ -1,11 +1,15 @@
+// ignore_for_file: use_build_context_synchronously, unused_local_variable
+
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
+import 'package:cooptourism/widgets/display_image.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:email_otp/email_otp.dart';
@@ -26,6 +30,34 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
+
+  String userUID = '';
+
+  Map<String, bool> checkedSkills = {};
+
+  final List<String> _skills = [
+    'Driver',
+    'Tour Guide',
+    'Good Communicator',
+    'Credit Collector',
+  ];
+
+  bool checkedSkillsInitialized = false;
+
+  final List<String> _skillsManager = [
+    'Team Management',
+    'Good Leader',
+    'Marketing'
+  ];
+
+   @override
+  void initState() {
+    super.initState();
+    // postRepository.addDummyPost();
+    userUID = widget.profileId.replaceAll(RegExp(r'}+$'), '');
+  }
+
+
 
   final userRepository = UserRepository();
   File? _image;
@@ -55,16 +87,289 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             FutureBuilder<UserModel>(
               future: userRepository.getUser(widget.profileId),
               builder: (context, snapshot) {
+                  
                 debugPrint(widget.profileId);
                 if (snapshot.hasData) {
                   final user = snapshot.data;
+                  if (!checkedSkillsInitialized) {
+                    checkedSkills = {
+                    for (var skill in user?.role == 'manager' ? _skillsManager : user?.role == 'Member' ? _skills : _skills) 
+                      skill: false,
+                  };
+                  }
+                  
                   debugPrint('user is $user');
                   if (user?.firstName == 'Customer' && user?.role == 'Customer') {
                     debugPrint(user?.emailStatus);
                     return customerSignUp(context, user!);
                   }
+                  else if (user?.role  == 'Customer') {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 15),
+                          Center(
+                              child: GestureDetector(
+                                onTap: getImage,
+                                child: Container(
+                                  width: 120.0,
+                                  height: 120.0,
+                                  decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Theme.of(context).colorScheme.secondary,
+                                  border: Border.all(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    width: 3.0,
+                                  )
+                                ),
+                                child: Stack(
+                                  children: [
+                                    if (user?.profilePicture != null)
+                                    DisplayImage(path: '${user!.uid}/images/${user.profilePicture}', height: 120, width: 120, radius: BorderRadius.circular(100))
+                                    else if (user?.profilePicture == null)
+                                      Center(
+                                        child: Icon(
+                                          Icons.person,
+                                          size: 60.0,
+                                          color: Theme.of(context).colorScheme.primary,
+                                        ),
+                                      ),
+                                    
+                                    Positioned(
+                                      right: 2,
+                                      bottom: 0,
+                                      child: Container(
+                                        height: 35,
+                                        width: 35,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Theme.of(context).colorScheme.secondary,
+                                        ),
+                                        child: Icon(
+                                          Icons.camera_alt,
+                                          size: 20.0,
+                                          color: Theme.of(context).colorScheme.primary
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                            Text(
+                              'Enter a suitable description for your profile:',
+                              style: TextStyle(
+                                fontSize: 19,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: TextFormField(
+                              controller: _profileBioController,
+                              maxLines: 7,
+                              decoration: InputDecoration(
+                                hintText: 'Profile Bio',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderSide: BorderSide(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    width: 2.0,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderSide: BorderSide(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    width: 2.0,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderSide: BorderSide(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    width: 2.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Enter your location:',
+                              style: TextStyle(
+                                fontSize: 19,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            TextFormField(
+                              controller: _locationController,
+                              decoration: const InputDecoration(
+                                labelText: 'Location',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  }
                   else {
-                    return const Column();
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 15),
+                          Center(
+                            child: GestureDetector(
+                              onTap: getImage,
+                              child: Container(
+                                width: 120.0,
+                                height: 120.0,
+                                decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Theme.of(context).colorScheme.secondary,
+                                border: Border.all(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  width: 3.0,
+                                )
+                              ),
+                              child: Stack(
+                                children: [
+                                  if (user?.profilePicture != null)
+                                  DisplayImage(path: '${user!.uid}/images/${user.profilePicture}', height: 120, width: 120, radius: BorderRadius.circular(100))
+                                  else if (user?.profilePicture == null)
+                                    Center(
+                                      child: Icon(
+                                        Icons.person,
+                                        size: 60.0,
+                                        color: Theme.of(context).colorScheme.primary,
+                                      ),
+                                    ),
+                                  
+                                  Positioned(
+                                    right: 2,
+                                    bottom: 0,
+                                    child: Container(
+                                      height: 35,
+                                      width: 35,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Theme.of(context).colorScheme.secondary,
+                                      ),
+                                      child: Icon(
+                                        Icons.camera_alt,
+                                        size: 20.0,
+                                        color: Theme.of(context).colorScheme.primary
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Enter a suitable description for your profile:',
+                            style: TextStyle(
+                              fontSize: 19,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: TextFormField(
+                            controller: _profileBioController,
+                            maxLines: 7,
+                            decoration: InputDecoration(
+                              hintText: 'Profile Bio',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  width: 2.0,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  width: 2.0,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  width: 2.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Enter your location:',
+                            style: TextStyle(
+                              fontSize: 19,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            controller: _locationController,
+                            decoration: const InputDecoration(
+                              labelText: 'Location',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+
+                          const SizedBox(height: 16),
+                          Text(
+                            'Choose skill/s that best describe you:',
+                            style: TextStyle(
+                              fontSize: 19,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+
+                          Column(
+                            children: (user?.role == 'Manager' ? _skillsManager : user?.role == 'Member' ? _skills : _skills).map((skill) {
+                              if (!checkedSkills.containsKey(skill)) {
+                                checkedSkills[skill] = false;
+                              }
+                              return CheckboxListTile(
+                                title: Text(skill), 
+                                value: checkedSkills[skill] ?? false,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    checkedSkills[skill] = value!;
+                                    debugPrint('checkedSkills is $checkedSkills');
+                                  });
+                                },
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 20),
+
+                          ElevatedButton(
+                            onPressed: () {
+                              context.go('/profile_page/${user?.uid}');
+                            },
+                           child: const Text('hello ')),
+
+                           const SizedBox(height: 100)
+                        ]
+                      ),
+                    );
                   }
                 }
                 else {
@@ -212,6 +517,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                         SizedBox(
                           child: TextFormField(
                             controller: _profileBioController,
+                            maxLines: 5,
                             decoration: const InputDecoration(
                               labelText: 'Bio',
                               border: OutlineInputBorder(),
@@ -248,11 +554,13 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                 emailStatus: user.emailStatus,
                                 role: user.role,
                                 profilePicture: path.basename(_image!.path),
+
+                                
                                                               );
-                              await userRepository.updateUser(widget.profileId, newUser);
+                              await userRepository.updateUser(userUID, newUser);
 
                               firebase_storage.Reference reference = firebase_storage.FirebaseStorage.instance
-                              .ref('${widget.profileId}}/images/${path.basename(_image!.path)}');
+                              .ref('${widget.profileId}/images/${path.basename(_image!.path)}');
 
                               firebase_storage.UploadTask uploadTask = reference.putFile(_image!);
 
@@ -262,8 +570,9 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                 ),
                                 
                               );
-
-                              Navigator.pop(context);
+                              
+                              context.go('/profile_page/${user.uid}');
+                              
                               }
                               else {
                                 debugPrint('All fields are not filled');
@@ -294,20 +603,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       title: Text(title,
           style: TextStyle(
               fontSize: 28, color: Theme.of(context).colorScheme.primary)),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
-            child: IconButton(
-              onPressed: () {
-                // showAddPostPage(context);
-              },
-              icon: const Icon(Icons.settings, color: Colors.white),
-            ),
-          ),
-        ),
-      ],
+
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
     );
   }
 }
