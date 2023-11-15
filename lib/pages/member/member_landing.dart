@@ -4,7 +4,7 @@ import 'package:cooptourism/data/models/post.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/data/repositories/post_repository.dart';
-import 'package:cooptourism/pages/market/listing_messages_inbox.dart';
+import 'package:cooptourism/pages/market/listing_messages.dart';
 import 'package:cooptourism/pages/tasks/tasks_page.dart';
 import 'package:cooptourism/providers/user_provider.dart';
 //import 'package:cooptourism/widgets/listing_card.dart';
@@ -183,10 +183,12 @@ Widget showListing(List<SalesData> listings) {
           DateFormat('MMMM d').format(listings[index].endDate!);
       final numberOfGuests = listings[index].numberOfGuests ?? 0;
 
-      // Ensure that the listingId is not null
+      // Ensure that the listingId and customerId are not null
       final listingId = listings[index].listingId;
-      if (listingId == null) {
-        // Handle the case where listingId is null
+      final customerId = listings[index].customerid;
+
+      if (listingId == null || customerId == null) {
+        // Handle the case where listingId or customerId is null
         return Container(); // or another appropriate widget
       }
 
@@ -216,8 +218,9 @@ Widget showListing(List<SalesData> listings) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ListingMessagesInbox(
+                  builder: (context) => ListingMessages(
                     listingId: listingId,
+                    docId: customerId, // Using customerId as docId
                   ),
                 ),
               );
@@ -228,8 +231,9 @@ Widget showListing(List<SalesData> listings) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ListingMessagesInbox(
+                    builder: (context) => ListingMessages(
                       listingId: listingId,
+                      docId: customerId, // Using customerId as docId
                     ),
                   ),
                 );
@@ -241,7 +245,6 @@ Widget showListing(List<SalesData> listings) {
     },
   );
 }
-
 
 
 
