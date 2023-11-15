@@ -73,6 +73,10 @@ class _MenuPageState extends ConsumerState<MenuPage> {
       _gridItems.removeWhere((element) => element['name'] == 'Events');
       _gridItems.removeWhere((element) => element['name'] == 'Marketplace');
       _gridItems.removeWhere((element) => element['name'] == 'Dashboard');
+      _gridItems.removeWhere((element) => element['name'] == 'Wiki');
+      _gridItems.removeWhere((element) => element['name'] == 'Vote');
+      _gridItems.removeWhere((element) => element['name'] == 'Feed');
+
     } else if (role == 'Member') {
       // _gridItems.removeWhere((element) => element['name'] == 'Cooperatives');
       _gridItems.removeWhere((element) => element['name'] == 'Marketplace');
