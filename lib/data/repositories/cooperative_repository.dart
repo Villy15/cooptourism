@@ -61,13 +61,7 @@ class CooperativesRepository {
       final doc =
           await cooperativesCollection.doc(coopId).collection('members').get();
 
-      // return the firstname and last name
-      return doc.docs.map((doc) {
-        var data = doc.data();
-        String fullName = "${data['last_name']}, ${data['first_name']}";
-        return fullName;
-      }).toList();
-      
+      return doc.docs.map((doc) => doc.id).toList();  
     } catch (e) {
       debugPrint('Error getting cooperative members from Firestore: $e');
       // You might want to handle errors more gracefully here
