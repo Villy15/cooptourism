@@ -1,17 +1,22 @@
-import 'package:cooptourism/data/models/listing.dart';
+//import 'package:cooptourism/data/models/listing.dart';
+import 'package:cooptourism/data/models/manager_dashboard.dart/sales.dart';
 import 'package:cooptourism/data/models/post.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/data/repositories/post_repository.dart';
+import 'package:cooptourism/pages/market/listing_messages_inbox.dart';
 import 'package:cooptourism/pages/tasks/tasks_page.dart';
 import 'package:cooptourism/providers/user_provider.dart';
 //import 'package:cooptourism/widgets/listing_card.dart';
 import 'package:cooptourism/widgets/post_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cooptourism/data/repositories/manager_dashboard/sales_repository.dart';
+import 'package:intl/intl.dart';
 
 final PostRepository _postRepository = PostRepository();
 final ListingRepository listingRepository = ListingRepository();
+final SalesRepository salesRepository = SalesRepository();
 
 class MemberDashboardPage extends ConsumerStatefulWidget {
   const MemberDashboardPage({super.key});
@@ -50,10 +55,9 @@ class _MemberDashboardPageState extends ConsumerState<MemberDashboardPage> {
         ));
   }
 
-
-StreamBuilder<List<ListingModel>> servicesMethod(UserModel user) {
-  return StreamBuilder<List<ListingModel>>(
-    stream: listingRepository.getListingsByUID(user.uid!),
+StreamBuilder<List<SalesData>> servicesMethod(UserModel user) {
+  return StreamBuilder<List<SalesData>>(
+    stream: salesRepository.getAllSalesByOwnerId(user.uid!),
     builder: (context, snapshot) {
       if (snapshot.hasError) {
         return Text('Error: ${snapshot.error}');
@@ -63,65 +67,181 @@ StreamBuilder<List<ListingModel>> servicesMethod(UserModel user) {
       }
 
       final listings = snapshot.data!;
+      final todayListings = listings.where((listing) =>
+          listing.startDate?.isBefore(DateTime.now()) == true &&
+          listing.endDate?.isAfter(DateTime.now()) == true).toList();
 
-      if (listings.isEmpty) {
+      final tomorrowListings = listings.where((listing) =>
+          listing.startDate?.isAfter(DateTime.now()) == true &&
+          listing.startDate?.isBefore(DateTime.now().add(const Duration(days: 1))) == true).toList();
+
+      final today = DateTime.now();
+      final startOfWeek = today.subtract(Duration(days: today.weekday - 1)); 
+      final endOfWeek = startOfWeek.add(const Duration(days: 6)); 
+
+      final thisWeekListings = listings.where((listing) =>
+        listing.startDate?.isAfter(startOfWeek) == true &&
+        listing.startDate?.isBefore(endOfWeek) == true &&
+        listing.startDate?.isAfter(DateTime.now().add(const Duration(days: 1))) == true).toList();
+
+      final thisMonthListings = listings.where((listing) =>
+          listing.startDate?.isAfter(DateTime.now().add(const Duration(days: 7))) == true &&
+          listing.startDate?.isBefore(DateTime(DateTime.now().year, DateTime.now().month + 1, 1)) == true).toList();
+
+      final nextMonthListings = listings.where((listing) =>
+          listing.startDate?.isAfter(DateTime(DateTime.now().year, DateTime.now().month + 1, 1)) == true &&
+          listing.startDate?.isBefore(DateTime(DateTime.now().year, DateTime.now().month + 2, 1)) == true).toList();
+
+      if (todayListings.isEmpty && tomorrowListings.isEmpty && thisWeekListings.isEmpty && thisMonthListings.isEmpty && nextMonthListings.isEmpty) {
         return const Center(
           child: Text(
-            'No listings found for this user.',
+            'No listings found',
             style: TextStyle(fontSize: 20),
           ),
         );
       } else {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(left: 20.0, top: 30.0),
-              child: Text('Today', style: TextStyle(fontSize: 20)),
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: listings.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 1.0),
-                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    title: const Text(
-                      'The Darwin Delight',
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (todayListings.isNotEmpty)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20.0, top: 30.0),
+                      child: Text('Today', style: TextStyle(fontSize: 20)),
                     ),
-                    subtitle: const Text(
-                      'Nov 12 - 13 | 2 Pax',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400,
-                      ),
+                    showListing(todayListings),
+                  ],
+                ),
+              if (tomorrowListings.isNotEmpty)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20.0),
+                      child: Text('Tomorrow', style: TextStyle(fontSize: 20)),
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.message),
-                      onPressed: () {
-                      },
+                    showListing(tomorrowListings),
+                  ],
+                ),
+              if (thisWeekListings.isNotEmpty)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20.0),
+                      child: Text('This Week', style: TextStyle(fontSize: 20)),
                     ),
-                  ),
-                );
-              },
-            ),
-            const Divider(
-              thickness: 2.0,
-            ),
-          ],
+                    showListing(thisWeekListings),
+                  ],
+                ),
+              if (thisMonthListings.isNotEmpty)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20.0),
+                      child: Text('This Month', style: TextStyle(fontSize: 20)),
+                    ),
+                    showListing(thisMonthListings),
+                  ],
+                ),
+              if (nextMonthListings.isNotEmpty)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20.0),
+                      child: Text('Next Month', style: TextStyle(fontSize: 20)),
+                    ),
+                    showListing(nextMonthListings),
+                  ],
+                ),
+              const SizedBox(height: 100
+                      ,)
+            ],
+          ),
         );
       }
     },
   );
 }
+
+
+Widget showListing(List<SalesData> listings) {
+  return ListView.builder(
+    physics: const NeverScrollableScrollPhysics(),
+    padding: EdgeInsets.zero,
+    shrinkWrap: true,
+    itemCount: listings.length,
+    itemBuilder: (context, index) {
+      final startDateFormatted =
+          DateFormat('MMMM d').format(listings[index].startDate!);
+      final endDateFormatted =
+          DateFormat('MMMM d').format(listings[index].endDate!);
+      final numberOfGuests = listings[index].numberOfGuests ?? 0;
+
+      // Ensure that the listingId is not null
+      final listingId = listings[index].listingId;
+      if (listingId == null) {
+        // Handle the case where listingId is null
+        return Container(); // or another appropriate widget
+      }
+
+      return Container(
+        decoration: BoxDecoration(
+          border: Border.all(width: 1.0),
+          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+        ),
+        margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20.0),
+          title: Text(
+            listings[index].listingName!,
+            style: const TextStyle(
+              fontSize: 20,
+            ),
+          ),
+          subtitle: Text(
+            '$startDateFormatted - $endDateFormatted | Guests: $numberOfGuests',
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          trailing: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ListingMessagesInbox(
+                    listingId: listingId,
+                  ),
+                ),
+              );
+            },
+            child: IconButton(
+              icon: const Icon(Icons.message),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ListingMessagesInbox(
+                      listingId: listingId,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
 
 
 
