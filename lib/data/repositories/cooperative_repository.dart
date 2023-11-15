@@ -60,7 +60,14 @@ class CooperativesRepository {
     try {
       final doc =
           await cooperativesCollection.doc(coopId).collection('members').get();
-      return doc.docs.map((doc) => doc.id).toList();
+
+      // return the firstname and last name
+      return doc.docs.map((doc) {
+        var data = doc.data();
+        String fullName = "${data['last_name']}, ${data['first_name']}";
+        return fullName;
+      }).toList();
+      
     } catch (e) {
       debugPrint('Error getting cooperative members from Firestore: $e');
       // You might want to handle errors more gracefully here
@@ -84,6 +91,28 @@ Future<Map<String, dynamic>> getCooperativeMembersNames(String coopId) async {
     }
 
     return memberNames;
+  } catch (e) {
+    debugPrint('Error getting cooperative members from Firestore: $e');
+    rethrow;
+  }
+}
+
+Future<List<Map<String, String>>> getCooperativeMembersNamesUid(String coopId) async {
+  try {
+    final querySnapshot = await cooperativesCollection
+        .doc(coopId)
+        .collection('members')
+        .get();
+
+    List<Map<String, String>> members = [];
+
+    for (var doc in querySnapshot.docs) {
+      var data = doc.data();
+      String fullName = "${data['last_name']} ${data['first_name']}";
+      members.add({'id': doc.id, 'name': fullName});
+    }
+
+    return members;
   } catch (e) {
     debugPrint('Error getting cooperative members from Firestore: $e');
     rethrow;

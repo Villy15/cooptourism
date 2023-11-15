@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cooptourism/data/models/events.dart';
@@ -9,6 +7,7 @@ import 'package:cooptourism/pages/events/confirm_event.dart';
 import 'package:cooptourism/pages/events/contribute_event.dart';
 import 'package:cooptourism/pages/events/edit_event.dart';
 import 'package:cooptourism/pages/events/join_event.dart';
+import 'package:cooptourism/pages/events/manager_tasks.dart';
 import 'package:cooptourism/providers/user_provider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -118,11 +117,37 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
                 customerFunctions(event)
               ],
 
+              if (role == 'Manager') ... [
+                managerFunctions(event)
+              ],
+
               const SizedBox(height: 10),
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget managerFunctions (EventsModel event) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: SizedBox(
+        width: double.infinity,
+        height: 50,
+        child: ElevatedButton(
+          onPressed: () {
+            // Push to the contribute event page use native
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ManagerTasksPage(event: event)),
+            );
+          },
+          child: const Text(">     Check Event Details     < ",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+        ),
+      ),
     );
   }
 

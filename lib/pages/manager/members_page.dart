@@ -54,6 +54,7 @@ class _MembersPageState extends State<MembersPage> {
           FutureBuilder(
             future: cooperativesRepository
                 .getCooperativeMembers("sslvO5tgDoCHGBO82kxq"),
+            // TODO Dont use hardcoded coopId
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return const Text('Error loading data');
