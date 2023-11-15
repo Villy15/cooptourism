@@ -65,7 +65,6 @@ dependencies:
   source_gen: null
   syncfusion_flutter_charts: ^23.1.44
   syncfusion_flutter_datepicker: ^23.1.44
-  google_fonts: ^6.1.0
   dio: ^5.3.3
   im_stepper: ^1.0.1+1
   # flutter_cache_manager:
