@@ -73,6 +73,10 @@ class _MenuPageState extends ConsumerState<MenuPage> {
       _gridItems.removeWhere((element) => element['name'] == 'Events');
       _gridItems.removeWhere((element) => element['name'] == 'Marketplace');
       _gridItems.removeWhere((element) => element['name'] == 'Dashboard');
+      _gridItems.removeWhere((element) => element['name'] == 'Wiki');
+      _gridItems.removeWhere((element) => element['name'] == 'Vote');
+      _gridItems.removeWhere((element) => element['name'] == 'Feed');
+
     } else if (role == 'Member') {
       // _gridItems.removeWhere((element) => element['name'] == 'Cooperatives');
       _gridItems.removeWhere((element) => element['name'] == 'Marketplace');
@@ -238,18 +242,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
           style: TextStyle(
               fontSize: 28, color: Theme.of(context).colorScheme.primary)),
       actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
-            child: IconButton(
-              onPressed: () {
-                // showAddPostPage(context);
-              },
-              icon: const Icon(Icons.settings, color: Colors.white),
-            ),
-          ),
-        ),
+        
 
         // Add signout
         Padding(

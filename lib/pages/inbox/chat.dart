@@ -49,6 +49,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget build(BuildContext context) {
     final Future<List<MessageModel>> chatRoom = messageRepository.getOneChatRoom(user!.uid, widget.userId);
     final Stream<List<MessageModel>> messages = messageRepository.getAllInboxMsgs(user!.uid, widget.userId);
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         ref.read(navBarVisibilityProvider.notifier).state = true;

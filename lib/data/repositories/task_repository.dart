@@ -33,6 +33,18 @@ class TaskRepository {
     });
   }
 
+  // Get all tasks from firestore by referenceId
+  Stream<List<TaskModel>> getAllTasksByReferenceId(String? referenceId) {
+    return tasksColleciton
+        .where('referenceId', isEqualTo: referenceId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return TaskModel.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // Add a Task to Firestore
   Future<void> addTask(TaskModel task) async {
     try {

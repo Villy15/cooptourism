@@ -60,6 +60,7 @@ class _CoachingPageState extends ConsumerState<CoachingPage> {
   // get coaches from firestore
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         _updateNavBarAndAppBarVisibility(true);

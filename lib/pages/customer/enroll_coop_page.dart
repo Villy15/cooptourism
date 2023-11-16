@@ -14,7 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+// import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class EnrollCoopPage extends ConsumerStatefulWidget {
   final String profileId;
@@ -183,10 +183,10 @@ class _EnrollCoopPageState extends ConsumerState<EnrollCoopPage> {
                     String? uid = docRef.id;
                     debugPrint('Cooperative added to database. Cooperative ID is $uid');
 
-                    firebase_storage.Reference reference = firebase_storage.FirebaseStorage.instance
-                    .ref('$uid/images/${path.basename(_image!.path)}');
+                    // firebase_storage.Reference reference = firebase_storage.FirebaseStorage.instance
+                    // .ref('$uid/images/${path.basename(_image!.path)}');
 
-                    firebase_storage.UploadTask uploadTask = reference.putFile(_image!);
+                    // firebase_storage.UploadTask uploadTask = reference.putFile(_image!);
                     // get user 
                     user = await userRepository.getUser(widget.profileId);
                     user.role = "Manager";

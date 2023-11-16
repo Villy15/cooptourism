@@ -2,12 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/models/message.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
+import 'package:cooptourism/providers/home_page_provider.dart';
 import 'package:cooptourism/providers/listing_provider.dart';
 import 'package:cooptourism/providers/user_provider.dart';
 import 'package:cooptourism/widgets/bottom_nav_selected_listing.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class ListingMessages extends ConsumerStatefulWidget {
   final String listingId;
@@ -20,6 +22,14 @@ class ListingMessages extends ConsumerStatefulWidget {
 
 class _ListingMessagesState extends ConsumerState<ListingMessages> {
   final textController = TextEditingController();
+  
+  @override
+  void initState(){
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      ref.read(navBarVisibilityProvider.notifier).state = false;
+    });
+  }
 
   @override
   void dispose() {
@@ -63,9 +73,7 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
                 final messages = snapshot.data!;
 
                 return Scaffold(
-                  // appBar: AppBar(
-                  //   backgroundColor: Colors.grey[800],
-                  // ),
+                  appBar: _appBar(context, widget.docId),
                   body: Column(
                     children: [
                       Expanded(
@@ -159,4 +167,33 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
               }));
         });
   }
+      AppBar _appBar(BuildContext context, String title) {
+        return AppBar(
+          toolbarHeight: 70,
+          title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+          iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            color: Theme.of(context).colorScheme.primary,
+            onPressed: () {
+              GoRouter.of(context).pop();
+              ref.read(navBarVisibilityProvider.notifier).state = true;
+            }
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: CircleAvatar(
+                backgroundColor: Colors.grey.shade300,
+                child: IconButton(
+                  onPressed: () {
+                    // showAddPostPage(context);
+                  },
+                  icon: const Icon(Icons.message, color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        );
+      }
 }

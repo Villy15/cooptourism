@@ -14,7 +14,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:im_stepper/stepper.dart';
-import 'package:path/path.dart' as path_utils;
+// import 'package:path/path.dart' as path_utils;
 
 class AddListing extends ConsumerStatefulWidget {
   const AddListing({super.key});
@@ -92,6 +92,7 @@ class _AddListingState extends ConsumerState<AddListing> {
   Widget build(BuildContext context) {
     // final storageRef = FirebaseStorage.instance.ref();
 
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         ref.read(navBarVisibilityProvider.notifier).state = true;
@@ -931,12 +932,12 @@ class _AddListingState extends ConsumerState<AddListing> {
     }
   }
 
-  String? _getProofPath() {
-    if (filePickerUtility.image != null) {
-      return path_utils.basename(filePickerUtility.image!.path);
-    } else if (filePickerUtility.pickedFile != null) {
-      return path_utils.basename(filePickerUtility.pickedFile!.path);
-    }
-    return null;
-  }
+  // String? _getProofPath() {
+  //   if (filePickerUtility.image != null) {
+  //     return path_utils.basename(filePickerUtility.image!.path);
+  //   } else if (filePickerUtility.pickedFile != null) {
+  //     return path_utils.basename(filePickerUtility.pickedFile!.path);
+  //   }
+  //   return null;
+  // }
 }

@@ -6,6 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class SalesData {
   String? uid;
   final DateTime date;
+  DateTime? startDate;
+  DateTime? endDate;
+  num? numberOfGuests;
   final num sales;
   final String category;
   String? customerid;
@@ -16,6 +19,9 @@ class SalesData {
   SalesData({
     this.uid,
     required this.date,
+    this.startDate,
+    this.endDate,
+    this.numberOfGuests,
     required this.sales,
     required this.category,
     this.customerid,
@@ -29,6 +35,9 @@ class SalesData {
   SalesData copyWith({
     String? uid,
     DateTime? date,
+    DateTime? startDate,
+    DateTime? endDate,
+    num? numberOfGuests,
     num? sales,
     String? category,
     String? customerid,
@@ -40,6 +49,9 @@ class SalesData {
     return SalesData(
       uid: uid ?? this.uid,
       date: date ?? this.date,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      numberOfGuests: numberOfGuests ?? this.numberOfGuests,
       sales: sales ?? this.sales,
       category: category ?? this.category,
       customerid: customerid ?? this.customerid,
@@ -55,6 +67,7 @@ class SalesData {
       'uid': uid,
       'date': date.millisecondsSinceEpoch,
       'sales': sales,
+      'numberOfGuests': numberOfGuests,
       'category': category,
       'customerid': customerid,
       'cooperativeId': cooperativeId,
@@ -68,6 +81,9 @@ class SalesData {
     return SalesData(
       uid: uid,
       date: (map['date'] as Timestamp).toDate(),
+      startDate: (map['startDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      endDate: (map['endDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      numberOfGuests: map['numberOfGuests'] != null ? map['numberOfGuests']as num : null,
       sales: map['sales'] as num,
       category: map['category'] as String,
       customerid: map['customerid'] != null ? map['customerid'] as String : null,
@@ -86,6 +102,6 @@ class SalesData {
 
   @override
   String toString() {
-    return 'SalesData(uid: $uid, date: $date, sales: $sales, category: $category, customerid: $customerid, cooperativeId: $cooperativeId, ownerId: $ownerId, listingId: $listingId, listingName: $listingName)';
+    return 'SalesData(uid: $uid, date: $date, startDate: $startDate, endDate: $endDate, numberOfGuests : $numberOfGuests, sales: $sales, category: $category, customerid: $customerid, cooperativeId: $cooperativeId, ownerId: $ownerId, listingId: $listingId, listingName: $listingName)';
   }
 }

@@ -30,6 +30,7 @@ class _SelectedWikiPageState extends ConsumerState<SelectedWikiPage> {
   Widget build(BuildContext context) {
     final Future<WikiModel?> wiki = wikiRepository.getSpecificWiki(widget.wikiId);
 
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         _updateNavBarAndAppBarVisibility(true);

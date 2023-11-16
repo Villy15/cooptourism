@@ -36,6 +36,7 @@ class _BudgetResultPageState extends ConsumerState<BudgetResultPage> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         ref.read(appBarVisibilityProvider.notifier).state = true;

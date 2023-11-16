@@ -32,7 +32,7 @@ dependencies:
   cached_network_image: null
   carousel_slider: ^4.0.0
   chat_bubbles: ^1.5.0
-  cloud_firestore: ^4.9.2
+  cloud_firestore: ^4.11.0
   cupertino_icons: ^1.0.2
   dots_indicator: ^3.0.0
   firebase_auth: ^4.8.0
@@ -47,6 +47,7 @@ dependencies:
   path: ^1.8.3
 
   email_otp: ^2.1.1
+  flutter_pdfview:
 
   shimmer: ^3.0.0
   flutter_dropdown: ^1.0.1+hotfix.1
@@ -64,7 +65,9 @@ dependencies:
   source_gen: null
   syncfusion_flutter_charts: ^23.1.44
   syncfusion_flutter_datepicker: ^23.1.44
+  dio: ^5.3.3
   im_stepper: ^1.0.1+1
+  path_provider: ^2.1.1
   # flutter_cache_manager:
 
 

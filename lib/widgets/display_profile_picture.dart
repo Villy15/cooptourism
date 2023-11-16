@@ -65,12 +65,15 @@ class DisplayProfilePicture extends StatelessWidget {
         child: FutureBuilder<String>(
           future: storageRef.child("$coopId/images/$data").getDownloadURL(),
           builder: (context, urlSnapshot) {
+            debugPrint(urlSnapshot.data.toString());
             if (urlSnapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
             }
 
             if (urlSnapshot.hasError) {
+              debugPrint('here is the errorrrrrrr: ${storageRef.child("$coopId/images/$data").getDownloadURL()}');
               return const Icon(Icons.error, color: Colors.red); // Display an error icon in case of error
+            
             }
 
             final imageUrl = urlSnapshot.data;
