@@ -37,7 +37,6 @@ class _AddVotePageState extends ConsumerState<AddVotePage> {
     debugPrint("selectedMembers: $selectedMembers");
     debugPrint("selectedMembersUId: $selectedMembersUId");
 
-
     return Scaffold(
       appBar: _appBar(context, 'Add Vote'),
       body: SingleChildScrollView(
@@ -60,105 +59,118 @@ class _AddVotePageState extends ConsumerState<AddVotePage> {
     );
   }
 
- 
-
   Widget addUsers(BuildContext context) {
-  return Align(
-    alignment: Alignment.centerLeft,
-    child: Column(
-      children: [
-        const Text("Choices", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: primaryColor)),
-        ...selectedMembers.map((member) => ListTile(
-          title: Text(member, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: primaryColor)),
-        )).toList(),
-        ListTile(
-          leading: const Icon(Icons.add),
-          title: const Text('Add Member', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: primaryColor)),
-          onTap: () {
-            showModalBottomSheet(
-              // add height
-              isScrollControlled: true,
-              context: context,
-              builder: (BuildContext context) {
-                return SizedBox(height: 350, child: listMembers());
-              },
-            );
-          },
-        ),
-      ],
-    ),
-  );
-}
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Column(
+        children: [
+          const Text("Choices",
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: primaryColor)),
+          ...selectedMembers
+              .map((member) => ListTile(
+                    title: Text(member,
+                        style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: primaryColor)),
+                  ))
+              .toList(),
+          ListTile(
+            leading: const Icon(Icons.add),
+            title: const Text('Add Member',
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: primaryColor)),
+            onTap: () {
+              showModalBottomSheet(
+                // add height
+                isScrollControlled: true,
+                context: context,
+                builder: (BuildContext context) {
+                  return SizedBox(height: 350, child: listMembers());
+                },
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   FutureBuilder<List<String>> listMembers() {
     return FutureBuilder(
-          future: cooperativesRepository
-              .getCooperativeMembers("sslvO5tgDoCHGBO82kxq"),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Text('Error loading data');
-            }
+      future:
+          cooperativesRepository.getCooperativeMembers("sslvO5tgDoCHGBO82kxq"),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Text('Error loading data');
+        }
 
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              // Return shirnk or no widget
-              return const SizedBox.shrink();
-            }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Return shirnk or no widget
+          return const SizedBox.shrink();
+        }
 
-            final members = snapshot.data as List<String>;
+        final members = snapshot.data as List<String>;
 
-             return ListView.builder(
-    shrinkWrap: true,
-    itemCount: members.length,
-    itemBuilder: (context, index) {
-      return FutureBuilder<UserModel>(
-        future: userRepository.getUser(members[index]),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return const Text('Error loading data');
-          }
+        return ListView.builder(
+          shrinkWrap: true,
+          itemCount: members.length,
+          itemBuilder: (context, index) {
+            return FutureBuilder<UserModel>(
+              future: userRepository.getUser(members[index]),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('Error loading data');
+                }
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const SizedBox.shrink();
-          }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox.shrink();
+                }
 
-          final user = snapshot.data!;
+                final user = snapshot.data!;
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
-            child: Column(
-              children: [
-                ListTile(
-                  onTap: () {
-                    setState(() {
-                      selectedMembers.add('${user.firstName} ${user.lastName}');
-                    });
-                    setState(() {
-                      selectedMembersUId.add(user.uid);
-                    });
-                    Navigator.pop(context);
-                  },
-                  title: Text(
-                    '${user.firstName} ${user.lastName}',
-                    style: const TextStyle(color: primaryColor, fontWeight: FontWeight.w500),
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0, vertical: 0.0),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        onTap: () {
+                          setState(() {
+                            selectedMembers
+                                .add('${user.firstName} ${user.lastName}');
+                          });
+                          setState(() {
+                            selectedMembersUId.add(user.uid);
+                          });
+                          Navigator.pop(context);
+                        },
+                        title: Text(
+                          '${user.firstName} ${user.lastName}',
+                          style: const TextStyle(
+                              color: primaryColor, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      const Divider(
+                        thickness: 1,
+                        indent: 20,
+                        endIndent: 20,
+                      ),
+                    ],
                   ),
-                ),
-                const Divider(
-                  thickness: 1,
-                  indent: 20,
-                  endIndent: 20,
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    },
-  );
+                );
+              },
+            );
           },
         );
+      },
+    );
   }
-
-
 
   ElevatedButton submitButton(GlobalKey<FormState> formKey) {
     List<PollModel> polls = List<PollModel>.generate(
@@ -187,8 +199,6 @@ class _AddVotePageState extends ConsumerState<AddVotePage> {
 
           // Add polls to the vote
 
-
-
           // Show snackbar and pop
           // Show snackbar
           ScaffoldMessenger.of(context).showSnackBar(
@@ -209,74 +219,77 @@ class _AddVotePageState extends ConsumerState<AddVotePage> {
   }
 
   Widget datePicker(BuildContext context) {
-    return Align (
+    return Align(
       alignment: Alignment.centerLeft,
       child: TextButton(
-                  onPressed: () async {
-                    final DateTime? pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
-                    );
-                    setState(() {
-                      selectedDate = pickedDate;
-                    });
-                  },
-                  child: Row(
-                    children: [
-                      const Icon (
-                        Icons.calendar_today,
-                        color: primaryColor,
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        selectedDate == null
-                            ? 'Select a date'
-                            : "Date: ${DateFormat('MMM d, y').format(selectedDate!)}",
-                      ),
-                    ],
-                  ),
-                ),
+        onPressed: () async {
+          final DateTime? pickedDate = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2000),
+            lastDate: DateTime(2100),
+          );
+          setState(() {
+            selectedDate = pickedDate;
+          });
+        },
+        child: Row(
+          children: [
+            const Icon(
+              Icons.calendar_today,
+              color: primaryColor,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              selectedDate == null
+                  ? 'Select a date'
+                  : "Date: ${DateFormat('MMM d, y').format(selectedDate!)}",
+            ),
+          ],
+        ),
+      ),
     );
   }
 
   TextFormField descriptionInput() {
     return TextFormField(
-                maxLines: 5,
-                decoration: const InputDecoration(labelText: 'Description', hintText: 'Enter a description',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a description';
-                  }
-                  return null;
-                },
-                style: const TextStyle (
-                  color: primaryColor,
-                ),
-                onSaved: (value) {
-                  description = value;
-                },
-              );
+      maxLines: 5,
+      decoration: const InputDecoration(
+        labelText: 'Description',
+        hintText: 'Enter a description',
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter a description';
+        }
+        return null;
+      },
+      style: const TextStyle(
+        color: primaryColor,
+      ),
+      onSaved: (value) {
+        description = value;
+      },
+    );
   }
 
   TextFormField titleInput() {
     return TextFormField(
-                decoration: const InputDecoration(labelText: 'Title', hintText: 'Enter a title'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a title';
-                  }
-                  return null;
-                },
-                style: const TextStyle (
-                  color: primaryColor,
-                ),
-                onSaved: (value) {
-                  title = value;
-                },
-              );
+      decoration:
+          const InputDecoration(labelText: 'Title', hintText: 'Enter a title'),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter a title';
+        }
+        return null;
+      },
+      style: const TextStyle(
+        color: primaryColor,
+      ),
+      onSaved: (value) {
+        title = value;
+      },
+    );
   }
 
   AppBar _appBar(BuildContext context, String title) {

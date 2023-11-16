@@ -1,4 +1,5 @@
 //import 'package:cooptourism/data/models/listing.dart';
+import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:cooptourism/data/models/manager_dashboard.dart/sales.dart';
 import 'package:cooptourism/data/models/post.dart';
 import 'package:cooptourism/data/models/user.dart';
@@ -193,8 +194,9 @@ Widget showListing(List<SalesData> listings) {
       }
 
       return Container(
+        // border color
         decoration: BoxDecoration(
-          border: Border.all(width: 1.0),
+          border: Border.all(color: primaryColor, width: 1.0),
           borderRadius: const BorderRadius.all(Radius.circular(10.0)),
         ),
         margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
@@ -203,6 +205,8 @@ Widget showListing(List<SalesData> listings) {
           title: Text(
             listings[index].listingName!,
             style: const TextStyle(
+              color: primaryColor,
+              fontWeight: FontWeight.bold,
               fontSize: 20,
             ),
           ),
@@ -226,7 +230,7 @@ Widget showListing(List<SalesData> listings) {
               );
             },
             child: IconButton(
-              icon: const Icon(Icons.message),
+              icon: const Icon(Icons.message, color: primaryColor),
               onPressed: () {
                 Navigator.push(
                   context,

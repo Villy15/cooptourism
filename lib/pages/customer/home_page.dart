@@ -23,10 +23,9 @@ class CustomerHomePage extends ConsumerStatefulWidget {
 
 class _CustomerHomePageState extends ConsumerState<CustomerHomePage> {
   final destinations = [
-    {'icon': Icons.beach_access, 'text': 'Beach'},
+    {'icon': Icons.beach_access, 'text': 'Accomodations'},
     {'icon': Icons.location_city, 'text': 'City'},
     {'icon': Icons.landscape, 'text': 'Wilderness'},
-
     {'icon': Icons.beach_access, 'text': 'Beach'},
     {'icon': Icons.location_city, 'text': 'City'},
     {'icon': Icons.landscape, 'text': 'Wilderness'},
@@ -289,20 +288,32 @@ class _CustomerHomePageState extends ConsumerState<CustomerHomePage> {
             height: 150.0,
             width: 120.0,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(30.0),
+              boxShadow: [
+                // Added shadow effect
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
-            child: CachedNetworkImage(
-              imageUrl: imageUrl,
-              imageBuilder: (context, imageProvider) => Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: imageProvider,
-                    fit: BoxFit.cover,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20.0),
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
+                // placeholder: (context, url) => const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
-              // placeholder: (context, url) => const CircularProgressIndicator(),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
           );
         }

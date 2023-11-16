@@ -60,7 +60,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
     switch (index) {
       case 0:
         if (role == "Manager") {
-          context.go("/manager_home_page");
+          context.go("/dashboard_page");
         } else if (role == 'Member') {
           context.go("/member_dashboard_page");
         } else if (role == 'Customer'){
@@ -70,7 +70,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         break;
       case 1:
         if (role == 'Manager') {
-          context.go("/dashboard_page");
+          context.go("/wallet_page");
         } else if (role == 'Member') {
           context.go("/wallet_page");
         } else if (role == 'Customer') {
@@ -88,7 +88,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         break;
       case 3:
         if (role == 'Manager') {
-          context.go("/reports_page");
+          context.go("/events_page");
         } else if (role == 'Member') {
           context.go("/profile_page/${user!.uid}}");
         } else if (role == 'Customer') {
@@ -105,24 +105,31 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
   List<BottomNavigationBarItem> _getManagerItems() {
     return const <BottomNavigationBarItem>[
       BottomNavigationBarItem(
-        icon: Icon(Icons.home_outlined),
-        activeIcon: Icon(Icons.home_rounded),
-        label: 'Home',
-      ),
-      BottomNavigationBarItem(
         icon: Icon(Icons.dashboard_outlined),
         activeIcon: Icon(Icons.dashboard_rounded),
         label: 'Dashboard',
       ),
       BottomNavigationBarItem(
+        icon: Icon(Icons.account_balance_wallet_outlined),
+        activeIcon: Icon(Icons.account_balance_wallet_rounded),
+        label: 'Finance',
+      ),
+
+      
+      BottomNavigationBarItem(
         icon: Icon(Icons.people_outline_rounded), 
         activeIcon: Icon(Icons.people_rounded),
         label: 'Members',
       ),
+      // BottomNavigationBarItem(
+      //   icon: Icon(Icons.bar_chart_outlined),
+      //   activeIcon: Icon(Icons.bar_chart_rounded),
+      //   label: 'Reports',
+      // ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.bar_chart_outlined),
-        activeIcon: Icon(Icons.bar_chart_rounded),
-        label: 'Reports',
+        icon: Icon(Icons.event_outlined),
+        activeIcon: Icon(Icons.event_rounded),
+        label: 'Events',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.menu_rounded),
