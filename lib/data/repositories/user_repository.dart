@@ -75,6 +75,19 @@ class UserRepository {
     }
   }
 
+  // Get the first name and last name of the user from Firestore
+  Future<String> getUserName(String userId) async {
+    try {
+      final doc = await usersCollection.doc(userId).get();
+      final data = doc.data() as Map<String, dynamic>;
+      return data['first_name'] + " " + data['last_name'];
+    } catch (e) {
+      debugPrint('Error getting user from Firestore: $e');
+      // You might want to handle errors more gracefully here
+      rethrow;
+    }
+  }
+
   // Get user streamr
   Stream<UserModel> getUserStream(String userId) {
     return usersCollection.doc(userId).snapshots().map((snapshot) {

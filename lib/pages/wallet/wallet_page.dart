@@ -103,6 +103,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
   }
 
   ListView listTransactions(List<SalesData> sales) {
+    final user = ref.watch(userModelProvider);
     return ListView.builder(
       shrinkWrap: true,
       itemCount: sales.length,
@@ -133,7 +134,8 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w400)),
           trailing: Text(
-              "${sale.sales >= 0 ? '+' : '-'}${sale.sales.abs().toStringAsFixed(2)} ",
+              user?.role == 'Member' ||  user?.role ==  'Manager' ? "${sale.sales >= 0 ? '+' : '-'}₱${sale.sales.abs().toStringAsFixed(2)} " 
+                : "${sale.sales <= 0 ? '+' : '-'}₱${sale.sales.abs().toStringAsFixed(2)} ",
               style: TextStyle(
                   fontSize: 18,
                   color: Theme.of(context).colorScheme.primary,
