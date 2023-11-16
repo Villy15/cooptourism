@@ -107,7 +107,7 @@ class _IteneraryPageState extends State<IteneraryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(context, "Itenary Page"),
+      appBar: _appBar(context, "Itenerary Page"),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: StreamBuilder(

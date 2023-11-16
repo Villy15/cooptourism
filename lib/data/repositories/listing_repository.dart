@@ -18,6 +18,12 @@ class ListingRepository {
       }).toList();
     });
   }
+  
+  // Get the title of a listing from Firestore by providing the uid
+  Future<String> getListingTitle(String listingId) async {
+    final doc = await listingsCollection.doc(listingId).get();
+    return (doc.data() as Map<String, dynamic>)['title'];
+  }
 
   // Get Listing by type from Firestore
   Stream<List<ListingModel>> getListingsByType(String type) {
@@ -31,6 +37,7 @@ class ListingRepository {
       }).toList();
     });
   }
+
 
   // get listing by city using Future
   Future<List<ListingModel>> getListingsByCity(String city) async {

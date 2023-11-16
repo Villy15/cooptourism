@@ -31,6 +31,19 @@ class SalesRepository {
     });
   }
 
+  // Get all sales by customerId
+  Stream<List<SalesData>> getAllSalesByCustomerId(String customerId) {
+    return salesCollection
+        .where('customerid', isEqualTo: customerId)
+        // .orderBy('date', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return SalesData.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // Delete all
   Future<void> deleteAllSales() async {
     final batch = FirebaseFirestore.instance.batch();

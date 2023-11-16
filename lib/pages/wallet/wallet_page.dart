@@ -1,21 +1,29 @@
+import 'package:cooptourism/data/models/manager_dashboard.dart/sales.dart';
+import 'package:cooptourism/data/repositories/listing_repository.dart';
+import 'package:cooptourism/data/repositories/manager_dashboard/sales_repository.dart';
+import 'package:cooptourism/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-class WalletPage extends StatefulWidget {
+final SalesRepository salesRepository = SalesRepository();
+final ListingRepository listingRepository = ListingRepository();
+
+class WalletPage extends ConsumerStatefulWidget {
   const WalletPage({super.key});
 
   @override
-  State<WalletPage> createState() => _WalletPageState();
+  ConsumerState<WalletPage> createState() => _WalletPageState();
 }
 
-class _WalletPageState extends State<WalletPage> {
-  final List<String> _tabTitles = ['Wallets', 'Loans', 'Donate'];
+class _WalletPageState extends ConsumerState<WalletPage> {
+  final List<String> _tabTitles = ['Transactions', 'Loans', 'Donate'];
   int _selectedIndex = 0;
 
    @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(context, "Wallet"),
+      appBar: _appBar(context, "Finance"),
       backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
         child: Column(
@@ -34,39 +42,35 @@ class _WalletPageState extends State<WalletPage> {
   }
 
   Widget _buildWalletsContent() {
-    String name = "Adrian";
-    double money = 1000.00;
+    final user = ref.watch(userModelProvider);
+    return StreamBuilder<Object>(
+      stream: user?.role! == 'Customer' ? salesRepository.getAllSalesByCustomerId(user!.uid!) : salesRepository.getAllSalesByOwnerId(user!.uid!),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        } 
 
-    // Create a sample of transactions where it has product, timestamp, amount
-    List<Transaction> transactions = [
-      Transaction(product: 'Item 1', timestamp: DateTime.now(), amount: 10.0),
-      Transaction(product: 'Item 2', timestamp: DateTime.now(), amount: 20.0),
-      Transaction(product: 'Item 3', timestamp: DateTime.now(), amount: 30.0),
-      Transaction(product: 'Item 1', timestamp: DateTime.now(), amount: 10.0),
-      Transaction(product: 'Item 2', timestamp: DateTime.now(), amount: 20.0),
-      Transaction(product: 'Item 3', timestamp: DateTime.now(), amount: 30.0),
-      Transaction(product: 'Item 1', timestamp: DateTime.now(), amount: 10.0),
-      Transaction(product: 'Item 2', timestamp: DateTime.now(), amount: 20.0),
-      Transaction(product: 'Item 3', timestamp: DateTime.now(), amount: 30.0),
-    ];
+        final transactions = snapshot.data as List<SalesData>;
+        // Sort transactions by date
+        transactions.sort((a, b) => b.date.compareTo(a.date));
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
-            child: walletWidget(context, name, money),
-          ),
-          const SizedBox(height: 10),
-
-          // ListsView Builder of transactions table
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-            child: transactionHeading(),
-          ),
-          listTransactions(transactions),
-        ],
-      ),
+        return Column(
+          children: [
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
+            //   child: walletWidget(context, name, money),
+            // ),
+            // const SizedBox(height: 10),
+        
+            // ListsView Builder of transactions table
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+              child: transactionHeading(),
+            ),
+            listTransactions(transactions),
+          ],
+        );
+      }
     );
   }
 
@@ -91,36 +95,45 @@ class _WalletPageState extends State<WalletPage> {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0)),
 
         //  See all underline
-        Text("See All",
-            style: TextStyle(
-                decoration: TextDecoration.underline, fontSize: 16.0)),
+        // Text("See All",
+        //     style: TextStyle(
+        //         decoration: TextDecoration.underline, fontSize: 16.0)),
       ],
     );
   }
 
-  ListView listTransactions(List<Transaction> transactions) {
+  ListView listTransactions(List<SalesData> sales) {
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: transactions.length,
+      itemCount: sales.length,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        final transaction = transactions[index];
+        final sale = sales[index];
         final formattedDate =
-            DateFormat('MMM dd yyyy | hh:mm a').format(transaction.timestamp);
+            DateFormat('MMM dd yyyy | hh:mm a').format(sale.date);
         return ListTile(
           leading: const Icon(Icons.payment),
-          title: Text(transaction.product,
-              style: TextStyle(
-                  fontSize: 20,
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.bold)),
+          title: FutureBuilder (
+            future: listingRepository.getListingTitle(sale.listingId!),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              } 
+              final listingTitle = snapshot.data as String;
+              return Text(listingTitle,
+                style: TextStyle(
+                    fontSize: 17,
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold));
+            }
+          ),
           subtitle: Text(formattedDate,
               style: TextStyle(
                   fontSize: 14,
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w400)),
           trailing: Text(
-              "${transaction.amount >= 0 ? '+' : '-'}${transaction.amount.abs().toStringAsFixed(2)} ",
+              "${sale.sales >= 0 ? '+' : '-'}${sale.sales.abs().toStringAsFixed(2)} ",
               style: TextStyle(
                   fontSize: 18,
                   color: Theme.of(context).colorScheme.primary,
@@ -382,11 +395,3 @@ Container loansWidget(BuildContext context, double maxLoan) {
   }
 }
 
-class Transaction {
-  final String product;
-  final DateTime timestamp;
-  final double amount;
-
-  Transaction(
-      {required this.product, required this.timestamp, required this.amount});
-}
