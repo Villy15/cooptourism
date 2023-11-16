@@ -23,19 +23,26 @@ class _WalletPageState extends ConsumerState<WalletPage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userModelProvider);
+
+    // remove all tabTitles if role is Customer
     return Scaffold(
       appBar: _appBar(context, "Finance"),
       backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            listFilter(),
-            const SizedBox(height: 10),
-            _selectedIndex == 0
-                ? _buildWalletsContent()
-                : _selectedIndex == 1
-                    ? _buildLoansContent()
-                    : _buildDonateContent(),
+            if (user?.role == 'Member' || user?.role == 'Manager') ...[
+              listFilter(),
+              const SizedBox(height: 10),
+              _selectedIndex == 0
+                  ? _buildWalletsContent()
+                  : _selectedIndex == 1
+                      ? _buildLoansContent()
+                      : _buildDonateContent(),
+            ] else ...[
+              _buildWalletsContent()
+            ],
           ],
         ),
       ),
@@ -121,56 +128,56 @@ class _WalletPageState extends ConsumerState<WalletPage> {
   }
 
   Widget _buildScrollableTerms() {
-  return Container(
-    padding: const EdgeInsets.all(16.0),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12.0),
-      boxShadow: const [
-        BoxShadow(
-          color: Colors.black26,
-          blurRadius: 4,
-          offset: Offset(0, 2),
-        ),
-      ],
-    ),
-    // Use a ConstrainedBox to limit the height of the SingleChildScrollView
-    child: ConstrainedBox(
-      constraints: const BoxConstraints(
-        // Set a max height for the scrollable area
-        maxHeight: 320.0,
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
-      child: const Scrollbar (
-        thumbVisibility: true,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Loan terms and conditions\n',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'The terms and conditions upon which each loan shall be granted and repaid shall include but not be limited to the following—\n\n'
-                'a. every application for a loan shall be accompanied by such information about the financial position and income of the borrower as the Credit Committee or loans officer may require;\n\n'
-                'b. no society shall make a loan to an unincorporated organization. Where such a loan is contemplated, it shall be made to one or more of the members or officers of the organisation provided, however; that the society shall, in any such particular case, require such additional security by way of endorsement of the promissory note as may be deemed desirable;\n\n'
-                'c. no loan shall be made to a member if it would cause the total indebtedness of the member to the credit union to exceed 10 percent of the paid-up capital and deposits of the credit union;\n\n'
-                'd. the total of all loans made to associations, organizations or corporations, shall not, at any time, exceed 25 percent of the total shares and deposits of the credit union;\n\n'
-                'e. no loan shall be made to a company unless such loan is personally guaranteed by shareholders of the company holding a majority of the shares in value and in voting rights provided that such personal guarantee shall not be required where the loan is guaranteed by an organization or agency of Government;\n\n'
-                'f. no loan shall be made by a society to a corporation if a majority of the shares of the corporation are held by the officers and directors of the credit union unless the application has been approved by the Registrar;\n\n'
-                'g. transactions in the loan account of a member shall be shown by the necessary entries in a passbook or statement to be delivered to each member;\n\n'
-                'h. where a mortgage on land or building is taken as security for a loan, the amount loaned shall not exceed 90 percent of the market value of the land or buildings;\n\n'
-                'i. before such a loan is made, the Credit Committee or loan officer shall require that an appraisal of the market value of the property be made by an appraiser whom they believe to be competent and who is instructed and employed by the Credit Union independently of any owner of the property on a form approved by the Registrar;\n\n'
-                'j. the expenses, if any, of any appraiser employed pursuant to subparagraph (i) may be borne by the applicant for the loan.\n',
-                style: TextStyle(fontSize: 14),
-              ),
-            ],
+      // Use a ConstrainedBox to limit the height of the SingleChildScrollView
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          // Set a max height for the scrollable area
+          maxHeight: 320.0,
+        ),
+        child: const Scrollbar(
+          thumbVisibility: true,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Loan terms and conditions\n',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  'The terms and conditions upon which each loan shall be granted and repaid shall include but not be limited to the following—\n\n'
+                  'a. every application for a loan shall be accompanied by such information about the financial position and income of the borrower as the Credit Committee or loans officer may require;\n\n'
+                  'b. no society shall make a loan to an unincorporated organization. Where such a loan is contemplated, it shall be made to one or more of the members or officers of the organisation provided, however; that the society shall, in any such particular case, require such additional security by way of endorsement of the promissory note as may be deemed desirable;\n\n'
+                  'c. no loan shall be made to a member if it would cause the total indebtedness of the member to the credit union to exceed 10 percent of the paid-up capital and deposits of the credit union;\n\n'
+                  'd. the total of all loans made to associations, organizations or corporations, shall not, at any time, exceed 25 percent of the total shares and deposits of the credit union;\n\n'
+                  'e. no loan shall be made to a company unless such loan is personally guaranteed by shareholders of the company holding a majority of the shares in value and in voting rights provided that such personal guarantee shall not be required where the loan is guaranteed by an organization or agency of Government;\n\n'
+                  'f. no loan shall be made by a society to a corporation if a majority of the shares of the corporation are held by the officers and directors of the credit union unless the application has been approved by the Registrar;\n\n'
+                  'g. transactions in the loan account of a member shall be shown by the necessary entries in a passbook or statement to be delivered to each member;\n\n'
+                  'h. where a mortgage on land or building is taken as security for a loan, the amount loaned shall not exceed 90 percent of the market value of the land or buildings;\n\n'
+                  'i. before such a loan is made, the Credit Committee or loan officer shall require that an appraisal of the market value of the property be made by an appraiser whom they believe to be competent and who is instructed and employed by the Credit Union independently of any owner of the property on a form approved by the Registrar;\n\n'
+                  'j. the expenses, if any, of any appraiser employed pursuant to subparagraph (i) may be borne by the applicant for the loan.\n',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildDonateContent() {
     // Content for the 'Donate' tab
