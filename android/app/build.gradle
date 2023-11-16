@@ -32,6 +32,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    packagingOptions {
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+        // Add other conflicting files if necessary
+    }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }

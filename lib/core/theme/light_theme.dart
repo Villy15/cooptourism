@@ -11,6 +11,7 @@ const double small = 14;
 
 ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
+  useMaterial3: false,
   
   // Color Theme
   colorScheme: const ColorScheme.light(
