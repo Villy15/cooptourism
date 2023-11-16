@@ -30,12 +30,15 @@ class _AddListingState extends ConsumerState<AddListing> {
   Map<String, dynamic> amenities = {};
   int roleCount = 0;
   int taskCount = 0;
-  Map<String, List<dynamic>> tasks = {};
+  Map<String, dynamic> tasks = {};
   Map<String, dynamic> roleMemberPair = {};
   List<String> memberNames = [];
   List<String> selectedMemberName = [];
+  List<String> selectedRole = [];
   List<TextEditingController> roleController = [];
   List<TextEditingController> taskRoleController = [];
+  List<FocusNode> roleFocus = [];
+  List<FocusNode> taskFocus = [];
   int activeStep = 0;
   int upperBound = 6;
   // String _province = "";
@@ -50,6 +53,13 @@ class _AddListingState extends ConsumerState<AddListing> {
       ref.read(appBarVisibilityProvider.notifier).state = true;
       ref.read(navBarVisibilityProvider.notifier).state = false;
     });
+  }
+
+  void _saveField(FocusNode node, Function save) {
+    debugPrint("is this even running");
+    if (!node.hasFocus) {
+      save();
+    }
   }
 
   void setMemberNames(List<String> names) {
@@ -279,9 +289,6 @@ class _AddListingState extends ConsumerState<AddListing> {
         );
 
       case 2:
-        // AppConfigRepository appConfigRepository = AppConfigRepository();
-        // Future<Map<String, dynamic>> amenities =
-        //     appConfigRepository.getAmenities();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -322,6 +329,23 @@ class _AddListingState extends ConsumerState<AddListing> {
                 shrinkWrap: true,
                 itemCount: roleCount,
                 itemBuilder: (context, index) {
+                  selectedMemberName.add(
+                    "${ref.watch(userModelProvider)!.lastName} ${ref.watch(userModelProvider)!.firstName}",
+                  );
+                  roleFocus.add(FocusNode());
+                  roleFocus[index].addListener(() {
+                    _saveField(roleFocus[index], () {
+                      roleMemberPair.addAll({
+                        selectedMemberName[index]:
+                            roleController[index].value.text
+                      });
+                      ref.read(marketAddListingProvider.notifier).setAddListing(
+                            ref
+                                .watch(marketAddListingProvider)!
+                                .copyWith(roles: roleMemberPair),
+                          );
+                    });
+                  });
                   roleController.add(TextEditingController());
                   return Container(
                     height: 75,
@@ -401,12 +425,12 @@ class _AddListingState extends ConsumerState<AddListing> {
                             border: Border.all(color: Colors.grey, width: 1),
                           ),
                           child: Form(
+                            key: Key(roleCount.toString()),
                             child: TextFormField(
                               controller: roleController[index],
-                              onChanged: (textValue) {
-                                roleMemberPair.update(selectedMemberName[index],
-                                    (value) => textValue);
-                                debugPrint(roleMemberPair.toString());
+                              focusNode: roleFocus[index],
+                              onTapOutside: (downEvent) {
+                                FocusScope.of(context).unfocus();
                               },
                               maxLines: null,
                               decoration: const InputDecoration(
@@ -432,26 +456,7 @@ class _AddListingState extends ConsumerState<AddListing> {
               onTap: () {
                 setState(() {
                   roleCount = roleCount + 1;
-                  selectedMemberName.add(
-                    "${ref.watch(userModelProvider)!.lastName} ${ref.watch(userModelProvider)!.firstName}",
-                  );
-                  roleMemberPair
-                      .addEntries({selectedMemberName.last: ""}.entries);
-                  ref.read(marketAddListingProvider.notifier).setAddListing(
-                        ref
-                            .watch(marketAddListingProvider)!
-                            .copyWith(roles: {selectedMemberName.last: ""}),
-                      );
                 });
-                if (roleCount > 0) {
-                  ref.read(marketAddListingProvider.notifier).setAddListing(
-                        ref
-                            .watch(marketAddListingProvider)!
-                            .copyWith(roles: roleMemberPair),
-                      );
-                }
-                debugPrint(
-                    ref.watch(marketAddListingProvider)!.roles.toString());
               },
               child: Container(
                 height: MediaQuery.sizeOf(context).height / 10,
@@ -513,6 +518,25 @@ class _AddListingState extends ConsumerState<AddListing> {
                 itemCount: taskCount,
                 itemBuilder: (context, index) {
                   taskRoleController.add(TextEditingController());
+                  selectedRole.add(ref
+                      .watch(marketAddListingProvider)!
+                      .roles!
+                      .entries
+                      .first
+                      .value);
+                  taskFocus.add(FocusNode());
+                  taskFocus[index].addListener(() {
+                    _saveField(taskFocus[index], () {
+                      tasks.addAll({
+                        taskRoleController[index].value.text:
+                            selectedRole[index]
+                      });
+                      ref.read(marketAddListingProvider.notifier).setAddListing(
+                          ref
+                              .watch(marketAddListingProvider)!
+                              .copyWith(tasks: tasks));
+                    });
+                  });
                   return Container(
                     height: 75,
                     margin: const EdgeInsets.only(bottom: 5),
@@ -528,9 +552,13 @@ class _AddListingState extends ConsumerState<AddListing> {
                             border: Border.all(color: Colors.grey, width: 1),
                           ),
                           child: Form(
+                            key: Key(taskCount.toString()),
                             child: TextFormField(
                               controller: taskRoleController[index],
-                              onChanged: (textValue) {},
+                              focusNode: taskFocus[index],
+                              onTapOutside: (downEvent) {
+                                FocusScope.of(context).unfocus();
+                              },
                               maxLines: null,
                               decoration: const InputDecoration(
                                 label: Text("Task"),
@@ -565,12 +593,21 @@ class _AddListingState extends ConsumerState<AddListing> {
                                 ),
                                 menuMaxHeight: 300,
                                 alignment: Alignment.center,
-                                value: ref
-                                    .watch(marketAddListingProvider)!
-                                    .roles!
-                                    .values
-                                    .first,
-                                onChanged: (newValue) {},
+                                value: selectedRole[index],
+                                onChanged: (newValue) {
+                                  selectedRole[index] = newValue!;
+                                  tasks.addAll({
+                                    taskRoleController[index].value.text:
+                                        selectedRole[index]
+                                  });
+                                  ref
+                                      .read(marketAddListingProvider.notifier)
+                                      .setAddListing(
+                                        ref
+                                            .watch(marketAddListingProvider)!
+                                            .copyWith(tasks: tasks),
+                                      );
+                                },
                                 items: ref
                                     .watch(marketAddListingProvider)!
                                     .roles!
@@ -653,6 +690,8 @@ class _AddListingState extends ConsumerState<AddListing> {
         );
 
       case 5:
+        debugPrint(
+            "this should be final ${ref.watch(marketAddListingProvider).toString()}");
         return Container(
             child: Column(
           children: [
