@@ -1,6 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:ffi';
+// import 'dart:ffi';
 
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/data/repositories/coopjoin_repository.dart';
@@ -12,10 +12,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:go_router/go_router.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:flutter_pdfview/flutter_pdfview.dart';
+// import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 class VerifyFormPage extends ConsumerStatefulWidget {

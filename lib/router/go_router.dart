@@ -1,5 +1,5 @@
-import 'package:cooptourism/pages/coaching/coaching_messaging.dart';
-import 'package:cooptourism/pages/coaching/coaching_page.dart';
+// import 'package:cooptourism/pages/coaching/coaching_messaging.dart';
+// import 'package:cooptourism/pages/coaching/coaching_page.dart';
 import 'package:cooptourism/pages/cooperatives/join_coop.dart';
 import 'package:cooptourism/pages/customer/city_page.dart';
 import 'package:cooptourism/pages/customer/enroll_coop_page.dart';
@@ -9,7 +9,7 @@ import 'package:cooptourism/pages/events/selected_events_page.dart';
 import 'package:cooptourism/pages/inbox/chat.dart';
 import 'package:cooptourism/pages/manager/home_page.dart';
 import 'package:cooptourism/pages/manager/verify_form.dart';
-import 'package:cooptourism/pages/manager/view_pdf.dart';
+// import 'package:cooptourism/pages/manager/view_pdf.dart';
 import 'package:cooptourism/pages/manager/vote_page.dart';
 import 'package:cooptourism/pages/market/add_listing.dart';
 import 'package:cooptourism/pages/market/listing_edit.dart';

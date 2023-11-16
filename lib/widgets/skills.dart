@@ -12,10 +12,10 @@ class SkillCheckbox extends StatefulWidget {
   });
 
   @override
-  _SkillCheckboxState createState() => _SkillCheckboxState();
+  SkillCheckboxState createState() => SkillCheckboxState();
 }
 
-class _SkillCheckboxState extends State<SkillCheckbox> {
+class SkillCheckboxState extends State<SkillCheckbox> {
   @override
   Widget build(BuildContext context) {
     return CheckboxListTile(

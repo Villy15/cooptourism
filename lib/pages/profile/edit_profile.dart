@@ -6,7 +6,7 @@ import 'dart:io';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/widgets/display_image.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+// import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -28,8 +28,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   final TextEditingController _profileBioController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
 
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _otpController = TextEditingController();
+  // final TextEditingController _emailController = TextEditingController();
+  // final TextEditingController _otpController = TextEditingController();
 
   String userUID = '';
 
@@ -544,6 +544,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                         Center(
                           child: ElevatedButton(
                             onPressed: () async {
+                              // ignore: unnecessary_null_comparison
                               if (_lastNameController != null) {
                                 final UserModel newUser = UserModel(
                                 firstName: _firstNameController.text,
@@ -559,10 +560,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                                               );
                               await userRepository.updateUser(userUID, newUser);
 
-                              firebase_storage.Reference reference = firebase_storage.FirebaseStorage.instance
-                              .ref('${widget.profileId}/images/${path.basename(_image!.path)}');
+                              // firebase_storage.Reference reference = firebase_storage.FirebaseStorage.instance
+                              // .ref('${widget.profileId}/images/${path.basename(_image!.path)}');
 
-                              firebase_storage.UploadTask uploadTask = reference.putFile(_image!);
+                              // firebase_storage.UploadTask uploadTask = reference.putFile(_image!);
 
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(

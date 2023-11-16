@@ -58,6 +58,7 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
     final user = ref.watch(userModelProvider);
     role = user?.role ?? 'Customer';
 
+    // ignore: deprecated_member_use
     return WillPopScope (
       onWillPop: () async {
         ref.read(navBarVisibilityProvider.notifier).state = true;

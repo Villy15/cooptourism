@@ -80,10 +80,7 @@ class _WalletPageState extends State<WalletPage> {
 
   Widget _buildDonateContent() {
     // Content for the 'Donate' tab
-    return Container(
-      // Replace this with your 'Donate' tab content
-      child: Text('Donate Content'),
-    );
+    return const Text('Donate Content');
   }
   
   Row transactionHeading() {

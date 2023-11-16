@@ -2,7 +2,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:cooptourism/data/repositories/coopjoin_repository.dart';
-import 'package:cooptourism/data/repositories/user_repository.dart';
+// import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/providers/home_page_provider.dart';
 import 'package:cooptourism/data/models/cooperatives.dart';
 import 'package:cooptourism/data/models/post.dart';
@@ -42,7 +42,7 @@ class _SelectedCoopPageState extends ConsumerState<SelectedCoopPage> {
     final CooperativesRepository cooperativeRepository =
         CooperativesRepository();
 
-    final userRepository = UserRepository();
+    // final userRepository = UserRepository();
     final PostRepository postRepository = PostRepository();
     final joinCooperativeRepository = JoinCooperativeRepository();
 
@@ -136,7 +136,6 @@ class _SelectedCoopPageState extends ConsumerState<SelectedCoopPage> {
                                         // if isMember, show dialog
                                         //
                                         if (isMember) {
-                                          // ignore: use_build_context_synchronously
                                           showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
@@ -167,7 +166,6 @@ class _SelectedCoopPageState extends ConsumerState<SelectedCoopPage> {
                                         }
 
                                         else if (isApplicant != null) {
-                                          // ignore: use_build_context_synchronously
                                           showDialog(
                                             context: context,
                                             builder: (BuildContext context) {

@@ -48,6 +48,7 @@ class _CityPageState extends ConsumerState<CityPage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      // ignore: deprecated_member_use
       child: WillPopScope(
         onWillPop: () async {
           ref.read(appBarVisibilityProvider.notifier).state = true;

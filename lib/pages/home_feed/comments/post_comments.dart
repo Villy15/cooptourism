@@ -42,6 +42,7 @@ class _PostCommentsPageState extends ConsumerState<PostCommentsPage> {
     final Future<PostModel> post = postRepository.getPost(widget.postId);
     final Stream<List<CommentModel>> comments =
         commentRepository.getAllPostComments(widget.postId);
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         ref.read(navBarVisibilityProvider.notifier).state = true;
