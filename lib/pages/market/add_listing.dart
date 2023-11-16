@@ -28,14 +28,16 @@ class _AddListingState extends ConsumerState<AddListing> {
   List<File> uploadedImages = [];
   FilePickerUtility filePickerUtility = FilePickerUtility();
   Map<String, dynamic> amenities = {};
-  int roles = 0;
+  int roleCount = 0;
+  int taskCount = 0;
   Map<String, List<dynamic>> tasks = {};
   Map<String, dynamic> roleMemberPair = {};
   List<String> memberNames = [];
   List<String> selectedMemberName = [];
   List<TextEditingController> roleController = [];
+  List<TextEditingController> taskRoleController = [];
   int activeStep = 0;
-  int upperBound = 5;
+  int upperBound = 6;
   // String _province = "";
   // String _city = "";
   // String _category = "";
@@ -131,6 +133,10 @@ class _AddListingState extends ConsumerState<AddListing> {
                     color: Colors.white,
                   ),
                   Icon(
+                    Icons.task_rounded,
+                    color: Colors.white,
+                  ),
+                  Icon(
                     Icons.summarize,
                     color: Colors.white,
                   ),
@@ -158,16 +164,20 @@ class _AddListingState extends ConsumerState<AddListing> {
   }
 
   Widget nextButton() {
-    return ElevatedButton(
-      onPressed: () {
-        // Increment activeStep, when the next button is tapped. However, check for upper bound.
-        if (activeStep < upperBound) {
-          setState(() {
-            activeStep++;
-          });
-        }
-      },
-      child: const Text('Next'),
+    return SizedBox(
+      height: 50,
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          // Increment activeStep, when the next button is tapped. However, check for upper bound.
+          if (activeStep < upperBound) {
+            setState(() {
+              activeStep++;
+            });
+          }
+        },
+        child: const Text('Next Step'),
+      ),
     );
   }
 
@@ -219,9 +229,12 @@ class _AddListingState extends ConsumerState<AddListing> {
         return 'Category and Type';
 
       case 3:
-        return 'Roles and Tasks';
+        return 'Assign Roles';
 
       case 4:
+        return 'Assign Tasks';
+
+      case 5:
         return 'Rewiew';
 
       default:
@@ -259,6 +272,8 @@ class _AddListingState extends ConsumerState<AddListing> {
                 ],
               ),
             ),
+            const SizedBox(height: 10),
+            nextButton(),
           ],
         );
 
@@ -273,6 +288,8 @@ class _AddListingState extends ConsumerState<AddListing> {
             const SizedBox(height: 5),
             const TypePicker(),
             const SizedBox(height: 5),
+            const SizedBox(height: 10),
+            nextButton(),
             const SizedBox(height: 20),
             DisplayText(
               text: "Notes:",
@@ -297,11 +314,12 @@ class _AddListingState extends ConsumerState<AddListing> {
         }
 
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (roles > 0)
+            if (roleCount > 0)
               ListView.builder(
                 shrinkWrap: true,
-                itemCount: roles,
+                itemCount: roleCount,
                 itemBuilder: (context, index) {
                   roleController.add(TextEditingController());
                   return Container(
@@ -344,7 +362,8 @@ class _AddListingState extends ConsumerState<AddListing> {
                                       onChanged: (newValue) {
                                         selectedMemberName[index] = newValue!;
                                         roleMemberPair.addEntries(
-                                          {selectedMemberName[index]: ""}.entries,
+                                          {selectedMemberName[index]: ""}
+                                              .entries,
                                         );
                                       },
                                       items: snapshot.data!.values
@@ -386,16 +405,6 @@ class _AddListingState extends ConsumerState<AddListing> {
                               onChanged: (textValue) {
                                 roleMemberPair.update(selectedMemberName[index],
                                     (value) => textValue);
-                                // setState(() {
-                                //   roleMemberPair.addEntries(rolePair.entries);
-                                // });
-                                // ref
-                                //     .read(marketAddListingProvider.notifier)
-                                //     .setAddListing(
-                                //       ref
-                                //           .watch(marketAddListingProvider)!
-                                //           .copyWith(roles: roleMemberPair),
-                                //     );
                                 debugPrint(roleMemberPair.toString());
                               },
                               maxLines: null,
@@ -421,7 +430,7 @@ class _AddListingState extends ConsumerState<AddListing> {
             InkWell(
               onTap: () {
                 setState(() {
-                  roles = roles + 1;
+                  roleCount = roleCount + 1;
                   selectedMemberName.add(
                     "${ref.watch(userModelProvider)!.lastName} ${ref.watch(userModelProvider)!.firstName}",
                   );
@@ -433,7 +442,7 @@ class _AddListingState extends ConsumerState<AddListing> {
                             .copyWith(roles: {selectedMemberName.last: ""}),
                       );
                 });
-                if (roles > 0) {
+                if (roleCount > 0) {
                   ref.read(marketAddListingProvider.notifier).setAddListing(
                         ref
                             .watch(marketAddListingProvider)!
@@ -461,17 +470,188 @@ class _AddListingState extends ConsumerState<AddListing> {
                     ),
                     const SizedBox(width: 20),
                     DisplayText(
-                        text: "Add and Assign a Task",
-                        lines: 1,
-                        style: Theme.of(context).textTheme.bodyMedium!),
+                      text: "Add and Assign a Role",
+                      lines: 1,
+                      style: Theme.of(context).textTheme.bodyMedium!,
+                    ),
                   ],
                 ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            nextButton(),
+            const SizedBox(height: 20),
+            DisplayText(
+              text: "Notes:",
+              lines: 1,
+              style: Theme.of(context).textTheme.headlineSmall!,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 5),
+                  DisplayText(
+                    text: "Roles will be used to designate tasks.",
+                    lines: 3,
+                    style: Theme.of(context).textTheme.bodySmall!,
+                  ),
+                ],
               ),
             ),
           ],
         );
 
       case 4:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (taskCount > 0)
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: taskCount,
+                itemBuilder: (context, index) {
+                  taskRoleController.add(TextEditingController());
+                  return Container(
+                    height: 75,
+                    margin: const EdgeInsets.only(bottom: 5),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          width: MediaQuery.sizeOf(context).width / 1.7,
+                          padding: const EdgeInsets.only(left: 15),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            border: Border.all(color: Colors.grey, width: 1),
+                          ),
+                          child: Form(
+                            child: TextFormField(
+                              controller: taskRoleController[index],
+                              onChanged: (textValue) {},
+                              maxLines: null,
+                              decoration: const InputDecoration(
+                                label: Text("Task"),
+                                border: InputBorder.none, // Removes underline
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a task';
+                                }
+                                return null; // Return null if the entered value is valid
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Expanded(
+                          child: Container(
+                            // width: MediaQuery.sizeOf(context).width / 1.5,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                  15), // Create a circular shape
+                              border: Border.all(
+                                  color: Colors.grey, width: 1), // Add a border
+                            ),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10.0),
+                              child: DropdownButtonFormField<String>(
+                                decoration: const InputDecoration(
+                                  labelText: "Assign to Role",
+                                  border: InputBorder.none,
+                                ),
+                                menuMaxHeight: 300,
+                                alignment: Alignment.center,
+                                value: ref
+                                    .watch(marketAddListingProvider)!
+                                    .roles!
+                                    .values
+                                    .first,
+                                onChanged: (newValue) {},
+                                items: ref
+                                    .watch(marketAddListingProvider)!
+                                    .roles!
+                                    .values
+                                    .map<DropdownMenuItem<String>>(
+                                        (dynamic value) {
+                                  return DropdownMenuItem<String>(
+                                    alignment: Alignment.centerLeft,
+                                    value: value,
+                                    child: DisplayText(
+                                      text: value,
+                                      lines: 2,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall!,
+                                    ),
+                                  );
+                                }).toList(),
+                                iconSize: 30.0,
+                                isExpanded: true,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            const SizedBox(height: 10),
+            InkWell(
+              onTap: () {
+                setState(() {
+                  taskCount = taskCount + 1;
+                });
+              },
+              child: Container(
+                height: MediaQuery.sizeOf(context).height / 10,
+                width: MediaQuery.sizeOf(context).width,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: Colors.grey, width: 1),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.people_outline_outlined,
+                      color: Colors.grey,
+                      size: 40,
+                    ),
+                    const SizedBox(width: 20),
+                    DisplayText(
+                      text: "Add and Assign a Task",
+                      lines: 1,
+                      style: Theme.of(context).textTheme.bodyMedium!,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            nextButton(),
+            const SizedBox(height: 20),
+            DisplayText(
+              text: "Notes:",
+              lines: 1,
+              style: Theme.of(context).textTheme.headlineSmall!,
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              child: Column(
+                children: [
+                  SizedBox(height: 5),
+                ],
+              ),
+            ),
+          ],
+        );
+
+      case 5:
         return Container(
             child: Column(
           children: [
@@ -485,7 +665,6 @@ class _AddListingState extends ConsumerState<AddListing> {
             )
           ],
         ));
-
       default:
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -718,6 +897,8 @@ class _AddListingState extends ConsumerState<AddListing> {
                   ]),
                 ),
               ),
+            const SizedBox(height: 10),
+            nextButton(),
             const SizedBox(height: 20),
             DisplayText(
               text: "Notes:",
