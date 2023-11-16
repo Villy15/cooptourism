@@ -54,7 +54,9 @@ class _WalletPageState extends ConsumerState<WalletPage> {
     return StreamBuilder<Object>(
         stream: user?.role! == 'Customer'
             ? salesRepository.getAllSalesByCustomerId(user!.uid!)
-            : salesRepository.getAllSalesByOwnerId(user!.uid!),
+            : user?.role! == 'Member'
+                ? salesRepository.getAllSalesByOwnerId(user!.uid!)
+                : salesRepository.getAllSalesByCooperativeId("sslvO5tgDoCHGBO82kxq"),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());

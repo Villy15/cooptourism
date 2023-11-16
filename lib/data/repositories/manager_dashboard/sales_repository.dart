@@ -31,6 +31,19 @@ class SalesRepository {
     });
   }
 
+  // Get all sales by cooperativeId
+  Stream<List<SalesData>> getAllSalesByCooperativeId(String cooperativeId) {
+    return salesCollection
+        .where('cooperativeId', isEqualTo: cooperativeId)
+        // .orderBy('date', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return SalesData.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // Get all sales by customerId
   Stream<List<SalesData>> getAllSalesByCustomerId(String customerId) {
     return salesCollection
