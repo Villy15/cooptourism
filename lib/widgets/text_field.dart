@@ -8,6 +8,7 @@ class MyTextField extends StatelessWidget {
   // Add an icon on the end of the text field where clicking it would reveal the password
   // Hint: Use the suffixIcon property of InputDecoration
   // Hint: Use the obscureText property of TextField
+  
 
   const MyTextField(
       {super.key,
@@ -18,27 +19,23 @@ class MyTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
-        // Text color of input
-        style: Theme.of(context).textTheme.bodySmall,
-        controller: controller,
-        obscureText: obscureText,
-        decoration: InputDecoration(
-          enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.white,
-            ),
-          ),
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.white,
-            ),
-          ),
-          fillColor: Colors.grey.shade200,
-          filled: true,
-          hintText: hintText,
-          hintStyle: TextStyle(
-            color: Colors.grey[500],
-          ),
-        ));
+      style: const TextStyle(color: Colors.black),
+      decoration: InputDecoration(
+        fillColor: Colors.white54,
+        filled: true,
+        prefixIcon: hintText == 'Email' ? const Icon(Icons.email) : const Icon(Icons.lock),
+        contentPadding: const EdgeInsets.all(20),
+        hintText: hintText,
+        enabledBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+        ),
+      ),
+      // Text color of input
+      controller: controller,
+      obscureText: obscureText,
+    );
   }
 }
