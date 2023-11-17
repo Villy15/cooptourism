@@ -15,7 +15,7 @@ class ListingModel {
   num? rating = 0;
   Map<String, dynamic>? amenities = {};
   Map<String, dynamic>? roles = {};
-  Map<String, List<dynamic>>? tasks = {};
+  Map<String, dynamic>? tasks = {};
   num? price = 0;
   String? type = "";
   Timestamp? postDate = Timestamp.now();
@@ -56,7 +56,7 @@ class ListingModel {
     num? rating,
     Map<String, dynamic>? amenities,
     Map<String, dynamic>? roles,
-    Map<String, List<dynamic>>? tasks,
+    Map<String, dynamic>? tasks,
     num? price,
     String? type,
     Timestamp? postDate,
@@ -122,7 +122,7 @@ class ListingModel {
       rating: map['rating'] != null ? map['rating'] as num : null,
       amenities: map['amenities'] != null ? Map<String, dynamic>.from((map['amenities'] as Map<String, dynamic>)) : null,
       roles: map['roles'] != null ? Map<String, dynamic>.from((map['roles'] as Map<String, dynamic>)) : null,
-      tasks: map['tasks'] != null ? Map<String, List<dynamic>>.from((map['tasks'] as Map<String, List<dynamic>>)) : null,
+      tasks: map['tasks'] != null ? Map<String, dynamic>.from((map['tasks'] as Map<String, dynamic>)) : null,
       price: map['price'] != null ? map['price'] as num : null,
       type: map['type'] != null ? map['type'] as String : null,
       postDate: map['postDate'] != null ? map['postDate'] as Timestamp : null,
