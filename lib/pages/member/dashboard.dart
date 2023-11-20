@@ -34,7 +34,7 @@ class _AddVotePageState extends ConsumerState<MemberChartsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(context, 'Dashboard'),
-      body: SingleChildScrollView (
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
@@ -42,7 +42,6 @@ class _AddVotePageState extends ConsumerState<MemberChartsPage> {
               dashBoardFunctions(context),
               businessDashboard(),
               const SizedBox(height: 60),
-
             ],
           ),
         ),
@@ -124,10 +123,8 @@ class _AddVotePageState extends ConsumerState<MemberChartsPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(title,
-                  style: const TextStyle(
-                      color: primaryColor, fontWeight: FontWeight.bold)),
-              Text(value, style: const TextStyle(color: primaryColor)),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(value),
             ],
           ),
         ),
@@ -140,14 +137,18 @@ class _AddVotePageState extends ConsumerState<MemberChartsPage> {
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white, // Change this color to match your design
+          color: Theme.of(context)
+              .colorScheme
+              .background, // Change this color to match your design
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey
+              color: Theme.of(context)
+                  .colorScheme
+                  .background
                   .withOpacity(0.2), // Change this color to match your design
-              spreadRadius: 5,
-              blurRadius: 7,
+              spreadRadius: 1,
+              blurRadius: 1,
               offset: const Offset(0, 3), // changes position of shadow
             ),
           ],
@@ -165,7 +166,9 @@ class _AddVotePageState extends ConsumerState<MemberChartsPage> {
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white, // Change this color to match your design
+          color: Theme.of(context)
+              .colorScheme
+              .background, // Change this color to match your design
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -206,7 +209,7 @@ class _AddVotePageState extends ConsumerState<MemberChartsPage> {
         Row(
           children: [
             // Add Icon of date
-            const Icon(Icons.calendar_today, color: primaryColor),
+            const Icon(Icons.calendar_today),
             TextButton(
               onPressed: () => _selectDate(context),
               child: Text(_selectedFilterType == 'Week'
@@ -263,8 +266,8 @@ class _AddVotePageState extends ConsumerState<MemberChartsPage> {
     return SfCartesianChart(
       title: ChartTitle(
           text: 'Sales Trend by Service Name',
-          textStyle: const TextStyle(
-              color: primaryColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          textStyle:
+              const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       plotAreaBorderColor: Colors.transparent,
       legend: const Legend(
           isVisible: true,
@@ -328,8 +331,8 @@ class _AddVotePageState extends ConsumerState<MemberChartsPage> {
             textStyle: TextStyle(color: primaryColor, fontSize: 12),
             labelIntersectAction: LabelIntersectAction.shift,
           ),
-          pointColorMapper: (SalesData data, _) =>
-            getColorForCategory(aggregatedChartData.keys.toList().indexOf(data.listingName!)),
+          pointColorMapper: (SalesData data, _) => getColorForCategory(
+              aggregatedChartData.keys.toList().indexOf(data.listingName!)),
           // Position the legends to the bottom
         )
       ];
@@ -338,8 +341,8 @@ class _AddVotePageState extends ConsumerState<MemberChartsPage> {
     return SfCircularChart(
       title: ChartTitle(
           text: 'Sales Participation by Service Name',
-          textStyle: const TextStyle(
-              color: primaryColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          textStyle:
+              const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       legend: const Legend(
           isVisible: true,
           overflowMode: LegendItemOverflowMode.wrap,
@@ -387,7 +390,6 @@ class _AddVotePageState extends ConsumerState<MemberChartsPage> {
   Color getColorForCategory(int index) {
     return colors[index % colors.length];
   }
-
 
   void _selectDate(BuildContext context) {
     DateTime tempDate = _selectedDate;
@@ -438,13 +440,14 @@ class _AddVotePageState extends ConsumerState<MemberChartsPage> {
   DropdownButton<String> _buildDropdownButton() {
     return DropdownButton<String>(
       value: _selectedFilterType,
-      icon: const Icon(Icons.arrow_downward),
+      icon: const Icon(
+        Icons.arrow_downward,
+        size: 16,
+      ),
       iconSize: 24,
       elevation: 16,
-      style: const TextStyle(color: primaryColor),
       underline: Container(
         height: 2,
-        color: primaryColor,
       ),
       onChanged: (String? newValue) {
         setState(() {
@@ -481,13 +484,12 @@ class _AddVotePageState extends ConsumerState<MemberChartsPage> {
     }
   }
 
-   AppBar _appBar(BuildContext context, String title) {
+  AppBar _appBar(BuildContext context, String title) {
     return AppBar(
-      iconTheme: const IconThemeData(color: primaryColor),
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       toolbarHeight: 70,
       title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       // actions: [
       //   Padding(
       //     padding: const EdgeInsets.only(right: 16.0),

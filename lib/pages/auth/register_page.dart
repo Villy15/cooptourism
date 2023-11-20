@@ -25,7 +25,7 @@ class _RegisterPageState extends State<RegisterPage> {
         context: context,
         builder: (context) => const Center(
               child: CircularProgressIndicator(),
-    ));
+            ));
 
     // Make sure passwords match
 
@@ -59,7 +59,7 @@ class _RegisterPageState extends State<RegisterPage> {
         'email': emailTextController.text,
         'first_name': 'Customer',
         'role': 'Customer',
-        'date_joined' : dateJoined,
+        'date_joined': dateJoined,
         'emailStatus': 'Not Verified',
         'joinedAt': DateTime.now(),
         'status': "",
@@ -67,8 +67,6 @@ class _RegisterPageState extends State<RegisterPage> {
         'user_rating': "",
         'user_trust': ""
       });
-      
-
     } on FirebaseAuthException catch (e) {
       if (context.mounted) {
         Navigator.pop(context);
@@ -79,124 +77,111 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void displayMessage(String message) {
     showDialog(
-      context: context, 
-      builder: (context) => AlertDialog(
-        title: Text(message),
-      )
-    );
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text(message),
+            ));
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [          
-                  
-                  // New here? register now
-                   Row(
-                    children: [
-                      Text(
-                        "Register",
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ],
-                  ),
-            
-                  Row(
-                    children: [
-                        Text(
-                        "Already have an account?  ",
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      GestureDetector(
-                        onTap: widget.onTap,
-                        child: Text(
-                          "Login here!",
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            decoration: TextDecoration.underline,
-                            fontWeight: FontWeight.bold,
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // New here? register now
+                    const Row(
+                      children: [
+                        Text("Register", style: TextStyle(fontSize: 24)),
+                      ],
+                    ),
+
+                    Row(
+                      children: [
+                        const Text(
+                          "Already have an account?  ",
                         ),
-                      ),
-                      )
-                    ],
-                  ),
-            
-                  const SizedBox(height: 75),
-            
-                  
-                  // email textfield
-                  MyTextField(
+                        GestureDetector(
+                          onTap: widget.onTap,
+                          child: Text(
+                            "Login here!",
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      decoration: TextDecoration.underline,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                          ),
+                        )
+                      ],
+                    ),
+
+                    const SizedBox(height: 75),
+
+                    // email textfield
+                    MyTextField(
                         controller: emailTextController,
                         hintText: "Email",
-                        obscureText: false
-                      ),
-            
-                  const SizedBox(height: 10),
-                    
-                  
-                  // password textfield
-                  MyTextField(
+                        obscureText: false),
+
+                    const SizedBox(height: 10),
+
+                    // password textfield
+                    MyTextField(
                         controller: passwordTextController,
                         hintText: "Password",
-                        obscureText: true
-                      ),
+                        obscureText: true),
 
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-
-                  MyTextField(
+                    MyTextField(
                         controller: confirmPasswordTextController,
                         hintText: "Confirm Password",
-                        obscureText: true
-                      ),
-            
-                  const SizedBox(height: 10),
-            
-                  
-                  // login button 
-                  MyButton(
-                    onTap: signUp,
-                    text: "Register",
-                  ),
-            
-                  const SizedBox(height: 20),
-                
-                  
-                  const SizedBox(height: 100),
-            
-                  // go to register page
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                       Text(
-                        "To register as a cooperative, ",
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      GestureDetector(
-                        onTap: widget.onCoopTap,
-                        child: Text(
-                          "click here",
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            decoration: TextDecoration.underline,
-                            fontWeight: FontWeight.bold,
+                        obscureText: true),
+
+                    const SizedBox(height: 10),
+
+                    // login button
+                    MyButton(
+                      onTap: signUp,
+                      text: "Register",
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    const SizedBox(height: 100),
+
+                    // go to register page
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "To register as a cooperative, ",
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        GestureDetector(
+                          onTap: widget.onCoopTap,
+                          child: Text(
+                            "click here",
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      decoration: TextDecoration.underline,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      )
-    );
+        ));
   }
 }

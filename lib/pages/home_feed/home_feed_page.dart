@@ -88,23 +88,24 @@ class HomeFeedPageState extends State<HomeFeedPage> {
       toolbarHeight: 70,
       floating: false,
       pinned: false, // This keeps the app bar visible at the top
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       title: Text(
-        "lakbay",
+        "Feed",
         style: TextStyle(
-            fontSize: 28,
-            color: Colors.orange.shade700,
+            color: Theme.of(context).colorScheme.primary,
             fontWeight: FontWeight.bold),
       ),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
             child: IconButton(
               onPressed: () {
                 showAddPostPage(context);
               },
-              icon: const Icon(Icons.add, color: Colors.white),
+              icon: const Icon(
+                Icons.add,
+              ),
             ),
           ),
         ),

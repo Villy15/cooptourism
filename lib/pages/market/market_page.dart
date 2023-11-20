@@ -39,7 +39,6 @@ class _MarketPageState extends ConsumerState<MarketPage> {
         listingRepository.getListingsByType(_type[_selectedIndex]);
     return Scaffold(
         appBar: _appBar(context, "Market"),
-        backgroundColor: Colors.white,
         body: Column(
           children: [
             if (isFilterVisible) listingFilter(context),
@@ -97,25 +96,13 @@ class _MarketPageState extends ConsumerState<MarketPage> {
         crossAxisCount: 1,
         childAspectRatio: 1,
         mainAxisSpacing: 10,
-        mainAxisExtent: 300,
+        mainAxisExtent: 315,
       ),
       itemCount: listings.length,
       itemBuilder: (context, index) {
         final listing = listings[index];
         return ListingCard(
-          listingModel: ListingModel(
-            id: listing.id,
-            owner: listing.owner,
-            title: listing.title,
-            description: listing.description,
-            rating: listing.rating,
-            amenities: listing.amenities,
-            price: listing.price,
-            type: listing.type,
-            postDate: listing.postDate,
-            images: listing.images,
-            visits: listing.visits,
-          ),
+          listingModel: listing,
         );
       },
     );
@@ -203,14 +190,13 @@ class _MarketPageState extends ConsumerState<MarketPage> {
     return AppBar(
       toolbarHeight: 70,
       title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: CircleAvatar(
-            backgroundColor: Colors.grey[800],
+            // backgroundColor: Colors.grey[800],
             child: IconButton(
               onPressed: () {
                 setState(() {
@@ -219,7 +205,7 @@ class _MarketPageState extends ConsumerState<MarketPage> {
               },
               icon: const Icon(
                 Icons.filter_alt_rounded,
-                color: Colors.white,
+                // color: Colors.white,
               ),
             ),
           ),
@@ -227,7 +213,7 @@ class _MarketPageState extends ConsumerState<MarketPage> {
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: CircleAvatar(
-            backgroundColor: Colors.grey[800],
+            // backgroundColor: Colors.grey[800],
             child: IconButton(
               onPressed: () {
                 ref.invalidate(marketProvinceProvider);
@@ -236,7 +222,7 @@ class _MarketPageState extends ConsumerState<MarketPage> {
               },
               icon: const Icon(
                 Icons.add,
-                color: Colors.white,
+                // color: Colors.white,
               ),
             ),
           ),

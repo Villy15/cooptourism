@@ -33,7 +33,6 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(context, "Dashboard"),
-      backgroundColor: Theme.of(context).colorScheme.background,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: ListView(
@@ -79,9 +78,9 @@ class _DashboardPageState extends State<DashboardPage> {
         }
 
         final List<SalesData> sales = snapshot.data as List<SalesData>;
-      
+
         sales.sort((a, b) => b.date.compareTo(a.date));
-        
+
         // Filtered sales
         final filteredSales = sales
             .where((element) => filterDataBasedOnSelection(element))
@@ -133,10 +132,8 @@ class _DashboardPageState extends State<DashboardPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(title,
-                  style: const TextStyle(
-                      color: primaryColor, fontWeight: FontWeight.bold)),
-              Text(value, style: const TextStyle(color: primaryColor)),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(value),
             ],
           ),
         ),
@@ -149,14 +146,18 @@ class _DashboardPageState extends State<DashboardPage> {
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white, // Change this color to match your design
+          color: Theme.of(context)
+              .colorScheme
+              .background, // Change this color to match your design
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey
+              color: Theme.of(context)
+                  .colorScheme
+                  .background
                   .withOpacity(0.2), // Change this color to match your design
-              spreadRadius: 5,
-              blurRadius: 7,
+              spreadRadius: 1,
+              blurRadius: 1,
               offset: const Offset(0, 3), // changes position of shadow
             ),
           ],
@@ -174,7 +175,9 @@ class _DashboardPageState extends State<DashboardPage> {
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white, // Change this color to match your design
+          color: Theme.of(context)
+              .colorScheme
+              .background, // Change this color to match your design
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -271,8 +274,8 @@ class _DashboardPageState extends State<DashboardPage> {
     return SfCartesianChart(
       title: ChartTitle(
           text: 'Sales Trend by Service Category',
-          textStyle: const TextStyle(
-              color: primaryColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          textStyle:
+              const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       plotAreaBorderColor: Colors.transparent,
       legend: const Legend(
           isVisible: true,
@@ -332,7 +335,7 @@ class _DashboardPageState extends State<DashboardPage> {
             labelPosition: ChartDataLabelPosition.outside,
             connectorLineSettings:
                 ConnectorLineSettings(type: ConnectorType.line),
-            textStyle: TextStyle(color: primaryColor, fontSize: 12),
+            textStyle: TextStyle(fontSize: 12),
             labelIntersectAction: LabelIntersectAction.shift,
           ),
           pointColorMapper: (SalesData data, _) =>
@@ -345,8 +348,8 @@ class _DashboardPageState extends State<DashboardPage> {
     return SfCircularChart(
       title: ChartTitle(
           text: 'Sales Participation by Service Category',
-          textStyle: const TextStyle(
-              color: primaryColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          textStyle:
+              const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       legend: const Legend(
           isVisible: true,
           overflowMode: LegendItemOverflowMode.wrap,
@@ -439,10 +442,12 @@ class _DashboardPageState extends State<DashboardPage> {
   DropdownButton<String> _buildDropdownButton() {
     return DropdownButton<String>(
       value: _selectedFilterType,
-      icon: const Icon(Icons.arrow_downward),
+      icon: const Icon(
+        Icons.arrow_downward,
+        size: 16,
+      ),
       iconSize: 24,
       elevation: 16,
-      style: const TextStyle(color: primaryColor),
       underline: Container(
         height: 2,
         color: primaryColor,
@@ -495,7 +500,7 @@ class _DashboardPageState extends State<DashboardPage> {
               decoration: BoxDecoration(
                 color: _selectedIndex == index
                     ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.secondary,
+                    : Theme.of(context).colorScheme.background,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Padding(
@@ -525,8 +530,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return AppBar(
       toolbarHeight: 70,
       title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       // actions: [
       //   Padding(
       //     padding: const EdgeInsets.only(right: 16.0),

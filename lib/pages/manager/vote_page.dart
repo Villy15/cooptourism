@@ -1,4 +1,3 @@
-import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:cooptourism/data/models/manager_dashboard.dart/votes.dart';
 import 'package:cooptourism/data/repositories/manager_dashboard/votes_repository.dart';
 import 'package:cooptourism/pages/manager/dashboard/add_vote_page.dart';
@@ -18,7 +17,6 @@ class VotePage extends ConsumerStatefulWidget {
 }
 
 class _VotePageState extends ConsumerState<VotePage> {
-
   @override
   void initState() {
     super.initState();
@@ -29,7 +27,7 @@ class _VotePageState extends ConsumerState<VotePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(context, 'Vote'),
-      body: SingleChildScrollView (
+      body: SingleChildScrollView(
         child: Column(
           children: [
             StreamBuilder<List<VoteModel>>(
@@ -50,18 +48,25 @@ class _VotePageState extends ConsumerState<VotePage> {
                   itemCount: votes.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      leading: const Icon(Icons.ballot, color: primaryColor),
-                      title: Text(votes[index].title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: primaryColor)),
+                      leading: const Icon(Icons.ballot),
+                      title: Text(votes[index].title,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          )),
                       // Format the date to show to Show Jul 15, 2023
 
-                      subtitle: Text("Due: ${DateFormat('MMM d, y').format(votes[index].date)}", style: const TextStyle(fontSize: 16, color: Colors.grey)),
+                      subtitle: Text(
+                          "Due: ${DateFormat('MMM d, y').format(votes[index].date)}",
+                          style: const TextStyle(fontSize: 16)),
                       // Add a trailing button that says Vote
                       trailing: ElevatedButton(
                         onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => SelectedVotePage(vote: votes[index]),
+                              builder: (context) =>
+                                  SelectedVotePage(vote: votes[index]),
                             ),
                           );
                         },
@@ -83,25 +88,27 @@ class _VotePageState extends ConsumerState<VotePage> {
 
     return AppBar(
       // Style the icons
-      iconTheme: const IconThemeData(color: primaryColor),
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       toolbarHeight: 70,
       title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
-          child: user?.role == 'Manager' ? CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
-            child: IconButton(
-              onPressed: () {
-                Navigator.push(context, 
-                  MaterialPageRoute(builder: (context) => const AddVotePage()));
-                
-              },
-              icon: const Icon(Icons.add, color: Colors.white),
-            ),
-          ) : Container(),
+          child: user?.role == 'Manager'
+              ? CircleAvatar(
+                  backgroundColor: Colors.grey.shade300,
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AddVotePage()));
+                    },
+                    icon: const Icon(Icons.add, color: Colors.white),
+                  ),
+                )
+              : Container(),
         ),
       ],
     );

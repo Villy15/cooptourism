@@ -1,4 +1,3 @@
-import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:cooptourism/data/models/events.dart';
 import 'package:cooptourism/pages/events/add_event.dart';
 import 'package:cooptourism/providers/user_provider.dart';
@@ -21,7 +20,6 @@ class _ContributeEventPageState extends ConsumerState<ConfirmEventPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(context, "Confirm Event"),
-      backgroundColor: Colors.white,
       body: ListView(
         children: [
           _confirmationSummary(context, widget.event),
@@ -38,7 +36,7 @@ class _ContributeEventPageState extends ConsumerState<ConfirmEventPage> {
 
   Widget _leaveEvent(BuildContext context, EventsModel event) {
     final user = ref.watch(userModelProvider);
-    return Card (
+    return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -61,9 +59,10 @@ class _ContributeEventPageState extends ConsumerState<ConfirmEventPage> {
               ),
               // Color
               onPressed: () {
-                // Delete current id to the list of participants 
+                // Delete current id to the list of participants
                 // eventsRepository.updateEventParticipants(widget.event.uid, user?.uid);
-                eventsRepository.removeEventParticipants(widget.event.uid, user?.uid);
+                eventsRepository.removeEventParticipants(
+                    widget.event.uid, user?.uid);
 
                 // show snackBar
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -83,93 +82,80 @@ class _ContributeEventPageState extends ConsumerState<ConfirmEventPage> {
   }
 
   Widget _showQrCode(BuildContext context, EventsModel event) {
-  return Padding(
-    padding: const EdgeInsets.all(16.0),
-    child: Center(
-      child: Text(
-        '🔔 Show this on the day of the event at the registration',
-        style: TextStyle(
-          fontSize: 22,
-          color: Theme.of(context).colorScheme.primary,
+    return const Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Center(
+        child: Text(
+          '🔔 Show this on the day of the event at the registration',
+          style: TextStyle(
+            fontSize: 22,
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _qrCode(BuildContext context, EventsModel event) {
     return Center(
       child: QrImageView(
-            data: 'This is a simple QR code',
-            version: QrVersions.auto,
-            size: 320,
-            gapless: false,
-            padding: const EdgeInsets.all(20.0),
-            dataModuleStyle: const QrDataModuleStyle(
-              dataModuleShape: QrDataModuleShape.square,
-              color: primaryColor,
-            ),
-            eyeStyle: const QrEyeStyle(
-              eyeShape: QrEyeShape.square,
-              color: primaryColor,
-            ),
-          ),
+        data: 'This is a simple QR code',
+        version: QrVersions.auto,
+        size: 320,
+        gapless: false,
+        padding: const EdgeInsets.all(20.0),
+        dataModuleStyle: QrDataModuleStyle(
+          dataModuleShape: QrDataModuleShape.square,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        eyeStyle: QrEyeStyle(
+          eyeShape: QrEyeShape.square,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ),
     );
   }
 
   Widget _eventDay(BuildContext context, EventsModel event) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
+    return const Padding(
+      padding: EdgeInsets.all(16.0),
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('On the Day:',
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              SizedBox(height: 10),
               Text('✔️ Check-in:',
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
-              const SizedBox(height: 5),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              SizedBox(height: 5),
               Text(
                   '• Present your confirmation email or QR code at the registration desk',
                   style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary)),
+                    fontSize: 16,
+                  )),
               // Message icon
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               // Event GC
               Text('👜 Tools and Equipment',
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
-              const SizedBox(height: 5),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              SizedBox(height: 5),
               Text(
                   '• All necessary tools will be provided. If you wish to bring your own gloves or equipment, please do so.',
                   style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary)),
-              const SizedBox(height: 20),
+                    fontSize: 16,
+                  )),
+              SizedBox(height: 20),
               // Food and beverages
               Text('🍽️ Food and Beverages',
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
-              const SizedBox(height: 5),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              SizedBox(height: 5),
               Text(
                   '• Lunch and refreshments will be provided. Please bring your own water bottle.',
                   style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary)),
+                    fontSize: 16,
+                  )),
             ],
           ),
         ),
@@ -186,53 +172,44 @@ class _ContributeEventPageState extends ConsumerState<ConfirmEventPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Keep this Information Handy',
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
+              const Text('Keep this Information Handy',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
-              Text('🗣️ Contact Person',
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
+              const Text('🗣️ Contact Person',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 5),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                      '• Adrian Villanueva',
+                  const Text('• Adrian Villanueva',
                       style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).colorScheme.primary)),
+                        fontSize: 16,
+                      )),
                   // Message icon
                   IconButton(
                     onPressed: () {},
-                    icon: const Icon(Icons.message, color: primaryColor),
+                    icon: const Icon(
+                      Icons.message,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 20),
               // Event GC
-              Text('👥 • Event Group Chat',
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
+              const Text('👥 • Event Group Chat',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 5),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                      'Green Horizons',
+                  const Text('Green Horizons',
                       style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).colorScheme.primary)),
+                        fontSize: 16,
+                      )),
                   // Message icon
                   IconButton(
                     onPressed: () {},
-                    icon: const Icon(Icons.message, color: primaryColor),
+                    icon: const Icon(Icons.message),
                   ),
                 ],
               ),
@@ -253,8 +230,7 @@ class _ContributeEventPageState extends ConsumerState<ConfirmEventPage> {
         children: [
           Text(
             '✅ You\'re Registered!',
-            style: TextStyle(
-                fontSize: 24, color: primaryColor, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10),
           Column(
@@ -264,14 +240,12 @@ class _ContributeEventPageState extends ConsumerState<ConfirmEventPage> {
                 'Thank you for joining us at Green Horizons!',
                 style: TextStyle(
                   fontSize: 16,
-                  color: primaryColor,
                 ),
               ),
               Text(
                 'Your participation is confirmed.',
                 style: TextStyle(
                   fontSize: 16,
-                  color: primaryColor,
                 ),
               ),
             ],
@@ -281,7 +255,7 @@ class _ContributeEventPageState extends ConsumerState<ConfirmEventPage> {
     );
   }
 
-   Widget _eventDetails(BuildContext context , EventsModel event) {
+  Widget _eventDetails(BuildContext context, EventsModel event) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Card(
@@ -290,35 +264,26 @@ class _ContributeEventPageState extends ConsumerState<ConfirmEventPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Event Details',
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
+              const Text('Event Details',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
-              Text('📅 Dates',
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
+              const Text('📅 Dates',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 5),
               Text(
                   '${DateFormat('dd MMM').format(event.startDate)} - ${DateFormat('dd MMM').format(event.endDate)}',
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary)),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  )),
               const SizedBox(height: 20),
-              Text('📍 Location',
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
+              const Text('📍 Location',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 5),
 
-              Text(event.location,
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary)),
+              Text(
+                event.location,
+                style: const TextStyle(fontSize: 16),
+              ),
               // Add more event details if necessary
             ],
           ),
@@ -337,7 +302,9 @@ class _ContributeEventPageState extends ConsumerState<ConfirmEventPage> {
         },
       ),
       toolbarHeight: 70,
-      title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+      title: Text(title,
+          style: TextStyle(
+              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       actions: const [
         // Padding(

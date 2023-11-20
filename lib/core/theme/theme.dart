@@ -8,8 +8,8 @@ final themeNotifierProvider =
 });
 
 class Pallete {
-  static const primaryColor = Colors.deepOrangeAccent;
-  static const secondaryColor = Colors.deepOrangeAccent;
+  static const primaryColor = Colors.deepOrange;
+  static const secondaryColor = Color.fromARGB(255, 247, 151, 121);
   static const white = Colors.white;
   static const black = Colors.black;
 
@@ -49,6 +49,17 @@ class Pallete {
 
     // Scaffold Theme
     scaffoldBackgroundColor: white,
+
+    // Style MOdal Bottom Sheet
+    bottomSheetTheme: const BottomSheetThemeData(
+      showDragHandle: true,
+    ),
+
+    // Card Theme
+    cardTheme: const CardTheme(
+      elevation: 1,
+      surfaceTintColor: white,
+    ),
   );
 
   // Dark mode app theme

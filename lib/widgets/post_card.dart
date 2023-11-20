@@ -79,7 +79,7 @@ class _PostCardState extends State<PostCard> {
                   children: [
                     Text(
                       widget.postModel.author ?? "No Author",
-                      style: Theme.of(context).textTheme.headlineSmall,
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     Text(
                       getTimeDifference(),
@@ -198,8 +198,7 @@ class _PostCardState extends State<PostCard> {
           const SizedBox(width: 8),
           Text(
             widget.postModel.comments!.length.toString(),
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
+            style: const TextStyle(
               fontWeight: FontWeight.w400,
               fontSize: 16,
             ),
@@ -314,7 +313,6 @@ class PollingWidgetState extends ConsumerState<PollingWidget> {
       padding: const EdgeInsets.symmetric(
           horizontal: 16.0), // Add padding around the container
       decoration: BoxDecoration(
-        color: Colors.white, // Setting a background color
         borderRadius: BorderRadius.circular(8.0), // Rounded corners
       ),
       child: Column(
@@ -324,11 +322,8 @@ class PollingWidgetState extends ConsumerState<PollingWidget> {
             width: double.infinity,
             padding:
                 const EdgeInsets.all(16.0), // Add padding around the container
-            decoration: BoxDecoration(
-              color: Theme.of(context)
-                  .colorScheme
-                  .primary, // Setting a background color
-              borderRadius: const BorderRadius.only(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(8.0),
                   topRight: Radius.circular(8.0)), // Rounded corners
             ),
@@ -338,21 +333,21 @@ class PollingWidgetState extends ConsumerState<PollingWidget> {
                 Text(
                   '${widget.polls.fold(0, (sum, poll) => sum + poll.votes)} Total Votes',
                   style: const TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 14,
-                      color: Colors.white),
+                    fontWeight: FontWeight.normal,
+                    fontSize: 14,
+                  ),
                 ),
                 Row(
                   children: [
-                    const Icon(Icons.calendar_today, color: Colors.white),
+                    const Icon(Icons.calendar_today),
                     const SizedBox(width: 4),
                     Text(
                       DateFormat('MM/dd/yyyy, hh:mm a').format(widget.polls[0]
                           .dateDeadline!), // Format includes date and time/ Format as per your requirement
                       style: const TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontSize: 14,
-                          color: Colors.white),
+                        fontWeight: FontWeight.normal,
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),
@@ -361,11 +356,9 @@ class PollingWidgetState extends ConsumerState<PollingWidget> {
           ),
           Container(
             padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
-            decoration: BoxDecoration(
-              color: Theme.of(context)
-                  .colorScheme
-                  .secondary, // Setting a background color
-              borderRadius: const BorderRadius.only(
+            decoration: const BoxDecoration(
+              // Setting a background color
+              borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(8.0),
                   bottomRight: Radius.circular(8.0)), // Rounded corners
             ),
@@ -380,16 +373,13 @@ class PollingWidgetState extends ConsumerState<PollingWidget> {
                       horizontal: 8.0, vertical: 4.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white, // Setting a background color
                       borderRadius:
                           BorderRadius.circular(8.0), // Rounded corners
                     ),
                     child: ListTile(
                       title: Text(widget.polls[index].optionText,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary)),
+                          style: const TextStyle()),
                       leading: Radio(
-                        activeColor: Theme.of(context).colorScheme.primary,
                         value: index,
                         groupValue: _selectedChoice,
                         onChanged: (int? value) {
@@ -539,8 +529,7 @@ class LikeDislikeState extends ConsumerState<LikeDislike> {
         const SizedBox(width: 8),
         Text(
           widget.likes?.length.toString() ?? '0',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
+          style: const TextStyle(
             fontWeight: FontWeight.w400,
             fontSize: 16,
           ),
@@ -558,8 +547,7 @@ class LikeDislikeState extends ConsumerState<LikeDislike> {
         const SizedBox(width: 8),
         Text(
           widget.dislikes?.length.toString() ?? '0',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
+          style: const TextStyle(
             fontWeight: FontWeight.w400,
             fontSize: 16,
           ),

@@ -1,4 +1,3 @@
-import 'package:cooptourism/core/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -69,7 +68,6 @@ class _LoanApplicationPageState extends ConsumerState<LoanApplicationPage> {
       child: Container(
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: Colors.white,
           borderRadius: BorderRadius.circular(12.0),
         ),
         child: const Column(
@@ -204,16 +202,14 @@ class _LoanApplicationPageState extends ConsumerState<LoanApplicationPage> {
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
       // Assuming primaryColor is defined in your dark_theme.dart
-      iconTheme: const IconThemeData(color: primaryColor),
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       toolbarHeight: 70,
       title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
             child: IconButton(
               onPressed: () {
                 // Settings or additional action

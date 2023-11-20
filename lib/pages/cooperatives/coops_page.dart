@@ -20,7 +20,6 @@ class _CoopsPageState extends State<CoopsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(context, "Cooperatives"),
-      backgroundColor: Theme.of(context).colorScheme.background,
       body: Column(
         children: [
           // const ListFilter(list: ["Location", "Cooperatives"]),
@@ -44,7 +43,7 @@ class _CoopsPageState extends State<CoopsPage> {
                       childAspectRatio: 3 / 2,
                       crossAxisSpacing: 20,
                       mainAxisSpacing: 20,
-                      mainAxisExtent: 220,
+                      mainAxisExtent: 230,
                     ),
                     itemCount: cooperatives.length,
                     itemBuilder: (_, index) {
@@ -52,7 +51,7 @@ class _CoopsPageState extends State<CoopsPage> {
                         margin: const EdgeInsets.symmetric(vertical: 10),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.background,
+                          // color: Theme.of(context).colorScheme.background,
                           borderRadius: BorderRadius.circular(16),
                           border:
                               Border.all(width: 1.0, style: BorderStyle.solid),
@@ -70,7 +69,7 @@ class _CoopsPageState extends State<CoopsPage> {
                                   topRight: Radius.circular(16.0),
                                 ),
                                 child: FutureBuilder<String>(
-                                  future: storageRef 
+                                  future: storageRef
                                       .child(
                                           "${cooperatives[index].id}/images/${cooperatives[index].get('logo')}")
                                       .getDownloadURL(), // Await here
@@ -139,19 +138,19 @@ class _CoopsPageState extends State<CoopsPage> {
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
       toolbarHeight: 70,
-      title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+      title: Text(title,
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       actions: [
         // add search
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
             child: IconButton(
               onPressed: () {
                 // showAddPostPage(context);
               },
-              icon: const Icon(Icons.search, color: Colors.white),
+              icon: const Icon(Icons.search),
             ),
           ),
         ),

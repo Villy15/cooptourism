@@ -115,7 +115,10 @@ class _AddListingState extends ConsumerState<AddListing> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Add Listing"),
+          title: Text('Add Listing',
+              style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+          iconTheme:
+              IconThemeData(color: Theme.of(context).colorScheme.primary),
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),

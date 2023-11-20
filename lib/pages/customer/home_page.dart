@@ -51,11 +51,9 @@ class _CustomerHomePageState extends ConsumerState<CustomerHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Scaffold(
         appBar: _appBar(context, "lakbay"),
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -63,14 +61,16 @@ class _CustomerHomePageState extends ConsumerState<CustomerHomePage> {
             children: [
               const Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text("Where do you want to go?"),
+                child: Text("Where do you want to go?",
+                    style:
+                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
               ),
 
               // Create a search bar with search icon on the left and a voice on the right
-               Padding(
+              Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
-                  onChanged: onSearchChanged, 
+                  onChanged: onSearchChanged,
                   style: const TextStyle(color: primaryColor, fontSize: 12.0),
                   decoration: const InputDecoration(
                     prefixIcon: Icon(Icons.search),
@@ -83,117 +83,115 @@ class _CustomerHomePageState extends ConsumerState<CustomerHomePage> {
                 ),
               ),
 
-              if (!isSearching) ... [
+              if (!isSearching) ...[
                 buildNonSearchingView(),
-              ] else ... [
+              ] else ...[
                 buildSearchView(),
               ],
-            
-
             ],
           ),
         ));
   }
 
   Widget buildSearchView() {
-  return FutureBuilder<List<LocationModel>>(
-    future: locationRepository.getAllLocationFuture(),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const CircularProgressIndicator(); // show a loader while waiting for data
-      } else if (snapshot.hasError) {
-        return Text('Error: ${snapshot.error}');
-      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        return const Text('No Locations available');
-      } else {
-        List<LocationModel> locationList = snapshot.data!;
-        // Filter the locationList based on the searchQuery
-        locationList = locationList.where((location) => 
-          location.city.toLowerCase().contains(searchQuery.toLowerCase()) || 
-          location.province.toLowerCase().contains(searchQuery.toLowerCase())
-        ).toList();
-        return ListView.builder(
-          shrinkWrap: true,
-          itemCount: locationList.length,
-          itemBuilder: (context, index) {
-            return Card(
-              child: ListTile(
-                leading: const Icon(Icons.location_city),
-                title: Text(locationList[index].city, style: const TextStyle(fontWeight: FontWeight.bold, color: primaryColor)),
-                subtitle: Text(locationList[index].province, style: const TextStyle(fontSize: 12.0, color: primaryColor)),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          CityPage(locationModel: locationList[index]),
-                    ),
-                  );
-                },
-              ),
-            );
-          },
-        );
-      }
-    },
-  );
-}
+    return FutureBuilder<List<LocationModel>>(
+      future: locationRepository.getAllLocationFuture(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(); // show a loader while waiting for data
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Text('No Locations available');
+        } else {
+          List<LocationModel> locationList = snapshot.data!;
+          // Filter the locationList based on the searchQuery
+          locationList = locationList
+              .where((location) =>
+                  location.city
+                      .toLowerCase()
+                      .contains(searchQuery.toLowerCase()) ||
+                  location.province
+                      .toLowerCase()
+                      .contains(searchQuery.toLowerCase()))
+              .toList();
+          return ListView.builder(
+            shrinkWrap: true,
+            itemCount: locationList.length,
+            itemBuilder: (context, index) {
+              return Card(
+                surfaceTintColor: Theme.of(context).colorScheme.background,
+                child: ListTile(
+                  leading: const Icon(Icons.location_city),
+                  title: Text(locationList[index].city,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: Text(locationList[index].province,
+                      style: const TextStyle(fontSize: 12.0)),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CityPage(locationModel: locationList[index]),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          );
+        }
+      },
+    );
+  }
 
   Widget buildNonSearchingView() {
     final user = ref.watch(userModelProvider);
 
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.start,
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Text("Tourism Ideas"),
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text("Tourism Ideas"),
+        ),
+        SizedBox(height: 100.0, child: listIteneraryIdeas()),
+        StreamBuilder(
+          stream: userRepository.getUserStream(user?.uid ?? "none"),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator(); // show a loader while waiting for data
+            }
 
-      SizedBox(height: 100.0, child: listIteneraryIdeas()),
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+            UserModel userModel = snapshot.data as UserModel;
 
-      StreamBuilder(
-        stream: userRepository.getUserStream(user?.uid ?? "none"),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator(); // show a loader while waiting for data
-          }
-
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
-          UserModel userModel = snapshot.data as UserModel;
-
-          if (userModel.location != null &&
-              userModel.location!.isNotEmpty) {
-            return const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text("Near You"),
-            );
-          } else {
-            return const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text("Discover"),
-            );
-          }
-          
-        },
-      ),
-
-      browseLocations(),
-
-      const Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Text("Popular Destinations"),
-      ),
-
-      browseLocations(),
-
-      const SizedBox(height: 70.0)
-    ],
-  );
-}
+            if (userModel.location != null && userModel.location!.isNotEmpty) {
+              return const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text("Near You"),
+              );
+            } else {
+              return const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text("Discover"),
+              );
+            }
+          },
+        ),
+        browseLocations(),
+        const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text("Popular Destinations"),
+        ),
+        browseLocations(),
+        const SizedBox(height: 70.0)
+      ],
+    );
+  }
 
   FutureBuilder<List<LocationModel>> browseLocations() {
     return FutureBuilder(
@@ -209,7 +207,7 @@ class _CustomerHomePageState extends ConsumerState<CustomerHomePage> {
           List<LocationModel> locationList = snapshot.data!;
 
           return SizedBox(
-            height: 200.0,
+            height: 210.0,
             child: ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.horizontal,
@@ -332,12 +330,10 @@ class _CustomerHomePageState extends ConsumerState<CustomerHomePage> {
           child: Column(
             children: [
               CircleAvatar(
-                backgroundColor: primaryColor,
                 radius: 30.0,
                 child: Icon(
                   destinations[index]['icon'] as IconData?,
                   size: 32.0,
-                  color: Colors.white,
                 ),
               ),
               Padding(
@@ -358,11 +354,11 @@ class _CustomerHomePageState extends ConsumerState<CustomerHomePage> {
       title: Text(
         title,
         style: TextStyle(
-            fontSize: 28,
-            color: Colors.orange.shade700,
-            fontWeight: FontWeight.bold),
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Satisfy',
+            color: Theme.of(context).colorScheme.primary),
       ),
-      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       // actions: [
       //   Padding(
       //     padding: const EdgeInsets.only(right: 16.0),

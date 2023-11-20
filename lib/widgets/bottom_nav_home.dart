@@ -37,17 +37,17 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
     return BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         elevation: 0,
-        iconSize: 30,
+        // iconSize: 30,
         showUnselectedLabels: true,
         showSelectedLabels: true,
         // unselectedIconTheme: IconThemeData(color: Theme.of(context).colorScheme.secondary),
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        selectedLabelStyle:
-            TextStyle(color: Theme.of(context).colorScheme.primary),
-        unselectedItemColor: Theme.of(context).colorScheme.primary,
-        unselectedLabelStyle:
-            TextStyle(color: Theme.of(context).colorScheme.primary),
-        backgroundColor: Theme.of(context).colorScheme.background,
+        // selectedItemColor: Theme.of(context).colorScheme.primary,
+        // selectedLabelStyle:
+        //     TextStyle(color: Theme.of(context).colorScheme.primary),
+        // unselectedItemColor: Theme.of(context).colorScheme.primary,
+        // unselectedLabelStyle:
+        //     TextStyle(color: Theme.of(context).colorScheme.primary),
+        // backgroundColor: Theme.of(context).colorScheme.background,
         // selectedFontSize: 12,
         items: items,
         currentIndex: position,
@@ -63,7 +63,7 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
           context.go("/dashboard_page");
         } else if (role == 'Member') {
           context.go("/member_dashboard_page");
-        } else if (role == 'Customer'){
+        } else if (role == 'Customer') {
           context.go("/customer_home_page");
         }
 
@@ -115,9 +115,8 @@ class _BottomNavHomeWidgetState extends ConsumerState<BottomNavHomeWidget> {
         label: 'Finance',
       ),
 
-      
       BottomNavigationBarItem(
-        icon: Icon(Icons.people_outline_rounded), 
+        icon: Icon(Icons.people_outline_rounded),
         activeIcon: Icon(Icons.people_rounded),
         label: 'Members',
       ),

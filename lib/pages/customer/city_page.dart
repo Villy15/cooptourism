@@ -43,8 +43,8 @@ class _CityPageState extends ConsumerState<CityPage> {
       ref.read(appBarVisibilityProvider.notifier).state = false;
       ref.read(navBarVisibilityProvider.notifier).state = false;
     });
-  } 
-  
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -62,7 +62,6 @@ class _CityPageState extends ConsumerState<CityPage> {
               toolbarHeight: 35,
               leading: LeadingBackButton(ref: ref)),
           extendBodyBehindAppBar: true,
-          backgroundColor: Colors.white,
           body: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -121,8 +120,8 @@ class _CityPageState extends ConsumerState<CityPage> {
                 crossAxisCount: 2,
                 childAspectRatio: 0.85,
               ),
-              itemCount:
-                  listings.length, // Change this to the number of items you have
+              itemCount: listings
+                  .length, // Change this to the number of items you have
               itemBuilder: (context, index) {
                 ListingModel listingModel = listings[index];
 
@@ -135,37 +134,34 @@ class _CityPageState extends ConsumerState<CityPage> {
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: Container(
-                      color: Colors.white,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (listingModel.images != null &&
-                              listingModel.images!.isNotEmpty) ...[
-                            listingImage(context, listingModel),
-                          ] else ...[
-                            Container(
-                              height: 150.0,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (listingModel.images != null &&
+                            listingModel.images!.isNotEmpty) ...[
+                          listingImage(context, listingModel),
+                        ] else ...[
+                          Container(
+                            height: 150.0,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
-                          ],
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text("₱${listingModel.price}",
-                                style: const TextStyle(
-                                    fontSize: 14.0, fontWeight: FontWeight.w400)),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2.0),
-                            child: Text(listingModel.title!,
-                                style: const TextStyle(
-                                    fontSize: 12.0, fontWeight: FontWeight.bold)),
-                          )
                         ],
-                      ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text("₱${listingModel.price}",
+                              style: const TextStyle(
+                                  fontSize: 14.0, fontWeight: FontWeight.w400)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2.0),
+                          child: Text(listingModel.title!,
+                              style: const TextStyle(
+                                  fontSize: 12.0, fontWeight: FontWeight.bold)),
+                        )
+                      ],
                     ),
                   ),
                 );
@@ -214,38 +210,35 @@ class _CityPageState extends ConsumerState<CityPage> {
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Container(
-                    color: Colors.white,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (itineraryModel.images != null &&
-                            itineraryModel.images!.isNotEmpty) ...[
-                          itineraryImage(context, itineraryModel),
-                        ] else ...[
-                          Container(
-                            height: 150.0,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (itineraryModel.images != null &&
+                          itineraryModel.images!.isNotEmpty) ...[
+                        itineraryImage(context, itineraryModel),
+                      ] else ...[
+                        Container(
+                          height: 150.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
-                        ],
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                              "${itineraryModel.days} days - ₱${itineraryModel.budget}",
-                              style: const TextStyle(
-                                  fontSize: 14.0, fontWeight: FontWeight.w400)),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2.0),
-                          child: Text(itineraryModel.name,
-                              style: const TextStyle(
-                                  fontSize: 12.0, fontWeight: FontWeight.bold)),
-                        )
                       ],
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                            "${itineraryModel.days} days - ₱${itineraryModel.budget}",
+                            style: const TextStyle(
+                                fontSize: 14.0, fontWeight: FontWeight.w400)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2.0),
+                        child: Text(itineraryModel.name,
+                            style: const TextStyle(
+                                fontSize: 12.0, fontWeight: FontWeight.bold)),
+                      )
+                    ],
                   ),
                 ),
               );

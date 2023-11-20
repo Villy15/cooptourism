@@ -1,6 +1,5 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:cooptourism/data/models/user.dart';
-import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
@@ -129,7 +128,6 @@ class _MembersPageState extends State<MembersPage> {
                                 title: Text(
                                   '${user.firstName} ${user.lastName}', // Your user's name
                                   style: const TextStyle(
-                                      color: primaryColor,
                                       fontWeight: FontWeight
                                           .w500), // Adjust text styling as needed
                                 ),
@@ -255,7 +253,7 @@ class _MembersPageState extends State<MembersPage> {
               decoration: BoxDecoration(
                 color: _selectedIndex == index
                     ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.secondary,
+                    : Theme.of(context).colorScheme.background,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Padding(
@@ -303,7 +301,6 @@ class _MembersPageState extends State<MembersPage> {
           child: ElevatedButton.icon(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),

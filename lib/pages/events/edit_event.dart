@@ -1,6 +1,5 @@
 // import 'dart:io';
 
-import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:cooptourism/data/models/events.dart';
 import 'package:cooptourism/data/repositories/events_repository.dart';
 import 'package:cooptourism/pages/events/selected_events_page.dart';
@@ -111,8 +110,8 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
     return ElevatedButton(
       // Take the maximum width
       style: ElevatedButton.styleFrom(
-          minimumSize: const Size(double.infinity, 50),
-          backgroundColor: Colors.orange.shade700),
+        minimumSize: const Size(double.infinity, 50),
+      ),
       onPressed: () {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
@@ -159,16 +158,13 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Dates',
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold)),
+            const Text('Dates',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             Text(
                 '${DateFormat('dd MMM').format(startDate)} - ${DateFormat('dd MMM').format(endDate)} (${endDate.difference(startDate).inDays} days)',
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.primary)),
+                style: const TextStyle(
+                  fontSize: 16,
+                )),
           ],
         ),
         TextButton(
@@ -211,9 +207,7 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
           },
           child: const Text('Edit',
               style: TextStyle(
-                  color: primaryColor,
-                  fontSize: 16,
-                  decoration: TextDecoration.underline)),
+                  fontSize: 16, decoration: TextDecoration.underline)),
         ),
       ],
     );
@@ -224,7 +218,6 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
       initialValue: location,
       decoration: const InputDecoration(labelText: 'Location'),
       onSaved: (value) => location = value,
-      style: const TextStyle(color: primaryColor),
     );
   }
 
@@ -233,10 +226,6 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
       initialValue: description,
       decoration: const InputDecoration(labelText: 'Description'),
       onSaved: (value) => description = value,
-      style: const TextStyle(
-        color: primaryColor,
-        // Make the textfield bigger
-      ),
       maxLines: 8,
     );
   }
@@ -246,31 +235,15 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
       initialValue: title,
       decoration: const InputDecoration(labelText: 'Title'),
       onSaved: (value) => title = value,
-      style: const TextStyle(color: primaryColor),
     );
   }
 
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
-      iconTheme: const IconThemeData(color: primaryColor),
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       toolbarHeight: 70,
       title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
-            child: IconButton(
-              onPressed: () {
-                // showAddPostPage(context);
-              },
-              icon: const Icon(Icons.settings, color: Colors.white),
-            ),
-          ),
-        ),
-      ],
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
     );
   }
 }

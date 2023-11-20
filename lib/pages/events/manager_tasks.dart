@@ -1,4 +1,3 @@
-import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:cooptourism/data/models/events.dart';
 import 'package:cooptourism/data/models/task.dart';
 import 'package:cooptourism/data/models/user.dart';
@@ -29,30 +28,29 @@ class _ManagerTasksPageState extends ConsumerState<ManagerTasksPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-              StreamBuilder(
-                stream: taskRepository.getAllTasksByReferenceId(widget.event.uid),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator(); // show a loader while waiting for data
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Text('No Tasks available');
-                  } else {
-                    List<TaskModel> taskList = snapshot.data!;
+            StreamBuilder(
+              stream: taskRepository.getAllTasksByReferenceId(widget.event.uid),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator(); // show a loader while waiting for data
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Text('No Tasks available');
+                } else {
+                  List<TaskModel> taskList = snapshot.data!;
 
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: taskList.length,
-                      itemBuilder: (context, index) {
-                        return taskCard(context, taskList[index]);
-                      },
-                    );
-                  }
-                },
-              )
-
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: taskList.length,
+                    itemBuilder: (context, index) {
+                      return taskCard(context, taskList[index]);
+                    },
+                  );
+                }
+              },
+            )
           ],
         ),
       ),
@@ -65,7 +63,7 @@ class _ManagerTasksPageState extends ConsumerState<ManagerTasksPage> {
       child: Container(
         width: 400,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary,
+          color: Theme.of(context).colorScheme.background,
           borderRadius: BorderRadius.circular(20.0),
         ),
         // Circular border
@@ -180,14 +178,14 @@ class _ManagerTasksPageState extends ConsumerState<ManagerTasksPage> {
   Column taskProgress(BuildContext context, TaskModel task) {
     return Column(
       children: [
-        // Add a text of Progress 50% 
+        // Add a text of Progress 50%
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
           child: Row(
             children: [
               const Text('Progress ',
-                  style: TextStyle(
-                      fontWeight: FontWeight.normal, fontSize: 12)),
+                  style:
+                      TextStyle(fontWeight: FontWeight.normal, fontSize: 12)),
               Text('${(calculateProgress(task) * 100).toStringAsFixed(0)}%',
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 12)),
@@ -210,8 +208,7 @@ class _ManagerTasksPageState extends ConsumerState<ManagerTasksPage> {
   Padding taskDescription(TaskModel task) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Text(
-          task.description,
+      child: Text(task.description,
           style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 12)),
     );
   }
@@ -221,16 +218,18 @@ class _ManagerTasksPageState extends ConsumerState<ManagerTasksPage> {
       padding: const EdgeInsets.only(top: 16.0, left: 16.0),
       child: Row(
         children: [
-          Expanded (
-            child: GestureDetector (
+          Expanded(
+            child: GestureDetector(
               onTap: () {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ManagerSelectedTask(taskId: task.uid!))
-                );
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ManagerSelectedTask(taskId: task.uid!)));
               },
               child: Text(task.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18)),
             ),
           ),
 
@@ -250,7 +249,7 @@ class _ManagerTasksPageState extends ConsumerState<ManagerTasksPage> {
 
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
-      iconTheme: const IconThemeData(color: primaryColor),
+      iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
       toolbarHeight: 70,
       title: Text(title,
           style: TextStyle(
@@ -259,14 +258,15 @@ class _ManagerTasksPageState extends ConsumerState<ManagerTasksPage> {
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
             child: IconButton(
               onPressed: () {
-                Navigator.push(context, 
-                  MaterialPageRoute(builder: (context) => ManagerTasksCreate(event: widget.event))
-                );
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ManagerTasksCreate(event: widget.event)));
               },
-              icon: const Icon(Icons.add, color: Colors.white),
+              icon: const Icon(Icons.add),
             ),
           ),
         ),
