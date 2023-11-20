@@ -1,3 +1,4 @@
+import 'package:cooptourism/core/theme/theme.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/providers/auth.dart';
@@ -61,10 +62,11 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
 
   Widget _buildApp(GoRouter router) {
+    final theme = ref.watch(themeNotifierProvider);
+
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      theme: lightTheme,
-      darkTheme: darkTheme,
+      theme: theme,
       routerDelegate: router.routerDelegate,
       routeInformationParser: router.routeInformationParser,
       routeInformationProvider: router.routeInformationProvider,

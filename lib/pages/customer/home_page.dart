@@ -71,7 +71,7 @@ class _CustomerHomePageState extends ConsumerState<CustomerHomePage> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
                   onChanged: onSearchChanged, 
-                  style: const TextStyle(color: primaryColor),
+                  style: const TextStyle(color: primaryColor, fontSize: 12.0),
                   decoration: const InputDecoration(
                     prefixIcon: Icon(Icons.search),
                     suffixIcon: Icon(Icons.mic),

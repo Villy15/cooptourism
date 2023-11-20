@@ -692,8 +692,7 @@ class _AddListingState extends ConsumerState<AddListing> {
       case 5:
         debugPrint(
             "this should be final ${ref.watch(marketAddListingProvider).toString()}");
-        return Container(
-            child: Column(
+        return Column(
           children: [
             const Text("Review"),
             const SizedBox(height: 20),
@@ -704,7 +703,7 @@ class _AddListingState extends ConsumerState<AddListing> {
                   onPressed: () {}, child: const Text("Submit Listing")),
             )
           ],
-        ));
+        );
       default:
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,

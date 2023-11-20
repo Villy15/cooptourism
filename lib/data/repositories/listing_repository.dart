@@ -2,6 +2,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/models/message.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final getListingByTypeProvider =
+    StreamProvider.autoDispose.family<List<ListingModel>, String>((ref, type) {
+  final listingRepository = ref.watch(listingRepositoryProvider);
+  return listingRepository.getListingsByType(type);
+});
+
+final listingRepositoryProvider = Provider<ListingRepository>((ref) {
+  return ListingRepository();
+});
 
 class ListingRepository {
   final CollectionReference listingsCollection =
@@ -18,7 +29,7 @@ class ListingRepository {
       }).toList();
     });
   }
-  
+
   // Get the title of a listing from Firestore by providing the uid
   Future<String> getListingTitle(String listingId) async {
     final doc = await listingsCollection.doc(listingId).get();
@@ -37,7 +48,6 @@ class ListingRepository {
       }).toList();
     });
   }
-
 
   // get listing by city using Future
   Future<List<ListingModel>> getListingsByCity(String city) async {
@@ -161,7 +171,7 @@ class ListingRepository {
   Future<void> addMessage(
       MessageModel message, String listingId, String docId) async {
     // final exists = await listingsCollection
-      await listingsCollection
+    await listingsCollection
         .doc(listingId)
         .collection('messages')
         .doc(docId)
