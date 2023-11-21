@@ -20,7 +20,7 @@ class MarketPage extends ConsumerStatefulWidget {
 
 class _MarketPageState extends ConsumerState<MarketPage> {
   final List<String> _tabTitles = ['Services']; //];
-  final List<String> _type = ['Service']; //, 'Product'];
+  // final List<String> _type = ['Service']; //, 'Product'];
   // final String _province = "";
   // final String _city = "";
   // final String _category = "";
@@ -35,8 +35,10 @@ class _MarketPageState extends ConsumerState<MarketPage> {
   @override
   Widget build(BuildContext context) {
     final ListingRepository listingRepository = ListingRepository();
-    final Stream<List<ListingModel>> listings0 =
-        listingRepository.getListingsByType(_type[_selectedIndex]);
+    // final Stream<List<ListingModel>> listings =
+    //     listingRepository.getListingsByType(_type[_selectedIndex]);
+    final Stream<List<ListingModel>> listings =
+        listingRepository.getAllListings();
     return Scaffold(
         appBar: _appBar(context, "Market"),
         body: Column(
@@ -47,7 +49,7 @@ class _MarketPageState extends ConsumerState<MarketPage> {
             // searchFilter(context),
             Expanded(
               child: StreamBuilder<List<ListingModel>>(
-                stream: listings0,
+                stream: listings,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}  ');
@@ -108,12 +110,12 @@ class _MarketPageState extends ConsumerState<MarketPage> {
             title: listing.title,
             description: listing.description,
             rating: listing.rating,
-            amenities: listing.amenities,
             price: listing.price,
             type: listing.type,
             postDate: listing.postDate,
             images: listing.images,
             pax: listing.pax,
+            cooperativeOwned: listing.cooperativeOwned,
           ),
         );
       },

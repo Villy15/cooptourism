@@ -483,7 +483,7 @@ class _ImageSliderState extends State<ImageSlider> {
             items: widget.listing.images!
                 .map<Widget>((e) => DisplayImage(
                       path:
-                          "${widget.listing.owner}/listingImages/${widget.listing.id}$e",
+                          "${widget.listing.cooperativeOwned}/listingImages/$e",
                       height: 250,
                       width: double.infinity,
                       radius: BorderRadius.zero,

@@ -13,7 +13,6 @@ class ListingModel {
   String? province = "";
   String? category = "";
   num? rating = 0;
-  Map<String, dynamic>? amenities = {};
   Map<String, dynamic>? roles = {};
   Map<String, dynamic>? tasks = {};
   num? price = 0;
@@ -32,7 +31,6 @@ class ListingModel {
     this.province,
     this.category,
     this.rating,
-    this.amenities,
     this.roles,
     this.tasks,
     this.price,
@@ -54,7 +52,6 @@ class ListingModel {
     String? province,
     String? category,
     num? rating,
-    Map<String, dynamic>? amenities,
     Map<String, dynamic>? roles,
     Map<String, dynamic>? tasks,
     num? price,
@@ -62,7 +59,7 @@ class ListingModel {
     Timestamp? postDate,
     List<dynamic>? images,
     num? pax,
-    String? ownerMember,
+    // String? ownerMember,
   }) {
     return ListingModel(
       id: id ?? this.id,
@@ -74,7 +71,6 @@ class ListingModel {
       province: province ?? this.province,
       category: category ?? this.category,
       rating: rating ?? this.rating,
-      amenities: amenities ?? this.amenities,
       roles: roles ?? this.roles,
       tasks: tasks ?? this.tasks,
       price: price ?? this.price,
@@ -82,7 +78,7 @@ class ListingModel {
       postDate: postDate ?? this.postDate,
       images: images ?? this.images,
       pax: pax ?? this.pax,
-      ownerMember: ownerMember ?? this.ownerMember,
+      // ownerMember: ownerMember ?? this.ownerMember,
     );
   }
 
@@ -97,15 +93,14 @@ class ListingModel {
       'province': province,
       'category': category,
       'rating': rating,
-      'amenities': amenities,
       'roles': roles,
       'tasks': tasks,
       'price': price,
       'type': type,
-      'postDate': postDate,
+      'postDate': postDate!.toDate(),
       'images': images,
-      'pax': pax,
-      'ownerMember': ownerMember,
+      'pax': pax!,
+      // 'ownerMember': ownerMember,
     };
   }
 
@@ -120,7 +115,6 @@ class ListingModel {
       province: map['province'] != null ? map['province'] as String : null,
       category: map['category'] != null ? map['category'] as String : null,
       rating: map['rating'] != null ? map['rating'] as num : null,
-      amenities: map['amenities'] != null ? Map<String, dynamic>.from((map['amenities'] as Map<String, dynamic>)) : null,
       roles: map['roles'] != null ? Map<String, dynamic>.from((map['roles'] as Map<String, dynamic>)) : null,
       tasks: map['tasks'] != null ? Map<String, dynamic>.from((map['tasks'] as Map<String, dynamic>)) : null,
       price: map['price'] != null ? map['price'] as num : null,
@@ -128,7 +122,7 @@ class ListingModel {
       postDate: map['postDate'] != null ? map['postDate'] as Timestamp : null,
       images: map['images'] != null ? List<dynamic>.from((map['images'] as List<dynamic>)) : null,
       pax: map['pax'] != null ? map['pax'] as num : null,
-      ownerMember: map['ownerMember'] != null ? map['ownerMember'] as String : null,
+      // ownerMember: map['ownerMember'] != null ? map['ownerMember'] as String : null,
     );
   }
 
@@ -138,7 +132,7 @@ class ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(id: $id, owner: $owner, title: $title, description: $description, cooperativeOwned: $cooperativeOwned, city: $city, province: $province, category: $category, rating: $rating, amenities: $amenities, roles: $roles, tasks: $tasks, price: $price, type: $type, postDate: $postDate, images: $images, pax: $pax, ownerMember: $ownerMember)';
+    return 'ListingModel(id: $id, owner: $owner, title: $title, description: $description, cooperativeOwned: $cooperativeOwned, city: $city, province: $province, category: $category, rating: $rating, roles: $roles, tasks: $tasks, price: $price, type: $type, postDate: $postDate, images: $images, pax: $pax)';//, ownerMember: $ownerMember)';
   }
 
 }

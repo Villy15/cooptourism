@@ -76,7 +76,7 @@ class ListingRepository {
   // Add a Listing to Firestore
   Future<void> addListing(ListingModel listing) async {
     try {
-      await listingsCollection.add(listing.toJson());
+      await listingsCollection.add(listing.toMap());
     } catch (e) {
       debugPrint('Error adding Listing to Firestore: $e');
       // You might want to handle errors more gracefully here

@@ -1,19 +1,22 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/core/file_picker.dart';
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
+import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/providers/home_page_provider.dart';
 import 'package:cooptourism/providers/market_page_provider.dart';
 import 'package:cooptourism/providers/user_provider.dart';
 import 'package:cooptourism/widgets/category_picker.dart';
 import 'package:cooptourism/widgets/display_text.dart';
-import 'package:cooptourism/widgets/listing_dropdown.dart';
 import 'package:cooptourism/widgets/type_picker.dart';
 import 'package:cooptourism/widgets/listing_province_city_picker.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:im_stepper/stepper.dart';
+import 'package:path/path.dart' as path;
 // import 'package:path/path.dart' as path_utils;
 
 class AddListing extends ConsumerStatefulWidget {
@@ -26,12 +29,14 @@ class AddListing extends ConsumerStatefulWidget {
 class _AddListingState extends ConsumerState<AddListing> {
   String listingType = "Service";
   List<File> uploadedImages = [];
+  List<String> fileNames = [];
   FilePickerUtility filePickerUtility = FilePickerUtility();
   Map<String, dynamic> amenities = {};
   int roleCount = 0;
   int taskCount = 0;
   Map<String, dynamic> tasks = {};
   Map<String, dynamic> roleMemberPair = {};
+  List<String> cooperativeNames = [];
   List<String> memberNames = [];
   List<String> selectedMemberName = [];
   List<String> selectedRole = [];
@@ -83,21 +88,39 @@ class _AddListingState extends ConsumerState<AddListing> {
       if (result != null) {
         // This is a list of all selected files
         List<PlatformFile> files = result.files;
-        // PlatformFile file = result.files.first;
 
         // Use the files
         // For example, you could update the state to display the images
         setState(() {
           uploadedImages.addAll(files.map((file) => File(file.path!)));
+          for (var element in files) {
+            fileNames.add(element.name);
+          }
           // uploadedImages = files.map((file) => File(file.path!)).toList();
           // uploadedImages.add(File(file.path!));
         });
+
+        ref.read(marketAddListingProvider.notifier).setAddListing(
+              ref.watch(marketAddListingProvider)!.copyWith(images: fileNames),
+            );
       } else {
         // User canceled the picker
       }
     } catch (e) {
       // Handle exception by logging or showing a message to the user
       debugPrint(e.toString());
+    }
+  }
+
+  uploadImage() async {
+    final firebaseStorage = FirebaseStorage.instance.ref();
+    debugPrint(" test this ${uploadedImages.toString()}");
+    if (ref.watch(marketAddListingProvider)!.images != null) {
+      for (var image in uploadedImages) {
+        await firebaseStorage
+            .child("${ref.watch(marketAddListingProvider)!.cooperativeOwned!}/listingImages/${path.basename(image.path)}")
+            .putFile(image);
+      }
     }
   }
 
@@ -111,6 +134,7 @@ class _AddListingState extends ConsumerState<AddListing> {
         ref.read(navBarVisibilityProvider.notifier).state = true;
         ref.read(appBarVisibilityProvider.notifier).state = true;
         ref.invalidate(marketCitiesProvider);
+        ref.invalidate(marketProvinceProvider);
         ref
             .read(marketAddListingProvider.notifier)
             .setAddListing(ListingModel());
@@ -260,9 +284,6 @@ class _AddListingState extends ConsumerState<AddListing> {
   }
 
   Widget stepForm() {
-    CooperativesRepository cooperativesRepository = CooperativesRepository();
-    Future<List<String>> getCooperativesJoined = cooperativesRepository
-        .getCooperativeNames(ref.watch(userModelProvider)!.cooperativesJoined!);
     switch (activeStep) {
       case 1:
         return Column(
@@ -323,10 +344,12 @@ class _AddListingState extends ConsumerState<AddListing> {
                   ref.watch(userModelProvider)!.cooperativesJoined![0]);
         } else {
           getCooperativeMembersNames =
-              cooperativesRepository.getCooperativeMembersNames(
-                  ref.watch(marketAddListingProvider)!.cooperativeOwned!);
+              cooperativesRepository.getCooperativeMembersNames(ref
+                      .watch(userModelProvider)!
+                      .cooperativesJoined![
+                  cooperativeNames.indexOf(
+                      ref.watch(marketAddListingProvider)!.cooperativeOwned!)]);
         }
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -408,7 +431,7 @@ class _AddListingState extends ConsumerState<AddListing> {
                                             lines: 2,
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .headlineSmall!,
+                                                .bodyMedium!,
                                           ),
                                         );
                                       }).toList(),
@@ -423,7 +446,7 @@ class _AddListingState extends ConsumerState<AddListing> {
                         ),
                         const SizedBox(width: 5),
                         Container(
-                          width: MediaQuery.sizeOf(context).width / 1.7,
+                          width: MediaQuery.sizeOf(context).width / 3,
                           padding: const EdgeInsets.only(left: 15),
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -599,7 +622,7 @@ class _AddListingState extends ConsumerState<AddListing> {
                                 ),
                                 menuMaxHeight: 300,
                                 alignment: Alignment.center,
-                                value: selectedRole[index],
+                                value: selectedRole[0],
                                 onChanged: (newValue) {
                                   selectedRole[index] = newValue!;
                                   tasks.addAll({
@@ -628,7 +651,7 @@ class _AddListingState extends ConsumerState<AddListing> {
                                       lines: 2,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .headlineSmall!,
+                                          .bodySmall!,
                                     ),
                                   );
                                 }).toList(),
@@ -696,170 +719,35 @@ class _AddListingState extends ConsumerState<AddListing> {
         );
 
       case 5:
-        TextEditingController coopPartnerController = TextEditingController(
-            text: ref.watch(marketAddListingProvider)!.cooperativeOwned);
-        TextEditingController titleController = TextEditingController(
-            text: ref.watch(marketAddListingProvider)!.title);
-        TextEditingController descriptionController = TextEditingController(
-            text: ref.watch(marketAddListingProvider)!.description);
-        TextEditingController priceController = TextEditingController(
-            text: ref.watch(marketAddListingProvider)!.price?.toString());
-        TextEditingController paxController = TextEditingController(
-            text: ref.watch(marketAddListingProvider)!.pax?.toString());
-        TextEditingController imagesController = TextEditingController(
-            text: ref.watch(marketAddListingProvider)?.images?.toString());
-        TextEditingController provinceController = TextEditingController(
-            text: ref.watch(marketAddListingProvider)?.province);
-        TextEditingController cityController = TextEditingController(
-            text: ref.watch(marketAddListingProvider)?.city);
-        TextEditingController categoryController = TextEditingController(
-            text: ref.watch(marketAddListingProvider)?.category);
-        TextEditingController typeController = TextEditingController(
-            text: ref.watch(marketAddListingProvider)?.type);
-        TextEditingController rolesController = TextEditingController(
-            text: ref.watch(marketAddListingProvider)?.roles?.toString());
-        TextEditingController tasksController = TextEditingController(
-            text: ref.watch(marketAddListingProvider)?.tasks?.toString());
+        ListingRepository listingRepository = ListingRepository();
         debugPrint(
             "this should be final ${ref.watch(marketAddListingProvider).toString()}");
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 12), // Padding inside the container
-                decoration: BoxDecoration(
-                  color: Colors.white, // Background color of the container
-                  borderRadius:
-                      BorderRadius.circular(15), // Makes it circular
-                  border: Border.all(
-                    color: Colors.grey, // Color of the border
-                    width: 1, // Width of the border
-                  ),
-                ),
-                child: TextFormField(
-                  readOnly: true,
-                  controller: coopPartnerController,
-                  maxLines: null,
-                  decoration: const InputDecoration(
-                    label: Text("Cooperative Partner"),
-                    border: InputBorder.none, // Removes underline
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 5),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 12), // Padding inside the container
-              decoration: BoxDecoration(
-                color: Colors.white, // Background color of the container
-                borderRadius: BorderRadius.circular(15), // Makes it circular
-                border: Border.all(
-                  color: Colors.grey, // Color of the border
-                  width: 1, // Width of the border
-                ),
-              ),
-              child: TextFormField(
-                readOnly: true,
-                controller: titleController,
-                maxLines: null,
-                decoration: const InputDecoration(
-                  label: Text("Title"),
-                  border: InputBorder.none, // Removes underline
-                ),
-              ),
-            ),
-            const SizedBox(height: 5),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 12), // Padding inside the container
-              decoration: BoxDecoration(
-                color: Colors.white, // Background color of the container
-                borderRadius: BorderRadius.circular(15), // Makes it circular
-                border: Border.all(
-                  color: Colors.grey, // Color of the border
-                  width: 1, // Width of the border
-                ),
-              ),
-              child: TextFormField(
-                readOnly: true,
-                controller: descriptionController,
-                maxLines: null,
-                decoration: const InputDecoration(
-                  label: Text("Description"),
-                  border: InputBorder.none, // Removes underline
-                ),
-              ),
-            ),
-            const SizedBox(height: 5),
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12), // Padding inside the container
-                    decoration: BoxDecoration(
-                      color:
-                          Colors.white, // Background color of the container
-                      borderRadius:
-                          BorderRadius.circular(15), // Makes it circular
-                      border: Border.all(
-                        color: Colors.grey, // Color of the border
-                        width: 1, // Width of the border
-                      ),
-                    ),
-                    child: TextFormField(
-                      readOnly: true,
-                      controller: priceController,
-                      maxLines: null,
-                      decoration: const InputDecoration(
-                        label: Text("Price"),
-                        border: InputBorder.none, // Removes underline
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12), // Padding inside the container
-                    decoration: BoxDecoration(
-                      color:
-                          Colors.white, // Background color of the container
-                      borderRadius:
-                          BorderRadius.circular(15), // Makes it circular
-                      border: Border.all(
-                        color: Colors.grey, // Color of the border
-                        width: 1, // Width of the border
-                      ),
-                    ),
-                    child: TextFormField(
-                      readOnly: true,
-                      controller: paxController,
-                      maxLines: null,
-                      decoration: const InputDecoration(
-                        label: Text("Persons (pax)"),
-                        border: InputBorder.none, // Removes underline
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                ],
-              ),
-            ),
             const SizedBox(height: 20),
             SizedBox(
               width: MediaQuery.sizeOf(context).width,
               height: 50,
               child: ElevatedButton(
-                  onPressed: () {}, child: const Text("Submit Listing")),
+                  onPressed: () {
+                    ref.read(marketAddListingProvider.notifier).setAddListing(
+                        ref.watch(marketAddListingProvider)!.copyWith(
+                            owner: ref.watch(userModelProvider)!.uid, postDate: Timestamp.now()));
+                    listingRepository
+                        .addListing(ref.watch(marketAddListingProvider)!);
+                    uploadImage();
+                  },
+                  child: const Text("Submit Listing")),
             )
           ],
         );
       default:
+        CooperativesRepository cooperativesRepository =
+            CooperativesRepository();
+        Future<List<String>> getCooperativesJoined =
+            cooperativesRepository.getCooperativeNames(
+                ref.watch(userModelProvider)!.cooperativesJoined!);
         titleFocus.addListener(() {
           _saveField(titleFocus, () {
             ref.read(marketAddListingProvider.notifier).setAddListing(
@@ -896,21 +784,69 @@ class _AddListingState extends ConsumerState<AddListing> {
                 );
           });
         });
+
         return Form(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ListingDropdown(
-                title: "Cooperative Partner",
-                future: getCooperativesJoined,
-                selectedValue:
-                    ref.watch(marketAddListingProvider)!.cooperativeOwned,
-                onValueChange: (newValue) {
-                  ref.read(marketAddListingProvider.notifier).setAddListing(
-                        ref
-                            .watch(marketAddListingProvider)!
-                            .copyWith(cooperativeOwned: newValue),
-                      );
+              FutureBuilder<List<String>>(
+                future:
+                    getCooperativesJoined, // your Future<List<String>> for types
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<String>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator(); // show loader while waiting for data
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    cooperativeNames = snapshot.data!;
+                    return Container(
+                      // width: MediaQuery.sizeOf(context).width / 1.5,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(
+                            15), // Create a circular shape
+                        border: Border.all(
+                            color: Colors.grey, width: 1), // Add a border
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: DropdownButtonFormField<String>(
+                          decoration: const InputDecoration(
+                            labelText: "Cooperative Partner",
+                            border: InputBorder.none,
+                          ),
+                          menuMaxHeight: 300,
+                          alignment: Alignment.center,
+                          value: ref
+                              .watch(marketAddListingProvider)!
+                              .cooperativeOwned,
+                          onChanged: (newValue) {
+                            ref
+                                .read(marketAddListingProvider.notifier)
+                                .setAddListing(
+                                  ref
+                                      .watch(marketAddListingProvider)!
+                                      .copyWith(cooperativeOwned: newValue),
+                                );
+                          },
+                          items: snapshot.data!
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              alignment: Alignment.centerLeft,
+                              value: value,
+                              child: DisplayText(
+                                text: value,
+                                lines: 2,
+                                style: Theme.of(context).textTheme.bodySmall!,
+                              ),
+                            );
+                          }).toList(),
+                          iconSize: 30.0,
+                          isExpanded: true,
+                        ),
+                      ),
+                    );
+                  }
                 },
               ),
               const SizedBox(height: 5),
@@ -1164,13 +1100,4 @@ class _AddListingState extends ConsumerState<AddListing> {
         );
     }
   }
-
-  // String? _getProofPath() {
-  //   if (filePickerUtility.image != null) {
-  //     return path_utils.basename(filePickerUtility.image!.path);
-  //   } else if (filePickerUtility.pickedFile != null) {
-  //     return path_utils.basename(filePickerUtility.pickedFile!.path);
-  //   }
-  //   return null;
-  // }
 }
