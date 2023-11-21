@@ -20,7 +20,7 @@ class ListingModel {
   String? type = "";
   Timestamp? postDate = Timestamp.now();
   List<dynamic>? images = [];
-  int? visits = 0;
+  num? pax = 0;
   String? ownerMember = "";
   ListingModel({
     this.id,
@@ -39,7 +39,7 @@ class ListingModel {
     this.type,
     this.postDate,
     this.images,
-    this.visits,
+    this.pax,
     this.ownerMember,
   });
   
@@ -61,7 +61,7 @@ class ListingModel {
     String? type,
     Timestamp? postDate,
     List<dynamic>? images,
-    int? visits,
+    num? pax,
     String? ownerMember,
   }) {
     return ListingModel(
@@ -81,7 +81,7 @@ class ListingModel {
       type: type ?? this.type,
       postDate: postDate ?? this.postDate,
       images: images ?? this.images,
-      visits: visits ?? this.visits,
+      pax: pax ?? this.pax,
       ownerMember: ownerMember ?? this.ownerMember,
     );
   }
@@ -104,7 +104,7 @@ class ListingModel {
       'type': type,
       'postDate': postDate,
       'images': images,
-      'visits': visits,
+      'pax': pax,
       'ownerMember': ownerMember,
     };
   }
@@ -127,7 +127,7 @@ class ListingModel {
       type: map['type'] != null ? map['type'] as String : null,
       postDate: map['postDate'] != null ? map['postDate'] as Timestamp : null,
       images: map['images'] != null ? List<dynamic>.from((map['images'] as List<dynamic>)) : null,
-      visits: map['visits'] != null ? map['visits'] as int : null,
+      pax: map['pax'] != null ? map['pax'] as num : null,
       ownerMember: map['ownerMember'] != null ? map['ownerMember'] as String : null,
     );
   }
@@ -138,7 +138,7 @@ class ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(id: $id, owner: $owner, title: $title, description: $description, cooperativeOwned: $cooperativeOwned, city: $city, province: $province, category: $category, rating: $rating, amenities: $amenities, roles: $roles, tasks: $tasks, price: $price, type: $type, postDate: $postDate, images: $images, visits: $visits, ownerMember: $ownerMember)';
+    return 'ListingModel(id: $id, owner: $owner, title: $title, description: $description, cooperativeOwned: $cooperativeOwned, city: $city, province: $province, category: $category, rating: $rating, amenities: $amenities, roles: $roles, tasks: $tasks, price: $price, type: $type, postDate: $postDate, images: $images, pax: $pax, ownerMember: $ownerMember)';
   }
 
 }

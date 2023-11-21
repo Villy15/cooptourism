@@ -37,14 +37,18 @@ class _AddListingState extends ConsumerState<AddListing> {
   List<String> selectedRole = [];
   List<TextEditingController> roleController = [];
   List<TextEditingController> taskRoleController = [];
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController priceController = TextEditingController();
+  TextEditingController paxController = TextEditingController();
+  FocusNode titleFocus = FocusNode(canRequestFocus: false);
+  FocusNode descriptionFocus = FocusNode();
+  FocusNode priceFocus = FocusNode();
+  FocusNode paxFocus = FocusNode();
   List<FocusNode> roleFocus = [];
   List<FocusNode> taskFocus = [];
   int activeStep = 0;
   int upperBound = 6;
-  // String _province = "";
-  // String _city = "";
-  // String _category = "";
-  // String _tourismType = "";
 
   @override
   void initState() {
@@ -56,7 +60,6 @@ class _AddListingState extends ConsumerState<AddListing> {
   }
 
   void _saveField(FocusNode node, Function save) {
-    debugPrint("is this even running");
     if (!node.hasFocus) {
       save();
     }
@@ -246,7 +249,7 @@ class _AddListingState extends ConsumerState<AddListing> {
         return 'Assign Tasks';
 
       case 5:
-        return 'Rewiew';
+        return 'Review';
 
       default:
         return 'Details';
@@ -690,37 +693,58 @@ class _AddListingState extends ConsumerState<AddListing> {
         );
 
       case 5:
+        TextEditingController coopPartnerController = TextEditingController(
+            text: ref.watch(marketAddListingProvider)!.cooperativeOwned);
+        TextEditingController titleController = TextEditingController(
+            text: ref.watch(marketAddListingProvider)!.title);
+        TextEditingController descriptionController = TextEditingController(
+            text: ref.watch(marketAddListingProvider)!.description);
+        TextEditingController priceController = TextEditingController(
+            text: ref.watch(marketAddListingProvider)!.price?.toString());
+        TextEditingController paxController = TextEditingController(
+            text: ref.watch(marketAddListingProvider)!.pax?.toString());
+        TextEditingController imagesController = TextEditingController(
+            text: ref.watch(marketAddListingProvider)?.images?.toString());
+        TextEditingController provinceController = TextEditingController(
+            text: ref.watch(marketAddListingProvider)?.province);
+        TextEditingController cityController = TextEditingController(
+            text: ref.watch(marketAddListingProvider)?.city);
+        TextEditingController categoryController = TextEditingController(
+            text: ref.watch(marketAddListingProvider)?.category);
+        TextEditingController typeController = TextEditingController(
+            text: ref.watch(marketAddListingProvider)?.type);
+        TextEditingController rolesController = TextEditingController(
+            text: ref.watch(marketAddListingProvider)?.roles?.toString());
+        TextEditingController tasksController = TextEditingController(
+            text: ref.watch(marketAddListingProvider)?.tasks?.toString());
         debugPrint(
             "this should be final ${ref.watch(marketAddListingProvider).toString()}");
-        return Container(
-            child: Column(
-          children: [
-            const Text("Review"),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: MediaQuery.sizeOf(context).width,
-              height: 50,
-              child: ElevatedButton(
-                  onPressed: () {}, child: const Text("Submit Listing")),
-            )
-          ],
-        ));
-      default:
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ListingDropdown(
-              title: "Cooperative Partner",
-              future: getCooperativesJoined,
-              selectedValue:
-                  ref.watch(marketAddListingProvider)!.cooperativeOwned,
-              onValueChange: (newValue) {
-                ref.read(marketAddListingProvider.notifier).setAddListing(
-                      ref
-                          .watch(marketAddListingProvider)!
-                          .copyWith(cooperativeOwned: newValue),
-                    );
-              },
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12), // Padding inside the container
+                decoration: BoxDecoration(
+                  color: Colors.white, // Background color of the container
+                  borderRadius:
+                      BorderRadius.circular(15), // Makes it circular
+                  border: Border.all(
+                    color: Colors.grey, // Color of the border
+                    width: 1, // Width of the border
+                  ),
+                ),
+                child: TextFormField(
+                  readOnly: true,
+                  controller: coopPartnerController,
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    label: Text("Cooperative Partner"),
+                    border: InputBorder.none, // Removes underline
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 5),
             Container(
@@ -734,8 +758,174 @@ class _AddListingState extends ConsumerState<AddListing> {
                   width: 1, // Width of the border
                 ),
               ),
-              child: Form(
+              child: TextFormField(
+                readOnly: true,
+                controller: titleController,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  label: Text("Title"),
+                  border: InputBorder.none, // Removes underline
+                ),
+              ),
+            ),
+            const SizedBox(height: 5),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 12), // Padding inside the container
+              decoration: BoxDecoration(
+                color: Colors.white, // Background color of the container
+                borderRadius: BorderRadius.circular(15), // Makes it circular
+                border: Border.all(
+                  color: Colors.grey, // Color of the border
+                  width: 1, // Width of the border
+                ),
+              ),
+              child: TextFormField(
+                readOnly: true,
+                controller: descriptionController,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  label: Text("Description"),
+                  border: InputBorder.none, // Removes underline
+                ),
+              ),
+            ),
+            const SizedBox(height: 5),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12), // Padding inside the container
+                    decoration: BoxDecoration(
+                      color:
+                          Colors.white, // Background color of the container
+                      borderRadius:
+                          BorderRadius.circular(15), // Makes it circular
+                      border: Border.all(
+                        color: Colors.grey, // Color of the border
+                        width: 1, // Width of the border
+                      ),
+                    ),
+                    child: TextFormField(
+                      readOnly: true,
+                      controller: priceController,
+                      maxLines: null,
+                      decoration: const InputDecoration(
+                        label: Text("Price"),
+                        border: InputBorder.none, // Removes underline
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12), // Padding inside the container
+                    decoration: BoxDecoration(
+                      color:
+                          Colors.white, // Background color of the container
+                      borderRadius:
+                          BorderRadius.circular(15), // Makes it circular
+                      border: Border.all(
+                        color: Colors.grey, // Color of the border
+                        width: 1, // Width of the border
+                      ),
+                    ),
+                    child: TextFormField(
+                      readOnly: true,
+                      controller: paxController,
+                      maxLines: null,
+                      decoration: const InputDecoration(
+                        label: Text("Persons (pax)"),
+                        border: InputBorder.none, // Removes underline
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: MediaQuery.sizeOf(context).width,
+              height: 50,
+              child: ElevatedButton(
+                  onPressed: () {}, child: const Text("Submit Listing")),
+            )
+          ],
+        );
+      default:
+        titleFocus.addListener(() {
+          _saveField(titleFocus, () {
+            ref.read(marketAddListingProvider.notifier).setAddListing(
+                  ref.watch(marketAddListingProvider)!.copyWith(
+                        title: titleController.text,
+                      ),
+                );
+          });
+        });
+        descriptionFocus.addListener(() {
+          _saveField(descriptionFocus, () {
+            ref.read(marketAddListingProvider.notifier).setAddListing(
+                  ref.watch(marketAddListingProvider)!.copyWith(
+                        description: descriptionController.text,
+                      ),
+                );
+          });
+        });
+        priceFocus.addListener(() {
+          _saveField(priceFocus, () {
+            ref.read(marketAddListingProvider.notifier).setAddListing(
+                  ref.watch(marketAddListingProvider)!.copyWith(
+                        price: num.parse(priceController.value.text),
+                      ),
+                );
+          });
+        });
+        paxFocus.addListener(() {
+          _saveField(paxFocus, () {
+            ref.read(marketAddListingProvider.notifier).setAddListing(
+                  ref.watch(marketAddListingProvider)!.copyWith(
+                        pax: num.parse(paxController.value.text),
+                      ),
+                );
+          });
+        });
+        return Form(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ListingDropdown(
+                title: "Cooperative Partner",
+                future: getCooperativesJoined,
+                selectedValue:
+                    ref.watch(marketAddListingProvider)!.cooperativeOwned,
+                onValueChange: (newValue) {
+                  ref.read(marketAddListingProvider.notifier).setAddListing(
+                        ref
+                            .watch(marketAddListingProvider)!
+                            .copyWith(cooperativeOwned: newValue),
+                      );
+                },
+              ),
+              const SizedBox(height: 5),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12), // Padding inside the container
+                decoration: BoxDecoration(
+                  color: Colors.white, // Background color of the container
+                  borderRadius: BorderRadius.circular(15), // Makes it circular
+                  border: Border.all(
+                    color: Colors.grey, // Color of the border
+                    width: 1, // Width of the border
+                  ),
+                ),
                 child: TextFormField(
+                  autofocus: false,
+                  controller: titleController,
+                  focusNode: titleFocus,
                   maxLines: null,
                   decoration: const InputDecoration(
                     label: Text("Title"),
@@ -749,21 +939,21 @@ class _AddListingState extends ConsumerState<AddListing> {
                   },
                 ),
               ),
-            ),
-            const SizedBox(height: 5),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 12), // Padding inside the container
-              decoration: BoxDecoration(
-                color: Colors.white, // Background color of the container
-                borderRadius: BorderRadius.circular(15), // Makes it circular
-                border: Border.all(
-                  color: Colors.grey, // Color of the border
-                  width: 1, // Width of the border
+              const SizedBox(height: 5),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12), // Padding inside the container
+                decoration: BoxDecoration(
+                  color: Colors.white, // Background color of the container
+                  borderRadius: BorderRadius.circular(15), // Makes it circular
+                  border: Border.all(
+                    color: Colors.grey, // Color of the border
+                    width: 1, // Width of the border
+                  ),
                 ),
-              ),
-              child: Form(
                 child: TextFormField(
+                  controller: descriptionController,
+                  focusNode: descriptionFocus,
                   maxLines: null,
                   decoration: const InputDecoration(
                     label: Text("Description"),
@@ -777,27 +967,28 @@ class _AddListingState extends ConsumerState<AddListing> {
                   },
                 ),
               ),
-            ),
-            const SizedBox(height: 5),
-            SizedBox(
-              width: MediaQuery.sizeOf(context).width,
-              child: Row(
-                children: [
-                  Container(
-                    width: MediaQuery.sizeOf(context).width * 0.6,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12), // Padding inside the container
-                    decoration: BoxDecoration(
-                      color: Colors.white, // Background color of the container
-                      borderRadius:
-                          BorderRadius.circular(15), // Makes it circular
-                      border: Border.all(
-                        color: Colors.grey, // Color of the border
-                        width: 1, // Width of the border
+              const SizedBox(height: 5),
+              SizedBox(
+                width: MediaQuery.sizeOf(context).width,
+                child: Row(
+                  children: [
+                    Container(
+                      width: MediaQuery.sizeOf(context).width * 0.6,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12), // Padding inside the container
+                      decoration: BoxDecoration(
+                        color:
+                            Colors.white, // Background color of the container
+                        borderRadius:
+                            BorderRadius.circular(15), // Makes it circular
+                        border: Border.all(
+                          color: Colors.grey, // Color of the border
+                          width: 1, // Width of the border
+                        ),
                       ),
-                    ),
-                    child: Form(
                       child: TextFormField(
+                        controller: priceController,
+                        focusNode: priceFocus,
                         decoration: const InputDecoration(
                           label: Text("Price"),
                           border: InputBorder.none, // Removes underline
@@ -811,25 +1002,25 @@ class _AddListingState extends ConsumerState<AddListing> {
                         },
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 5),
-                  Expanded(
-                    child: Container(
-                      width: MediaQuery.sizeOf(context).width * 0.3,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12), // Padding inside the container
-                      decoration: BoxDecoration(
-                        color:
-                            Colors.white, // Background color of the container
-                        borderRadius:
-                            BorderRadius.circular(15), // Makes it circular
-                        border: Border.all(
-                          color: Colors.grey, // Color of the border
-                          width: 1, // Width of the border
+                    const SizedBox(width: 5),
+                    Expanded(
+                      child: Container(
+                        width: MediaQuery.sizeOf(context).width * 0.3,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12), // Padding inside the container
+                        decoration: BoxDecoration(
+                          color:
+                              Colors.white, // Background color of the container
+                          borderRadius:
+                              BorderRadius.circular(15), // Makes it circular
+                          border: Border.all(
+                            color: Colors.grey, // Color of the border
+                            width: 1, // Width of the border
+                          ),
                         ),
-                      ),
-                      child: Form(
                         child: TextFormField(
+                          controller: paxController,
+                          focusNode: paxFocus,
                           decoration: const InputDecoration(
                             label: Text("Persons (pax)"),
                             border: InputBorder.none, // Removes underline
@@ -844,129 +1035,129 @@ class _AddListingState extends ConsumerState<AddListing> {
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 5),
-            if (uploadedImages.isEmpty)
-              InkWell(
-                onTap: () {
-                  pickImages();
-                },
-                child: Container(
-                  height: MediaQuery.sizeOf(context).height / 5,
-                  width: MediaQuery.sizeOf(context).width,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.grey, width: 1),
-                  ),
-                  child: Column(children: [
-                    const Icon(
-                      Icons.add_photo_alternate_outlined,
-                      color: Colors.grey,
-                      size: 90,
-                    ),
-                    DisplayText(
-                      text: "Add Images",
-                      lines: 1,
-                      style: Theme.of(context).textTheme.bodySmall!,
-                    ),
-                  ]),
+                  ],
                 ),
               ),
-            if (uploadedImages.isNotEmpty)
-              Container(
-                margin: const EdgeInsets.only(top: 10),
-                height: 200,
-                child: GridView.builder(
-                  // Sets the grid structure
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: uploadedImages.length <= 4
-                        ? uploadedImages.length
-                        : 4, // Number of columns
-                    crossAxisSpacing: 4.0, // Space between columns
-                    mainAxisSpacing: 4.0, // Space between rows
-                    childAspectRatio: 1,
+              const SizedBox(height: 5),
+              if (uploadedImages.isEmpty)
+                InkWell(
+                  onTap: () {
+                    pickImages();
+                  },
+                  child: Container(
+                    height: MediaQuery.sizeOf(context).height / 5,
+                    width: MediaQuery.sizeOf(context).width,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.grey, width: 1),
+                    ),
+                    child: Column(children: [
+                      const Icon(
+                        Icons.add_photo_alternate_outlined,
+                        color: Colors.grey,
+                        size: 90,
+                      ),
+                      DisplayText(
+                        text: "Add Images",
+                        lines: 1,
+                        style: Theme.of(context).textTheme.bodySmall!,
+                      ),
+                    ]),
                   ),
-                  itemCount: uploadedImages.length,
-                  itemBuilder: (context, index) {
-                    return Expanded(
-                      child: Container(
-                        clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: FileImage(uploadedImages[index]),
+                ),
+              if (uploadedImages.isNotEmpty)
+                Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  height: 200,
+                  child: GridView.builder(
+                    // Sets the grid structure
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: uploadedImages.length <= 4
+                          ? uploadedImages.length
+                          : 4, // Number of columns
+                      crossAxisSpacing: 4.0, // Space between columns
+                      mainAxisSpacing: 4.0, // Space between rows
+                      childAspectRatio: 1,
+                    ),
+                    itemCount: uploadedImages.length,
+                    itemBuilder: (context, index) {
+                      return Expanded(
+                        child: Container(
+                          clipBehavior: Clip.hardEdge,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: FileImage(uploadedImages[index]),
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            if (uploadedImages.isNotEmpty)
-              InkWell(
-                onTap: () {
-                  pickImages();
-                },
-                child: Container(
-                  height: MediaQuery.sizeOf(context).height / 8,
-                  width: MediaQuery.sizeOf(context).width,
-                  margin: const EdgeInsets.only(top: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.grey, width: 1),
+                      );
+                    },
                   ),
-                  child: Column(children: [
-                    const Icon(
-                      Icons.add_photo_alternate_outlined,
-                      color: Colors.grey,
-                      size: 50,
+                ),
+              if (uploadedImages.isNotEmpty)
+                InkWell(
+                  onTap: () {
+                    pickImages();
+                  },
+                  child: Container(
+                    height: MediaQuery.sizeOf(context).height / 8,
+                    width: MediaQuery.sizeOf(context).width,
+                    margin: const EdgeInsets.only(top: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.grey, width: 1),
                     ),
+                    child: Column(children: [
+                      const Icon(
+                        Icons.add_photo_alternate_outlined,
+                        color: Colors.grey,
+                        size: 50,
+                      ),
+                      DisplayText(
+                        text: "Add Images",
+                        lines: 1,
+                        style: Theme.of(context).textTheme.bodySmall!,
+                      ),
+                    ]),
+                  ),
+                ),
+              const SizedBox(height: 10),
+              nextButton(),
+              const SizedBox(height: 20),
+              DisplayText(
+                text: "Notes:",
+                lines: 1,
+                style: Theme.of(context).textTheme.headlineSmall!,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 5),
                     DisplayText(
-                      text: "Add Images",
-                      lines: 1,
+                      text:
+                          "Images should provide valuable information regarding the service to increase its popularity.",
+                      lines: 3,
                       style: Theme.of(context).textTheme.bodySmall!,
                     ),
-                  ]),
+                    const SizedBox(height: 5),
+                    DisplayText(
+                      text:
+                          "Images are better displayed if their resolution is rectangular in shape (crosswise).",
+                      lines: 3,
+                      style: Theme.of(context).textTheme.bodySmall!,
+                    ),
+                  ],
                 ),
               ),
-            const SizedBox(height: 10),
-            nextButton(),
-            const SizedBox(height: 20),
-            DisplayText(
-              text: "Notes:",
-              lines: 1,
-              style: Theme.of(context).textTheme.headlineSmall!,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Column(
-                children: [
-                  const SizedBox(height: 5),
-                  DisplayText(
-                    text:
-                        "Images should provide valuable information regarding the service to increase its popularity.",
-                    lines: 3,
-                    style: Theme.of(context).textTheme.bodySmall!,
-                  ),
-                  const SizedBox(height: 5),
-                  DisplayText(
-                    text:
-                        "Images are better displayed if their resolution is rectangular in shape (crosswise).",
-                    lines: 3,
-                    style: Theme.of(context).textTheme.bodySmall!,
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         );
     }
   }

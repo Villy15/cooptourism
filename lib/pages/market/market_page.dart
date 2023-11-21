@@ -114,7 +114,7 @@ class _MarketPageState extends ConsumerState<MarketPage> {
             type: listing.type,
             postDate: listing.postDate,
             images: listing.images,
-            visits: listing.visits,
+            pax: listing.pax,
           ),
         );
       },
