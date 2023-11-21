@@ -104,19 +104,7 @@ class _MarketPageState extends ConsumerState<MarketPage> {
       itemBuilder: (context, index) {
         final listing = listings[index];
         return ListingCard(
-          listingModel: ListingModel(
-            id: listing.id,
-            owner: listing.owner,
-            title: listing.title,
-            description: listing.description,
-            rating: listing.rating,
-            price: listing.price,
-            type: listing.type,
-            postDate: listing.postDate,
-            images: listing.images,
-            pax: listing.pax,
-            cooperativeOwned: listing.cooperativeOwned,
-          ),
+          listingModel: listing
         );
       },
     );
