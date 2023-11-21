@@ -42,6 +42,19 @@ class JoinCooperativeRepository {
           });
   }
 
+  // get all pending cooperative applications based on cooperative id from Firestore
+  Stream<List<CooperativeAppFormModel>> getAllPendingCoopApplicationsByCoopId(String coopId) {
+    return coopApplicationsCollection
+          .where('status', isEqualTo: 'Pending')
+          .where('coopId', isEqualTo: coopId)
+          .snapshots()
+          .map((snapshot) {
+            return snapshot.docs.map((doc) {
+              return CooperativeAppFormModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
+            }).toList();
+          });
+  }
+
   // change status to approved for a cooperative application in Firestore
   Future<void> approveCoopApplication(String coopAppId) {
     return coopApplicationsCollection
