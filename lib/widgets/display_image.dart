@@ -22,20 +22,16 @@ class DisplayImage extends StatelessWidget {
     return ClipRRect(
       borderRadius: radius!,
       child: FutureBuilder<String>(
-        future: storageRef
-            .child(path!)
-            .getDownloadURL(), // Await here
-        builder: (context, urlSnapshot) {;
-          if (urlSnapshot.connectionState ==
-              ConnectionState.waiting) {
+        future: storageRef.child(path!).getDownloadURL(), // Await here
+        builder: (context, urlSnapshot) {
+          if (urlSnapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator();
           }
 
           if (urlSnapshot.hasError) {
             debugPrint('Error fetching image URL: ${urlSnapshot.error}');
-
-
-            return const Icon(Icons.error); // Or some other widget to indicate an error
+            return const Icon(
+                Icons.error); // Or some other widget to indicate an error
           }
 
           final imageUrl = urlSnapshot.data;

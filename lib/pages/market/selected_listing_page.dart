@@ -44,6 +44,8 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
     });
   }
 
+  int navigationRailIndex = 0;
+  bool railVisibility = false;
   @override
   Widget build(BuildContext context) {
     final ListingRepository listingRepository = ListingRepository();
@@ -94,129 +96,194 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
-
                 final reviews = snapshot.data!;
-                return ListView(
-                  padding: const EdgeInsets.only(top: 0),
+                return Stack(
                   children: [
-                    ImageSlider(listing: listing),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 14),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 14.0),
-                            child: DisplayText(
-                                text: listing.title!,
-                                lines: 1,
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                )),
-                          ),
-                          // Padding(
-                          //   padding: const EdgeInsets.only(bottom: 10.0),
-                          //   child: DisplayText(
-                          //       text: "₱${listing.price!.toStringAsFixed(2)}",
-                          //       lines: 1,
-                          //       style: const TextStyle(
-                          //         fontSize: 18,
-                          //         fontWeight: FontWeight.w500,
-                          //       )),
-                          // ),
-                          DisplayText(
-                            text: "Type: ${listing.type!}",
-                            lines: 4,
-                            style: TextStyle(
-                                fontSize: Theme.of(context)
-                                    .textTheme
-                                    .labelLarge
-                                    ?.fontSize),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: DisplayText(
-                              text: "Desrciption: ${listing.description!}",
-                              lines: 5,
-                              style: TextStyle(
-                                fontSize: Theme.of(context)
-                                    .textTheme
-                                    .labelLarge
-                                    ?.fontSize,
+                    ListView(
+                      padding: const EdgeInsets.only(top: 0),
+                      children: [
+                        ImageSlider(listing: listing),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 14.0),
+                                child: DisplayText(
+                                    text: listing.title!,
+                                    lines: 2,
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                    )),
                               ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: DisplayText(
-                                text: "Rating",
-                                lines: 1,
-                                style: Theme.of(context).textTheme.labelLarge!),
-                          ),
-                          RatingBarIndicator(
-                            rating: listing.rating!.toDouble(),
-                            itemBuilder: (context, index) {
-                              return Icon(
-                                Icons.star_rounded,
-                                color: Theme.of(context).colorScheme.primary,
-                              );
-                            },
-                            itemCount: 5,
-                            itemSize: 25,
-                            direction: Axis.horizontal,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: DisplayText(
-                              text: "Amenities",
-                              lines: 1,
-                              style: Theme.of(context).textTheme.labelLarge!,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: DisplayText(
-                              text: "Reviews",
-                              lines: 1,
-                              style: Theme.of(context).textTheme.labelLarge!,
-                            ),
-                          ),
-                          reviews.isEmpty
-                              ? const Center(child: Text('No reviews'))
-                              : ListView.builder(
-                                  padding: const EdgeInsets.only(top: 0),
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: reviews.length,
-                                  itemBuilder: (context, index) {
-                                    final review = reviews[index];
-                                    return ReviewCard(
-                                      reviewModel: review,
-                                    );
-                                  },
+                              Padding(
+                                padding: const EdgeInsets.only(top: 10.0),
+                                child: DisplayText(
+                                  text: "Description: ${listing.description!}",
+                                  lines: 10,
+                                  style: TextStyle(
+                                    fontSize: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge
+                                        ?.fontSize,
+                                  ),
                                 ),
-                          if (listing.ownerMember != null)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 20.0),
-                              child: DisplayText(
-                                text: "Owner Information",
-                                lines: 1,
-                                style:
-                                    Theme.of(context).textTheme.headlineSmall!,
+                              ),
+                              DisplayText(
+                                text: "Category: ${listing.category!}",
+                                lines: 4,
+                                style: TextStyle(
+                                    fontSize: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge
+                                        ?.fontSize),
+                              ),
+                              DisplayText(
+                                text: "Type: ${listing.type!}",
+                                lines: 4,
+                                style: TextStyle(
+                                    fontSize: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge
+                                        ?.fontSize),
+                              ),
+
+                              Padding(
+                                padding: const EdgeInsets.only(top: 20.0),
+                                child: DisplayText(
+                                    text: "Rating",
+                                    lines: 1,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge!),
+                              ),
+                              RatingBarIndicator(
+                                rating:
+                                    listing.rating?.toDouble() ?? 0.toDouble(),
+                                itemBuilder: (context, index) {
+                                  return Icon(
+                                    Icons.star_rounded,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  );
+                                },
+                                itemCount: 5,
+                                itemSize: 25,
+                                direction: Axis.horizontal,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 20.0),
+                                child: DisplayText(
+                                  text: "Reviews",
+                                  lines: 1,
+                                  style:
+                                      Theme.of(context).textTheme.labelLarge!,
+                                ),
+                              ),
+                              reviews.isEmpty
+                                  ? const Center(child: Text('No reviews'))
+                                  : ListView.builder(
+                                      padding: const EdgeInsets.only(top: 0),
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: reviews.length,
+                                      itemBuilder: (context, index) {
+                                        final review = reviews[index];
+                                        return ReviewCard(
+                                          reviewModel: review,
+                                        );
+                                      },
+                                    ),
+                              if (listing.ownerMember != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 20.0),
+                                  child: DisplayText(
+                                    text: "Owner Information",
+                                    lines: 1,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall!,
+                                  ),
+                                ),
+                              // if (role == 'Customer')
+                              // customerFunctions(context, listing)
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Positioned(
+                      right: 0,
+                      child: SizedBox(
+                        height: MediaQuery.sizeOf(context).height,
+                        child: Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(20),
+                                      bottomLeft: Radius.circular(20))),
+                              child: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    railVisibility = !railVisibility;
+                                  });
+                                },
+                                icon: const Icon(
+                                    Icons.settings_accessibility_rounded),
+                                color: Theme.of(context).colorScheme.background,
                               ),
                             ),
-                          if (listing.ownerMember != null)
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 10.0, top: 10.0),
-                              child: ownerListing(listing: listing),
-                            ),
-                          // if (role == 'Customer')
-                          // customerFunctions(context, listing)
-                        ],
+                            if (railVisibility == true)
+                              Container(
+                                height: MediaQuery.sizeOf(context).height,
+                                decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(20),
+                                        bottomLeft: Radius.circular(20))),
+                                child: NavigationRail(
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.primary,
+                                  minWidth: 56,
+                                  selectedIndex: navigationRailIndex,
+                                  groupAlignment: 0,
+                                  unselectedIconTheme: IconThemeData(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .background),
+                                  onDestinationSelected: (int index) {
+                                    setState(() {
+                                      navigationRailIndex = index;
+                                    });
+                                  },
+                                  labelType: NavigationRailLabelType.none,
+                                  destinations: const <NavigationRailDestination>[
+                                    NavigationRailDestination(
+                                      icon: Icon(Icons.message_rounded),
+                                      selectedIcon: Icon(Icons.favorite),
+                                      label: Text('Messages'),
+                                    ),
+                                    NavigationRailDestination(
+                                      icon: Icon(Icons.edit_document),
+                                      selectedIcon: Icon(Icons.book),
+                                      label: Text('Edit Listing'),
+                                    ),
+                                    NavigationRailDestination(
+                                      icon: Icon(Icons.task),
+                                      selectedIcon: Icon(Icons.star),
+                                      label: Text('Tasks'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
-                    ),
+                    )
                   ],
                 );
               },
@@ -372,70 +439,6 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
   //     ),
   //   );
   // }
-
-  Row ownerListing({required ListingModel listing}) {
-    return Row(
-      children: [
-        Container(
-          width: 50, // Adjust width as needed
-          height: 50, // Adjust height as needed
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary,
-            border: Border.all(
-              color:
-                  Theme.of(context).colorScheme.primary, // Color of the border
-              width: 2, // Width of the border
-            ),
-            shape: BoxShape.circle, // Shape of the Container
-          ),
-          child: const Icon(
-            Icons.person,
-            size: 40,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: FutureBuilder(
-            future: userRepository.getUser(listing.ownerMember!),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Text("Error: ${snapshot.error}");
-              }
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              final user = snapshot.data!;
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  DisplayText(
-                    text: "${user.firstName!} ${user.lastName!}",
-                    lines: 1,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  DisplayText(
-                    text:
-                        "Cooperative members since ${user.joinedAt!.toDate().year}",
-                    lines: 1,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        )
-      ],
-    );
-  }
 }
 
 class ImageSlider extends StatefulWidget {
