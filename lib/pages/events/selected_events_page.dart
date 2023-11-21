@@ -59,7 +59,6 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
         // bool isContributor = event.contributors!.contains(user?.uid);
         bool isParticipant = event.participants!.contains(user?.uid);
 
-
         return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,9 +85,10 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
                                       EditEventPage(event: event)),
                             );
                           },
-                          icon: const Padding(
-                            padding: EdgeInsets.only(top: 12.0),
-                            child: Icon(Icons.edit, color: Colors.grey),
+                          icon: Padding(
+                            padding: const EdgeInsets.only(top: 12.0),
+                            child: Icon(Icons.edit,
+                                color: Theme.of(context).colorScheme.primary),
                           ),
                         )
                       : const SizedBox(width: 10),
@@ -111,15 +111,14 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
               // Create a button that spans the entire width and has a height of 50
               if (role == 'Customer') customerFunctions(event),
 
-              if (role == 'Member') ... [
-
-                isParticipant ? const SizedBox(height: 0) : memberFunctions(event),
+              if (role == 'Member') ...[
+                isParticipant
+                    ? const SizedBox(height: 0)
+                    : memberFunctions(event),
                 customerFunctions(event)
               ],
 
-              if (role == 'Manager') ... [
-                managerFunctions(event)
-              ],
+              if (role == 'Manager') ...[managerFunctions(event)],
 
               const SizedBox(height: 10),
             ],
@@ -129,7 +128,7 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
     );
   }
 
-  Widget managerFunctions (EventsModel event) {
+  Widget managerFunctions(EventsModel event) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: SizedBox(
@@ -239,42 +238,51 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
 
     return Column(
       children: [
-       isUserParticipant
+        isUserParticipant
             ? const SizedBox(height: 0)
             : Column(
                 children: [
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16),
-                    child: user?.role == 'Member' ? const Text(
-                        "Do you wish to join the event only instead of contributing?") : Container(),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16.0, horizontal: 16),
+                    child: user?.role == 'Member'
+                        ? const Text(
+                            "Do you wish to join the event only instead of contributing?")
+                        : Container(),
                   )
                 ],
               ),
-
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: SizedBox(
             width: double.infinity,
             height: 50,
-            child: ElevatedButton(
+            child: FilledButton(
+              // Make it wider
+              style: ButtonStyle(
+                minimumSize:
+                    MaterialStateProperty.all<Size>(const Size(300, 45)),
+              ),
               onPressed: () {
                 // Push to the contribute event page use native
-                isUserParticipant ? Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ConfirmEventPage(event: event)),
-                ) : Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => JoinEventPage(event: event)));
+                isUserParticipant
+                    ? Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ConfirmEventPage(event: event)),
+                      )
+                    : Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => JoinEventPage(event: event)));
               },
               child: Text(
                   isUserParticipant
                       ? ">     Check Event Details     < "
                       : ">     Join Event     < ",
-                  style:
-                      const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w500)),
             ),
           ),
         ),
@@ -302,10 +310,10 @@ class _SelectedEventsPageState extends ConsumerState<SelectedEventsPage> {
             ],
           ),
           const SizedBox(height: 16.0),
-          Container(
+          SizedBox(
             width: 350,
             height: 200,
-            color: Colors.grey[300],
+            // color: Colors.grey[300],
             child: Center(
               child: Text("Map Placeholder",
                   style:

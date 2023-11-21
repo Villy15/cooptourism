@@ -44,11 +44,7 @@ class _ProfilePageState extends State<ProfilePage> {
     'Coaching Sessions'
   ];
 
-  final List<String> _titlesManager = [
-    'Application Forms',
-    'About',
-    'Posts'
-  ];
+  final List<String> _titlesManager = ['Application Forms', 'About', 'Posts'];
 
   final List<String> _titlesCustomer = [
     // temporary for now
@@ -80,7 +76,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final coachingRepository = CoachingRepository();
   final joinCooperativeRepository = JoinCooperativeRepository();
 
-
   @override
   void initState() {
     super.initState();
@@ -88,12 +83,10 @@ class _ProfilePageState extends State<ProfilePage> {
     userUID = widget.profileId.replaceAll(RegExp(r'}+$'), '');
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: _appBar(context, "Profiles"),
-        backgroundColor: Theme.of(context).colorScheme.background,
         body: RefreshIndicator(
             onRefresh: () async {
               setState(() {});
@@ -107,10 +100,12 @@ class _ProfilePageState extends State<ProfilePage> {
       scrollDirection: Axis.horizontal,
       // add other title members here,
       itemCount: user.role == 'Member'
-                  ? _titlesMember.length
-                  : user.role == 'Manager'
-                  ? _titlesManager.length
-                  : user.role == 'Customer' ?_titlesCustomer.length : _titlesCustomer.length,
+          ? _titlesMember.length
+          : user.role == 'Manager'
+              ? _titlesManager.length
+              : user.role == 'Customer'
+                  ? _titlesCustomer.length
+                  : _titlesCustomer.length,
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -120,7 +115,7 @@ class _ProfilePageState extends State<ProfilePage> {
               decoration: BoxDecoration(
                 color: _selectedIndex == index
                     ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.secondary,
+                    : Theme.of(context).colorScheme.background,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Padding(
@@ -131,8 +126,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       ? _titlesMember[index]
                       : user.role == 'Manager'
                           ? _titlesManager[index]
-                          : user.role == 'Customer' 
-                          ?_titlesCustomer[index] : _titlesCustomer[index],
+                          : user.role == 'Customer'
+                              ? _titlesCustomer[index]
+                              : _titlesCustomer[index],
                   style: TextStyle(
                     color: _selectedIndex == index
                         ? Theme.of(context).colorScheme.background
@@ -254,9 +250,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       const SizedBox(height: 15),
                     ],
                   );
-                }
-
-                else if (selectedIndex == 0 && userData?.role == 'Customer') {
+                } else if (selectedIndex == 0 && userData?.role == 'Customer') {
                   return Column(
                     children: [
                       profile(context, userData!, profileId),
@@ -269,9 +263,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       enrollCoop(context, userData, profileId)
                     ],
                   );
-                }
-                
-                else if (selectedIndex == 1 && userData?.role == 'Customer') {
+                } else if (selectedIndex == 1 && userData?.role == 'Customer') {
                   return Column(
                     children: [
                       profile(context, userData!, profileId),
@@ -298,29 +290,23 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Column enrollCoop(BuildContext context, UserModel user, String userUID) {
-    return  Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-            'Do you wish to enroll your cooperative?',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontSize: 21,
-              fontWeight: FontWeight.bold,
-            )
-          ),
-        const SizedBox(height: 7),
-        Text(
-          'Manage your cooperative with ease through the app!',
+    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Text('Do you wish to enroll your cooperative?',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: 21,
+            fontWeight: FontWeight.bold,
+          )),
+      const SizedBox(height: 7),
+      Text('Manage your cooperative with ease through the app!',
           style: TextStyle(
             color: Theme.of(context).colorScheme.primary,
             fontSize: 16.3,
-          )
-        ),
+          )),
 
-        const SizedBox(height: 15),
-        
-        Padding(
+      const SizedBox(height: 15),
+
+      Padding(
         padding: const EdgeInsets.only(left: 12.0, right: 8.0),
         child: RichText(
           text: TextSpan(
@@ -329,7 +315,9 @@ class _ProfilePageState extends State<ProfilePage> {
               children: const <TextSpan>[
                 TextSpan(
                     text: 'Q:', style: TextStyle(fontWeight: FontWeight.bold)),
-                TextSpan(text: ' How will this be of help in my cooperative and our current operations?')
+                TextSpan(
+                    text:
+                        ' How will this be of help in my cooperative and our current operations?')
               ]),
         ),
       ),
@@ -354,7 +342,9 @@ class _ProfilePageState extends State<ProfilePage> {
               children: const <TextSpan>[
                 TextSpan(
                     text: 'Q:', style: TextStyle(fontWeight: FontWeight.bold)),
-                TextSpan(text: ' How do I then enroll my cooperative in the application?')
+                TextSpan(
+                    text:
+                        ' How do I then enroll my cooperative in the application?')
               ]),
         ),
       ),
@@ -377,170 +367,161 @@ class _ProfilePageState extends State<ProfilePage> {
             style: TextStyle(
                 fontSize: 15, color: Theme.of(context).colorScheme.primary)),
       ),
-      
 
-        const SizedBox(height: 25),
-        // add a container that acts as a clickable button to direct the user in the enrollment page
-        
-        StreamBuilder<DocumentSnapshot>(
-          stream: FirebaseFirestore.instance.collection('users').doc(widget.profileId).snapshots(),
+      const SizedBox(height: 25),
+      // add a container that acts as a clickable button to direct the user in the enrollment page
+
+      StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(widget.profileId)
+              .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              Map<String, dynamic> userData = snapshot.data!.data() as Map<String, dynamic>;
+              Map<String, dynamic> userData =
+                  snapshot.data!.data() as Map<String, dynamic>;
               String firstName = userData['first_name'];
               bool canNavigate = firstName != 'Customer';
 
-              return InkWell( 
-                onTap: canNavigate ? () {
-                  GoRouter.of(context).go('/profile_page/$userUID/enroll_cooperative');
-                } : () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text(
-                          'Edit Profile Required.',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.bold
-                          )
-                        ),
-                        content: Text(
-                          'Please give your personal details first before enrolling your cooperative.',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary
-                          )
-                        ),
-                        actions: <Widget> [
-                          TextButton(
-                            child: Text(
-                              'OK',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary
-                              )
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            }
-                          ),
-                        ] 
-                      );
-                    }
-                  );
-                },
+              return InkWell(
+                onTap: canNavigate
+                    ? () {
+                        GoRouter.of(context)
+                            .go('/profile_page/$userUID/enroll_cooperative');
+                      }
+                    : () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                  title: Text('Edit Profile Required.',
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          fontWeight: FontWeight.bold)),
+                                  content: Text(
+                                      'Please give your personal details first before enrolling your cooperative.',
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary)),
+                                  actions: <Widget>[
+                                    TextButton(
+                                        child: Text('OK',
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary)),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        }),
+                                  ]);
+                            });
+                      },
                 child: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Theme.of(context).colorScheme.primary),
+                    border: Border.all(
+                        color: Theme.of(context).colorScheme.primary),
                     borderRadius: BorderRadius.circular(10),
                     color: Theme.of(context).colorScheme.primary,
                   ),
-                  child: 
-                      Text(
-                        'Enroll Now!', 
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Theme.of(context).colorScheme.secondary,
-                          fontWeight: FontWeight.bold,
-                        )
-                      ),
-                  ),
+                  child: Text('Enroll Now!',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontWeight: FontWeight.bold,
+                      )),
+                ),
               );
-            }
-            else {
+            } else {
               return const CircularProgressIndicator();
-            
             }
-          }
-        ),
+          }),
 
-        const SizedBox(height: 85)
-      ]
-    );
+      const SizedBox(height: 85)
+    ]);
   }
 
-  Column registerAsMemberSection(BuildContext context, UserModel user, String userUID) {
+  Column registerAsMemberSection(
+      BuildContext context, UserModel user, String userUID) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-            'Do you wish to become a cooperative member?',
+        Text('Do you wish to become a cooperative member?',
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontSize: 19,
               fontWeight: FontWeight.bold,
-            )
-          ),
+            )),
         const SizedBox(height: 7),
-        Text(
-          'Be sure to submit the documents needed prior to joining!',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
-            fontSize: 15,
-          )
-        ),
-
+        Text('Be sure to submit the documents needed prior to joining!',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontSize: 15,
+            )),
         const SizedBox(height: 15),
-        
         Padding(
-        padding: const EdgeInsets.only(left: 12.0, right: 8.0),
-        child: RichText(
-          text: TextSpan(
-              style: TextStyle(
-                  fontSize: 17.0, color: Theme.of(context).colorScheme.primary),
-              children: const <TextSpan>[
-                TextSpan(
-                    text: 'Q:', style: TextStyle(fontWeight: FontWeight.bold)),
-                TextSpan(text: ' How do I join as a cooperative member of a cooperative?')
-              ]),
+          padding: const EdgeInsets.only(left: 12.0, right: 8.0),
+          child: RichText(
+            text: TextSpan(
+                style: TextStyle(
+                    fontSize: 17.0,
+                    color: Theme.of(context).colorScheme.primary),
+                children: const <TextSpan>[
+                  TextSpan(
+                      text: 'Q:',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(
+                      text:
+                          ' How do I join as a cooperative member of a cooperative?')
+                ]),
+          ),
         ),
-      ),
-
-      const SizedBox(height: 10),
-      Padding(
-        padding: const EdgeInsets.only(left: 16.0, right: 12.0),
-        child: Text(
-            "Press the 'Coops' icon on the bottom navigation bar. You will be directed to the list of cooperatives that are currently enrolled in the application. Select the cooperative you wish to join and press the 'Join' button.",
-            style: TextStyle(
-                fontSize: 15, color: Theme.of(context).colorScheme.primary)),
-      ),
-
-      const SizedBox(height: 15),
-
-      Padding(
-        padding: const EdgeInsets.only(left: 12.0, right: 8.0),
-        child: RichText(
-          text: TextSpan(
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0, right: 12.0),
+          child: Text(
+              "Press the 'Coops' icon on the bottom navigation bar. You will be directed to the list of cooperatives that are currently enrolled in the application. Select the cooperative you wish to join and press the 'Join' button.",
               style: TextStyle(
-                  fontSize: 17.0, color: Theme.of(context).colorScheme.primary),
-              children: const <TextSpan>[
-                TextSpan(
-                    text: 'Q:', style: TextStyle(fontWeight: FontWeight.bold)),
-                TextSpan(text: ' What are the documents needed before joining a cooperative?')
-              ]),
+                  fontSize: 15, color: Theme.of(context).colorScheme.primary)),
         ),
-      ),
-
-      const SizedBox(height: 10),
-
-      Padding(
-        padding: const EdgeInsets.only(left: 16.0, right: 12.0),
-        child: Text(
-            "It will vary depending on the cooperative you wish to join. Please contact the cooperative you wish to join for more information.",
-            style: TextStyle(
-                fontSize: 15, color: Theme.of(context).colorScheme.primary)),
-      ),
-
-      const SizedBox(height: 15),
-      Padding(
-        padding: const EdgeInsets.only(left: 16.0, right: 12.0),
-        child: Text(
-            "Do note that you are not restricted to joining only one cooperative. You can join as many cooperatives as you wish. Also, prior to joining, we wish that you would complete your profile first. This will help the cooperative you wish to join to know more about you.",
-            style: TextStyle(
-                fontSize: 15, color: Theme.of(context).colorScheme.primary)),
-      ),
-
-      const SizedBox(height: 65),
+        const SizedBox(height: 15),
+        Padding(
+          padding: const EdgeInsets.only(left: 12.0, right: 8.0),
+          child: RichText(
+            text: TextSpan(
+                style: TextStyle(
+                    fontSize: 17.0,
+                    color: Theme.of(context).colorScheme.primary),
+                children: const <TextSpan>[
+                  TextSpan(
+                      text: 'Q:',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(
+                      text:
+                          ' What are the documents needed before joining a cooperative?')
+                ]),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0, right: 12.0),
+          child: Text(
+              "It will vary depending on the cooperative you wish to join. Please contact the cooperative you wish to join for more information.",
+              style: TextStyle(
+                  fontSize: 15, color: Theme.of(context).colorScheme.primary)),
+        ),
+        const SizedBox(height: 15),
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0, right: 12.0),
+          child: Text(
+              "Do note that you are not restricted to joining only one cooperative. You can join as many cooperatives as you wish. Also, prior to joining, we wish that you would complete your profile first. This will help the cooperative you wish to join to know more about you.",
+              style: TextStyle(
+                  fontSize: 15, color: Theme.of(context).colorScheme.primary)),
+        ),
+        const SizedBox(height: 65),
       ],
     );
   }
@@ -549,7 +530,6 @@ class _ProfilePageState extends State<ProfilePage> {
     Color borderColor = Theme.of(context).colorScheme.secondary;
 
     debugPrint("${widget.profileId} werhwerhweoh");
-
 
     switch (user.memberType) {
       case 'Bronze':
@@ -577,7 +557,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
         height: 250,
         width: 400,
-        color: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -591,21 +571,22 @@ class _ProfilePageState extends State<ProfilePage> {
                     border: Border.all(color: borderColor, width: 3.5)),
                 child: user.profilePicture != null &&
                         user.profilePicture!.isNotEmpty
-                    ? DisplayImage(path: '$userUID/images/${user.profilePicture}', height: 70, width: 70, radius: BorderRadius.circular(60))
+                    ? DisplayImage(
+                        path: '$userUID/images/${user.profilePicture}',
+                        height: 70,
+                        width: 70,
+                        radius: BorderRadius.circular(60))
                     : Icon(Icons.person,
                         size: 50,
                         color: Theme.of(context).colorScheme.secondary),
               ),
             ),
-
             const SizedBox(height: 7),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Text('${user.firstName} ${user.lastName}',
-                  style: TextStyle(
-                      fontSize: 22,
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.bold)),
+                  style: const TextStyle(
+                      fontSize: 22, fontWeight: FontWeight.bold)),
             ),
             const SizedBox(height: 15),
             rowData(Icons.calendar_month, 'Joined: ', user.dateJoined),
@@ -623,17 +604,15 @@ class _ProfilePageState extends State<ProfilePage> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 6.0, right: 8.0),
-          child: Icon(icon, color: Theme.of(context).colorScheme.secondary),
+          child: Icon(
+            icon,
+          ),
         ),
         Text(description,
-            style: TextStyle(
-                fontSize: 15,
-                color: Theme.of(context).colorScheme.secondary,
-                fontWeight: FontWeight.bold)),
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
         Text(userData!.isNotEmpty ? userData : 'Unavailable info.',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 15,
-              color: Theme.of(context).colorScheme.secondary,
             ))
       ],
     );
@@ -657,13 +636,15 @@ class _ProfilePageState extends State<ProfilePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 15.0),
-          child: Text('Performance',
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary)),
+        const Padding(
+          padding: EdgeInsets.only(left: 15.0),
+          child: Text(
+            'Performance',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         const SizedBox(height: 15),
         GridView.builder(
@@ -679,7 +660,8 @@ class _ProfilePageState extends State<ProfilePage> {
             itemBuilder: (context, index) {
               return Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
+                  border: Border.all(
+                      color: Theme.of(context).colorScheme.primary, width: 1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Padding(
@@ -690,11 +672,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       Column(
                         children: [
                           Text(profileTiles[index],
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color:
-                                      Theme.of(context).colorScheme.primary)),
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              )),
                           const SizedBox(height: 50),
                           Padding(
                             padding: const EdgeInsets.only(bottom: 8.0),
@@ -712,28 +693,24 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               const Text('Current: '),
                               Text(tempData[index],
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary))
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ))
                             ],
                           ),
-                          Row(
+                          const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Padding(
+                              Padding(
                                 padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
                                 child: Text('Goal: '),
                               ),
                               Text('100,000',
                                   style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary))
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ))
                             ],
                           ),
                         ],
@@ -792,21 +769,19 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Column aboutSection(BuildContext context, UserModel user, String userUID) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Center(
+      const Center(
         child: Text('About',
-            style: TextStyle(
-                fontSize: 22,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold)),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
       ),
       Center(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text(
-              '${user.bio!.isNotEmpty ? user.bio : 'No bio added yet.'}',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 15, color: Theme.of(context).colorScheme.primary)),
+          child:
+              Text('${user.bio!.isNotEmpty ? user.bio : 'No bio added yet.'}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 15,
+                  )),
         ),
       ),
       const SizedBox(height: 5),
@@ -815,18 +790,19 @@ class _ProfilePageState extends State<ProfilePage> {
         color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
       ),
       const SizedBox(height: 15),
-      Padding(
-        padding: const EdgeInsets.only(left: 15.0),
+      const Padding(
+        padding: EdgeInsets.only(left: 15.0),
         child: Text('My Skills',
             style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary)),
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            )),
       ),
       if (user.skills!.isEmpty) ...[
-        Text('No skills added yet.',
+        const Text('No skills added yet.',
             style: TextStyle(
-                fontSize: 17, color: Theme.of(context).colorScheme.primary))
+              fontSize: 17,
+            ))
       ] else ...[
         SizedBox(
             height: 210,
@@ -870,13 +846,13 @@ class _ProfilePageState extends State<ProfilePage> {
     ];
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Padding(
-        padding: const EdgeInsets.only(left: 24.0),
+      const Padding(
+        padding: EdgeInsets.only(left: 24.0),
         child: Text('Need help in improving your trust rating?',
             style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary)),
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            )),
       ),
       const SizedBox(height: 15),
       Padding(
@@ -884,21 +860,25 @@ class _ProfilePageState extends State<ProfilePage> {
         child: RichText(
           text: TextSpan(
               style: TextStyle(
-                  fontSize: 18.0, color: Theme.of(context).colorScheme.primary),
+                  fontSize: 18.0,
+                  color: Theme.of(context).colorScheme.secondary),
               children: const <TextSpan>[
                 TextSpan(
                     text: 'Q:', style: TextStyle(fontWeight: FontWeight.bold)),
-                TextSpan(text: ' What is a trust rating?')
+                TextSpan(
+                  text: ' What is a trust rating?',
+                )
               ]),
         ),
       ),
       const SizedBox(height: 10),
-      Padding(
-        padding: const EdgeInsets.only(left: 16.0, right: 12.0),
+      const Padding(
+        padding: EdgeInsets.only(left: 16.0, right: 12.0),
         child: Text(
             "A trust rating is a measure of credibility and reliability that is assigned to individuals or entities based on their past actions, behavior, and reputation.",
             style: TextStyle(
-                fontSize: 15, color: Theme.of(context).colorScheme.primary)),
+              fontSize: 15,
+            )),
       ),
       const SizedBox(height: 10),
       Padding(
@@ -906,7 +886,8 @@ class _ProfilePageState extends State<ProfilePage> {
         child: RichText(
           text: TextSpan(
               style: TextStyle(
-                  fontSize: 18.0, color: Theme.of(context).colorScheme.primary),
+                  fontSize: 18.0,
+                  color: Theme.of(context).colorScheme.secondary),
               children: const <TextSpan>[
                 TextSpan(
                     text: 'Q:', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -915,12 +896,13 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
       const SizedBox(height: 10),
-      Padding(
-        padding: const EdgeInsets.only(left: 16.0, right: 12.0),
+      const Padding(
+        padding: EdgeInsets.only(left: 16.0, right: 12.0),
         child: Text(
             "A trust rating is important because it affects how others perceive and interact with you. It can can influence people's willingness to engage in transactions, collaborations or partnerships with you.",
             style: TextStyle(
-                fontSize: 15, color: Theme.of(context).colorScheme.primary)),
+              fontSize: 15,
+            )),
       ),
       const SizedBox(height: 10),
       Padding(
@@ -928,7 +910,8 @@ class _ProfilePageState extends State<ProfilePage> {
         child: RichText(
           text: TextSpan(
               style: TextStyle(
-                  fontSize: 18.0, color: Theme.of(context).colorScheme.primary),
+                  fontSize: 18.0,
+                  color: Theme.of(context).colorScheme.secondary),
               children: const <TextSpan>[
                 TextSpan(
                     text: 'Q:', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -937,12 +920,13 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
       const SizedBox(height: 10),
-      Padding(
-        padding: const EdgeInsets.only(left: 16.0, right: 12.0),
+      const Padding(
+        padding: EdgeInsets.only(left: 16.0, right: 12.0),
         child: Text(
             "Improving your trust rating requires consistent effort and positive actions. Some ways to improve your trust rating include:",
             style: TextStyle(
-                fontSize: 15, color: Theme.of(context).colorScheme.primary)),
+              fontSize: 15,
+            )),
       ),
       const SizedBox(height: 5),
       SizedBox(
@@ -956,7 +940,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Row(
                   children: [
                     Icon(Icons.circle,
-                        size: 8, color: Theme.of(context).colorScheme.primary),
+                        size: 8,
+                        color: Theme.of(context).colorScheme.secondary),
                     const SizedBox(width: 7),
                     Expanded(
                       child: Text(tips[index],
@@ -969,12 +954,12 @@ class _ProfilePageState extends State<ProfilePage> {
               );
             })),
       ),
-      Center(
+      const Center(
         child: Text('Need more assistance?',
             style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary)),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            )),
       ),
       const SizedBox(height: 10),
       Center(
@@ -982,18 +967,17 @@ class _ProfilePageState extends State<ProfilePage> {
             height: 155,
             width: 250,
             decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
+                color:
+                    Theme.of(context).colorScheme.background.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(10)),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16.0, bottom: 12),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 16.0, bottom: 12),
                     child: Text('Apply for coaching!',
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
-                            fontWeight: FontWeight.bold)),
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                   const SizedBox(height: 10),
                   InkWell(
@@ -1084,13 +1068,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: 40,
                         width: 80,
                         decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.primary,
                             borderRadius: BorderRadius.circular(24)),
                         child: Center(
                             child: Text('Start',
                                 style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .background,
                                     fontSize: 16)))),
                   )
                 ],
@@ -1131,23 +1116,20 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Column appFormSection(BuildContext context, UserModel user, String userUID) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: Text(
-            'Pending Forms',
-            style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary),
-            ),
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: Text(
+          'Pending Forms',
+          style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary),
         ),
-          const SizedBox(height: 15),
-          pendingAppForms()
-      ]
-    );
+      ),
+      const SizedBox(height: 15),
+      pendingAppForms()
+    ]);
   }
 
   Column approvalSection(BuildContext context, UserModel user, String userUID) {
@@ -1234,7 +1216,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 final coopApplication = coopApplications[index];
                 return InkWell(
                   onTap: () {
-                    GoRouter.of(context).go('/profile_page/${widget.profileId}/verify_form/${coopApplication.uid}');
+                    GoRouter.of(context).go(
+                        '/profile_page/${widget.profileId}/verify_form/${coopApplication.uid}');
                   },
                   child: SizedBox(
                       height: 50,
@@ -1286,11 +1269,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(right: 12.0),
-                              child: Icon(
-                                Icons.pending_actions,
-                                size: 24,
-                                color: Theme.of(context).colorScheme.primary
-                              ),
+                              child: Icon(Icons.pending_actions,
+                                  size: 24,
+                                  color: Theme.of(context).colorScheme.primary),
                             ),
                           ],
                         ),
@@ -1926,40 +1907,40 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   AppBar _appBar(BuildContext context, String title) {
-  return AppBar(
-    toolbarHeight: 70,
-    title: Text(title,
-        style: TextStyle(
-            fontSize: 28, color: Theme.of(context).colorScheme.primary)),
-    iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
-    actions: [
-      Padding(
-        padding: const EdgeInsets.only(right: 16.0),
-        child: StreamBuilder<UserModel>(
-          stream: userRepository.getUser(userUID).asStream(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              UserModel user = snapshot.data!;
-              return CircleAvatar(
-                backgroundColor: Colors.grey.shade300,
-                child: IconButton(
-                  onPressed: () {
-                    if (user.emailStatus == 'Not Verified') {
-                      GoRouter.of(context).go('/profile_page/$userUID/email_verification');
-                    } else  {
-                      GoRouter.of(context).go('/profile_page/$userUID/edit_profile');
-                    }
-                  },
-                  icon: const Icon(Icons.edit, color: Colors.white),
-                ),
-              );
-            } else {
-              return const CircularProgressIndicator();
-            }
-          },
+    return AppBar(
+      toolbarHeight: 70,
+      title: Text(title,
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: StreamBuilder<UserModel>(
+            stream: userRepository.getUser(userUID).asStream(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                UserModel user = snapshot.data!;
+                return CircleAvatar(
+                  child: IconButton(
+                    onPressed: () {
+                      if (user.emailStatus == 'Not Verified') {
+                        GoRouter.of(context)
+                            .go('/profile_page/$userUID/email_verification');
+                      } else {
+                        GoRouter.of(context)
+                            .go('/profile_page/$userUID/edit_profile');
+                      }
+                    },
+                    icon: const Icon(Icons.edit),
+                  ),
+                );
+              } else {
+                return const CircularProgressIndicator();
+              }
+            },
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 }

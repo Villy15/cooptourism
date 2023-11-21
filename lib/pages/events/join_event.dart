@@ -1,4 +1,3 @@
-import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:cooptourism/data/models/events.dart';
 import 'package:cooptourism/data/repositories/events_repository.dart';
 import 'package:cooptourism/pages/events/confirm_event.dart';
@@ -25,7 +24,6 @@ class _ContributeEventPageState extends ConsumerState<JoinEventPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(context, "Join Event"),
-      backgroundColor: Colors.white,
       body: ListView(
         children: [
           _listingSummary(context, widget.event),
@@ -40,40 +38,40 @@ class _ContributeEventPageState extends ConsumerState<JoinEventPage> {
   }
 
   Widget _listingRules(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
+    return const Padding(
+      padding: EdgeInsets.all(16.0),
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Ground Rules',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              SizedBox(height: 10),
+              Text(
+                  '• To ensure a safe and enjoyable event for everyone, we kindly ask you to follow these guidelines:',
                   style: TextStyle(
-                      fontSize: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              Text('• To ensure a safe and enjoyable event for everyone, we kindly ask you to follow these guidelines:',
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary)),
+                    fontSize: 16,
+                  )),
               // Add a bulleted point list of text
-              const SizedBox(height: 10),
-              Text('• Use tools and resources responsibly and return them after use',
+              SizedBox(height: 10),
+              Text(
+                  '• Use tools and resources responsibly and return them after use',
                   style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary)),
-              const SizedBox(height: 10),
-              Text('• Follow all safety instructions and stay within designated areas', 
+                    fontSize: 16,
+                  )),
+              SizedBox(height: 10),
+              Text(
+                  '• Follow all safety instructions and stay within designated areas',
                   style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary)),
-              const SizedBox(height: 10),
+                    fontSize: 16,
+                  )),
+              SizedBox(height: 10),
               Text('• Dispose of waste properly in the provided bins',
                   style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary)),
+                    fontSize: 16,
+                  )),
             ],
           ),
         ),
@@ -81,24 +79,18 @@ class _ContributeEventPageState extends ConsumerState<JoinEventPage> {
     );
   }
 
-
   Widget _listingSummary(BuildContext context, EventsModel event) {
     // You will need to replace the Image.network with an image from your model
     return ListTile(
       leading: DisplayImage(
-        path:
-            "${event.uid}/${event.image![0]}",
+        path: "${event.uid}/${event.image![0]}",
         height: 100,
         width: 100,
-        radius: const BorderRadius.only(
-        ),
+        radius: const BorderRadius.only(),
       ),
       title: Text(
         event.title,
-        style: TextStyle(
-            fontSize: 20,
-            color: Theme.of(context).colorScheme.primary,
-            fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
       // subtitle: Row(
       //   children: [
@@ -109,7 +101,7 @@ class _ContributeEventPageState extends ConsumerState<JoinEventPage> {
     );
   }
 
-  Widget _tripDetails(BuildContext context , EventsModel event) {
+  Widget _tripDetails(BuildContext context, EventsModel event) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Card(
@@ -118,11 +110,8 @@ class _ContributeEventPageState extends ConsumerState<JoinEventPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Your trip',
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
+              const Text('Your trip',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -131,16 +120,14 @@ class _ContributeEventPageState extends ConsumerState<JoinEventPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Dates',
+                      const Text('Dates',
                           style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.bold)),
+                              fontSize: 16, fontWeight: FontWeight.bold)),
                       Text(
                           '${DateFormat('dd MMM').format(event.startDate)} - ${DateFormat('dd MMM').format(event.endDate)} (${event.endDate.difference(event.startDate).inDays} days)',
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).colorScheme.primary)),
+                          style: const TextStyle(
+                            fontSize: 16,
+                          )),
                     ],
                   ),
                 ],
@@ -153,15 +140,13 @@ class _ContributeEventPageState extends ConsumerState<JoinEventPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Guests',
+                      const Text('Guests',
                           style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.bold)),
+                              fontSize: 16, fontWeight: FontWeight.bold)),
                       Text('${_guestCount.toString()} Guests',
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).colorScheme.primary)),
+                          style: const TextStyle(
+                            fontSize: 16,
+                          )),
                     ],
                   ),
                   // Add + and minus button
@@ -170,14 +155,14 @@ class _ContributeEventPageState extends ConsumerState<JoinEventPage> {
                       if (_guestCount > 1)
                         IconButton(
                           onPressed: _decrementGuestCount,
-                          icon: const Icon(Icons.remove_circle_outline,
-                              color: primaryColor),
+                          icon: Icon(Icons.remove_circle_outline,
+                              color: Theme.of(context).colorScheme.primary),
                         ),
                       Text(_guestCount.toString()),
                       IconButton(
                         onPressed: _incrementGuestCount,
-                        icon: const Icon(Icons.add_circle_outline,
-                            color:  primaryColor),
+                        icon: Icon(Icons.add_circle_outline,
+                            color: Theme.of(context).colorScheme.primary),
                       ),
                     ],
                   ),
@@ -204,7 +189,7 @@ class _ContributeEventPageState extends ConsumerState<JoinEventPage> {
 
   Widget _confirmPay(BuildContext context) {
     final user = ref.watch(userModelProvider);
-    return Card (
+    return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -214,21 +199,17 @@ class _ContributeEventPageState extends ConsumerState<JoinEventPage> {
               style: TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 20), // Add some spacing
-            ElevatedButton(
-              // Make it larger
-              style: ElevatedButton.styleFrom(
-                // Color
-                backgroundColor: Colors.orange.shade700,
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+            const SizedBox(height: 20),
+            FilledButton(
+              // Make it wider
+              style: ButtonStyle(
+                minimumSize:
+                    MaterialStateProperty.all<Size>(const Size(300, 45)),
               ),
-              // Color
               onPressed: () {
-                // Add current id to the list of participants 
-                eventsRepository.updateEventParticipants(widget.event.uid, user?.uid);
+                // Add current id to the list of participants
+                eventsRepository.updateEventParticipants(
+                    widget.event.uid, user?.uid);
 
                 Navigator.pushReplacement(
                   context,
@@ -245,11 +226,10 @@ class _ContributeEventPageState extends ConsumerState<JoinEventPage> {
     );
   }
 
-
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
-      toolbarHeight: 70,
-      title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+      title: Text(title,
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       actions: const [
         // Padding(

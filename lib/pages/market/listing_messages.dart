@@ -18,7 +18,8 @@ final UserRepository userRepository = UserRepository();
 class ListingMessages extends ConsumerStatefulWidget {
   final String listingId;
   final String docId;
-  const ListingMessages({super.key, required this.listingId, required this.docId});
+  const ListingMessages(
+      {super.key, required this.listingId, required this.docId});
 
   @override
   ConsumerState<ListingMessages> createState() => _ListingMessagesState();
@@ -26,9 +27,9 @@ class ListingMessages extends ConsumerStatefulWidget {
 
 class _ListingMessagesState extends ConsumerState<ListingMessages> {
   final textController = TextEditingController();
-  
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
       ref.read(navBarVisibilityProvider.notifier).state = false;
@@ -76,7 +77,6 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
 
                 final messages = snapshot.data!;
 
-
                 return Scaffold(
                   appBar: _appBar(context, widget.docId),
                   body: Column(
@@ -91,9 +91,11 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
                             return BubbleNormal(
                               text: message.content!,
                               isSender: user!.uid == message.senderId!,
-                              color: primaryColor, // Colors.grey[800]!,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withOpacity(0.1), // Colors.grey[800]!,
                               textStyle: TextStyle(
-                                color: Colors.white,
                                 fontSize: Theme.of(context)
                                     .textTheme
                                     .bodySmall!
@@ -110,17 +112,24 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
                       Container(
                         height: 40,
                         decoration: BoxDecoration(
-                          border:
-                              Border.all(width: 2, color: primaryColor),
+                          border: Border.all(width: 2, color: primaryColor),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(children: [
                           Expanded(
                             child: TextField(
                               controller: textController,
+                              style: TextStyle(
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .fontSize,
+                                fontWeight: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .fontWeight,
+                              ),
                               // Color
-                              style: const TextStyle(
-                                  color: primaryColor),
                               textAlignVertical: const TextAlignVertical(y: 0),
                               cursorHeight: 15,
                               cursorWidth: 2,
@@ -136,15 +145,18 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
                           Container(
                             margin: const EdgeInsets.only(right: 2.5),
                             decoration: BoxDecoration(
-                              color: primaryColor,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withOpacity(0.1),
                               borderRadius: BorderRadius.circular(50),
                             ),
                             child: InkWell(
                               onTap: () {
                                 String receiverId = "";
-                                if(user!.uid == widget.docId) {
+                                if (user!.uid == widget.docId) {
                                   receiverId = currentListing!.owner!;
-                                }else {
+                                } else {
                                   receiverId = widget.docId;
                                 }
                                 listingRepository.addMessage(
@@ -161,7 +173,6 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
                               },
                               child: const Icon(
                                 Icons.arrow_upward_rounded,
-                                color: Colors.white,
                                 size: 30,
                               ),
                             ),
@@ -176,47 +187,49 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
               }));
         });
   }
-      AppBar _appBar(BuildContext context, String userId) {
-  return AppBar(
-    toolbarHeight: 70,
-    title: FutureBuilder<String>(
-      future: userRepository.getUserName(userId),
-      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('Loading...'); // or some other placeholder
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return Text(
-            snapshot.data ?? '', // Use the data if available, otherwise use an empty string
-            style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary),
-          );
-        }
-      },
-    ),
-    iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
-    leading: IconButton(
-      icon: const Icon(Icons.arrow_back),
-      color: Theme.of(context).colorScheme.primary,
-      onPressed: () {
-        GoRouter.of(context).pop();
-        ref.read(navBarVisibilityProvider.notifier).state = true;
-      },
-    ),
-    actions: [
-      Padding(
-        padding: const EdgeInsets.only(right: 16.0),
-        child: CircleAvatar(
-          backgroundColor: Colors.grey.shade300,
-          child: IconButton(
-            onPressed: () {
-              // showAddPostPage(context);
-            },
-            icon: const Icon(Icons.message, color: Colors.white),
+
+  AppBar _appBar(BuildContext context, String userId) {
+    return AppBar(
+      toolbarHeight: 70,
+      title: FutureBuilder<String>(
+        future: userRepository.getUserName(userId),
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Text('Loading...'); // or some other placeholder
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            return Text(
+              snapshot.data ??
+                  '', // Use the data if available, otherwise use an empty string
+              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+            );
+          }
+        },
+      ),
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        color: Theme.of(context).colorScheme.primary,
+        onPressed: () {
+          GoRouter.of(context).pop();
+          ref.read(navBarVisibilityProvider.notifier).state = true;
+        },
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: CircleAvatar(
+            backgroundColor: Colors.grey.shade300,
+            child: IconButton(
+              onPressed: () {
+                // showAddPostPage(context);
+              },
+              icon: const Icon(Icons.message, color: Colors.white),
+            ),
           ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 }

@@ -1,6 +1,3 @@
-
-
-import 'package:cooptourism/core/theme/light_theme.dart';
 import 'package:cooptourism/data/models/manager_dashboard.dart/votes.dart';
 import 'package:cooptourism/data/models/poll.dart';
 import 'package:cooptourism/data/repositories/manager_dashboard/votes_repository.dart';
@@ -17,11 +14,11 @@ class SelectedVotePage extends ConsumerStatefulWidget {
   const SelectedVotePage({super.key, required this.vote});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _SelectedVotePageState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _SelectedVotePageState();
 }
 
 class _SelectedVotePageState extends ConsumerState<SelectedVotePage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,37 +31,35 @@ class _SelectedVotePageState extends ConsumerState<SelectedVotePage> {
           eventTitle(widget.vote),
           eventDescription(widget.vote),
 
-
           votePoll(),
         ],
       ),
-
     );
   }
 
   StreamBuilder<List<PollModel>> votePoll() {
     return StreamBuilder<List<PollModel>>(
-          stream: voteRepository
-              .getAllPolls(widget.vote.uid), // Assume uid is the post ID
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              final polls = snapshot.data!;
+      stream: voteRepository
+          .getAllPolls(widget.vote.uid), // Assume uid is the post ID
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          final polls = snapshot.data!;
 
-              if (polls.isEmpty) {
-                return const SizedBox.shrink(); // Returns an empty widget
-              }
+          if (polls.isEmpty) {
+            return const SizedBox.shrink(); // Returns an empty widget
+          }
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: PollingWidget(polls: polls, vote: widget.vote),
-              );
-            }
-          },
-        );
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: PollingWidget(polls: polls, vote: widget.vote),
+          );
+        }
+      },
+    );
   }
 
   Padding eventDurationBar(VoteModel vote) {
@@ -109,23 +104,22 @@ class _SelectedVotePageState extends ConsumerState<SelectedVotePage> {
   }
 
   AppBar _appBar(BuildContext context, String title) {
-    
     return AppBar(
-      iconTheme: const IconThemeData(color: primaryColor),
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       toolbarHeight: 70,
       title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
             child: IconButton(
               onPressed: () {
                 // showAddPostPage(context);
               },
-              icon: const Icon(Icons.edit, color: Colors.white),
+              icon: const Icon(
+                Icons.edit,
+              ),
             ),
           ),
         ),
@@ -133,7 +127,6 @@ class _SelectedVotePageState extends ConsumerState<SelectedVotePage> {
     );
   }
 }
-
 
 class PollingWidget extends ConsumerStatefulWidget {
   final List<PollModel> polls;
@@ -179,15 +172,14 @@ class PollingWidgetState extends ConsumerState<PollingWidget> {
       }
 
       // Get the totalVotes by adding up the length of each poll's voters
-      totalVotes = widget.polls.fold(
-          0, (sum, poll) => sum! + (poll.voters?.length ?? 0));
+      totalVotes = widget.polls
+          .fold(0, (sum, poll) => sum! + (poll.voters?.length ?? 0));
     }
 
     return Container(
       padding: const EdgeInsets.symmetric(
           horizontal: 16.0), // Add padding around the container
       decoration: BoxDecoration(
-        color: Colors.white, // Setting a background color
         borderRadius: BorderRadius.circular(8.0), // Rounded corners
       ),
       child: Column(
@@ -200,7 +192,8 @@ class PollingWidgetState extends ConsumerState<PollingWidget> {
             decoration: BoxDecoration(
               color: Theme.of(context)
                   .colorScheme
-                  .primary, // Setting a background color
+                  .primary
+                  .withOpacity(0.3), // Setting a background color
               borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(8.0),
                   topRight: Radius.circular(8.0)), // Rounded corners
@@ -211,20 +204,23 @@ class PollingWidgetState extends ConsumerState<PollingWidget> {
                 Text(
                   '$totalVotes Total Votes',
                   style: const TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 14,
-                      color: Colors.white),
+                    fontWeight: FontWeight.normal,
+                    fontSize: 14,
+                  ),
                 ),
                 Row(
                   children: [
-                    const Icon(Icons.calendar_today, color: Colors.white),
+                    const Icon(
+                      Icons.calendar_today,
+                    ),
                     const SizedBox(width: 4),
                     Text(
-                      DateFormat('MM/dd/yyyy, hh:mm a').format(widget.vote.date), // Format includes date and time/ Format as per your requirement
+                      DateFormat('MM/dd/yyyy, hh:mm a').format(widget.vote
+                          .date), // Format includes date and time/ Format as per your requirement
                       style: const TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontSize: 14,
-                          color: Colors.white),
+                        fontWeight: FontWeight.normal,
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),
@@ -236,7 +232,8 @@ class PollingWidgetState extends ConsumerState<PollingWidget> {
             decoration: BoxDecoration(
               color: Theme.of(context)
                   .colorScheme
-                  .secondary, // Setting a background color
+                  .primary
+                  .withOpacity(0.2), // Setting a background color
               borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(8.0),
                   bottomRight: Radius.circular(8.0)), // Rounded corners
@@ -252,14 +249,16 @@ class PollingWidgetState extends ConsumerState<PollingWidget> {
                       horizontal: 8.0, vertical: 4.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white, // Setting a background color
+                      color: Theme.of(context)
+                          .colorScheme
+                          .background, // Setting a background color
                       borderRadius:
                           BorderRadius.circular(8.0), // Rounded corners
                     ),
                     child: ListTile(
-                      title: Text(widget.polls[index].optionText,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary)),
+                      title: Text(
+                        widget.polls[index].optionText,
+                      ),
                       leading: Radio(
                         activeColor: Theme.of(context).colorScheme.primary,
                         value: index,
@@ -303,7 +302,6 @@ class PollingWidgetState extends ConsumerState<PollingWidget> {
                               // Set the selected choice to the new value
                               _selectedChoice = value;
 
-                              
                               setState(() {
                                 // Update total votes
                                 widget.polls[value].votes += 1;

@@ -17,7 +17,6 @@ class SelectedWikiPage extends ConsumerStatefulWidget {
 }
 
 class _SelectedWikiPageState extends ConsumerState<SelectedWikiPage> {
-  
   @override
   void initState() {
     super.initState();
@@ -28,7 +27,8 @@ class _SelectedWikiPageState extends ConsumerState<SelectedWikiPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Future<WikiModel?> wiki = wikiRepository.getSpecificWiki(widget.wikiId);
+    final Future<WikiModel?> wiki =
+        wikiRepository.getSpecificWiki(widget.wikiId);
 
     // ignore: deprecated_member_use
     return WillPopScope(
@@ -38,29 +38,31 @@ class _SelectedWikiPageState extends ConsumerState<SelectedWikiPage> {
       },
       child: Scaffold(
         appBar: _buildAppBar(context),
-        body: FutureBuilder<WikiModel?> (
-          future: wiki,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Text("Error: ${snapshot.error}");
-            }
+        body: FutureBuilder<WikiModel?>(
+            future: wiki,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Text("Error: ${snapshot.error}");
+              }
 
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-            final wiki = snapshot.data!;
+              final wiki = snapshot.data!;
 
-            return _buildBody(wiki);
-          }
-        ),
+              return _buildBody(wiki);
+            }),
       ),
     );
   }
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      title: const Text('Wiki Page'),
+      title: Text(
+        'Wiki Page',
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+      ),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
         color: Theme.of(context).colorScheme.primary,
@@ -88,10 +90,7 @@ class _SelectedWikiPageState extends ConsumerState<SelectedWikiPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Add an image placeholder
-          const SizedBox(
-            height: 200,
-            child: Placeholder()
-          ),
+          const SizedBox(height: 200, child: Placeholder()),
           const SizedBox(height: 20),
 
           titleWikiPost(wiki),
@@ -106,35 +105,33 @@ class _SelectedWikiPageState extends ConsumerState<SelectedWikiPage> {
 
   Text contentWikiPost(WikiModel wiki) {
     return Text(
-          wiki.description ?? 'No content',
-          style: const TextStyle(fontSize: 16),
-        );
+      wiki.description ?? 'No content',
+      style: const TextStyle(fontSize: 16),
+    );
   }
 
   Row titleWikiPost(WikiModel wiki) {
     return Row(
-          children: [
-            Expanded(
-              child: Text(
-                wiki.title ?? 'No title',
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
-              )
-            ),
-            // Wrap the icon button to a square container with smooth edges
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.favorite, color: Colors.white), // Use Icons.favorite for a filled heart
-                onPressed: () {
-                  // Add your favorite functionality here
-                },
-              ),
-            ),
-          ],
-        );
+      children: [
+        Expanded(
+            child: Text(wiki.title ?? 'No title',
+                style: const TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.bold))),
+        // Wrap the icon button to a square container with smooth edges
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: IconButton(
+            icon: const Icon(
+                Icons.favorite), // Use Icons.favorite for a filled heart
+            onPressed: () {
+              // Add your favorite functionality here
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   void _updateNavBarAndAppBarVisibility(bool isVisible) {

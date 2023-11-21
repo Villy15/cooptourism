@@ -28,38 +28,36 @@ class _TasksPageState extends ConsumerState<TasksPage> {
     final user = ref.watch(userModelProvider);
     String uid = user!.uid!;
 
-    return SingleChildScrollView (
-          child: Column (
-            children: [
-              StreamBuilder(
-                stream: taskRepository.getAllTasksByUser(uid),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator(); // show a loader while waiting for data
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Text('No Tasks available');
-                  } else {
-                    List<TaskModel> taskList = snapshot.data!;
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          StreamBuilder(
+            stream: taskRepository.getAllTasksByUser(uid),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator(); // show a loader while waiting for data
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Text('No Tasks available');
+              } else {
+                List<TaskModel> taskList = snapshot.data!;
 
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: taskList.length,
-                      itemBuilder: (context, index) {
-                        return taskCard(context, taskList[index]);
-                      },
-                    );
-                  }
-                },
-              )
-
-            ],
-          ),
-        );
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: taskList.length,
+                  itemBuilder: (context, index) {
+                    return taskCard(context, taskList[index]);
+                  },
+                );
+              }
+            },
+          )
+        ],
+      ),
+    );
   }
-
 
   Padding taskCard(BuildContext context, TaskModel task) {
     return Padding(
@@ -67,7 +65,6 @@ class _TasksPageState extends ConsumerState<TasksPage> {
       child: Container(
         width: 400,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary,
           borderRadius: BorderRadius.circular(20.0),
         ),
         // Circular border
@@ -152,14 +149,14 @@ class _TasksPageState extends ConsumerState<TasksPage> {
   Column taskProgress(BuildContext context, TaskModel task) {
     return Column(
       children: [
-        // Add a text of Progress 50% 
+        // Add a text of Progress 50%
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
           child: Row(
             children: [
               const Text('Progress ',
-                  style: TextStyle(
-                      fontWeight: FontWeight.normal, fontSize: 12)),
+                  style:
+                      TextStyle(fontWeight: FontWeight.normal, fontSize: 12)),
               Text('${(calculateProgress(task) * 100).toStringAsFixed(0)}%',
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 12)),
@@ -182,8 +179,7 @@ class _TasksPageState extends ConsumerState<TasksPage> {
   Padding taskDescription(TaskModel task) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Text(
-          task.description,
+      child: Text(task.description,
           style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 12)),
     );
   }
@@ -193,13 +189,14 @@ class _TasksPageState extends ConsumerState<TasksPage> {
       padding: const EdgeInsets.only(top: 16.0, left: 16.0),
       child: Row(
         children: [
-          Expanded (
-            child: GestureDetector (
+          Expanded(
+            child: GestureDetector(
               onTap: () {
                 context.go('/member_dashboard_page/tasks_page/${task.uid}');
               },
               child: Text(task.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18)),
             ),
           ),
 
@@ -216,5 +213,4 @@ class _TasksPageState extends ConsumerState<TasksPage> {
       ),
     );
   }
-
 }

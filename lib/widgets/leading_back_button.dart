@@ -18,12 +18,14 @@ class LeadingBackButton extends StatelessWidget {
         height: 20,
         width: 20,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(50),
         ),
         child: IconButton(
-          icon: Icon(Icons.arrow_back,
-              size: 20, color: Theme.of(context).colorScheme.secondary),
+          icon: Icon(
+            Icons.arrow_back,
+            size: 20,
+            color: Theme.of(context).colorScheme.primary,
+          ),
           onPressed: () {
             ref.read(navBarVisibilityProvider.notifier).state = true;
             ref.read(appBarVisibilityProvider.notifier).state = true;

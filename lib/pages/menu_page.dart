@@ -1,3 +1,4 @@
+import 'package:cooptourism/core/theme/theme.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/providers/user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -46,11 +47,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
       'name': 'Members',
       'route': '/members_page'
     },
-    {
-      'logo': Icons.how_to_vote_outlined,
-      'name': 'Vote',
-      'route': '/vote_page'
-    }, 
+    {'logo': Icons.how_to_vote_outlined, 'name': 'Vote', 'route': '/vote_page'},
     {
       // Dashboard
       'logo': Icons.dashboard_outlined,
@@ -58,6 +55,10 @@ class _MenuPageState extends ConsumerState<MenuPage> {
       'route': '/member_charts'
     }
   ];
+
+  void toggleTheme(WidgetRef ref) {
+    ref.read(themeNotifierProvider.notifier).toggleTheme();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +77,6 @@ class _MenuPageState extends ConsumerState<MenuPage> {
       _gridItems.removeWhere((element) => element['name'] == 'Wiki');
       _gridItems.removeWhere((element) => element['name'] == 'Vote');
       _gridItems.removeWhere((element) => element['name'] == 'Feed');
-
     } else if (role == 'Member') {
       // _gridItems.removeWhere((element) => element['name'] == 'Cooperatives');
       _gridItems.removeWhere((element) => element['name'] == 'Marketplace');
@@ -91,7 +91,6 @@ class _MenuPageState extends ConsumerState<MenuPage> {
       _gridItems.removeWhere((element) => element['name'] == 'Dashboard');
       // _gridItems.removeWhere((element) => element['name'] == 'Feed');
       _gridItems.removeWhere((element) => element['name'] == 'Events');
-
     }
 
     return Scaffold(
@@ -165,10 +164,21 @@ class _MenuPageState extends ConsumerState<MenuPage> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Text(
-                  '${user?.firstName ?? 'Unknown'} ${user?.lastName ?? ''}',
-                  style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.bold),
+                child: Row(
+                  children: [
+                    Text(
+                      '${user?.firstName ?? 'Unknown'} ${user?.lastName ?? ''}',
+                      style: const TextStyle(
+                          fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                        onPressed: () => toggleTheme(ref),
+                        color: Theme.of(context).colorScheme.primary,
+                        icon: Icon(
+                            Theme.of(context).brightness == Brightness.light
+                                ? Icons.dark_mode_outlined
+                                : Icons.dark_mode_rounded)),
+                  ],
                 ),
               ),
               // ... other user details ...
@@ -180,7 +190,6 @@ class _MenuPageState extends ConsumerState<MenuPage> {
   }
 
   GridView gridSquares(BuildContext context) {
-    Color color = Theme.of(context).colorScheme.secondary;
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -189,7 +198,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
         childAspectRatio: 3 / 2,
         crossAxisSpacing: 20,
         mainAxisSpacing: 0,
-        mainAxisExtent: 100,
+        mainAxisExtent: 108,
       ),
       itemCount: _gridItems.length,
       itemBuilder: (_, index) {
@@ -197,15 +206,10 @@ class _MenuPageState extends ConsumerState<MenuPage> {
           margin: const EdgeInsets.symmetric(vertical: 10),
           child: InkWell(
             onTap: () {
-              setState(() {
-                color = Theme.of(context).colorScheme.primary;
-              });
-
               context.push(_gridItems[index]['route']);
             },
             child: Ink(
               decoration: BoxDecoration(
-                color: color,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                     width: 1.5,
@@ -241,21 +245,18 @@ class _MenuPageState extends ConsumerState<MenuPage> {
     return AppBar(
       toolbarHeight: 70,
       title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       actions: [
-        
-
         // Add signout
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
             child: IconButton(
               onPressed: () {
                 signOut();
               },
-              icon: const Icon(Icons.logout, color: Colors.white),
+              icon: Icon(Icons.logout,
+                  color: Theme.of(context).colorScheme.primary),
             ),
           ),
         ),

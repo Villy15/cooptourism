@@ -56,7 +56,8 @@ class _WalletPageState extends ConsumerState<WalletPage> {
             ? salesRepository.getAllSalesByCustomerId(user!.uid!)
             : user?.role! == 'Member'
                 ? salesRepository.getAllSalesByOwnerId(user!.uid!)
-                : salesRepository.getAllSalesByCooperativeId("sslvO5tgDoCHGBO82kxq"),
+                : salesRepository
+                    .getAllSalesByCooperativeId("sslvO5tgDoCHGBO82kxq"),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
@@ -115,13 +116,12 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                 );
               },
               style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.background,
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
               ),
               child: const Text("Start Application",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 16)),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             ),
           ),
         ),
@@ -133,7 +133,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.background,
         borderRadius: BorderRadius.circular(12.0),
         boxShadow: const [
           BoxShadow(
@@ -147,7 +147,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
       child: ConstrainedBox(
         constraints: const BoxConstraints(
           // Set a max height for the scrollable area
-          maxHeight: 320.0,
+          maxHeight: 280.0,
         ),
         child: const Scrollbar(
           thumbVisibility: true,
@@ -221,24 +221,18 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                 }
                 final listingTitle = snapshot.data as String;
                 return Text(listingTitle,
-                    style: TextStyle(
-                        fontSize: 17,
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.bold));
+                    style: const TextStyle(
+                        fontSize: 17, fontWeight: FontWeight.bold));
               }),
           subtitle: Text(formattedDate,
-              style: TextStyle(
-                  fontSize: 14,
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w400)),
+              style:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
           trailing: Text(
               user?.role == 'Member' || user?.role == 'Manager'
                   ? "${sale.sales >= 0 ? '+' : '-'}₱${sale.sales.abs().toStringAsFixed(2)} "
                   : "${sale.sales <= 0 ? '+' : '-'}₱${sale.sales.abs().toStringAsFixed(2)} ",
-              style: TextStyle(
-                  fontSize: 18,
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w400)),
+              style:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.w400)),
         );
       },
     );
@@ -346,7 +340,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
 
   Container loansWidget(BuildContext context, double maxLoan) {
     return Container(
-      height: 150, // Adjust the height as needed
+      height: 164, // Adjust the height as needed
       width: double.infinity, // This will take the full width available
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -401,7 +395,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                 decoration: BoxDecoration(
                   color: _selectedIndex == index
                       ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.secondary,
+                      : Theme.of(context).colorScheme.background,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Padding(
@@ -432,8 +426,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
     return AppBar(
       toolbarHeight: 70,
       title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       // actions: [
       //   Padding(

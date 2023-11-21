@@ -1,4 +1,4 @@
-import 'package:cooptourism/core/theme/dark_theme.dart';
+// import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:cooptourism/widgets/display_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cooptourism/data/models/listing.dart';
@@ -24,7 +24,6 @@ class _BookServicePageState extends State<BookServicePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: _appBar(context, "Confirm and Pay"),
       body: ListView(
         children: [
@@ -40,7 +39,7 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _confirmPay(BuildContext context) {
-    return Card (
+    return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -65,48 +64,50 @@ class _BookServicePageState extends State<BookServicePage> {
               onPressed: () {
                 // Add your confirm and pay action here
               },
-              child: const Text('Confirm and Pay'),
+              child: Text('Confirm and Pay',
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.background,
+                      fontSize: 16)),
             ),
           ],
         ),
       ),
     );
   }
+
   Widget _listingRules(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
+    return const Padding(
+      padding: EdgeInsets.all(16.0),
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Ground Rules',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              SizedBox(height: 10),
+              Text(
+                  'We ask the guest to remember a few simple about what makes a great guest: ',
                   style: TextStyle(
-                      fontSize: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              Text('We ask the guest to remember a few simple about what makes a great guest: ',
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary)),
+                    fontSize: 16,
+                  )),
               // Add a bulleted point list of text
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               Text('• Communicate with your host',
                   style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary)),
-              const SizedBox(height: 10),
-              Text('• Leave the place as you found it', 
+                    fontSize: 16,
+                  )),
+              SizedBox(height: 10),
+              Text('• Leave the place as you found it',
                   style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary)),
-              const SizedBox(height: 10),
+                    fontSize: 16,
+                  )),
+              SizedBox(height: 10),
               Text('• Treat your host\'s home like your own home',
                   style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary)),
+                    fontSize: 16,
+                  )),
             ],
           ),
         ),
@@ -118,8 +119,7 @@ class _BookServicePageState extends State<BookServicePage> {
     return AppBar(
       title: Text(
         title,
-        style: TextStyle(
-            fontSize: 28, color: Theme.of(context).colorScheme.primary),
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
       ),
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
     );
@@ -133,14 +133,13 @@ class _BookServicePageState extends State<BookServicePage> {
             "${widget.listing.owner}/listingImages/${widget.listing.id}${widget.listing.images![0]}",
         height: 100,
         width: 100,
-        radius: const BorderRadius.only(
-        ),
+        radius: const BorderRadius.only(),
       ),
       title: Text(
         widget.listing.title ?? '',
-        style: TextStyle(
+        style: const TextStyle(
             fontSize: 20,
-            color: Theme.of(context).colorScheme.primary,
+            // color: Theme.of(context).colorScheme.primary,
             fontWeight: FontWeight.bold),
       ),
       subtitle: Row(
@@ -161,11 +160,8 @@ class _BookServicePageState extends State<BookServicePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Your trip',
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
+              const Text('Your trip',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -174,16 +170,14 @@ class _BookServicePageState extends State<BookServicePage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Dates',
+                      const Text('Dates',
                           style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.bold)),
+                              fontSize: 16, fontWeight: FontWeight.bold)),
                       Text(
                           '${DateFormat('dd MMM').format(_startDate)} - ${DateFormat('dd MMM').format(_endDate)} (${_endDate.difference(_startDate).inDays} nights)',
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).colorScheme.primary)),
+                          style: const TextStyle(
+                            fontSize: 16,
+                          )),
                     ],
                   ),
                   TextButton(
@@ -226,7 +220,6 @@ class _BookServicePageState extends State<BookServicePage> {
                     },
                     child: const Text('Edit',
                         style: TextStyle(
-                            color: primaryColor,
                             fontSize: 16,
                             decoration: TextDecoration.underline)),
                   ),
@@ -240,15 +233,13 @@ class _BookServicePageState extends State<BookServicePage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Guests',
+                      const Text('Guests',
                           style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.bold)),
+                              fontSize: 16, fontWeight: FontWeight.bold)),
                       Text('${_guestCount.toString()} Guests',
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).colorScheme.primary)),
+                          style: const TextStyle(
+                            fontSize: 16,
+                          )),
                       Text('This place has a maximum of $maxGuestCount guests',
                           style: TextStyle(
                               fontSize: 12,
@@ -263,8 +254,8 @@ class _BookServicePageState extends State<BookServicePage> {
                       if (_guestCount > 1)
                         IconButton(
                           onPressed: _decrementGuestCount,
-                          icon: const Icon(Icons.remove_circle_outline,
-                              color: primaryColor),
+                          icon: Icon(Icons.remove_circle_outline,
+                              color: Theme.of(context).colorScheme.primary),
                         ),
                       Text(_guestCount.toString()),
                       IconButton(
@@ -274,7 +265,7 @@ class _BookServicePageState extends State<BookServicePage> {
                         icon: Icon(Icons.add_circle_outline,
                             color: _guestCount >= maxGuestCount
                                 ? Colors.grey
-                                : primaryColor),
+                                : Theme.of(context).colorScheme.primary),
                       ),
                     ],
                   ),
@@ -308,23 +299,21 @@ class _BookServicePageState extends State<BookServicePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Price details',
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
+              const Text('Price details',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('₱${widget.listing.price} x $_nights nights',
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).colorScheme.primary)),
-                  Text('₱${(widget.listing.price! * _nights).toStringAsFixed(2)}',
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).colorScheme.primary)),
+                      style: const TextStyle(
+                        fontSize: 16,
+                      )),
+                  Text(
+                      '₱${(widget.listing.price! * _nights).toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                      )),
                 ],
               ),
               const Padding(
@@ -334,17 +323,13 @@ class _BookServicePageState extends State<BookServicePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Total',
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.bold)),
+                  const Text('Total',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   Text(
                       '₱${(widget.listing.price! * _nights * 1.12).toStringAsFixed(2)}',
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.bold)),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold)),
                 ],
               ),
               Align(
@@ -372,16 +357,13 @@ class _BookServicePageState extends State<BookServicePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Pay with',
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
+              const Text('Pay with',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox (
+                  SizedBox(
                     width: 70, // specify the width
                     height: 40, // specify the height
                     child: Image.asset('lib/assets/images/paymaya.jpg'),

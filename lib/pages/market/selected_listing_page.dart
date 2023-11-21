@@ -59,7 +59,7 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
     role = user?.role ?? 'Customer';
 
     // ignore: deprecated_member_use
-    return WillPopScope (
+    return WillPopScope(
       onWillPop: () async {
         ref.read(navBarVisibilityProvider.notifier).state = true;
         ref.read(appBarVisibilityProvider.notifier).state = true;
@@ -81,20 +81,20 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
-    
+
             final listing = snapshot.data!;
-    
+
             return StreamBuilder<List<ReviewModel>>(
               stream: reviews,
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 }
-    
+
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
-    
+
                 final reviews = snapshot.data!;
                 return ListView(
                   padding: const EdgeInsets.only(top: 0),
@@ -115,23 +115,23 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                                   fontWeight: FontWeight.bold,
                                 )),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10.0),
-                            child: DisplayText(
-                                text: "₱${listing.price!.toStringAsFixed(2)}",
-                                lines: 1,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                )),
-                          ),
+                          // Padding(
+                          //   padding: const EdgeInsets.only(bottom: 10.0),
+                          //   child: DisplayText(
+                          //       text: "₱${listing.price!.toStringAsFixed(2)}",
+                          //       lines: 1,
+                          //       style: const TextStyle(
+                          //         fontSize: 18,
+                          //         fontWeight: FontWeight.w500,
+                          //       )),
+                          // ),
                           DisplayText(
                             text: "Type: ${listing.type!}",
                             lines: 4,
                             style: TextStyle(
                                 fontSize: Theme.of(context)
                                     .textTheme
-                                    .headlineSmall
+                                    .labelLarge
                                     ?.fontSize),
                           ),
                           Padding(
@@ -142,7 +142,7 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                               style: TextStyle(
                                 fontSize: Theme.of(context)
                                     .textTheme
-                                    .headlineSmall
+                                    .labelLarge
                                     ?.fontSize,
                               ),
                             ),
@@ -152,8 +152,7 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                             child: DisplayText(
                                 text: "Rating",
                                 lines: 1,
-                                style:
-                                    Theme.of(context).textTheme.headlineSmall!),
+                                style: Theme.of(context).textTheme.labelLarge!),
                           ),
                           RatingBarIndicator(
                             rating: listing.rating!.toDouble(),
@@ -172,7 +171,7 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                             child: DisplayText(
                               text: "Amenities",
                               lines: 1,
-                              style: Theme.of(context).textTheme.headlineSmall!,
+                              style: Theme.of(context).textTheme.labelLarge!,
                             ),
                           ),
                           Padding(
@@ -180,7 +179,7 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                             child: DisplayText(
                               text: "Reviews",
                               lines: 1,
-                              style: Theme.of(context).textTheme.headlineSmall!,
+                              style: Theme.of(context).textTheme.labelLarge!,
                             ),
                           ),
                           reviews.isEmpty
@@ -203,7 +202,8 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                               child: DisplayText(
                                 text: "Owner Information",
                                 lines: 1,
-                                style: Theme.of(context).textTheme.headlineSmall!,
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall!,
                               ),
                             ),
                           if (listing.ownerMember != null)
@@ -212,7 +212,8 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                                   const EdgeInsets.only(left: 10.0, top: 10.0),
                               child: ownerListing(listing: listing),
                             ),
-                          if (role == 'Customer') customerFunctions(context, listing)
+                          // if (role == 'Customer')
+                          // customerFunctions(context, listing)
                         ],
                       ),
                     ),
@@ -223,76 +224,154 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
           },
         ),
         bottomNavigationBar: role == 'Customer'
-            ? null
+            ? BottomAppBar(
+                surfaceTintColor: Colors.white,
+                height: 90,
+                child: FutureBuilder(
+                    future: listings,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Text("Error: ${snapshot.error}");
+                      }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      final listing = snapshot.data!;
+                      return customerRow(listing);
+                    }),
+              )
             : BottomNavSelectedListing(listingId: widget.listingId),
       ),
     );
   }
 
-  Padding customerFunctions(BuildContext context, ListingModel listing) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 160.0),
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Create a button that is an icon inside a container to favorite the listing
-            ElevatedButton(
-              onPressed: () {
-                // context.go("/booking_page/${listing.id}");
-              },
-              child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 16.0),
-                child: Icon(Icons.favorite_border_rounded),
+  Row customerRow(ListingModel listing) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Price',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Text('₱${listing.price!.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
+                      const Text('/night',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w400)),
+                    ],
+                  ),
+                ],
               ),
-            ),
-
-            const SizedBox(width: 10),
-
-            ElevatedButton(
-              onPressed: () {
-                // context.go("/booking_page/${listing.id}");
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Theme.of(context).colorScheme.primary,
-                backgroundColor:
-                    Theme.of(context).colorScheme.secondary, // Text color
-              ),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 16.0),
-                child: Text("Contact", style: TextStyle(fontSize: 20)),
-              ),
-            ),
-
-            const SizedBox(width: 10),
-
-
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(context, 
-                  MaterialPageRoute(builder: (context) => listing.type == 
-                  // If service show book service page
-                  'Service' ? BookServicePage(listing: listing) 
-
-                  // If product show buy product page
-                  : BuyProductPage(listing: listing))
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 16.0),
-                child: Text(
-                  // If type is Service then display "Book" else display "Rent"
-                  listing.type == 'Service' ? "Book Now" : "Buy Now"
-                  
-                  , style: const TextStyle(fontSize: 20)),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: FilledButton(
+            // Make it wider
+            style: ButtonStyle(
+              minimumSize: MaterialStateProperty.all<Size>(const Size(180, 45)),
+            ),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => listing.type ==
+                              // If service show book service page
+                              'Service'
+                          ? BookServicePage(listing: listing)
+
+                          // If product show buy product page
+                          : BuyProductPage(listing: listing)));
+            },
+            child: const Text('Book Now'),
+          ),
+        ),
+      ],
     );
   }
+
+  // Padding customerFunctions(BuildContext context, ListingModel listing) {
+  //   return Padding(
+  //     padding: const EdgeInsets.only(top: 160.0),
+  //     child: Align(
+  //       alignment: Alignment.bottomCenter,
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         children: [
+  //           // Create a button that is an icon inside a container to favorite the listing
+  //           ElevatedButton(
+  //             onPressed: () {
+  //               // context.go("/booking_page/${listing.id}");
+  //             },
+  //             child: const Padding(
+  //               padding: EdgeInsets.symmetric(vertical: 16.0),
+  //               child: Icon(Icons.favorite_border_rounded),
+  //             ),
+  //           ),
+
+  //           const SizedBox(width: 10),
+
+  //           ElevatedButton(
+  //             onPressed: () {
+  //               // context.go("/booking_page/${listing.id}");
+  //             },
+  //             style: ElevatedButton.styleFrom(
+  //               foregroundColor: Theme.of(context).colorScheme.primary,
+  //               backgroundColor:
+  //                   Theme.of(context).colorScheme.secondary, // Text color
+  //             ),
+  //             child: const Padding(
+  //               padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 16.0),
+  //               child: Text("Contact", style: TextStyle(fontSize: 20)),
+  //             ),
+  //           ),
+
+  //           const SizedBox(width: 10),
+
+  //           ElevatedButton(
+  //             onPressed: () {
+  //               Navigator.push(
+  //                   context,
+  //                   MaterialPageRoute(
+  //                       builder: (context) => listing.type ==
+  //                               // If service show book service page
+  //                               'Service'
+  //                           ? BookServicePage(listing: listing)
+
+  //                           // If product show buy product page
+  //                           : BuyProductPage(listing: listing)));
+  //             },
+  //             child: Padding(
+  //               padding: const EdgeInsets.symmetric(
+  //                   horizontal: 10.0, vertical: 16.0),
+  //               child: Text(
+  //                   // If type is Service then display "Book" else display "Rent"
+  //                   listing.type == 'Service' ? "Book Now" : "Buy Now",
+  //                   style: const TextStyle(fontSize: 20)),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Row ownerListing({required ListingModel listing}) {
     return Row(

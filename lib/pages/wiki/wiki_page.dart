@@ -34,7 +34,7 @@ class _WikiPageState extends State<WikiPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold (
+    return Scaffold(
       appBar: _appBar(context, "Wiki"),
       backgroundColor: Theme.of(context).colorScheme.background,
       body: RefreshIndicator(
@@ -49,7 +49,7 @@ class _WikiPageState extends State<WikiPage> {
                 child: listViewFilter(),
               ),
               // New Here?
-    
+
               if (_selectedIndex == 0) ...[
                 recommendedSection(context),
                 wikiHeading("Popular Reads"),
@@ -117,7 +117,7 @@ class _WikiPageState extends State<WikiPage> {
               decoration: BoxDecoration(
                 color: _selectedIndex == index
                     ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.secondary,
+                    : Theme.of(context).colorScheme.background,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Padding(
@@ -165,7 +165,7 @@ class _WikiPageState extends State<WikiPage> {
               return Container(
                 width: 120,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Column(
@@ -176,14 +176,12 @@ class _WikiPageState extends State<WikiPage> {
                         item['text'],
                         style: const TextStyle(
                           fontSize: 16,
-                          color: Colors.white,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
                     ),
                     Icon(
                       item['logo'],
-                      color: Colors.white,
                     )
                   ],
                 ),
@@ -254,21 +252,23 @@ class _WikiPageState extends State<WikiPage> {
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
       toolbarHeight: 70,
-      title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+      title: Text(title,
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: CircleAvatar(
-              backgroundColor: Colors.grey.shade300,
-              child: IconButton(
-                onPressed: () {
-                  // showAddPostPage(context);
-                },
-                icon: const Icon(Icons.add, color: Colors.white),
+            child: IconButton(
+              onPressed: () {
+                // showAddPostPage(context);
+              },
+              icon: const Icon(
+                Icons.add,
               ),
             ),
-        ),
+          ),
+        )
       ],
     );
   }

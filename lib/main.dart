@@ -1,3 +1,4 @@
+import 'package:cooptourism/core/theme/theme.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/providers/auth.dart';
@@ -8,8 +9,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'package:cooptourism/core/theme/dark_theme.dart';
-import 'package:cooptourism/core/theme/light_theme.dart';
+// import 'package:cooptourism/core/theme/dark_theme.dart';
+// import 'package:cooptourism/core/theme/light_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -61,10 +62,11 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
 
   Widget _buildApp(GoRouter router) {
+    final theme = ref.watch(themeNotifierProvider);
+
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      theme: lightTheme,
-      darkTheme: darkTheme,
+      theme: theme,
       routerDelegate: router.routerDelegate,
       routeInformationParser: router.routeInformationParser,
       routeInformationProvider: router.routeInformationProvider,

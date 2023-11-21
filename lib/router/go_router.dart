@@ -49,9 +49,8 @@ import 'package:go_router/go_router.dart';
 // import 'package:cooptourism/pages/inbox/chat.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
-final GlobalKey<NavigatorState> _shellNavigator = GlobalKey<NavigatorState>(debugLabel: 'shell');
-
-    
+final GlobalKey<NavigatorState> _shellNavigator =
+    GlobalKey<NavigatorState>(debugLabel: 'shell');
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
@@ -82,7 +81,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         case 'Member':
           return '/member_dashboard_page';
         case 'Manager':
-          return '/manager_home_page';
+          return '/dashboard_page';
         default:
           return '/'; // Fallback for unexpected roles
       }
@@ -159,7 +158,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: "/member_charts",
                 name: "Member Charts",
                 pageBuilder: (context, state) {
-                  return NoTransitionPage(child: MemberChartsPage(key: state.pageKey));
+                  return NoTransitionPage(
+                      child: MemberChartsPage(key: state.pageKey));
                 }),
 
             // MEMBER ROUTES
@@ -186,8 +186,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                           );
                         },
                       )
-                    ]
-                ),
+                    ]),
               ],
             ),
             GoRoute(
@@ -213,7 +212,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     GoRoute(
                         path: 'listing_messages_inbox',
                         builder: (BuildContext context, GoRouterState state) {
-                          return ListingMessagesInbox(listingId: state.pathParameters["listingId"]!);
+                          return ListingMessagesInbox(
+                              listingId: state.pathParameters["listingId"]!);
                         },
                         routes: [
                           GoRoute(
@@ -244,49 +244,52 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 pageBuilder: (context, state) {
                   final profileId = state.pathParameters["profileId"]!;
                   return NoTransitionPage(
-                      child: ProfilePage(key: state.pageKey, profileId: profileId));
+                      child: ProfilePage(
+                          key: state.pageKey, profileId: profileId));
                 },
                 routes: [
                   GoRoute(
-                    path: 'poll',
-                    builder: (BuildContext context, GoRouterState state) {
-                      return PollProfilePage(
-                        profileId: state.pathParameters["profileId"]!,
-                      );
-                    }),
-
+                      path: 'poll',
+                      builder: (BuildContext context, GoRouterState state) {
+                        return PollProfilePage(
+                          profileId: state.pathParameters["profileId"]!,
+                        );
+                      }),
                   GoRoute(
-                    path: 'enroll_cooperative',
-                    builder: (BuildContext context, state) {
-                      final profileId = state.pathParameters["profileId"]!;
-                      return EnrollCoopPage(key: state.pageKey, profileId: profileId);
-                    } // enable navigation to enroll_coop_page.dart
-                  ),
+                      path: 'enroll_cooperative',
+                      builder: (BuildContext context, state) {
+                        final profileId = state.pathParameters["profileId"]!;
+                        return EnrollCoopPage(
+                            key: state.pageKey, profileId: profileId);
+                      } // enable navigation to enroll_coop_page.dart
+                      ),
                   GoRoute(
                     path: 'edit_profile',
-                    builder:(context, state) {
+                    builder: (context, state) {
                       final profileId = state.pathParameters["profileId"]!;
-                      return EditProfilePage(key: state.pageKey, profileId: profileId);
+                      return EditProfilePage(
+                          key: state.pageKey, profileId: profileId);
                     },
                   ),
                   GoRoute(
                     path: 'email_verification',
                     builder: (context, state) {
                       final profileId = state.pathParameters["profileId"]!;
-                      return EmailVerificationPage(key: state.pageKey, profileId: profileId);
+                      return EmailVerificationPage(
+                          key: state.pageKey, profileId: profileId);
                     },
                   ),
                   GoRoute(
                     path: 'verify_form/:coopAppId',
                     builder: (context, state) {
                       final coopAppId = state.pathParameters["coopAppId"]!;
-                      return VerifyFormPage(key: state.pageKey, coopAppId: coopAppId);
+                      return VerifyFormPage(
+                          key: state.pageKey, coopAppId: coopAppId);
                     },
                   ),
-                ]
-              ),
+                ]),
             // ADMIN ROUTES
-             GoRoute(
+            GoRoute(
                 path: "/manager_home_page",
                 name: "Manager Home",
                 pageBuilder: (context, state) {
@@ -315,8 +318,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                           profileId: state.pathParameters["memberId"]!,
                         );
                       }),
-                ]
-                ),
+                ]),
             GoRoute(
                 path: "/reports_page",
                 name: "Reports",
@@ -336,27 +338,24 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: "/vote_page",
                 name: "Vote",
                 pageBuilder: (context, state) {
-                  return NoTransitionPage(
-                      child: VotePage(key: state.pageKey));
+                  return NoTransitionPage(child: VotePage(key: state.pageKey));
                 }),
             GoRoute(
-              path: "/inbox_page",
-              name: "Inbox",
-              pageBuilder: (context, state) {
-                return NoTransitionPage(child: InboxPage(key: state.pageKey));
-              },
-              routes: [
-                GoRoute(
-                  path: ':userId',
-                  name: 'Chat',
-                  pageBuilder: (context, state) {
-                    return NoTransitionPage(
-                        child: ChatScreen(
-                            userId: state.pathParameters["userId"]!));
-                  }
-                )
-              ]
-            ),
+                path: "/inbox_page",
+                name: "Inbox",
+                pageBuilder: (context, state) {
+                  return NoTransitionPage(child: InboxPage(key: state.pageKey));
+                },
+                routes: [
+                  GoRoute(
+                      path: ':userId',
+                      name: 'Chat',
+                      pageBuilder: (context, state) {
+                        return NoTransitionPage(
+                            child: ChatScreen(
+                                userId: state.pathParameters["userId"]!));
+                      })
+                ]),
             GoRoute(
               path: "/wiki_page",
               name: "Wiki",
@@ -395,9 +394,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               path: "/customer_home_page",
               name: "Customer Home",
               pageBuilder: (context, state) {
-                return NoTransitionPage(child: CustomerHomePage(key: state.pageKey));
+                return NoTransitionPage(
+                    child: CustomerHomePage(key: state.pageKey));
               },
-               routes: [
+              routes: [
                 GoRoute(
                     path: ':cityId',
                     builder: (BuildContext context, GoRouterState state) {
@@ -408,7 +408,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ],
             ),
           ]),
-          
     ],
     redirect: (context, state) {
       if (authState.isLoading || authState.hasError) return null;

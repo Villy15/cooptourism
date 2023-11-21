@@ -30,83 +30,82 @@ class _EventsPageState extends ConsumerState<EventsPage> {
 
   @override
   Widget build(BuildContext context) {
-   
     return Scaffold(
       appBar: _appBar(context, "Events"),
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: SingleChildScrollView (
+      body: SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
-                  height: 40,
-                  child: listViewFilter(),
-                ),
-
+              height: 40,
+              child: listViewFilter(),
+            ),
             StreamBuilder(
-                stream: eventsRepository.getAllEvents(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator(); // show a loader while waiting for data
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Text('No Events available');
-                  } else {
-                    List<EventsModel> eventsList = snapshot.data!;
+              stream: eventsRepository.getAllEvents(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator(); // show a loader while waiting for data
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Text('No Events available');
+                } else {
+                  List<EventsModel> eventsList = snapshot.data!;
 
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: eventsList.length,
-                      itemBuilder: (context, index) {
-                        return eventsCard(context, eventsList[index]);
-                      },
-                    );
-                  }
-                },
-              )
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: eventsList.length,
+                    itemBuilder: (context, index) {
+                      return eventsCard(context, eventsList[index]);
+                    },
+                  );
+                }
+              },
+            )
           ],
         ),
       ),
-
     );
   }
 
-  Padding eventsCard (BuildContext context, EventsModel event) {
+  Padding eventsCard(BuildContext context, EventsModel event) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-      child: GestureDetector (
+      child: GestureDetector(
         onTap: () {
           context.push('/events_page/${event.uid}');
         },
-        child: Container(
-          width: 400,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondary,
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          // Circular border
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              eventTitle(event),
+        child: Card(
+          elevation: 1,
+          child: Container(
+            width: 400,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.background,
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            // Circular border
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                eventTitle(event),
 
-              // eventImage(event),
-              // If the length of the image list is greater than 0, show the image
-              if (event.image != null && event.image!.isNotEmpty)
-                eventImage(event),
+                // eventImage(event),
+                // If the length of the image list is greater than 0, show the image
+                if (event.image != null && event.image!.isNotEmpty)
+                  eventImage(event),
 
-              taskProgress(context, event),
-                
-              eventDurationBar(event),
-            ],
+                taskProgress(context, event),
+
+                eventDurationBar(event),
+              ],
+            ),
           ),
         ),
       ),
     );
-  } 
+  }
 
-   Padding taskProgress(BuildContext context, EventsModel event) {
+  Padding taskProgress(BuildContext context, EventsModel event) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: LinearProgressIndicator(
@@ -142,7 +141,6 @@ class _EventsPageState extends ConsumerState<EventsPage> {
         height: 150,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0),
-
         ),
         child: FutureBuilder(
           future: storageRef.child(imagePath).getDownloadURL(),
@@ -182,14 +180,15 @@ class _EventsPageState extends ConsumerState<EventsPage> {
       child: Row(
         children: [
           // Make the icon smaller
-          Icon(Icons.calendar_today_outlined,
-              color: Theme.of(context).colorScheme.primary,
-              size: 16,),
+          Icon(
+            Icons.calendar_today_outlined,
+            color: Theme.of(context).colorScheme.primary,
+            size: 16,
+          ),
           const SizedBox(width: 10),
-          Text(
-              "${formatDate(event.startDate)} - ${formatDate(event.endDate)}",
-              style: const TextStyle(
-                  fontWeight: FontWeight.normal, fontSize: 14)),
+          Text("${formatDate(event.startDate)} - ${formatDate(event.endDate)}",
+              style:
+                  const TextStyle(fontWeight: FontWeight.normal, fontSize: 14)),
         ],
       ),
     );
@@ -208,7 +207,7 @@ class _EventsPageState extends ConsumerState<EventsPage> {
               decoration: BoxDecoration(
                 color: _selectedIndex == index
                     ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.secondary,
+                    : Theme.of(context).colorScheme.background,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Padding(
@@ -234,28 +233,32 @@ class _EventsPageState extends ConsumerState<EventsPage> {
     );
   }
 
-   AppBar _appBar(BuildContext context, String title) {
+  AppBar _appBar(BuildContext context, String title) {
     final user = ref.watch(userModelProvider);
 
     return AppBar(
       toolbarHeight: 70,
-      title: Text(title, style: TextStyle(fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+      title: Text(title,
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       actions: [
-        user?.role == "Manager" ? Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-              backgroundColor: Colors.grey.shade300,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.push(context, 
-                    MaterialPageRoute(builder: (context) => const AddEventPage())
-                  );
-                },
-                icon: const Icon(Icons.add, color: Colors.white),
-              ),
-            ),
-        ) : Container(),
+        user?.role == "Manager"
+            ? Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: CircleAvatar(
+                  backgroundColor: Colors.grey.shade300,
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AddEventPage()));
+                    },
+                    icon: const Icon(Icons.add, color: Colors.white),
+                  ),
+                ),
+              )
+            : Container(),
       ],
     );
   }

@@ -2,7 +2,7 @@
 import 'package:cooptourism/data/models/cooperatives.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/widgets/button.dart';
-import 'package:cooptourism/widgets/text_field.dart';
+// import 'package:cooptourism/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 
 class RegisterCoopPage extends StatefulWidget {
@@ -28,11 +28,13 @@ class _RegisterCoopPageState extends State<RegisterCoopPage> {
         title: const Text('Name'),
         content: Column(
           children: [
-            MyTextField(
+            TextField(
               controller: coopNameController,
-              hintText: 'Cooperative Name',
-              obscureText: false,
-            ),
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Cooperative Name*',
+              ),
+            )
           ],
         ),
         isActive: _currentStep == 0,
@@ -48,11 +50,13 @@ class _RegisterCoopPageState extends State<RegisterCoopPage> {
         title: const Text('City'),
         content: Column(
           children: [
-            MyTextField(
+            TextField(
               controller: cityController,
-              hintText: 'City',
-              obscureText: false,
-            ),
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'City*',
+              ),
+            )
           ],
         ),
         isActive: _currentStep == 2,
@@ -61,11 +65,13 @@ class _RegisterCoopPageState extends State<RegisterCoopPage> {
         title: const Text('Province'),
         content: Column(
           children: [
-            MyTextField(
+            TextField(
               controller: provinceController,
-              hintText: 'Province',
-              obscureText: false,
-            ),
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Province*',
+              ),
+            )
           ],
         ),
         isActive: _currentStep == 3,
@@ -82,7 +88,7 @@ class _RegisterCoopPageState extends State<RegisterCoopPage> {
     ];
   }
 
-  void _submitForm () async {
+  void _submitForm() async {
     try {
       final coop = CooperativesModel(
         name: coopNameController.text,
@@ -91,8 +97,6 @@ class _RegisterCoopPageState extends State<RegisterCoopPage> {
       );
 
       await coopRepostiroy.addCooperative(coop);
-
-
     } catch (e) {
       debugPrint(e.toString());
     } finally {
@@ -177,20 +181,24 @@ class _RegisterCoopPageState extends State<RegisterCoopPage> {
                 ),
                 if (_currentStep == _buildSteps(context).length - 1)
                   const SizedBox(height: 60),
-                  MyButton(
-                    onTap: () {
-                      _submitForm();
-                    },
-                    text: 'Submit',
-                  ),
+                MyButton(
+                  onTap: () {
+                    _submitForm();
+                  },
+                  text: 'Submit',
+                ),
                 const SizedBox(height: 50),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.1),
                     ),
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    color:
+                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Text(

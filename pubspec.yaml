@@ -2,7 +2,7 @@ name: cooptourism
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.1.0 <4.0.0'
+  sdk: ">=3.1.0 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -30,28 +30,23 @@ environment:
 dependencies:
   build: null
   cached_network_image: null
-  carousel_slider: ^4.0.0
+  carousel_slider: ^4.2.1
   chat_bubbles: ^1.5.0
   cloud_firestore: ^4.11.0
   cupertino_icons: ^1.0.2
+  dio: ^5.3.3
   dots_indicator: ^3.0.0
+  email_otp: ^2.1.1
+  file_picker: null
   firebase_auth: ^4.8.0
   firebase_core: ^2.15.1
   firebase_storage: ^11.2.7
   fl_chart: ^0.64.0
   flutter:
     sdk: flutter
-
-  file_picker:
-  image_picker:
-  path: ^1.8.3
-
-  email_otp: ^2.1.1
-  flutter_pdfview:
-
-  shimmer: ^3.0.0
   flutter_dropdown: ^1.0.1+hotfix.1
   flutter_image_compress: null
+  flutter_pdfview: null
   flutter_rating_bar: ^4.0.1
   flutter_riverpod: ^2.4.2
   go_router: ^7.1.1
@@ -59,17 +54,18 @@ dependencies:
   google_maps_flutter: null
   google_nav_bar: ^5.0.6
   http: ^1.1.0
+  im_stepper: ^1.0.1+1
+  image_picker: null
   intl: ^0.18.1
+  path: ^1.8.3
+  path_provider: ^2.1.1
   percent_indicator: ^4.2.3
   qr_flutter: ^4.1.0
+  shared_preferences: ^2.2.2
+  shimmer: ^3.0.0
   source_gen: null
   syncfusion_flutter_charts: ^23.1.44
   syncfusion_flutter_datepicker: ^23.1.44
-  dio: ^5.3.3
-  im_stepper: ^1.0.1+1
-  path_provider: ^2.1.1
-  # flutter_cache_manager:
-
 
 dev_dependencies:
   flutter_lints: ^2.0.0
@@ -80,7 +76,6 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
