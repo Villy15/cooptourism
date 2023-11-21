@@ -44,6 +44,8 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
     });
   }
 
+  int navigationRailIndex = 0;
+  bool railVisibility = false;
   @override
   Widget build(BuildContext context) {
     final ListingRepository listingRepository = ListingRepository();
@@ -133,7 +135,6 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
-
                 final reviews = snapshot.data!;
                 return ListView(
                   padding: const EdgeInsets.only(top: 0),
@@ -690,70 +691,6 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
   //     ),
   //   );
   // }
-
-  Row ownerListing({required ListingModel listing}) {
-    return Row(
-      children: [
-        Container(
-          width: 50, // Adjust width as needed
-          height: 50, // Adjust height as needed
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary,
-            border: Border.all(
-              color:
-                  Theme.of(context).colorScheme.primary, // Color of the border
-              width: 2, // Width of the border
-            ),
-            shape: BoxShape.circle, // Shape of the Container
-          ),
-          child: const Icon(
-            Icons.person,
-            size: 40,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: FutureBuilder(
-            future: userRepository.getUser(listing.ownerMember!),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Text("Error: ${snapshot.error}");
-              }
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              final user = snapshot.data!;
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  DisplayText(
-                    text: "${user.firstName!} ${user.lastName!}",
-                    lines: 1,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  DisplayText(
-                    text:
-                        "Cooperative members since ${user.joinedAt!.toDate().year}",
-                    lines: 1,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        )
-      ],
-    );
-  }
 }
 
 class ImageSlider extends StatefulWidget {

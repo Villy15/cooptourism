@@ -7,14 +7,13 @@ import 'package:cooptourism/data/models/cooperatives.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
-import 'package:cooptourism/providers/market_page_provider.dart';
-import 'package:cooptourism/widgets/listing_province_city_picker.dart';
+import 'package:cooptourism/widgets/coop_province_city_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
-// import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class EnrollCoopPage extends ConsumerStatefulWidget {
   final String profileId;
@@ -31,7 +30,17 @@ class _EnrollCoopPageState extends ConsumerState<EnrollCoopPage> {
   final picker = ImagePicker();
   late UserModel user;
   final userRepository = UserRepository();
+  String? selectedProvince;
+  String? selectedCity;
   
+  void onSelectionChanged(String? province, String? city) {
+    setState(() {
+      debugPrint('this is the province: $province');
+      debugPrint('this is the city: $city');
+      selectedProvince = province;
+      selectedCity = city;
+    });
+  }
 
   Future getImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -98,7 +107,7 @@ class _EnrollCoopPageState extends ConsumerState<EnrollCoopPage> {
                     border: OutlineInputBorder(),
                     hintText: 'Description of the cooperative...',
                   ),
-                  maxLines: 1,
+                  maxLines: 7,
                 ),
               ),
               const SizedBox(height: 20),
@@ -159,7 +168,9 @@ class _EnrollCoopPageState extends ConsumerState<EnrollCoopPage> {
                 ),
               ),
               const SizedBox(height: 10),
-              const ListingProvinceCityPicker(),
+              CoopProvinceCityPicker(
+                onSelectionChanged: onSelectionChanged,
+              ),
               const SizedBox(height: 20),
               // add submit button
               Center(
@@ -171,8 +182,8 @@ class _EnrollCoopPageState extends ConsumerState<EnrollCoopPage> {
                     CooperativesModel newCoop = CooperativesModel(
                       name: coopNameController.text,
                       profileDescription: coopDescriptionController.text,
-                      province: ref.read(marketProvinceProvider),
-                      city: ref.read(marketCityProvider),
+                      province: selectedProvince,
+                      city: selectedCity,
                       logo: path.basename(_image!.path),
                       profilePicture: path.basename(_image!.path),
                     );
@@ -183,10 +194,13 @@ class _EnrollCoopPageState extends ConsumerState<EnrollCoopPage> {
                     String? uid = docRef.id;
                     debugPrint('Cooperative added to database. Cooperative ID is $uid');
 
-                    // firebase_storage.Reference reference = firebase_storage.FirebaseStorage.instance
-                    // .ref('$uid/images/${path.basename(_image!.path)}');
+                    firebase_storage.Reference reference = firebase_storage.FirebaseStorage.instance
+                    .ref('$uid/images/${path.basename(_image!.path)}');
 
-                    // firebase_storage.UploadTask uploadTask = reference.putFile(_image!);
+                    // ignore: unused_local_variable
+                    firebase_storage.UploadTask uploadTask = reference.putFile(_image!);
+
+                    
                     // get user 
                     user = await userRepository.getUser(widget.profileId);
                     user.role = "Manager";

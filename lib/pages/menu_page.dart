@@ -1,8 +1,8 @@
 import 'package:cooptourism/core/theme/theme.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/providers/user_provider.dart';
+import 'package:cooptourism/widgets/display_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -127,7 +127,6 @@ class _MenuPageState extends ConsumerState<MenuPage> {
   }
 
   GestureDetector profileCard(BuildContext context, UserModel? user) {
-    final storageRef = FirebaseStorage.instance.ref();
 
     String imagePath = "${user?.uid}/images/${user?.profilePicture}";
 
@@ -143,25 +142,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Create a profile picture circular, dont use network image, just use an icon
-              CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.grey.shade300,
-                child: FutureBuilder(
-                  future: storageRef
-                      .child(imagePath)
-                      .getDownloadURL(), // Await here
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return CircleAvatar(
-                        radius: 30,
-                        backgroundImage: NetworkImage(snapshot.data.toString()),
-                      );
-                    }
-                    return const Icon(Icons.person,
-                        size: 30, color: Colors.white);
-                  },
-                ),
-              ),
+              DisplayImage(path: imagePath, height: 50, width: 50, radius: BorderRadius.circular(30)),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Row(

@@ -103,6 +103,7 @@ class _MarketPageState extends ConsumerState<MarketPage> {
       itemCount: listings.length,
       itemBuilder: (context, index) {
         final listing = listings[index];
+
         return ListingCard(listingModel: listing);
       },
     );
