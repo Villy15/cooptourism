@@ -7,6 +7,11 @@ final themeNotifierProvider =
   return ThemeNotifier();
 });
 
+// FONT SIZE VARIABLES
+const double large = 48;
+const double medium = 20;
+const double small = 14;
+
 class Pallete {
   static const primaryColor = Colors.deepOrange;
   static const secondaryColor = Color.fromARGB(255, 247, 151, 121);
@@ -60,7 +65,9 @@ class Pallete {
       elevation: 1,
       surfaceTintColor: white,
     ),
+
   );
+
 
   // Dark mode app theme
   static final darkTheme = ThemeData(
@@ -69,7 +76,7 @@ class Pallete {
     // Color Theme
     colorScheme: ColorScheme.fromSeed(
       seedColor: Colors.deepOrange,
-      brightness: Brightness.dark,
+      brightness: Brightness.light
     ),
   );
 }

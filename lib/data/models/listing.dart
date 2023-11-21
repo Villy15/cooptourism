@@ -13,14 +13,13 @@ class ListingModel {
   String? province = "";
   String? category = "";
   num? rating = 0;
-  Map<String, dynamic>? amenities = {};
   Map<String, dynamic>? roles = {};
   Map<String, dynamic>? tasks = {};
   num? price = 0;
   String? type = "";
   Timestamp? postDate = Timestamp.now();
   List<dynamic>? images = [];
-  int? visits = 0;
+  num? pax = 0;
   String? ownerMember = "";
   ListingModel({
     this.id,
@@ -32,14 +31,13 @@ class ListingModel {
     this.province,
     this.category,
     this.rating,
-    this.amenities,
     this.roles,
     this.tasks,
     this.price,
     this.type,
     this.postDate,
     this.images,
-    this.visits,
+    this.pax,
     this.ownerMember,
   });
   
@@ -54,15 +52,14 @@ class ListingModel {
     String? province,
     String? category,
     num? rating,
-    Map<String, dynamic>? amenities,
     Map<String, dynamic>? roles,
     Map<String, dynamic>? tasks,
     num? price,
     String? type,
     Timestamp? postDate,
     List<dynamic>? images,
-    int? visits,
-    String? ownerMember,
+    num? pax,
+    // String? ownerMember,
   }) {
     return ListingModel(
       id: id ?? this.id,
@@ -74,15 +71,14 @@ class ListingModel {
       province: province ?? this.province,
       category: category ?? this.category,
       rating: rating ?? this.rating,
-      amenities: amenities ?? this.amenities,
       roles: roles ?? this.roles,
       tasks: tasks ?? this.tasks,
       price: price ?? this.price,
       type: type ?? this.type,
       postDate: postDate ?? this.postDate,
       images: images ?? this.images,
-      visits: visits ?? this.visits,
-      ownerMember: ownerMember ?? this.ownerMember,
+      pax: pax ?? this.pax,
+      // ownerMember: ownerMember ?? this.ownerMember,
     );
   }
 
@@ -97,15 +93,14 @@ class ListingModel {
       'province': province,
       'category': category,
       'rating': rating,
-      'amenities': amenities,
       'roles': roles,
       'tasks': tasks,
       'price': price,
       'type': type,
-      'postDate': postDate,
+      'postDate': postDate!.toDate(),
       'images': images,
-      'visits': visits,
-      'ownerMember': ownerMember,
+      'pax': pax!,
+      // 'ownerMember': ownerMember,
     };
   }
 
@@ -120,15 +115,14 @@ class ListingModel {
       province: map['province'] != null ? map['province'] as String : null,
       category: map['category'] != null ? map['category'] as String : null,
       rating: map['rating'] != null ? map['rating'] as num : null,
-      amenities: map['amenities'] != null ? Map<String, dynamic>.from((map['amenities'] as Map<String, dynamic>)) : null,
       roles: map['roles'] != null ? Map<String, dynamic>.from((map['roles'] as Map<String, dynamic>)) : null,
       tasks: map['tasks'] != null ? Map<String, dynamic>.from((map['tasks'] as Map<String, dynamic>)) : null,
       price: map['price'] != null ? map['price'] as num : null,
       type: map['type'] != null ? map['type'] as String : null,
       postDate: map['postDate'] != null ? map['postDate'] as Timestamp : null,
       images: map['images'] != null ? List<dynamic>.from((map['images'] as List<dynamic>)) : null,
-      visits: map['visits'] != null ? map['visits'] as int : null,
-      ownerMember: map['ownerMember'] != null ? map['ownerMember'] as String : null,
+      pax: map['pax'] != null ? map['pax'] as num : null,
+      // ownerMember: map['ownerMember'] != null ? map['ownerMember'] as String : null,
     );
   }
 
@@ -138,7 +132,7 @@ class ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(id: $id, owner: $owner, title: $title, description: $description, cooperativeOwned: $cooperativeOwned, city: $city, province: $province, category: $category, rating: $rating, amenities: $amenities, roles: $roles, tasks: $tasks, price: $price, type: $type, postDate: $postDate, images: $images, visits: $visits, ownerMember: $ownerMember)';
+    return 'ListingModel(id: $id, owner: $owner, title: $title, description: $description, cooperativeOwned: $cooperativeOwned, city: $city, province: $province, category: $category, rating: $rating, roles: $roles, tasks: $tasks, price: $price, type: $type, postDate: $postDate, images: $images, pax: $pax)';//, ownerMember: $ownerMember)';
   }
 
 }

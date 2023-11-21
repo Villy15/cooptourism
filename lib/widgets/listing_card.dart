@@ -60,7 +60,7 @@ class _ListingCardState extends ConsumerState<ListingCard> {
                   // Random Image
                   DisplayImage(
                     path:
-                        "${widget.listingModel.owner}/listingImages/${widget.listingModel.id}${widget.listingModel.images![0]}",
+                        "${widget.listingModel.cooperativeOwned}/listingImages/${widget.listingModel.images![0]}",
                     height: 175,
                     width: double.infinity,
                     radius: const BorderRadius.only(
@@ -143,7 +143,7 @@ class _ListingCardState extends ConsumerState<ListingCard> {
                               color: Theme.of(context).colorScheme.primary,
                             ),
                             Text(
-                              widget.listingModel.rating!.toStringAsFixed(1),
+                              widget.listingModel.rating?.toStringAsFixed(1) ?? "No Rating",
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
