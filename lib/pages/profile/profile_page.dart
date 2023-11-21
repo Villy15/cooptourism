@@ -1,10 +1,8 @@
 // import 'package:cooptourism/animations/slide_transition.dart';
 // import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cooptourism/data/models/coaching_form.dart';
 import 'package:cooptourism/data/models/coop_application.dart';
 import 'package:cooptourism/data/models/user.dart';
-import 'package:cooptourism/data/repositories/coaching_repository.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/data/repositories/coopjoin_repository.dart';
 // import 'package:cooptourism/data/repositories/listing_repository.dart';
@@ -900,6 +898,7 @@ class _ProfilePageState extends State<ProfilePage> {
               coopApplications.sort((a, b) => b.timestamp!.compareTo(a.timestamp!));
               return ListView.separated(
                   itemCount: coopApplications.length,
+                  physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
                   separatorBuilder: (context, index) => const Divider(),
@@ -989,22 +988,6 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 
-  // StreamBuilder<List<CooperativeAppFormModel>> pendingAppForms() {
-  //   return StreamBuilder(
-  //     stream: joinCooperativeRepository.getAllPendingCoopApplications(),
-  //     builder: (context, snapshot) {
-  //       if (snapshot.hasData) {
- 
-  //       }
-
-  //       if (snapshot.hasError) {
-  //         return const Text("Error");
-  //       } else {
-  //         return const Center(child: CircularProgressIndicator());
-  //       }
-  //     },
-  //   );
-  // }
 
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
