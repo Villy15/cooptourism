@@ -13,7 +13,8 @@ class AddTaskProofPage extends StatefulWidget {
   final ToDoItem item;
   final TaskModel task;
   final int index;
-  const AddTaskProofPage({Key? key, required this.item, required this.task, required this.index})
+  const AddTaskProofPage(
+      {Key? key, required this.item, required this.task, required this.index})
       : super(key: key);
 
   @override
@@ -52,11 +53,11 @@ class AddPostPageState extends State<AddTaskProofPage> {
       if (mounted) {
         Navigator.pop(context);
       }
-      
     } catch (e) {
       _showSnackBar('Error updating task!');
     }
   }
+
   // Find the index of the item in the list and update it
   Future<void> _updateTaskInDatabase(String proofPath) async {
     final task = widget.task;
@@ -76,9 +77,11 @@ class AddPostPageState extends State<AddTaskProofPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: primaryColor,
-        title: const Text('Add Proof',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
+        title: Text('Add Proof',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+            )),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -101,8 +104,7 @@ class AddPostPageState extends State<AddTaskProofPage> {
 
   Text _buildTaskTitle(Color primaryColor) {
     return Text(widget.item.title,
-        style: TextStyle(
-            fontSize: 22, fontWeight: FontWeight.bold, color: primaryColor));
+        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold));
   }
 
   Widget _buildContent(Color primaryColor) {
@@ -120,13 +122,12 @@ class AddPostPageState extends State<AddTaskProofPage> {
       children: [
         _cancelButton(context, primaryColor),
         const SizedBox(width: 16),
-
         if (filePickerUtility.image != null ||
-            filePickerUtility.pickedFile != null || widget.item.proof == null)
-          _addRecordButton(primaryColor)
-        else ... [
-          _changeRecordButton(primaryColor)
-        ]
+            filePickerUtility.pickedFile != null ||
+            widget.item.proof == null ||
+            widget.item.proof == '')
+          _addRecordButton()
+        else ...[_changeRecordButton(primaryColor)]
       ],
     );
   }
@@ -146,7 +147,6 @@ class AddPostPageState extends State<AddTaskProofPage> {
     }
     return null;
   }
-
 
   Widget _buildImageContent() {
     return Align(
@@ -202,91 +202,92 @@ class AddPostPageState extends State<AddTaskProofPage> {
   }
 
   Widget _imagePlaceHolder(Color primaryColor) {
-  final storageRef = FirebaseStorage.instance.ref();
-  String imagePath = "tasks/${widget.item.proof}";
+    final storageRef = FirebaseStorage.instance.ref();
+    String imagePath = "tasks/${widget.item.proof}";
 
-  return FutureBuilder(
-    future: storageRef.child(imagePath).getDownloadURL(),
-    builder: (BuildContext context, AsyncSnapshot snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const CircularProgressIndicator(); // Show loading indicator while waiting
-      } else if (snapshot.hasError) {
-        return _buildPlaceholder(primaryColor); // Show placeholder if error occurred
-      } else {
-        return _buildImage(snapshot.data); // Show image if it exists
-      }
-    },
-  );
-}
+    return FutureBuilder(
+      future: storageRef.child(imagePath).getDownloadURL(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(); // Show loading indicator while waiting
+        } else if (snapshot.hasError) {
+          return _buildPlaceholder(
+              primaryColor); // Show placeholder if error occurred
+        } else {
+          return _buildImage(snapshot.data); // Show image if it exists
+        }
+      },
+    );
+  }
 
-Widget _buildPlaceholder(Color primaryColor) {
-  return Align(
-    alignment: Alignment.center,
-    child: GestureDetector(
-      onTap: () => _showImageSourceChoice(context),
+  Widget _buildPlaceholder(Color primaryColor) {
+    return Align(
+      alignment: Alignment.center,
+      child: GestureDetector(
+        onTap: () => _showImageSourceChoice(context),
+        child: Container(
+          width: 250,
+          height: 200,
+          decoration: BoxDecoration(
+            color: secondaryColor,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 3,
+                  blurRadius: 5)
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.add_a_photo, size: 40, color: Colors.grey[700]),
+              const SizedBox(height: 10),
+              const Text('Add Proof',
+                  style: TextStyle(
+                    fontSize: 16,
+                  )),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImage(String imageUrl) {
+    return Align(
+      alignment: Alignment.center,
       child: Container(
         width: 250,
         height: 200,
         decoration: BoxDecoration(
-          color: secondaryColor,
           borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                spreadRadius: 3,
-                blurRadius: 5)
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.add_a_photo, size: 40, color: Colors.grey[700]),
-            const SizedBox(height: 10),
-            Text('Add Proof',
-                style: TextStyle(fontSize: 16, color: primaryColor)),
-          ],
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: NetworkImage(imageUrl),
+          ),
         ),
       ),
-    ),
-  );
-}
-
-Widget _buildImage(String imageUrl) {
-  return Align(
-    alignment: Alignment.center,
-    child: Container(
-      width: 250,
-      height: 200,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: NetworkImage(imageUrl),
-        ),
-      ),
-    ),
-  );
-}
-
-  
+    );
+  }
 
   Widget _cancelButton(BuildContext context, Color primaryColor) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Theme.of(context).colorScheme.secondary,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      child:
-          Text('Cancel', style: TextStyle(fontSize: 16, color: primaryColor)),
+      child: const Text('Cancel',
+          style: TextStyle(
+            fontSize: 16,
+          )),
       onPressed: () => Navigator.pop(context),
     );
   }
 
-  Widget _addRecordButton(Color primaryColor) {
+  Widget _addRecordButton() {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: primaryColor,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
@@ -298,7 +299,6 @@ Widget _buildImage(String imageUrl) {
   Widget _changeRecordButton(Color primaryColor) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: primaryColor,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),

@@ -35,7 +35,7 @@ class _ManagerSelectedTaskState extends State<ManagerSelectedTask> {
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else if (!snapshot.hasData || snapshot.data == null) {
-                    return const Text('No Tasks available');
+                    return const Center(child: Text('No Tasks available'));
                   } else {
                     TaskModel task = snapshot.data as TaskModel;
 
@@ -62,19 +62,18 @@ class _ManagerSelectedTaskState extends State<ManagerSelectedTask> {
   }
 
   List<Widget> buildToDoList(TaskModel task) {
-  List<Widget> toDoList = [];
+    List<Widget> toDoList = [];
 
-  for (ToDoItem item in task.toDoList) {
-
-    toDoList.add(
-      Column(
-        children: [
-          ListTile(
-            leading: Checkbox(
-              value: item.isChecked,
-              activeColor: Theme.of(context).colorScheme.primary,
-              onChanged: null,
-            ),
+    for (ToDoItem item in task.toDoList) {
+      toDoList.add(
+        Column(
+          children: [
+            ListTile(
+              leading: Checkbox(
+                value: item.isChecked,
+                activeColor: Theme.of(context).colorScheme.primary,
+                onChanged: null,
+              ),
               title: Text(item.title,
                   style: const TextStyle(
                       fontWeight: FontWeight.normal, fontSize: 12)),
@@ -83,7 +82,11 @@ class _ManagerSelectedTaskState extends State<ManagerSelectedTask> {
                   style: const TextStyle(
                       fontWeight: FontWeight.normal, fontSize: 12)),
               trailing: item.proof != "" && item.proof != null
-                  ? DisplayImage(path: "tasks/${item.proof!}", width: 50, height: 50, radius: BorderRadius.circular(10))
+                  ? DisplayImage(
+                      path: "tasks/${item.proof!}",
+                      width: 50,
+                      height: 50,
+                      radius: BorderRadius.circular(10))
                   : const Text(
                       'No Proof',
                       style: TextStyle(
@@ -146,7 +149,6 @@ class _ManagerSelectedTaskState extends State<ManagerSelectedTask> {
               Text('${(calculateProgress(task) * 100).toStringAsFixed(0)}%',
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 12)),
-
               Expanded(
                 // This will take up all available space and push the button to the right
                 child: Align(
@@ -208,7 +210,8 @@ class _ManagerSelectedTaskState extends State<ManagerSelectedTask> {
     );
   }
 
-  void showAddProofPage(BuildContext context, ToDoItem item, TaskModel task, int index) {
+  void showAddProofPage(
+      BuildContext context, ToDoItem item, TaskModel task, int index) {
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) {
@@ -229,22 +232,7 @@ class _ManagerSelectedTaskState extends State<ManagerSelectedTask> {
       toolbarHeight: 70,
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
-            child: IconButton(
-              onPressed: () {
-                // showAddPostPage(context);
-              },
-              icon: const Icon(Icons.settings, color: Colors.white),
-            ),
-          ),
-        ),
-      ],
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
     );
   }
 }

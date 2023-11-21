@@ -36,7 +36,7 @@ class _ManagerTasksPageState extends ConsumerState<ManagerTasksPage> {
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Text('No Tasks available');
+                  return const Center(child: Text('No Tasks available'));
                 } else {
                   List<TaskModel> taskList = snapshot.data!;
 
@@ -249,11 +249,10 @@ class _ManagerTasksPageState extends ConsumerState<ManagerTasksPage> {
 
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
-      iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       toolbarHeight: 70,
       title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16.0),

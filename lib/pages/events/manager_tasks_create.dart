@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:cooptourism/data/models/events.dart';
 import 'package:cooptourism/data/models/task.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
@@ -52,7 +51,6 @@ class _ManagerTasksCreateState extends ConsumerState<ManagerTasksCreate> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(context, 'Create Task'),
-      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -65,7 +63,7 @@ class _ManagerTasksCreateState extends ConsumerState<ManagerTasksCreate> {
                 descText(),
 
                 // Add the list of tasks with its date in a listtile
-                // Text of Tasks: 
+                // Text of Tasks:
                 taskHeading(),
                 taskLists(),
 
@@ -75,7 +73,6 @@ class _ManagerTasksCreateState extends ConsumerState<ManagerTasksCreate> {
                     _showAddTaskModal(context);
                   },
                   child: const Text('Add Task'),
-
                 ),
 
                 Padding(
@@ -94,35 +91,49 @@ class _ManagerTasksCreateState extends ConsumerState<ManagerTasksCreate> {
 
   ListView taskLists() {
     return ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: _toDoList.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(_toDoList[index].title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: primaryColor)),
-                    // Format the date as 11/15/2023 00:00 
-                    subtitle: Text(DateFormat('MM/dd/yyyy HH:mm').format(_toDoList[index].date!.toDate()), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: primaryColor)),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: primaryColor),
-                      onPressed: () {
-                        setState(() {
-                          _toDoList.removeAt(index);
-                        });
-                      },
-                    ),
-                  );
-                },
-              );
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: _toDoList.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(_toDoList[index].title,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              )),
+          // Format the date as 11/15/2023 00:00
+          subtitle: Text(
+              DateFormat('MM/dd/yyyy HH:mm')
+                  .format(_toDoList[index].date!.toDate()),
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              )),
+          trailing: IconButton(
+            icon: const Icon(
+              Icons.delete,
+            ),
+            onPressed: () {
+              setState(() {
+                _toDoList.removeAt(index);
+              });
+            },
+          ),
+        );
+      },
+    );
   }
 
   Padding taskHeading() {
     return const Padding(
-                padding: EdgeInsets.only(top: 20.0),
-                child: Text('Tasks', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: primaryColor)),
-              );
+      padding: EdgeInsets.only(top: 20.0),
+      child: Text('Tasks',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          )),
+    );
   }
-
-  
 
   void _showAddTaskModal(BuildContext context) {
     showModalBottomSheet(
@@ -139,7 +150,8 @@ class _ManagerTasksCreateState extends ConsumerState<ManagerTasksCreate> {
               TextFormField(
                 maxLines: 3,
                 controller: _taskController,
-                decoration: const InputDecoration(labelText: 'Task Description'),
+                decoration:
+                    const InputDecoration(labelText: 'Task Description'),
               ),
               const SizedBox(height: 20),
               // Text of selected Date and format it to Jun 13,2013
@@ -149,15 +161,17 @@ class _ManagerTasksCreateState extends ConsumerState<ManagerTasksCreate> {
                   Row(
                     children: [
                       // Icon of calendar
-                      const Icon(Icons.calendar_today, color: primaryColor),
+                      const Icon(
+                        Icons.calendar_today,
+                      ),
                       const SizedBox(width: 10),
-                      // Format the date as 11/15/2023 00:00 
+                      // Format the date as 11/15/2023 00:00
                       Text(
                         _selectedDate != null
                             ? DateFormat('MM/dd/yyyy HH:mm')
                                 .format(_selectedDate!.toDate())
                             : 'No Date Selected!',
-                        style: const TextStyle(color: primaryColor, fontSize: 16),
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ],
                   ),
@@ -192,9 +206,9 @@ class _ManagerTasksCreateState extends ConsumerState<ManagerTasksCreate> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 20),
-              Align (
+              Align(
                 alignment: Alignment.center,
                 child: ElevatedButton(
                   // Width bigger
@@ -320,11 +334,10 @@ class _ManagerTasksCreateState extends ConsumerState<ManagerTasksCreate> {
 
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
-      iconTheme: const IconThemeData(color: primaryColor),
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       toolbarHeight: 70,
       title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
     );
   }
 }

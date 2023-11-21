@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:cooptourism/data/models/events.dart';
 import 'package:cooptourism/data/repositories/events_repository.dart';
 import 'package:cooptourism/providers/user_provider.dart';
@@ -20,7 +18,6 @@ class AddEventPage extends ConsumerStatefulWidget {
 }
 
 class _AddEventPageState extends ConsumerState<AddEventPage> {
-
   final _formKey = GlobalKey<FormState>();
   String? title;
   String? description;
@@ -28,8 +25,6 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now().add(const Duration(days: 1));
   XFile? image;
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +45,17 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                   SizedBox(
                       height: 200,
                       width: 300,
-                    child: Image.file(File(image!.path))),
+                      child: Image.file(File(image!.path))),
                 imagePicker(),
                 Padding(
-                  padding: const EdgeInsets.only(top: 70.0),
+                  padding: const EdgeInsets.only(
+                    top: 70.0,
+                  ),
                   child: submitBtn(),
                 ),
+                const SizedBox(
+                  height: 60,
+                )
               ],
             ),
           ),
@@ -66,15 +66,16 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
 
   ElevatedButton imagePicker() {
     return ElevatedButton(
-                onPressed: () async {
-                  final ImagePicker picker = ImagePicker();
-                  XFile? selectedImage = await picker.pickImage(source: ImageSource.gallery);
-                  setState(() {
-                    image = selectedImage;
-                  });
-                },
-                child: const Text('Select Image'),
-              );
+      onPressed: () async {
+        final ImagePicker picker = ImagePicker();
+        XFile? selectedImage =
+            await picker.pickImage(source: ImageSource.gallery);
+        setState(() {
+          image = selectedImage;
+        });
+      },
+      child: const Text('Select Image'),
+    );
   }
 
   ElevatedButton submitBtn() {
@@ -82,8 +83,8 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
     return ElevatedButton(
       // Take the maximum width
       style: ElevatedButton.styleFrom(
-          minimumSize: const Size(double.infinity, 50),
-          backgroundColor: Colors.orange.shade700),
+        minimumSize: const Size(double.infinity, 50),
+      ),
       onPressed: () {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
@@ -113,7 +114,6 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
 
           // Pop
           Navigator.pop(context);
-          
         }
       },
       child: const Text('Submit'),
@@ -122,119 +122,95 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
 
   Row datePicker(BuildContext context) {
     return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Dates',
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.bold)),
-                      Text(
-                          '${DateFormat('dd MMM').format(startDate)} - ${DateFormat('dd MMM').format(endDate)} (${endDate.difference(startDate).inDays} days)',
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).colorScheme.primary)),
-                    ],
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      final result = await showDialog<PickerDateRange>(
-                        context: context,
-                        builder: (context) => Dialog(
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width *
-                                0.8, // 80% of screen width
-                            height: MediaQuery.of(context).size.height *
-                                0.6, // 60% of screen height
-                            child: SfDateRangePicker(
-                              // onSelectionChanged: _onDateSelection,
-                              selectionMode:
-                                  DateRangePickerSelectionMode.range,
-                              initialSelectedRange: PickerDateRange(
-                                startDate,
-                                endDate,
-                              ),
-                              showActionButtons:
-                                  true, // Enable the confirm and cancel buttons
-                              onSubmit: (value) {
-                                Navigator.pop(context, value);
-                              },
-                              onCancel: () {
-                                Navigator.pop(context, null);
-                              },
-                            ),
-                          ),
-                        ),
-                      );
-
-                      if (result != null) {
-                        setState(() {
-                          startDate = result.startDate!;
-                          endDate = result.endDate!;
-                          // nights = endDate.difference(startDate).inDays;
-                        });
-                      }
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Dates',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(
+                '${DateFormat('dd MMM').format(startDate)} - ${DateFormat('dd MMM').format(endDate)} (${endDate.difference(startDate).inDays} days)',
+                style: const TextStyle(
+                  fontSize: 16,
+                )),
+          ],
+        ),
+        TextButton(
+          onPressed: () async {
+            final result = await showDialog<PickerDateRange>(
+              context: context,
+              builder: (context) => Dialog(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width *
+                      0.8, // 80% of screen width
+                  height: MediaQuery.of(context).size.height *
+                      0.6, // 60% of screen height
+                  child: SfDateRangePicker(
+                    // onSelectionChanged: _onDateSelection,
+                    selectionMode: DateRangePickerSelectionMode.range,
+                    initialSelectedRange: PickerDateRange(
+                      startDate,
+                      endDate,
+                    ),
+                    showActionButtons:
+                        true, // Enable the confirm and cancel buttons
+                    onSubmit: (value) {
+                      Navigator.pop(context, value);
                     },
-                    child: const Text('Edit',
-                        style: TextStyle(
-                            color: primaryColor,
-                            fontSize: 16,
-                            decoration: TextDecoration.underline)),
+                    onCancel: () {
+                      Navigator.pop(context, null);
+                    },
                   ),
-                ],
-              );
+                ),
+              ),
+            );
+
+            if (result != null) {
+              setState(() {
+                startDate = result.startDate!;
+                endDate = result.endDate!;
+                // nights = endDate.difference(startDate).inDays;
+              });
+            }
+          },
+          child: const Text('Edit',
+              style: TextStyle(
+                  fontSize: 16, decoration: TextDecoration.underline)),
+        ),
+      ],
+    );
   }
 
   TextFormField textLocation() {
     return TextFormField(
-                decoration: const InputDecoration(labelText: 'Location'),
-                onSaved: (value) => location = value,
-                style: const TextStyle(color: primaryColor),
-              );
+      decoration: const InputDecoration(labelText: 'Location'),
+      onSaved: (value) => location = value,
+    );
   }
 
   TextFormField textDesc() {
     return TextFormField(
-                decoration: const InputDecoration(labelText: 'Description'),
-                onSaved: (value) => description = value,
-                style: const TextStyle(color: primaryColor),
-
-              );
+      maxLines: null,
+      decoration: const InputDecoration(labelText: 'Description'),
+      onSaved: (value) => description = value,
+    );
   }
 
   TextFormField textTitle() {
     return TextFormField(
-                decoration: const InputDecoration(labelText: 'Title'),
-                onSaved: (value) => title = value,
-                style: const TextStyle(color: primaryColor),
-              );
+      decoration: const InputDecoration(labelText: 'Title'),
+      onSaved: (value) => title = value,
+    );
   }
 
-   AppBar _appBar(BuildContext context, String title) {
+  AppBar _appBar(BuildContext context, String title) {
     return AppBar(
-      iconTheme: const IconThemeData(color: primaryColor),
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       toolbarHeight: 70,
       title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
-            child: IconButton(
-              onPressed: () {
-                // showAddPostPage(context);
-              },
-              icon: const Icon(Icons.settings, color: Colors.white),
-            ),
-          ),
-        ),
-      ],
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
     );
   }
 }

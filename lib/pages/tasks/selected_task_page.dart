@@ -2,8 +2,10 @@ import 'package:cooptourism/core/util/animations/slide_transition.dart';
 import 'package:cooptourism/data/models/task.dart';
 import 'package:cooptourism/data/repositories/task_repository.dart';
 import 'package:cooptourism/pages/tasks/add_proof.dart';
+import 'package:cooptourism/widgets/display_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 final TaskRepository taskRepository = TaskRepository();
 
@@ -66,32 +68,76 @@ class _SelectedTaskPageState extends State<SelectedTaskPage> {
     for (ToDoItem item in task.toDoList) {
       int index = task.toDoList.indexWhere((i) => i == item);
 
+      // toDoList.add(
+      //   Row(
+      //     children: [
+      //       Checkbox(
+      //         value: item.isChecked,
+      //         activeColor: Theme.of(context).colorScheme.primary,
+      //         onChanged: (value) {
+      //           item.isChecked = value!;
+      //           task.progress = calculateProgress(task);
+      //           taskRepository.updateTask(task.uid, task);
+      //         },
+      //       ),
+      //       Expanded(
+      //         child: Text(item.title,
+      //             style: const TextStyle(
+      //                 fontWeight: FontWeight.normal, fontSize: 12)),
+      //       ),
+
+      //       // Add an circular container to push to the selected task page that says "Add proof" then push this to the most left
+      //       IconButton(
+      //         icon: const Icon(Icons.add),
+      //         iconSize: 20,
+      //         color: Theme.of(context).colorScheme.primary,
+      //         onPressed: () {
+      //           showAddProofPage(context, item, task, index);
+      //         },
+      //       ),
+      //     ],
+      //   ),
+      // );
+
       toDoList.add(
-        Row(
+        Column(
           children: [
-            Checkbox(
-              value: item.isChecked,
-              activeColor: Theme.of(context).colorScheme.primary,
-              onChanged: (value) {
-                item.isChecked = value!;
-                task.progress = calculateProgress(task);
-                taskRepository.updateTask(task.uid, task);
-              },
-            ),
-            Expanded (
-              child: Text(item.title,
+            ListTile(
+              leading: Checkbox(
+                value: item.isChecked,
+                activeColor: Theme.of(context).colorScheme.primary,
+                onChanged: (value) {
+                  item.isChecked = value!;
+                  task.progress = calculateProgress(task);
+                  taskRepository.updateTask(task.uid, task);
+                },
+              ),
+              title: Text(item.title,
                   style: const TextStyle(
                       fontWeight: FontWeight.normal, fontSize: 12)),
-            ),
-
-            // Add an circular container to push to the selected task page that says "Add proof" then push this to the most left
-            IconButton(
-              icon: const Icon(Icons.add),
-              iconSize: 20,
-              color: Theme.of(context).colorScheme.primary,
-              onPressed: () {
-                showAddProofPage(context, item, task, index);             
-              },
+              subtitle: Text(
+                  'Date: ${DateFormat('dd/MM/yyyy HH:mm').format(item.date!.toDate())}',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.normal, fontSize: 12)),
+              trailing: item.proof != "" && item.proof != null
+                  ? InkWell(
+                      onTap: () {
+                        showAddProofPage(context, item, task, index);
+                      },
+                      child: DisplayImage(
+                          path: "tasks/${item.proof!}",
+                          width: 50,
+                          height: 50,
+                          radius: BorderRadius.circular(10)),
+                    )
+                  : IconButton(
+                      icon: const Icon(Icons.add),
+                      iconSize: 20,
+                      color: Theme.of(context).colorScheme.primary,
+                      onPressed: () {
+                        showAddProofPage(context, item, task, index);
+                      },
+                    ),
             ),
           ],
         ),
@@ -149,7 +195,6 @@ class _SelectedTaskPageState extends State<SelectedTaskPage> {
               Text('${(calculateProgress(task) * 100).toStringAsFixed(0)}%',
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 12)),
-
               Expanded(
                 // This will take up all available space and push the button to the right
                 child: Align(
@@ -211,7 +256,8 @@ class _SelectedTaskPageState extends State<SelectedTaskPage> {
     );
   }
 
-  void showAddProofPage(BuildContext context, ToDoItem item, TaskModel task, int index) {
+  void showAddProofPage(
+      BuildContext context, ToDoItem item, TaskModel task, int index) {
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) {
@@ -232,22 +278,7 @@ class _SelectedTaskPageState extends State<SelectedTaskPage> {
       toolbarHeight: 70,
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
-            child: IconButton(
-              onPressed: () {
-                // showAddPostPage(context);
-              },
-              icon: const Icon(Icons.settings, color: Colors.white),
-            ),
-          ),
-        ),
-      ],
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
     );
   }
 }

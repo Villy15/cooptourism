@@ -65,9 +65,7 @@ class Pallete {
       elevation: 1,
       surfaceTintColor: white,
     ),
-
   );
-
 
   // Dark mode app theme
   static final darkTheme = ThemeData(
@@ -75,9 +73,7 @@ class Pallete {
 
     // Color Theme
     colorScheme: ColorScheme.fromSeed(
-      seedColor: Colors.deepOrange,
-      brightness: Brightness.light
-    ),
+        seedColor: Colors.deepOrange, brightness: Brightness.dark),
   );
 }
 

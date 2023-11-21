@@ -118,7 +118,7 @@ class _ListingCardState extends ConsumerState<ListingCard> {
                         Row(
                           children: [
                             Text(
-                              widget.listingModel.price.toString(),
+                              '₱${widget.listingModel.price}',
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -143,7 +143,8 @@ class _ListingCardState extends ConsumerState<ListingCard> {
                               color: Theme.of(context).colorScheme.primary,
                             ),
                             Text(
-                              widget.listingModel.rating?.toStringAsFixed(1) ?? "No Rating",
+                              widget.listingModel.rating?.toStringAsFixed(1) ??
+                                  "No Rating",
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,

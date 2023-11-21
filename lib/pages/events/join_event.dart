@@ -83,7 +83,7 @@ class _ContributeEventPageState extends ConsumerState<JoinEventPage> {
     // You will need to replace the Image.network with an image from your model
     return ListTile(
       leading: DisplayImage(
-        path: "${event.uid}/${event.image![0]}",
+        path: "events/${event.uid}/${event.image![0]}",
         height: 100,
         width: 100,
         radius: const BorderRadius.only(),

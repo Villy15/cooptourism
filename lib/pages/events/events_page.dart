@@ -132,7 +132,7 @@ class _EventsPageState extends ConsumerState<EventsPage> {
   Padding eventImage(EventsModel event) {
     final storageRef = FirebaseStorage.instance.ref();
     // Assuming event.image![0] is the path of the image in Firebase Storage
-    String imagePath = "${event.uid}/${event.image?[0]}";
+    String imagePath = "events/${event.uid}/${event.image?[0]}";
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -246,7 +246,6 @@ class _EventsPageState extends ConsumerState<EventsPage> {
             ? Padding(
                 padding: const EdgeInsets.only(right: 16.0),
                 child: CircleAvatar(
-                  backgroundColor: Colors.grey.shade300,
                   child: IconButton(
                     onPressed: () {
                       Navigator.push(
@@ -254,7 +253,9 @@ class _EventsPageState extends ConsumerState<EventsPage> {
                           MaterialPageRoute(
                               builder: (context) => const AddEventPage()));
                     },
-                    icon: const Icon(Icons.add, color: Colors.white),
+                    icon: const Icon(
+                      Icons.add,
+                    ),
                   ),
                 ),
               )

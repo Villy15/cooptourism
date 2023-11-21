@@ -58,6 +58,45 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
     final user = ref.watch(userModelProvider);
     role = user?.role ?? 'Customer';
 
+    void showSnackBar(BuildContext context, String text) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(text),
+            action: SnackBarAction(
+              label: 'Close',
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
+            ),
+          ),
+        );
+    }
+
+    final List<String> images = [
+      'https://via.placeholder.com/150',
+      'https://via.placeholder.com/200',
+      'https://via.placeholder.com/250',
+      // Add more image URLs as needed
+    ];
+
+// Define a list of bedrooms
+    final List<String> bedrooms = [
+      'Bedroom 1',
+      'Bedroom 2',
+      'Bedroom 3',
+      // Add more bedrooms as needed
+    ];
+
+// Define a list of beds
+    final List<String> beds = [
+      '2 queen beds',
+      '1 king bed',
+      '1 single bed',
+      // Add more beds as needed
+    ];
+
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
@@ -126,7 +165,8 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                           //       )),
                           // ),
                           DisplayText(
-                            text: "Type: ${listing.type!}",
+                            text:
+                                "Location: ${listing.province ?? ''}, ${listing.city ?? ''}",
                             lines: 4,
                             style: TextStyle(
                                 fontSize: Theme.of(context)
@@ -134,84 +174,292 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                                     .labelLarge
                                     ?.fontSize),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: DisplayText(
-                              text: "Desrciption: ${listing.description!}",
-                              lines: 5,
-                              style: TextStyle(
+                          DisplayText(
+                            text:
+                                "${listing.pax ?? 1} guests · ${listing.type ?? ''} · ${listing.category ?? ''}",
+                            lines: 1,
+                            style: TextStyle(
                                 fontSize: Theme.of(context)
                                     .textTheme
                                     .labelLarge
-                                    ?.fontSize,
-                              ),
-                            ),
+                                    ?.fontSize),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: DisplayText(
-                                text: "Rating",
+                          Row(
+                            children: [
+                              Icon(Icons.star_rounded,
+                                  color: Theme.of(context).colorScheme.primary),
+                              const SizedBox(width: 5),
+                              DisplayText(
+                                text: "${listing.rating ?? 0}",
                                 lines: 1,
-                                style: Theme.of(context).textTheme.labelLarge!),
-                          ),
-                          RatingBarIndicator(
-                            rating: listing.rating!.toDouble(),
-                            itemBuilder: (context, index) {
-                              return Icon(
-                                Icons.star_rounded,
-                                color: Theme.of(context).colorScheme.primary,
-                              );
-                            },
-                            itemCount: 5,
-                            itemSize: 25,
-                            direction: Axis.horizontal,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: DisplayText(
-                              text: "Amenities",
-                              lines: 1,
-                              style: Theme.of(context).textTheme.labelLarge!,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: DisplayText(
-                              text: "Reviews",
-                              lines: 1,
-                              style: Theme.of(context).textTheme.labelLarge!,
-                            ),
-                          ),
-                          reviews.isEmpty
-                              ? const Center(child: Text('No reviews'))
-                              : ListView.builder(
-                                  padding: const EdgeInsets.only(top: 0),
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: reviews.length,
-                                  itemBuilder: (context, index) {
-                                    final review = reviews[index];
-                                    return ReviewCard(
-                                      reviewModel: review,
-                                    );
+                                style: TextStyle(
+                                    fontSize: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge
+                                        ?.fontSize),
+                              ),
+                              const SizedBox(width: 5),
+                              TextButton(
+                                  onPressed: () {
+                                    // Show snackbar with reviews
+                                    showSnackBar(context, 'Reviews');
                                   },
+                                  child: const Text('13 reviews',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          decoration:
+                                              TextDecoration.underline))),
+                            ],
+                          ),
+
+                          const Divider(),
+
+                          DisplayText(
+                            text: 'Description',
+                            lines: 1,
+                            style: TextStyle(
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.fontSize,
+                            ),
+                          ),
+
+                          const SizedBox(
+                            height: 10,
+                          ),
+
+                          descriptionText(listing, context),
+
+                          const Divider(),
+
+                          // Where you'll sleep
+                          DisplayText(
+                            text: 'Where you\'ll sleep',
+                            lines: 1,
+                            style: TextStyle(
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.fontSize,
+                            ),
+                          ),
+
+                          // Generate me a list of cards with an image, Bedroom 1, 2 queen beds that is scrollable horizontally
+                          SingleChildScrollView(
+                            clipBehavior: Clip.none,
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                Card(
+                                  elevation: 0,
+                                  surfaceTintColor:
+                                      Theme.of(context).colorScheme.background,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: 150,
+                                          height: 100,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            image: DecorationImage(
+                                              image: NetworkImage(images[0]),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text(bedrooms[0],
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelLarge!),
+                                        Text(beds[0]),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                          if (listing.ownerMember != null)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 20.0),
-                              child: DisplayText(
-                                text: "Owner Information",
-                                lines: 1,
-                                style:
-                                    Theme.of(context).textTheme.headlineSmall!,
-                              ),
+                                Card(
+                                  elevation: 0,
+                                  surfaceTintColor:
+                                      Theme.of(context).colorScheme.background,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: 150,
+                                          height: 100,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            image: DecorationImage(
+                                              image: NetworkImage(images[0]),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text(bedrooms[1],
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelLarge!),
+                                        Text(beds[1]),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Card(
+                                  elevation: 0,
+                                  surfaceTintColor:
+                                      Theme.of(context).colorScheme.background,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: 150,
+                                          height: 100,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            image: DecorationImage(
+                                              image: NetworkImage(images[0]),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text(bedrooms[2],
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelLarge!),
+                                        Text(beds[2]),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          if (listing.ownerMember != null)
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 10.0, top: 10.0),
-                              child: ownerListing(listing: listing),
+                          ),
+
+                          const Divider(),
+
+                          DisplayText(
+                            text: 'Where you\'ll go',
+                            lines: 1,
+                            style: TextStyle(
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.fontSize,
                             ),
+                          ),
+
+                          Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16.0, right: 16.0),
+                              child: Column(
+                                children: [
+                                  const Row(
+                                    children: [
+                                      // Make the icon smaller
+                                      // Icon(
+                                      //   Icons.location_on_outlined,
+                                      //   color: Theme.of(context)
+                                      //       .colorScheme
+                                      //       .primary,
+                                      //   size: 16,
+                                      // ),
+                                      // const SizedBox(width: 10),
+                                      Text('',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.normal,
+                                              fontSize: 14)),
+                                    ],
+                                  ),
+                                  Container(
+                                    width: 350,
+                                    height: 200,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.1),
+                                    child: Center(
+                                      child: Text("Map Placeholder",
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary)),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16.0),
+                                ],
+                              )),
+
+                          const Divider(),
+
+                          // Hosted by owner
+                          ListTile(
+                            leading: DisplayImage(
+                                path: '${listing.owner}/images/pfp.jpg',
+                                height: 40,
+                                width: 40,
+                                radius: BorderRadius.circular(20)),
+                            // Contact owner
+                            trailing: IconButton(
+                              onPressed: () {
+                                // Show snackbar with reviews
+                                showSnackBar(context, 'Contact owner');
+                              },
+                              icon: const Icon(Icons.message_rounded),
+                            ),
+                            title: Text(
+                                'Hosted by ${listing.ownerMember ?? 'Timothy Mendoza'}',
+                                style: Theme.of(context).textTheme.labelLarge),
+                            subtitle: Text(
+                                listing.cooperativeOwned ??
+                                    'Iwahori Multi-Purpose Cooperative',
+                                style: Theme.of(context).textTheme.bodySmall),
+                          ),
+
+                          const Divider(),
+
+                          const SizedBox(
+                            height: 100,
+                          ),
+
+                          // Padding(
+                          //   padding: const EdgeInsets.only(top: 20.0),
+                          //   child: DisplayText(
+                          //     text: "Reviews",
+                          //     lines: 1,
+                          //     style: Theme.of(context).textTheme.labelLarge!,
+                          //   ),
+                          // ),
+                          // reviews.isEmpty
+                          //     ? const Center(child: Text('No reviews'))
+                          //     : ListView.builder(
+                          //         padding: const EdgeInsets.only(top: 0),
+                          //         physics: const NeverScrollableScrollPhysics(),
+                          //         shrinkWrap: true,
+                          //         itemCount: reviews.length,
+                          //         itemBuilder: (context, index) {
+                          //           final review = reviews[index];
+                          //           return ReviewCard(
+                          //             reviewModel: review,
+                          //           );
+                          //         },
+                          //       ),
+
                           // if (role == 'Customer')
                           // customerFunctions(context, listing)
                         ],
@@ -243,6 +491,76 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
               )
             : BottomNavSelectedListing(listingId: widget.listingId),
       ),
+    );
+  }
+
+  String addSpaces(String description) {
+    List<String> sentences = description.split('. ');
+    for (int i = 3; i < sentences.length; i += 4) {
+      sentences[i] = '\n\n\n${sentences[i]}';
+    }
+    return sentences.join('.');
+  }
+
+  Column descriptionText(ListingModel listing, BuildContext context) {
+    String descriptionWithSpaces = addSpaces(listing.description!);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          child: DisplayText(
+            text: descriptionWithSpaces,
+            lines: 5,
+            style: TextStyle(
+              fontSize: Theme.of(context).textTheme.labelLarge?.fontSize,
+            ),
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            showModalBottomSheet(
+              // show indicator drag
+              isScrollControlled: true,
+              enableDrag: true,
+              showDragHandle: true,
+              context: context,
+              builder: (context) {
+                return Container(
+                  height: MediaQuery.sizeOf(context).height * 0.7,
+                  padding: const EdgeInsets.all(16.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        DisplayText(
+                          text: 'About this Space',
+                          lines: 1,
+                          style: Theme.of(context).textTheme.titleLarge!,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          descriptionWithSpaces,
+                          style: TextStyle(
+                            fontSize: Theme.of(context)
+                                .textTheme
+                                .labelLarge
+                                ?.fontSize,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+          child: const Text('Show More'),
+        ),
+      ],
     );
   }
 
@@ -298,7 +616,7 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                           ? BookServicePage(listing: listing)
 
                           // If product show buy product page
-                          : BuyProductPage(listing: listing)));
+                          : BookServicePage(listing: listing)));
             },
             child: const Text('Book Now'),
           ),
@@ -491,29 +809,55 @@ class _ImageSliderState extends State<ImageSlider> {
                 .toList(),
           ),
         ),
-        SizedBox(
-          height: 250,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 10.0),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(25)),
-                child: Padding(
-                  padding: const EdgeInsets.all(2.5),
-                  child: DotsIndicator(
-                    key: ValueKey(currentImageIndex),
-                    dotsCount: maxImageIndex,
-                    position: currentImageIndex,
-                    decorator: decorator,
-                  ),
+        Positioned(
+          bottom: 10,
+          right: 10,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.black.withOpacity(0.3),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4),
+              child: Text(
+                '${currentImageIndex + 1} / $maxImageIndex',
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
           ),
         ),
+        // SizedBox(
+        //   height: 250,
+        //   child: Padding(
+        //     padding: const EdgeInsets.only(bottom: 10.0),
+        //     child: Align(
+        //       alignment: Alignment.bottomCenter,
+        //       child: Container(
+        //         decoration: BoxDecoration(
+        //             color: Colors.white,
+        //             borderRadius: BorderRadius.circular(25)),
+        //         child: Padding(
+        //           padding: const EdgeInsets.all(2.5),
+        //           child: DotsIndicator(
+        //             key: ValueKey(currentImageIndex),
+        //             dotsCount: maxImageIndex,
+        //             position: currentImageIndex,
+        //             decorator: decorator,
+        //           ),
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

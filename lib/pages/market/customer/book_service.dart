@@ -130,7 +130,7 @@ class _BookServicePageState extends State<BookServicePage> {
     return ListTile(
       leading: DisplayImage(
         path:
-            "${widget.listing.owner}/listingImages/${widget.listing.id}${widget.listing.images![0]}",
+            "${widget.listing.cooperativeOwned}/listingImages/${widget.listing.images![0]}",
         height: 100,
         width: 100,
         radius: const BorderRadius.only(),
