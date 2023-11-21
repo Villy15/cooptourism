@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
+import 'package:cooptourism/providers/user_provider.dart';
 import 'package:cooptourism/widgets/display_image.dart';
 // import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
@@ -27,6 +28,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _profileBioController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
+  List<String> userSkills = [];
 
   // final TextEditingController _emailController = TextEditingController();
   // final TextEditingController _otpController = TextEditingController();
@@ -38,7 +40,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   final List<String> _skills = [
     'Driver',
     'Tour Guide',
-    'Good Communicator',
+    'Tour Accommodation',
     'Credit Collector',
   ];
 
@@ -55,7 +57,20 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     super.initState();
     // postRepository.addDummyPost();
     userUID = widget.profileId.replaceAll(RegExp(r'}+$'), '');
+    final user = ref.read(userModelProvider);
+    _profileBioController.text = user?.bio ?? '';
+    _locationController.text = user?.location ?? '';
+    userSkills = user!.skills!;
+
+    // initialize checkedSkills with the skills of the user
+    // check the user role and initialize the skills accordingly
+    checkedSkills = {
+      for (var skill in (user.role == 'Manager' ? _skillsManager : _skills))
+        skill: userSkills.contains(skill),
+    };
   }
+
+  bool isNewImageSelected = false;
 
   final userRepository = UserRepository();
   File? _image;
@@ -68,7 +83,9 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
+        isNewImageSelected = true;
         debugPrint('Image selected. Image is $pickedFile and $_image');
+        debugPrint('it is selected because it is $isNewImageSelected');
       } else {
         debugPrint('No image selected.');
       }
@@ -126,7 +143,20 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                     )),
                                 child: Stack(
                                   children: [
-                                    if (user?.profilePicture != null)
+                                     if (_image != null &&
+                                        isNewImageSelected) ...[
+                                      ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(60.0),
+                                        child: Image.file(
+                                          _image!,
+                                          width: 120.0,
+                                          height: 120.0,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ]
+                                    else if (user?.profilePicture != null)
                                       DisplayImage(
                                           path:
                                               '${user!.uid}/images/${user.profilePicture}',
@@ -182,7 +212,9 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                               controller: _profileBioController,
                               maxLines: 7,
                               decoration: InputDecoration(
-                                hintText: 'Profile Bio',
+                                hintText: _profileBioController.text.isEmpty
+                                    ? 'Profile Bio'
+                                    : _profileBioController.text,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10.0),
                                   borderSide: BorderSide(
@@ -255,7 +287,20 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                       )),
                                   child: Stack(
                                     children: [
-                                      if (user?.profilePicture != null)
+                                      if (_image != null &&
+                                        isNewImageSelected) ...[
+                                      ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(60.0),
+                                        child: Image.file(
+                                          _image!,
+                                          width: 120.0,
+                                          height: 120.0,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ]
+                                    else if (user?.profilePicture != null)
                                         DisplayImage(
                                             path:
                                                 '${user!.uid}/images/${user.profilePicture}',
@@ -311,7 +356,9 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                 controller: _profileBioController,
                                 maxLines: 7,
                                 decoration: InputDecoration(
-                                  hintText: 'Profile Bio',
+                                  hintText: _profileBioController.text.isEmpty
+                                      ? 'Profile Bio'
+                                      : _profileBioController.text,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10.0),
                                     borderSide: BorderSide(
@@ -371,6 +418,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                           : _skills)
                                   .map((skill) {
                                 if (!checkedSkills.containsKey(skill)) {
+                                  debugPrint(
+                                      "checkedSkills doesn't contain $skill");
                                   checkedSkills[skill] = false;
                                 }
                                 return CheckboxListTile(
@@ -378,20 +427,22 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                   value: checkedSkills[skill] ?? false,
                                   onChanged: (bool? value) {
                                     setState(() {
-                                      checkedSkills[skill] = value!;
-                                      debugPrint(
-                                          'checkedSkills is $checkedSkills');
+                                      checkedSkills[skill] = value ?? false;
                                     });
+                                    debugPrint(
+                                        'checkedSkills is $checkedSkills');
                                   },
                                 );
                               }).toList(),
                             ),
                             const SizedBox(height: 20),
-                            ElevatedButton(
-                                onPressed: () {
-                                  context.go('/profile_page/${user?.uid}');
-                                },
-                                child: const Text('hello ')),
+                            Center(
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    context.go('/profile_page/${user?.uid}');
+                                  },
+                                  child: const Text('Submit')),
+                            ),
                             const SizedBox(height: 100)
                           ]),
                     );

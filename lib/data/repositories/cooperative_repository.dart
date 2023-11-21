@@ -61,7 +61,7 @@ class CooperativesRepository {
       final doc =
           await cooperativesCollection.doc(coopId).collection('members').get();
 
-      return doc.docs.map((doc) => doc.id).toList();  
+      return doc.docs.map((doc) => doc.id).toList();
     } catch (e) {
       debugPrint('Error getting cooperative members from Firestore: $e');
       // You might want to handle errors more gracefully here
@@ -85,9 +85,36 @@ class CooperativesRepository {
     }
   }
 
+  // verify if current user profile is a manager of a cooperative
+  // from the field managers (list of strings) of a cooperative from Firestore
+  Future<String?> isCooperativeManager(String uid) async {
+  try {
+    final querySnapshot = await cooperativesCollection.get();
+    for (var doc in querySnapshot.docs) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      if (data['managers'] != null) {
+        List<dynamic> managersDynamic = data['managers'];
+        List<String> managers = [];
+        for (var ref in managersDynamic) {
+          DocumentSnapshot managerDoc = await ref.get();
+          managers.add(managerDoc.id);
+        }
+        debugPrint(managersDynamic.toString());
+        if (managers.contains(uid)) {
+          debugPrint('user exists!!!!!');
+          return doc.id; // return the cooperative ID
+        }
+      }
+    }
+    return null; // return null if the user is not a manager in any cooperative
+  } catch (e) {
+    debugPrint('Error getting cooperatives from Firestore: $e');
+    rethrow;
+  }
+}
+
   // add a member to the members subcollection of a cooperative from Firestore
-  Future<void> addCooperativeMember(
-      String coopId, String memberId) async {
+  Future<void> addCooperativeMember(String coopId, String memberId) async {
     try {
       await cooperativesCollection
           .doc(coopId)
@@ -100,53 +127,47 @@ class CooperativesRepository {
       rethrow;
     }
   }
-  
-Future<Map<String, dynamic>> getCooperativeMembersNames(String coopId) async {
-  try {
-    final querySnapshot = await cooperativesCollection
-        .doc(coopId)
-        .collection('members')
-        .get();
 
-    Map<String, dynamic> memberNames = {};
+  Future<Map<String, dynamic>> getCooperativeMembersNames(String coopId) async {
+    try {
+      final querySnapshot =
+          await cooperativesCollection.doc(coopId).collection('members').get();
 
-    for (var doc in querySnapshot.docs) {
-      var data = doc.data();
-      String fullName = "${data['last_name']} ${data['first_name']}";
-      memberNames[doc.id] = fullName;
+      Map<String, dynamic> memberNames = {};
+
+      for (var doc in querySnapshot.docs) {
+        var data = doc.data();
+        String fullName = "${data['last_name']} ${data['first_name']}";
+        memberNames[doc.id] = fullName;
+      }
+
+      return memberNames;
+    } catch (e) {
+      debugPrint('Error getting cooperative members from Firestore: $e');
+      rethrow;
     }
-
-    return memberNames;
-  } catch (e) {
-    debugPrint('Error getting cooperative members from Firestore: $e');
-    rethrow;
   }
-}
 
-Future<List<Map<String, String>>> getCooperativeMembersNamesUid(String coopId) async {
-  try {
-    final querySnapshot = await cooperativesCollection
-        .doc(coopId)
-        .collection('members')
-        .get();
+  Future<List<Map<String, String>>> getCooperativeMembersNamesUid(
+      String coopId) async {
+    try {
+      final querySnapshot =
+          await cooperativesCollection.doc(coopId).collection('members').get();
 
-    List<Map<String, String>> members = [];
+      List<Map<String, String>> members = [];
 
-    for (var doc in querySnapshot.docs) {
-      var data = doc.data();
-      String fullName = "${data['last_name']} ${data['first_name']}";
-      members.add({'id': doc.id, 'name': fullName});
+      for (var doc in querySnapshot.docs) {
+        var data = doc.data();
+        String fullName = "${data['last_name']} ${data['first_name']}";
+        members.add({'id': doc.id, 'name': fullName});
+      }
+
+      return members;
+    } catch (e) {
+      debugPrint('Error getting cooperative members from Firestore: $e');
+      rethrow;
     }
-
-    return members;
-  } catch (e) {
-    debugPrint('Error getting cooperative members from Firestore: $e');
-    rethrow;
   }
-}
-
-
-
 
   // Add cooperative
   Future<DocumentReference> addCooperative(

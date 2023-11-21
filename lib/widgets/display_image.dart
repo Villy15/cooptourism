@@ -25,8 +25,7 @@ class DisplayImage extends StatelessWidget {
         future: storageRef
             .child(path!)
             .getDownloadURL(), // Await here
-        builder: (context, urlSnapshot) {
-          debugPrint('this is storage ref $path');
+        builder: (context, urlSnapshot) {;
           if (urlSnapshot.connectionState ==
               ConnectionState.waiting) {
             return const CircularProgressIndicator();
@@ -35,12 +34,11 @@ class DisplayImage extends StatelessWidget {
           if (urlSnapshot.hasError) {
             debugPrint('Error fetching image URL: ${urlSnapshot.error}');
 
-            debugPrint('Error anthoyn here: ${urlSnapshot.data}');
+
             return const Icon(Icons.error); // Or some other widget to indicate an error
           }
 
           final imageUrl = urlSnapshot.data;
-          debugPrint("${urlSnapshot.data} this is the image url");
 
           return Image.network(
             imageUrl!,
