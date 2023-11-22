@@ -6,19 +6,16 @@ import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/data/repositories/review_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/pages/market/customer/book_service.dart';
-import 'package:cooptourism/pages/market/customer/buy_product.dart';
 import 'package:cooptourism/providers/home_page_provider.dart';
 import 'package:cooptourism/providers/user_provider.dart';
 import 'package:cooptourism/widgets/bottom_nav_selected_listing.dart';
 import 'package:cooptourism/widgets/display_image.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 import 'package:cooptourism/widgets/leading_back_button.dart';
-import 'package:cooptourism/widgets/review_card.dart';
-import 'package:dots_indicator/dots_indicator.dart';
+// import 'package:dots_indicator/dots_indicator.dart';
 // import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final UserRepository userRepository = UserRepository();
@@ -135,7 +132,9 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                final reviews = snapshot.data!;
+
+                // Todo add reviews
+                // final reviews = snapshot.data!;
                 return ListView(
                   padding: const EdgeInsets.only(top: 0),
                   children: [
@@ -149,7 +148,7 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                             padding: const EdgeInsets.only(top: 14.0),
                             child: DisplayText(
                                 text: listing.title!,
-                                lines: 1,
+                                lines: 2,
                                 style: const TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
@@ -705,45 +704,73 @@ class _ImageSliderState extends State<ImageSlider> {
   int currentImageIndex = 0;
   @override
   Widget build(BuildContext context) {
-    final decorator = DotsDecorator(
-      activeColor: Colors.orange[700],
-      size: const Size.square(7.5),
-      activeSize: const Size.square(10.0),
-      activeShape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
-      ),
-      spacing: const EdgeInsets.all(2.5),
-    );
+    // final decorator = DotsDecorator(
+    //   activeColor: Colors.orange[700],
+    //   size: const Size.square(7.5),
+    //   activeSize: const Size.square(10.0),
+    //   activeShape: RoundedRectangleBorder(
+    //     borderRadius: BorderRadius.circular(20.0),
+    //   ),
+    //   spacing: const EdgeInsets.all(2.5),
+    // );
     int maxImageIndex = widget.listing.images!.length;
     CarouselController carouselController = CarouselController();
 
     return Stack(
       children: [
-        SizedBox(
-          height: 250,
-          child: CarouselSlider(
-            carouselController: carouselController,
-            options: CarouselOptions(
-              viewportFraction: 1.0,
-              height: 250.0,
-              enlargeFactor: 0,
-              enlargeCenterPage: true,
-              enableInfiniteScroll: false,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  currentImageIndex = index;
-                });
+        InkWell(
+          onTap: () {
+            showModalBottomSheet(
+              isScrollControlled: true,
+              context: context,
+              builder: (context) {
+                return FractionallySizedBox(
+                  heightFactor: 0.9,
+                  child: GridView.count(
+                    crossAxisCount: 1,
+                    children: widget.listing.images!
+                        .map<Widget>((e) => Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: DisplayImage(
+                                path:
+                                    "${widget.listing.cooperativeOwned}/listingImages/$e",
+                                height: 250,
+                                width: double.infinity,
+                                radius: BorderRadius.zero,
+                              ),
+                            ))
+                        .toList(),
+                  ),
+                );
               },
+            );
+          },
+          child: SizedBox(
+            height: 250,
+            child: CarouselSlider(
+              carouselController: carouselController,
+              options: CarouselOptions(
+                viewportFraction: 1.0,
+                height: 250.0,
+                enlargeFactor: 0,
+                enlargeCenterPage: true,
+                enableInfiniteScroll: false,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    currentImageIndex = index;
+                  });
+                },
+              ),
+              items: widget.listing.images!
+                  .map<Widget>((e) => DisplayImage(
+                        path:
+                            "${widget.listing.cooperativeOwned}/listingImages/$e",
+                        height: 250,
+                        width: double.infinity,
+                        radius: BorderRadius.zero,
+                      ))
+                  .toList(),
             ),
-            items: widget.listing.images!
-                .map<Widget>((e) => DisplayImage(
-                      path:
-                          "${widget.listing.cooperativeOwned}/listingImages/$e",
-                      height: 250,
-                      width: double.infinity,
-                      radius: BorderRadius.zero,
-                    ))
-                .toList(),
           ),
         ),
         Positioned(
@@ -752,7 +779,7 @@ class _ImageSliderState extends State<ImageSlider> {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              color: Colors.black.withOpacity(0.3),
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.3),
@@ -767,6 +794,7 @@ class _ImageSliderState extends State<ImageSlider> {
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
+                  color: Colors.white,
                 ),
               ),
             ),
