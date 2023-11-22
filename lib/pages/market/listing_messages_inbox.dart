@@ -44,7 +44,8 @@ class _ListingMessagesInboxState extends ConsumerState<ListingMessagesInbox> {
           debugPrint("testing the print ${receivedFrom.length}");
           if (receivedFrom.isNotEmpty) {
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
               child: ListView.builder(
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
@@ -145,8 +146,6 @@ class _ListingMessagesInboxState extends ConsumerState<ListingMessagesInbox> {
           }
         },
       ),
-      bottomNavigationBar:
-          BottomNavSelectedListing(listingId: widget.listingId),
     );
   }
 }

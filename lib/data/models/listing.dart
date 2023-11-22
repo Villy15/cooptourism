@@ -40,7 +40,6 @@ class ListingModel {
     this.pax,
     this.ownerMember,
   });
-  
 
   ListingModel copyWith({
     String? id,
@@ -109,18 +108,27 @@ class ListingModel {
       id: id,
       owner: map['owner'] != null ? map['owner'] as String : null,
       title: map['title'] != null ? map['title'] as String : null,
-      description: map['description'] != null ? map['description'] as String : null,
-      cooperativeOwned: map['cooperativeOwned'] != null ? map['cooperativeOwned'] as String : null,
+      description:
+          map['description'] != null ? map['description'] as String : null,
+      cooperativeOwned: map['cooperativeOwned'] != null
+          ? map['cooperativeOwned'] as String
+          : null,
       city: map['city'] != null ? map['city'] as String : null,
       province: map['province'] != null ? map['province'] as String : null,
       category: map['category'] != null ? map['category'] as String : null,
       rating: map['rating'] != null ? map['rating'] as num : null,
-      roles: map['roles'] != null ? Map<String, dynamic>.from((map['roles'] as Map<String, dynamic>)) : null,
-      tasks: map['tasks'] != null ? Map<String, dynamic>.from((map['tasks'] as Map<String, dynamic>)) : null,
+      roles: map['roles'] != null
+          ? Map<String, dynamic>.from((map['roles'] as Map<String, dynamic>))
+          : null,
+      tasks: map['tasks'] != null
+          ? Map<String, dynamic>.from((map['tasks'] as Map<String, dynamic>))
+          : null,
       price: map['price'] != null ? map['price'] as num : null,
       type: map['type'] != null ? map['type'] as String : null,
       postDate: map['postDate'] != null ? map['postDate'] as Timestamp : null,
-      images: map['images'] != null ? List<dynamic>.from((map['images'] as List<dynamic>)) : null,
+      images: map['images'] != null
+          ? List<dynamic>.from((map['images'] as List<dynamic>))
+          : null,
       pax: map['pax'] != null ? map['pax'] as num : null,
       // ownerMember: map['ownerMember'] != null ? map['ownerMember'] as String : null,
     );
@@ -128,11 +136,11 @@ class ListingModel {
 
   String toJson() => json.encode(toMap());
 
-  factory ListingModel.fromJson(String source) => ListingModel.fromMap("", json.decode(source) as Map<String, dynamic>);
+  factory ListingModel.fromJson(String source) =>
+      ListingModel.fromMap("", json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
-    return 'ListingModel(id: $id, owner: $owner, title: $title, description: $description, cooperativeOwned: $cooperativeOwned, city: $city, province: $province, category: $category, rating: $rating, roles: $roles, tasks: $tasks, price: $price, type: $type, postDate: $postDate, images: $images, pax: $pax)';//, ownerMember: $ownerMember)';
+    return 'ListingModel(id: $id, owner: $owner, title: $title, description: $description, cooperativeOwned: $cooperativeOwned, city: $city, province: $province, category: $category, rating: $rating, roles: $roles, tasks: $tasks, price: $price, type: $type, postDate: $postDate, images: $images, pax: $pax)'; //, ownerMember: $ownerMember)';
   }
-
 }

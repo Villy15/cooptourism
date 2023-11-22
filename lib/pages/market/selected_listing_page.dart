@@ -2,11 +2,14 @@
 
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/models/review.dart';
+import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/data/repositories/review_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/pages/market/customer/book_service.dart';
 import 'package:cooptourism/pages/market/customer/buy_product.dart';
+import 'package:cooptourism/pages/market/listing_edit.dart';
+import 'package:cooptourism/pages/market/listing_messages_inbox.dart';
 import 'package:cooptourism/providers/home_page_provider.dart';
 import 'package:cooptourism/providers/user_provider.dart';
 import 'package:cooptourism/widgets/bottom_nav_selected_listing.dart';
@@ -20,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 final UserRepository userRepository = UserRepository();
 
@@ -44,8 +48,7 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
     });
   }
 
-  int navigationRailIndex = 0;
-  bool railVisibility = false;
+  int railIndex = 0;
   @override
   Widget build(BuildContext context) {
     final ListingRepository listingRepository = ListingRepository();
@@ -124,355 +127,57 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
             }
 
             final listing = snapshot.data!;
-
-            return StreamBuilder<List<ReviewModel>>(
-              stream: reviews,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final reviews = snapshot.data!;
-                return ListView(
-                  padding: const EdgeInsets.only(top: 0),
-                  children: [
-                    ImageSlider(listing: listing),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 14),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 14.0),
-                            child: DisplayText(
-                                text: listing.title!,
-                                lines: 1,
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                )),
-                          ),
-                          // Padding(
-                          //   padding: const EdgeInsets.only(bottom: 10.0),
-                          //   child: DisplayText(
-                          //       text: "₱${listing.price!.toStringAsFixed(2)}",
-                          //       lines: 1,
-                          //       style: const TextStyle(
-                          //         fontSize: 18,
-                          //         fontWeight: FontWeight.w500,
-                          //       )),
-                          // ),
-                          DisplayText(
-                            text:
-                                "Location: ${listing.province ?? ''}, ${listing.city ?? ''}",
-                            lines: 4,
-                            style: TextStyle(
-                                fontSize: Theme.of(context)
-                                    .textTheme
-                                    .labelLarge
-                                    ?.fontSize),
-                          ),
-                          DisplayText(
-                            text:
-                                "${listing.pax ?? 1} guests · ${listing.type ?? ''} · ${listing.category ?? ''}",
-                            lines: 1,
-                            style: TextStyle(
-                                fontSize: Theme.of(context)
-                                    .textTheme
-                                    .labelLarge
-                                    ?.fontSize),
-                          ),
-                          Row(
-                            children: [
-                              Icon(Icons.star_rounded,
-                                  color: Theme.of(context).colorScheme.primary),
-                              const SizedBox(width: 5),
-                              DisplayText(
-                                text: "${listing.rating ?? 0}",
-                                lines: 1,
-                                style: TextStyle(
-                                    fontSize: Theme.of(context)
-                                        .textTheme
-                                        .labelLarge
-                                        ?.fontSize),
-                              ),
-                              const SizedBox(width: 5),
-                              TextButton(
-                                  onPressed: () {
-                                    // Show snackbar with reviews
-                                    showSnackBar(context, 'Reviews');
-                                  },
-                                  child: const Text('13 reviews',
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          decoration:
-                                              TextDecoration.underline))),
-                            ],
-                          ),
-
-                          const Divider(),
-
-                          DisplayText(
-                            text: 'Description',
-                            lines: 1,
-                            style: TextStyle(
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.fontSize,
-                            ),
-                          ),
-
-                          const SizedBox(
-                            height: 10,
-                          ),
-
-                          descriptionText(listing, context),
-
-                          const Divider(),
-
-                          // Where you'll sleep
-                          DisplayText(
-                            text: 'Where you\'ll sleep',
-                            lines: 1,
-                            style: TextStyle(
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.fontSize,
-                            ),
-                          ),
-
-                          // Generate me a list of cards with an image, Bedroom 1, 2 queen beds that is scrollable horizontally
-                          SingleChildScrollView(
-                            clipBehavior: Clip.none,
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                Card(
-                                  elevation: 0,
-                                  surfaceTintColor:
-                                      Theme.of(context).colorScheme.background,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          width: 150,
-                                          height: 100,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            image: DecorationImage(
-                                              image: NetworkImage(images[0]),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Text(bedrooms[0],
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelLarge!),
-                                        Text(beds[0]),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Card(
-                                  elevation: 0,
-                                  surfaceTintColor:
-                                      Theme.of(context).colorScheme.background,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          width: 150,
-                                          height: 100,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            image: DecorationImage(
-                                              image: NetworkImage(images[0]),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Text(bedrooms[1],
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelLarge!),
-                                        Text(beds[1]),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Card(
-                                  elevation: 0,
-                                  surfaceTintColor:
-                                      Theme.of(context).colorScheme.background,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          width: 150,
-                                          height: 100,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            image: DecorationImage(
-                                              image: NetworkImage(images[0]),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Text(bedrooms[2],
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelLarge!),
-                                        Text(beds[2]),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          const Divider(),
-
-                          DisplayText(
-                            text: 'Where you\'ll go',
-                            lines: 1,
-                            style: TextStyle(
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.fontSize,
-                            ),
-                          ),
-
-                          Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16.0, right: 16.0),
-                              child: Column(
-                                children: [
-                                  const Row(
-                                    children: [
-                                      // Make the icon smaller
-                                      // Icon(
-                                      //   Icons.location_on_outlined,
-                                      //   color: Theme.of(context)
-                                      //       .colorScheme
-                                      //       .primary,
-                                      //   size: 16,
-                                      // ),
-                                      // const SizedBox(width: 10),
-                                      Text('',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.normal,
-                                              fontSize: 14)),
-                                    ],
-                                  ),
-                                  Container(
-                                    width: 350,
-                                    height: 200,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.1),
-                                    child: Center(
-                                      child: Text("Map Placeholder",
-                                          style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary)),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                ],
-                              )),
-
-                          const Divider(),
-
-                          // Hosted by owner
-                          ListTile(
-                            leading: DisplayImage(
-                                path: '${listing.owner}/images/pfp.jpg',
-                                height: 40,
-                                width: 40,
-                                radius: BorderRadius.circular(20)),
-                            // Contact owner
-                            trailing: IconButton(
-                              onPressed: () {
-                                // Show snackbar with reviews
-                                showSnackBar(context, 'Contact owner');
-                              },
-                              icon: const Icon(Icons.message_rounded),
-                            ),
-                            title: Text(
-                                'Hosted by ${listing.ownerMember ?? 'Timothy Mendoza'}',
-                                style: Theme.of(context).textTheme.labelLarge),
-                            subtitle: Text(
-                                listing.cooperativeOwned ??
-                                    'Iwahori Multi-Purpose Cooperative',
-                                style: Theme.of(context).textTheme.bodySmall),
-                          ),
-
-                          const Divider(),
-
-                          const SizedBox(
-                            height: 100,
-                          ),
-
-                          // Padding(
-                          //   padding: const EdgeInsets.only(top: 20.0),
-                          //   child: DisplayText(
-                          //     text: "Reviews",
-                          //     lines: 1,
-                          //     style: Theme.of(context).textTheme.labelLarge!,
-                          //   ),
-                          // ),
-                          // reviews.isEmpty
-                          //     ? const Center(child: Text('No reviews'))
-                          //     : ListView.builder(
-                          //         padding: const EdgeInsets.only(top: 0),
-                          //         physics: const NeverScrollableScrollPhysics(),
-                          //         shrinkWrap: true,
-                          //         itemCount: reviews.length,
-                          //         itemBuilder: (context, index) {
-                          //           final review = reviews[index];
-                          //           return ReviewCard(
-                          //             reviewModel: review,
-                          //           );
-                          //         },
-                          //       ),
-
-                          // if (role == 'Customer')
-                          // customerFunctions(context, listing)
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              },
-            );
+            CooperativesRepository cooperativesRepository =
+                CooperativesRepository();
+            Future<List<String>> cooperativeNames =
+                cooperativesRepository.getCooperativeNames(
+                    ref.watch(userModelProvider)!.cooperativesJoined!);
+            return FutureBuilder(
+                future: cooperativeNames,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  final names = snapshot.data!;
+                  return Stack(
+                    children: [
+                      if (railIndex == 0)
+                        viewListing(
+                          listing,
+                          context,
+                          showSnackBar,
+                          images,
+                          bedrooms,
+                          beds,
+                        ),
+                      if (railIndex == 1)
+                        ListingMessagesInbox(
+                          listingId: listing.id!,
+                        ),
+                      if (railIndex == 2)
+                        ListingEdit(
+                          listingId: listing.id!,
+                        ),
+                      if (ref.watch(userModelProvider)!.role == "Manager" &&
+                          names.contains(listing.cooperativeOwned) == true)
+                        ManagerMenu(
+                          railIndex: railIndex,
+                          onDestinationSelected: (index) {
+                            setState(() {
+                              railIndex = index;
+                            });
+                          },
+                          listingId: widget.listingId,
+                        ),
+                    ],
+                  );
+                });
           },
         ),
-        bottomNavigationBar: role == 'Customer'
+        bottomNavigationBar: railIndex == 0
             ? BottomAppBar(
                 surfaceTintColor: Colors.white,
                 height: 90,
@@ -490,8 +195,339 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                       return customerRow(listing);
                     }),
               )
-            : BottomNavSelectedListing(listingId: widget.listingId),
+            : null,
       ),
+    );
+  }
+
+  ListView viewListing(
+      ListingModel listing,
+      BuildContext context,
+      void Function(BuildContext context, String text) showSnackBar,
+      List<String> images,
+      List<String> bedrooms,
+      List<String> beds) {
+    return ListView(
+      padding: const EdgeInsets.only(top: 0),
+      children: [
+        ImageSlider(listing: listing),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 14.0),
+                child: DisplayText(
+                    text: listing.title!,
+                    lines: 1,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    )),
+              ),
+              // Padding(
+              //   padding: const EdgeInsets.only(bottom: 10.0),
+              //   child: DisplayText(
+              //       text: "₱${listing.price!.toStringAsFixed(2)}",
+              //       lines: 1,
+              //       style: const TextStyle(
+              //         fontSize: 18,
+              //         fontWeight: FontWeight.w500,
+              //       )),
+              // ),
+              DisplayText(
+                text:
+                    "Location: ${listing.province ?? ''}, ${listing.city ?? ''}",
+                lines: 4,
+                style: TextStyle(
+                    fontSize: Theme.of(context).textTheme.labelLarge?.fontSize),
+              ),
+              DisplayText(
+                text:
+                    "${listing.pax ?? 1} guests · ${listing.type ?? ''} · ${listing.category ?? ''}",
+                lines: 1,
+                style: TextStyle(
+                    fontSize: Theme.of(context).textTheme.labelLarge?.fontSize),
+              ),
+              Row(
+                children: [
+                  Icon(Icons.star_rounded,
+                      color: Theme.of(context).colorScheme.primary),
+                  const SizedBox(width: 5),
+                  DisplayText(
+                    text: "${listing.rating ?? 0}",
+                    lines: 1,
+                    style: TextStyle(
+                        fontSize:
+                            Theme.of(context).textTheme.labelLarge?.fontSize),
+                  ),
+                  const SizedBox(width: 5),
+                  TextButton(
+                      onPressed: () {
+                        // Show snackbar with reviews
+                        showSnackBar(context, 'Reviews');
+                      },
+                      child: const Text('13 reviews',
+                          style: TextStyle(
+                              fontSize: 12,
+                              decoration: TextDecoration.underline))),
+                ],
+              ),
+
+              const Divider(),
+
+              DisplayText(
+                text: 'Description',
+                lines: 1,
+                style: TextStyle(
+                  fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
+                ),
+              ),
+
+              const SizedBox(
+                height: 10,
+              ),
+
+              descriptionText(listing, context),
+
+              const Divider(),
+
+              // Where you'll sleep
+              DisplayText(
+                text: 'Where you\'ll sleep',
+                lines: 1,
+                style: TextStyle(
+                  fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
+                ),
+              ),
+
+              // Generate me a list of cards with an image, Bedroom 1, 2 queen beds that is scrollable horizontally
+              SingleChildScrollView(
+                clipBehavior: Clip.none,
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    Card(
+                      elevation: 0,
+                      surfaceTintColor:
+                          Theme.of(context).colorScheme.background,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 150,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                  image: NetworkImage(images[0]),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(bedrooms[0],
+                                style: Theme.of(context).textTheme.labelLarge!),
+                            Text(beds[0]),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Card(
+                      elevation: 0,
+                      surfaceTintColor:
+                          Theme.of(context).colorScheme.background,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 150,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                  image: NetworkImage(images[0]),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(bedrooms[1],
+                                style: Theme.of(context).textTheme.labelLarge!),
+                            Text(beds[1]),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Card(
+                      elevation: 0,
+                      surfaceTintColor:
+                          Theme.of(context).colorScheme.background,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 150,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                  image: NetworkImage(images[0]),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(bedrooms[2],
+                                style: Theme.of(context).textTheme.labelLarge!),
+                            Text(beds[2]),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const Divider(),
+
+              DisplayText(
+                text: 'Where you\'ll go',
+                lines: 1,
+                style: TextStyle(
+                  fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
+                ),
+              ),
+
+              Padding(
+                  padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                  child: Column(
+                    children: [
+                      const Row(
+                        children: [
+                          // Make the icon smaller
+                          // Icon(
+                          //   Icons.location_on_outlined,
+                          //   color: Theme.of(context)
+                          //       .colorScheme
+                          //       .primary,
+                          //   size: 16,
+                          // ),
+                          // const SizedBox(width: 10),
+                          Text('',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal, fontSize: 14)),
+                        ],
+                      ),
+                      Container(
+                        width: 350,
+                        height: 200,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.1),
+                        child: Center(
+                          child: Text("Map Placeholder",
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.primary)),
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+                    ],
+                  )),
+
+              const Divider(),
+
+              // Hosted by owner
+              ListTile(
+                leading: DisplayImage(
+                    path: '${listing.owner}/images/pfp.jpg',
+                    height: 40,
+                    width: 40,
+                    radius: BorderRadius.circular(20)),
+                // Contact owner
+                trailing: IconButton(
+                  onPressed: () {
+                    // Show snackbar with reviews
+                    showSnackBar(context, 'Contact owner');
+                  },
+                  icon: const Icon(Icons.message_rounded),
+                ),
+                title: Text(
+                    'Hosted by ${listing.ownerMember ?? 'Timothy Mendoza'}',
+                    style: Theme.of(context).textTheme.labelLarge),
+                subtitle: Text(
+                    listing.cooperativeOwned ??
+                        'Iwahori Multi-Purpose Cooperative',
+                    style: Theme.of(context).textTheme.bodySmall),
+              ),
+
+              const Divider(),
+
+              const SizedBox(
+                height: 100,
+              ),
+              // StreamBuilder<List<ReviewModel>>(
+              //   stream: reviews,
+              //   builder: (context, snapshot) {
+              //     if (snapshot.hasError) {
+              //       return Text('Error: ${snapshot.error}');
+              //     }
+
+              //     if (snapshot.connectionState ==
+              //         ConnectionState.waiting) {
+              //       return const Center(
+              //           child: CircularProgressIndicator());
+              //     }
+              //     final reviews = snapshot.data!;
+              //     return Padding(
+              //       padding: const EdgeInsets.only(top: 20.0),
+              //       child: Column(
+              //         children: [
+              //           DisplayText(
+              //             text: "Reviews",
+              //             lines: 1,
+              //             style: Theme.of(context)
+              //                 .textTheme
+              //                 .labelLarge!,
+              //           ),
+              //           reviews.isEmpty
+              //               ? const Center(
+              //                   child: Text('No reviews'))
+              //               : ListView.builder(
+              //                   padding:
+              //                       const EdgeInsets.only(top: 0),
+              //                   physics:
+              //                       const NeverScrollableScrollPhysics(),
+              //                   shrinkWrap: true,
+              //                   itemCount: reviews.length,
+              //                   itemBuilder: (context, index) {
+              //                     final review = reviews[index];
+              //                     return ReviewCard(
+              //                       reviewModel: review,
+              //                     );
+              //                   },
+              //                 ),
+              //         ],
+              //       ),
+              //     );
+              //   },
+              // ),
+
+              // if (role == 'Customer')
+              // customerFunctions(context, listing)
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -796,6 +832,95 @@ class _ImageSliderState extends State<ImageSlider> {
         //   ),
         // ),
       ],
+    );
+  }
+}
+
+class ManagerMenu extends StatefulWidget {
+  final int railIndex;
+  final Function onDestinationSelected;
+  final String listingId;
+  const ManagerMenu({
+    super.key,
+    required this.railIndex,
+    required this.onDestinationSelected,
+    required this.listingId,
+  });
+
+  @override
+  State<ManagerMenu> createState() => _ManagerMenuState();
+}
+
+class _ManagerMenuState extends State<ManagerMenu> {
+  bool railVisibility = false;
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      right: 0,
+      child: SizedBox(
+        height: MediaQuery.sizeOf(context).height,
+        child: Row(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    bottomLeft: Radius.circular(20)),
+              ),
+              child: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      railVisibility = !railVisibility;
+                    });
+                  },
+                  icon: const Icon(Icons.settings_accessibility_rounded)),
+            ),
+            if (railVisibility == true)
+              Container(
+                height: MediaQuery.sizeOf(context).height,
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        bottomLeft: Radius.circular(20))),
+                child: NavigationRail(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  minWidth: 56,
+                  selectedIndex: widget.railIndex,
+                  groupAlignment: 0,
+                  unselectedIconTheme: IconThemeData(
+                      color: Theme.of(context).colorScheme.background),
+                  onDestinationSelected: (int index) {
+                    widget.onDestinationSelected(index);
+                  },
+                  labelType: NavigationRailLabelType.none,
+                  destinations: const <NavigationRailDestination>[
+                    NavigationRailDestination(
+                      icon: Icon(Icons.remove_red_eye_rounded),
+                      selectedIcon: Icon(Icons.remove_red_eye_rounded),
+                      label: Text('View'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.message_rounded),
+                      selectedIcon: Icon(Icons.message_rounded),
+                      label: Text('Chat'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.edit_outlined),
+                      selectedIcon: Icon(Icons.edit_outlined),
+                      label: Text('Edit'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.task),
+                      selectedIcon: Icon(Icons.task),
+                      label: Text('Tasks'),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

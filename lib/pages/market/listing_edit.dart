@@ -102,8 +102,9 @@ class _ListingEditState extends ConsumerState<ListingEdit> {
                                     .showSnackBar(snackBar);
 
                                 ref
-                                    .read(bottomNavSelectedListingControllerProvider
-                                        .notifier)
+                                    .read(
+                                        bottomNavSelectedListingControllerProvider
+                                            .notifier)
                                     .setPosition(1);
                                 context.pop();
                               },
@@ -117,8 +118,6 @@ class _ListingEditState extends ConsumerState<ListingEdit> {
                 ),
               ),
             ),
-            bottomNavigationBar:
-                BottomNavSelectedListing(listingId: widget.listingId),
           );
         });
   }
