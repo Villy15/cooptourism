@@ -1,7 +1,7 @@
 import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/providers/bottom_nav_selected_listing_provider.dart';
-import 'package:cooptourism/widgets/bottom_nav_selected_listing.dart';
+// import 'package:cooptourism/widgets/bottom_nav_selected_listing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

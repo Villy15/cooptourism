@@ -7,12 +7,13 @@ import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/data/repositories/review_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
 import 'package:cooptourism/pages/market/customer/book_service.dart';
-import 'package:cooptourism/pages/market/customer/buy_product.dart';
+// import 'package:cooptourism/pages/market/customer/buy_product.dart';
 import 'package:cooptourism/pages/market/listing_edit.dart';
 import 'package:cooptourism/pages/market/listing_messages_inbox.dart';
+import 'package:cooptourism/pages/market/map_page.dart';
 import 'package:cooptourism/providers/home_page_provider.dart';
 import 'package:cooptourism/providers/user_provider.dart';
-import 'package:cooptourism/widgets/bottom_nav_selected_listing.dart';
+// import 'package:cooptourism/widgets/bottom_nav_selected_listing.dart';
 import 'package:cooptourism/widgets/display_image.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 import 'package:cooptourism/widgets/leading_back_button.dart';
@@ -21,7 +22,7 @@ import 'package:cooptourism/widgets/leading_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+// import 'package:go_router/go_router.dart';
 
 final UserRepository userRepository = UserRepository();
 
@@ -408,34 +409,13 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                   padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                   child: Column(
                     children: [
-                      const Row(
-                        children: [
-                          // Make the icon smaller
-                          // Icon(
-                          //   Icons.location_on_outlined,
-                          //   color: Theme.of(context)
-                          //       .colorScheme
-                          //       .primary,
-                          //   size: 16,
-                          // ),
-                          // const SizedBox(width: 10),
-                          Text('',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 14)),
-                        ],
-                      ),
-                      Container(
+                      const SizedBox(height: 16.0),
+                      SizedBox(
                         width: 350,
                         height: 200,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withOpacity(0.1),
-                        child: Center(
-                          child: Text("Map Placeholder",
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.primary)),
+                        child: MapSample(
+                          address:
+                              '${listing.province ?? ''}, ${listing.city ?? 'Philippines'}',
                         ),
                       ),
                       const SizedBox(height: 16.0),
