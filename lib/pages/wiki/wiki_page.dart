@@ -221,6 +221,7 @@ class _WikiPageState extends State<WikiPage> {
               children: [
                 Expanded(
                   child: Text(
+                    maxLines: 1,
                     wiki.title ?? 'No title',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
@@ -240,6 +241,7 @@ class _WikiPageState extends State<WikiPage> {
             ),
             const SizedBox(height: 10),
             Text(
+              maxLines: 2,
               wiki.description ?? 'No description',
               style: const TextStyle(fontSize: 14),
             ),

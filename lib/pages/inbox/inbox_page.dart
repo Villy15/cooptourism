@@ -1,4 +1,5 @@
 import 'package:cooptourism/providers/home_page_provider.dart';
+// import 'package:cooptourism/providers/user_provider.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -51,7 +52,10 @@ class _InboxPageState extends ConsumerState<InboxPage> {
         return true;
       },
       child: Scaffold(
-          appBar: _appBar(context, 'Inbox'),
+          appBar: InboxAppBar(
+            title: 'Inbox',
+            onTabChange: (controller) {},
+          ),
           body: SingleChildScrollView(
             child: ListView.separated(
               itemCount: _users.length,
@@ -95,39 +99,161 @@ class _InboxPageState extends ConsumerState<InboxPage> {
     );
   }
 
-  AppBar _appBar(BuildContext context, String title) {
-    return AppBar(
-      toolbarHeight: 70,
-      title: Text(title,
-          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
-      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
-      leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          color: Theme.of(context).colorScheme.primary,
-          onPressed: () {
-            GoRouter.of(context).go('/menu_page');
-            _updateNavBarAndAppBarVisibility(true);
-          }),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-            child: IconButton(
-              onPressed: () {
-                // showAddPostPage(context);
-              },
-              icon: const Icon(
-                Icons.message,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _appBar(BuildContext context, String title) {
+  //   List<Widget> tabs = [
+  //     const SizedBox(
+  //       child: Tab(
+  //         icon: Icon(Icons.person),
+  //         child: Flexible(child: Text('Individual')),
+  //       ),
+  //     ),
+  //     const SizedBox(
+  //       child: Tab(
+  //         icon: Icon(Icons.group),
+  //         child: Flexible(child: Text('Groups')),
+  //       ),
+  //     ),
+  //   ];
+
+  //   return DefaultTabController(
+  //     length: tabs.length,
+  //     child: AppBar(
+  //       bottom: TabBar(
+  //         tabs: tabs,
+  //       ),
+  //       toolbarHeight: 70,
+  //       title: Text(title,
+  //           style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+  //       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
+  //       leading: IconButton(
+  //           icon: const Icon(Icons.arrow_back),
+  //           color: Theme.of(context).colorScheme.primary,
+  //           onPressed: () {
+  //             GoRouter.of(context).go('/menu_page');
+  //             _updateNavBarAndAppBarVisibility(true);
+  //           }),
+  //       actions: [
+  //         Padding(
+  //           padding: const EdgeInsets.only(right: 16.0),
+  //           child: CircleAvatar(
+  //             child: IconButton(
+  //               onPressed: () {
+  //                 // showAddPostPage(context);
+  //               },
+  //               icon: const Icon(
+  //                 Icons.message,
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   void _updateNavBarAndAppBarVisibility(bool isVisible) {
     ref.read(navBarVisibilityProvider.notifier).state = isVisible;
     ref.read(appBarVisibilityProvider.notifier).state = isVisible;
+  }
+}
+
+class InboxAppBar extends ConsumerStatefulWidget
+    implements PreferredSizeWidget {
+  final String title;
+  final Function(TabController) onTabChange;
+  const InboxAppBar({
+    super.key,
+    required this.title,
+    required this.onTabChange,
+  });
+
+  @override
+  ConsumerState<InboxAppBar> createState() => _InboxAppBarState();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 75);
+}
+
+class _InboxAppBarState extends ConsumerState<InboxAppBar>
+    with SingleTickerProviderStateMixin {
+  late TabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(length: 2, vsync: this);
+    tabController.addListener(() {
+      widget.onTabChange(tabController);
+    });
+  }
+
+  @override
+  void dispose() {
+    tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final user = ref.watch(userModelProvider);
+
+    List<Widget> tabs = [
+      const SizedBox(
+        child: Tab(
+          icon: Icon(Icons.person),
+          child: Flexible(child: Text('Individuals')),
+        ),
+      ),
+      const SizedBox(
+        child: Tab(
+          icon: Icon(Icons.group),
+          child: Flexible(child: Text('Groups')),
+        ),
+      ),
+    ];
+
+    // void updateNavBarAndAppBarVisibility(bool isVisible) {
+    //   ref.read(navBarVisibilityProvider.notifier).state = isVisible;
+    //   ref.read(appBarVisibilityProvider.notifier).state = isVisible;
+    // }
+
+    return DefaultTabController(
+      length: tabs.length,
+      initialIndex: 0,
+      child: AppBar(
+        // Style the icons
+        bottom: TabBar(
+          controller: tabController,
+          tabs: tabs,
+        ),
+        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
+        toolbarHeight: 70,
+        title: Text(widget.title,
+            style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back),
+        //   color: Theme.of(context).colorScheme.primary,
+        //   onPressed: () {
+        //     // GoRouter.of(context).go('/menu_page');
+        //     // updateNavBarAndAppBarVisibility(true);
+        //   },
+        // ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: CircleAvatar(
+              child: IconButton(
+                onPressed: () {
+                  // showAddPostPage(context);
+                },
+                icon: const Icon(
+                  Icons.message,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
