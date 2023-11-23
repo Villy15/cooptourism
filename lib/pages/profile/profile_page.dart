@@ -832,6 +832,7 @@ class _ProfilePageState extends State<ProfilePage> {
               return ListView.builder(
                   itemCount: posts.length,
                   shrinkWrap: true,
+                  physics:const  NeverScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   itemBuilder: ((context, index) {
                     final post = posts[index];

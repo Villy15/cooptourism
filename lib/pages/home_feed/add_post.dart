@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooptourism/data/models/poll_posts.dart';
 import 'package:cooptourism/data/models/post.dart';
 import 'package:cooptourism/data/models/user.dart';
 // import 'package:cooptourism/data/models/user_chart.dart';
@@ -21,6 +22,11 @@ class AddPostPageState extends State<AddPostPage> {
 
   // Add type anotation
   late final UserModel userPosting;
+
+  List<TextEditingController> _optionController = [
+    TextEditingController(),
+  ];
+  TextEditingController _pollTitleController = TextEditingController();
 
   @override
   void dispose() {
@@ -51,7 +57,9 @@ class AddPostPageState extends State<AddPostPage> {
     final author = '${userPosting.firstName!} ${userPosting.lastName!}';
     final content = _contentController.text.trim();
     final timestamp = Timestamp.now();
-    if (content.isNotEmpty) {
+    if (content.isNotEmpty &&
+        _pollTitleController.text.isEmpty &&
+        _optionController.isEmpty) {
       try {
         final post = PostModel(
           uid: '',
@@ -95,6 +103,66 @@ class AddPostPageState extends State<AddPostPage> {
         _contentFocusNode.requestFocus();
         // Close the keyboard
       }
+    } else if (content.isNotEmpty &&
+        _pollTitleController.text.isNotEmpty &&
+        _optionController.isNotEmpty) {
+      try {
+        final author = '${userPosting.firstName!} ${userPosting.lastName!}';
+        final content = _contentController.text.trim();
+        final timestamp = Timestamp.now();
+
+        final post = PostModel(
+          uid: '',
+          author: author,
+          authorId: userPosting.uid,
+          authorType: userPosting.role,
+          content: content,
+          likes: [],
+          dislikes: [],
+          comments: [],
+          timestamp: timestamp,
+          images: [],
+        );
+
+        final poll = PollPostModel(
+          uid: '',
+          title: _pollTitleController.text.trim(),
+          options: _optionController.map((e) => e.text.trim()).toList(),
+          votes: {
+            for (var e in _optionController.map((e) => e.text.trim()).toList())
+              e: []
+          },
+        );
+
+        final String postId = await _postRepository.addPost(post);
+        await _postRepository.addPollPost(postId, poll);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Post added successfully!'),
+            ),
+          );
+
+          FocusScope.of(context).unfocus();
+          Navigator.of(context).pop();
+        }        
+
+
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to add post!'),
+            ),
+          );
+        }
+      } finally {
+        // Clear the text field
+        _contentController.clear();
+        // Request focus again
+        _contentFocusNode.requestFocus();
+        // Close the keyboard
+      }
     }
   }
 
@@ -113,6 +181,10 @@ class AddPostPageState extends State<AddPostPage> {
           ),
         ),
         actions: [
+          IconButton(
+            onPressed: createPoll,
+            icon: const Icon(Icons.poll_sharp, color: Colors.white),
+          ),
           IconButton(
             onPressed: _submitForm,
             icon: const Icon(Icons.post_add),
@@ -157,6 +229,81 @@ class AddPostPageState extends State<AddPostPage> {
           ],
         ),
       ),
+    );
+  }
+
+  void createPoll() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Create a poll'),
+              actions: [
+                TextButton(
+                  child: const Text('Create'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    // clears the _optionController list and polls title
+                    _pollTitleController.clear();
+                    _optionController.clear();
+                    _optionController.add(TextEditingController());
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+              content: Column(
+                children: [
+                  TextFormField(
+                    controller: _pollTitleController,
+                    decoration: const InputDecoration(
+                      hintText: 'Poll Title',
+                    ),
+                  ),
+                  ..._optionController.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    TextEditingController controller = entry.value;
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: controller,
+                            decoration: InputDecoration(
+                              hintText: 'Option ${index + 1}',
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {
+                            setState(() {
+                              _optionController.removeAt(index);
+                            });
+                          },
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                  TextButton(
+                    child: const Text('Add option'),
+                    onPressed: () {
+                      setState(() {
+                        _optionController.add(TextEditingController());
+                      });
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
