@@ -2,6 +2,8 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
+import 'package:cooptourism/data/models/task.dart';
 
 class ListingModel {
   String? id = "";
@@ -13,14 +15,16 @@ class ListingModel {
   String? province = "";
   String? category = "";
   num? rating = 0;
-  Map<String, dynamic>? roles = {};
-  Map<String, dynamic>? tasks = {};
+  Map<String, List<String>>? roles = {};
+  List<ToDoItem>? tasks = [];
   num? price = 0;
   String? type = "";
   Timestamp? postDate = Timestamp.now();
   List<dynamic>? images = [];
   num? pax = 0;
   String? ownerMember = "";
+  bool? isPublished = false;
+
   ListingModel({
     this.id,
     this.owner,
@@ -39,6 +43,7 @@ class ListingModel {
     this.images,
     this.pax,
     this.ownerMember,
+    this.isPublished,
   });
 
   ListingModel copyWith({
@@ -51,13 +56,14 @@ class ListingModel {
     String? province,
     String? category,
     num? rating,
-    Map<String, dynamic>? roles,
-    Map<String, dynamic>? tasks,
+    Map<String, List<String>>? roles,
+    List<ToDoItem>? tasks,
     num? price,
     String? type,
     Timestamp? postDate,
     List<dynamic>? images,
     num? pax,
+    bool? isPublished,
     // String? ownerMember,
   }) {
     return ListingModel(
@@ -77,6 +83,7 @@ class ListingModel {
       postDate: postDate ?? this.postDate,
       images: images ?? this.images,
       pax: pax ?? this.pax,
+      isPublished: isPublished ?? this.isPublished,
       // ownerMember: ownerMember ?? this.ownerMember,
     );
   }
@@ -99,6 +106,7 @@ class ListingModel {
       'postDate': postDate!.toDate(),
       'images': images,
       'pax': pax!,
+      'isPublished': isPublished!,
       // 'ownerMember': ownerMember,
     };
   }
@@ -118,10 +126,11 @@ class ListingModel {
       category: map['category'] != null ? map['category'] as String : null,
       rating: map['rating'] != null ? map['rating'] as num : null,
       roles: map['roles'] != null
-          ? Map<String, dynamic>.from((map['roles'] as Map<String, dynamic>))
+          ? Map<String, List<String>>.from(
+              (map['roles'] as Map<String, List<String>>))
           : null,
       tasks: map['tasks'] != null
-          ? Map<String, dynamic>.from((map['tasks'] as Map<String, dynamic>))
+          ? List<ToDoItem>.from((map['tasks'] as List<ToDoItem>))
           : null,
       price: map['price'] != null ? map['price'] as num : null,
       type: map['type'] != null ? map['type'] as String : null,
@@ -130,6 +139,8 @@ class ListingModel {
           ? List<dynamic>.from((map['images'] as List<dynamic>))
           : null,
       pax: map['pax'] != null ? map['pax'] as num : null,
+      isPublished:
+          map['isPublished'] != null ? map['paisPublishedx'] as bool : null,
       // ownerMember: map['ownerMember'] != null ? map['ownerMember'] as String : null,
     );
   }
@@ -141,6 +152,49 @@ class ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(id: $id, owner: $owner, title: $title, description: $description, cooperativeOwned: $cooperativeOwned, city: $city, province: $province, category: $category, rating: $rating, roles: $roles, tasks: $tasks, price: $price, type: $type, postDate: $postDate, images: $images, pax: $pax)'; //, ownerMember: $ownerMember)';
+    return 'ListingModel(id: $id, owner: $owner, title: $title, description: $description, cooperativeOwned: $cooperativeOwned, city: $city, province: $province, category: $category, rating: $rating, roles: $roles, tasks: $tasks ,price: $price, type: $type, postDate: $postDate, images: $images, pax: $pax, isPublished: $isPublished)'; //, ownerMember: $ownerMember)';
   }
 }
+
+// class RoleModel {
+//   String? roleName;
+//   List<String>? assigned;
+//   RoleModel({
+//     this.roleName,
+//     this.assigned,
+//   });
+
+//   RoleModel copyWith({
+//     String? roleName,
+//     List<String>? assigned,
+//   }) {
+//     return RoleModel(
+//       roleName: roleName ?? this.roleName,
+//       assigned: assigned ?? this.assigned,
+//     );
+//   }
+
+//   Map<String, dynamic> toMap() {
+//     return <String, dynamic>{
+//       'roleName': roleName,
+//       'assigned': assigned,
+//     };
+//   }
+
+//   factory RoleModel.fromMap(Map<String, dynamic> map) {
+//     return RoleModel(
+//       roleName: map['roleName'] != null ? map['roleName'] as String : null,
+//       assigned: map['assigned'] != null
+//           ? List<String>.from((map['assigned'] as List<String>))
+//           : null,
+//     );
+//   }
+
+//   String toJson() => json.encode(toMap());
+
+//   factory RoleModel.fromJson(String source) =>
+//       RoleModel.fromMap(json.decode(source) as Map<String, dynamic>);
+
+//   @override
+//   String toString() => 'RoleModel(roleName: $roleName, assigned: $assigned)';
+// }
