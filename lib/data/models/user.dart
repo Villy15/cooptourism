@@ -20,9 +20,6 @@ class UserModel {
   String? memberType;
   List<String>? currentListings; 
   // for testing purposes
-  String? monthlySales;
-  String? annualProfit;
-  String? totalSales;
   Timestamp? joinedAt;
   List<String>? cooperativesJoined;
   String? emailStatus;
@@ -46,9 +43,6 @@ class UserModel {
     this.bio,
     this.memberType,
     this.currentListings,
-    this.monthlySales,
-    this.annualProfit,
-    this.totalSales,
     this.joinedAt,
     this.cooperativesJoined,
     this.emailStatus
@@ -73,9 +67,6 @@ class UserModel {
       bio: json['bio'] ?? '',
       memberType: json['memberType'] ?? '',
       currentListings: json['currentListings'] != null ? List<String>.from(json['currentListings']) : [],
-      monthlySales: json['monthlySales'] ?? '',
-      annualProfit: json['annualProfit'] ?? '',
-      totalSales: json['totalSales'] ?? '',
       joinedAt: json['joined_at'] != null ? json['joined_at'] as Timestamp : null,
       cooperativesJoined: json['cooperativesJoined'] != null ? List<String>.from(json['cooperativesJoined']) : [],
       emailStatus: json['emailStatus'] ?? ''
@@ -100,9 +91,6 @@ class UserModel {
       'bio': bio ?? '',
       'memberType': memberType ?? '',
       'currentListings': currentListings ?? [],
-      'monthlySales': monthlySales ?? '',
-      'annualProfit': annualProfit ?? '',
-      'totalSales': totalSales ?? '',
       'joinedAt': joinedAt,
       'cooperativesJoined': cooperativesJoined ?? [],
       'emailStatus': emailStatus ?? ''
@@ -131,15 +119,12 @@ class UserModel {
     bio = user.bio;
     memberType = user.memberType;
     currentListings = user.currentListings;
-    monthlySales = user.monthlySales;
-    annualProfit = user.annualProfit;
-    totalSales = user.totalSales;
     joinedAt = user.joinedAt;
     cooperativesJoined = user.cooperativesJoined;
   }
 
   @override
   String toString() {
-    return 'UserModel(uid: $uid, email: $email, firstName: $firstName, lastName: $lastName, status: $status, userAccomplishment: $userAccomplishment, userRating: $userRating, userTrust: $userTrust, role: $role, profilePicture: $profilePicture, bio: $bio, location: $location, skills: $skills, featuredImgs: $featuredImgs, dateJoined: $dateJoined, memberType: $memberType, currentListings: $currentListings, monthlySales: $monthlySales, annualProfit: $annualProfit, totalSales: $totalSales, joinedAt: $joinedAt, cooperativesJoined: $cooperativesJoined, emailStatus: $emailStatus)';
+    return 'UserModel(uid: $uid, email: $email, firstName: $firstName, lastName: $lastName, status: $status, userAccomplishment: $userAccomplishment, userRating: $userRating, userTrust: $userTrust, role: $role, profilePicture: $profilePicture, bio: $bio, location: $location, skills: $skills, featuredImgs: $featuredImgs, dateJoined: $dateJoined, memberType: $memberType, currentListings: $currentListings,  joinedAt: $joinedAt, cooperativesJoined: $cooperativesJoined, emailStatus: $emailStatus)';
   }
 }

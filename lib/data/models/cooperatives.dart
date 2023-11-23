@@ -10,6 +10,9 @@ class CooperativesModel {
   String? city;
   String? logo;
   List<DocumentReference>? managers;
+  String? cooperativeType;
+  List<dynamic>? memberRequirements;
+  num? membershipFee;
 
 
 
@@ -21,7 +24,10 @@ class CooperativesModel {
     this.province,
     this.city,
     this.logo,
-    this.managers
+    this.managers,
+    this.cooperativeType,
+    this.memberRequirements,
+    this.membershipFee
   });
 
   factory CooperativesModel.fromJson(String docId, Map<String, dynamic> json) {
@@ -34,6 +40,9 @@ class CooperativesModel {
       city: json['city'],
       logo: json['logo'],
       managers: json['managers'],
+      cooperativeType: json['cooperativeType'],
+      memberRequirements: json['memberRequirements'],
+      membershipFee: json['membershipFee']
     );
   }
 
@@ -45,7 +54,10 @@ class CooperativesModel {
       'province': province,
       'city': city,
       'logo': logo,
-      'managers': managers
+      'managers': managers,
+      'cooperativeType': cooperativeType,
+      'memberRequirements': memberRequirements,
+      'membershipFee': membershipFee
     };
   }
 }
