@@ -2,7 +2,7 @@ import 'package:cooptourism/core/get_time_difference.dart';
 import 'package:cooptourism/data/models/message.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
-import 'package:cooptourism/widgets/bottom_nav_selected_listing.dart';
+// import 'package:cooptourism/widgets/bottom_nav_selected_listing.dart';
 import 'package:cooptourism/widgets/display_image.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 import 'package:flutter/material.dart';

@@ -5,7 +5,8 @@ import 'dart:convert';
 class CoopProvinceCityPicker extends StatefulWidget {
   final Function(String?, String?) onSelectionChanged;
 
-  const CoopProvinceCityPicker({Key? key, required this.onSelectionChanged}) : super(key: key);
+  const CoopProvinceCityPicker({Key? key, required this.onSelectionChanged})
+      : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -26,7 +27,8 @@ class _CoopProvinceCityPickerState extends State<CoopProvinceCityPicker> {
 
   fetchProvinces() async {
     try {
-      final response = await http.get(Uri.parse('https://psgc.gitlab.io/api/provinces.json'));
+      final response = await http
+          .get(Uri.parse('https://psgc.gitlab.io/api/provinces.json'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
@@ -37,7 +39,8 @@ class _CoopProvinceCityPickerState extends State<CoopProvinceCityPicker> {
             initProvinces.add({"code": e["code"], "name": e["name"]});
           }
 
-          initProvinces.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
+          initProvinces.sort(
+              (a, b) => (a['name'] as String).compareTo(b['name'] as String));
 
           // Update the state with the sorted list of provinces
           setState(() {
@@ -53,7 +56,8 @@ class _CoopProvinceCityPickerState extends State<CoopProvinceCityPicker> {
 
   fetchCities(String? provinceCode) async {
     try {
-      final response = await http.get(Uri.parse('https://psgc.gitlab.io/api/provinces/$provinceCode/cities.json'));
+      final response = await http.get(Uri.parse(
+          'https://psgc.gitlab.io/api/provinces/$provinceCode/cities.json'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
@@ -72,7 +76,7 @@ class _CoopProvinceCityPickerState extends State<CoopProvinceCityPicker> {
       }
     } catch (e) {
       // Handle error
-      print('Failed to fetch cities: $e');
+      debugPrint('Failed to fetch cities: $e');
     }
   }
 
@@ -84,7 +88,7 @@ class _CoopProvinceCityPickerState extends State<CoopProvinceCityPicker> {
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: Colors.grey.shade400),
+            border: Border.all(color: const Color.fromARGB(255, 105, 86, 86)),
           ),
           child: DropdownButtonFormField<String>(
             decoration: const InputDecoration(
@@ -94,7 +98,8 @@ class _CoopProvinceCityPickerState extends State<CoopProvinceCityPicker> {
             menuMaxHeight: 300,
             alignment: Alignment.center,
             value: provinces.isNotEmpty ? provinces[0]['name'] : null,
-            items: provinces.map<DropdownMenuItem<String>>((Map<String, dynamic> province) {
+            items: provinces
+                .map<DropdownMenuItem<String>>((Map<String, dynamic> province) {
               return DropdownMenuItem<String>(
                 value: province['name'],
                 child: Text(province['name']),
@@ -102,7 +107,8 @@ class _CoopProvinceCityPickerState extends State<CoopProvinceCityPicker> {
             }).toList(),
             onChanged: (String? value) {
               if (value != null) {
-                String? provinceCode = provinces.firstWhere((province) => province['name'] == value)['code'];
+                String? provinceCode = provinces.firstWhere(
+                    (province) => province['name'] == value)['code'];
                 fetchCities(provinceCode);
 
                 setState(() {
@@ -110,7 +116,8 @@ class _CoopProvinceCityPickerState extends State<CoopProvinceCityPicker> {
                 });
 
                 // Notify the parent widget about the selection
-                widget.onSelectionChanged(value, cities.isNotEmpty ? cities[0] : null);
+                widget.onSelectionChanged(
+                    value, cities.isNotEmpty ? cities[0] : null);
               }
             },
           ),

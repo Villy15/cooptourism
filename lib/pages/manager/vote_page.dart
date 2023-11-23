@@ -97,7 +97,6 @@ class _VotePageState extends ConsumerState<VotePage> {
           padding: const EdgeInsets.only(right: 16.0),
           child: user?.role == 'Manager'
               ? CircleAvatar(
-                  backgroundColor: Colors.grey.shade300,
                   child: IconButton(
                     onPressed: () {
                       Navigator.push(
@@ -105,7 +104,7 @@ class _VotePageState extends ConsumerState<VotePage> {
                           MaterialPageRoute(
                               builder: (context) => const AddVotePage()));
                     },
-                    icon: const Icon(Icons.add, color: Colors.white),
+                    icon: const Icon(Icons.add),
                   ),
                 )
               : Container(),
