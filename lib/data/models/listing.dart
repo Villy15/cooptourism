@@ -100,7 +100,7 @@ class ListingModel {
       'category': category,
       'rating': rating,
       'roles': roles,
-      'tasks': tasks,
+      'tasks': tasks!.map((x) => x.toMap()).toList(),
       'price': price,
       'type': type,
       'postDate': postDate!.toDate(),
@@ -140,7 +140,7 @@ class ListingModel {
           : null,
       pax: map['pax'] != null ? map['pax'] as num : null,
       isPublished:
-          map['isPublished'] != null ? map['paisPublishedx'] as bool : null,
+          map['isPublished'] != null ? map['isPublished'] as bool : null,
       // ownerMember: map['ownerMember'] != null ? map['ownerMember'] as String : null,
     );
   }

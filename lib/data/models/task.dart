@@ -114,7 +114,6 @@ class ToDoItem {
 
   ToDoItem copyWith({
     List<String>? owner,
-    String? description,
     String? referenceId,
     String? type,
     String? title,
@@ -124,7 +123,6 @@ class ToDoItem {
   }) {
     return ToDoItem(
       owner: owner ?? this.owner,
-      description: description ?? this.description,
       referenceId: referenceId ?? this.referenceId,
       type: type ?? this.type,
       title: title ?? this.title,
@@ -137,7 +135,6 @@ class ToDoItem {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'owner': owner,
-      'description': description,
       'referenceId': referenceId,
       'type': type,
       'title': title,
@@ -149,10 +146,9 @@ class ToDoItem {
 
   factory ToDoItem.fromMap(String id, Map<String, dynamic> map) {
     return ToDoItem(
-      owner: map['owner'] as List<String>,
-      description: map['description'] as String,
-      referenceId: map['referenceId'] as String,
-      type: map['type'] as String,
+      owner: map['owner'] as List<String>?,
+      referenceId: map['referenceId'] as String?,
+      type: map['type'] as String?,
       title: map['title'] as String,
       isChecked: map['isChecked'] as bool,
       proof: map['proof'] as String?,
@@ -167,5 +163,5 @@ class ToDoItem {
 
   @override
   String toString() =>
-      'ToDoItem(owner: $owner, description: $description, referenceId: $referenceId, type: $type, title: $title, isChecked: $isChecked , proof: $proof , date: $date)';
+      'ToDoItem(owner: $owner, referenceId: $referenceId, type: $type, title: $title, isChecked: $isChecked , proof: $proof , date: $date)';
 }

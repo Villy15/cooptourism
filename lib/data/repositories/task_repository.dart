@@ -55,6 +55,16 @@ class TaskRepository {
     }
   }
 
+  // Add a Task to Firestore
+  Future<void> addToDoItem(ToDoItem task) async {
+    try {
+      await tasksColleciton.add(task.toMap());
+    } catch (e) {
+      debugPrint('Error adding Task to Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
+  }
+
   // Read a Task from Firestore
   Future<TaskModel> getSpecificTask(String taskId) async {
     try {
@@ -68,7 +78,8 @@ class TaskRepository {
   }
 
   // Get task by referenceId using Future
-  Future<TaskModel?> getTaskByReferenceId(String? referenceId, String userId) async {
+  Future<TaskModel?> getTaskByReferenceId(
+      String? referenceId, String userId) async {
     try {
       final doc = await tasksColleciton
           .where('referenceId', isEqualTo: referenceId)
@@ -76,9 +87,8 @@ class TaskRepository {
           .get()
           .then((snapshot) {
         if (snapshot.docs.isNotEmpty) {
-          return TaskModel.fromMap(
-              snapshot.docs.first.id, snapshot.docs.first.data() as Map<String, dynamic>
-          );
+          return TaskModel.fromMap(snapshot.docs.first.id,
+              snapshot.docs.first.data() as Map<String, dynamic>);
         }
         return null;
       });
@@ -89,7 +99,6 @@ class TaskRepository {
       rethrow;
     }
   }
-  
 
   Stream<TaskModel?> streamSpecificTask(String taskId) {
     return tasksColleciton.doc(taskId).snapshots().map((snapshot) {
@@ -112,19 +121,16 @@ class TaskRepository {
   }
 
   // Update a Todo in Task in firestore
-  Future<void> updateTaskTodo(
-      String? taskId, ToDoItem todo) async {
+  Future<void> updateTaskTodo(String? taskId, ToDoItem todo) async {
     try {
-      await tasksColleciton
-          .doc(taskId)
-          .update({'toDoList': FieldValue.arrayUnion([todo.toMap()])});
+      await tasksColleciton.doc(taskId).update({
+        'toDoList': FieldValue.arrayUnion([todo.toMap()])
+      });
     } catch (e) {
       debugPrint('Error updating Task in Firestore: $e');
       // You might want to handle errors more gracefully here
     }
   }
-  
-  
 
   // Delete a Task from Firestore
   Future<void> deleteTask(String taskId) async {
@@ -194,38 +200,57 @@ class TaskRepository {
     }
   }
 
-
   // Add manually
- Future<void> addTaskManually() async {
+  Future<void> addTaskManually() async {
     try {
-      await tasksColleciton.add(
-        TaskModel(
-          title: 'Historical Walk in Intramuros',
-          description:
-              'Tasks associated with organizing the Historical Walk in Intramuros. Ensure all tasks are completed to provide an educational and engaging experience.',
-          progress: 0.0,
-          toDoList: [
-            ToDoItem(title: 'Design the route to cover major historical sites', isChecked: false),
-            ToDoItem(title: 'Hire knowledgeable tour guides', isChecked: false),
-            ToDoItem(title: 'Coordinate with Intramuros Administration for access permissions', isChecked: false),
-            ToDoItem(title: 'Arrange for audio equipment for the tour', isChecked: false),
-            ToDoItem(title: 'Prepare informative materials and handouts', isChecked: false),
-            ToDoItem(title: 'Set up registration booth and checkpoints', isChecked: false),
-            ToDoItem(title: 'Organize a briefing on the historical significance of Intramuros', isChecked: false),
-            ToDoItem(title: 'Confirm bookings for group meals or refreshments', isChecked: false),
-            ToDoItem(title: 'Plan for first-aid and emergency contingencies', isChecked: false),
-            ToDoItem(title: 'Gather feedback forms for the end of the tour', isChecked: false),
-          ],
-          type: 'Cultural',
-          referenceId: '6LMTLXQOloSsEWbIL1il' // Replace with the actual ID for the event.
-        ).toMap()
-      );
+      await tasksColleciton.add(TaskModel(
+              title: 'Historical Walk in Intramuros',
+              description:
+                  'Tasks associated with organizing the Historical Walk in Intramuros. Ensure all tasks are completed to provide an educational and engaging experience.',
+              progress: 0.0,
+              toDoList: [
+                ToDoItem(
+                    title: 'Design the route to cover major historical sites',
+                    isChecked: false),
+                ToDoItem(
+                    title: 'Hire knowledgeable tour guides', isChecked: false),
+                ToDoItem(
+                    title:
+                        'Coordinate with Intramuros Administration for access permissions',
+                    isChecked: false),
+                ToDoItem(
+                    title: 'Arrange for audio equipment for the tour',
+                    isChecked: false),
+                ToDoItem(
+                    title: 'Prepare informative materials and handouts',
+                    isChecked: false),
+                ToDoItem(
+                    title: 'Set up registration booth and checkpoints',
+                    isChecked: false),
+                ToDoItem(
+                    title:
+                        'Organize a briefing on the historical significance of Intramuros',
+                    isChecked: false),
+                ToDoItem(
+                    title: 'Confirm bookings for group meals or refreshments',
+                    isChecked: false),
+                ToDoItem(
+                    title: 'Plan for first-aid and emergency contingencies',
+                    isChecked: false),
+                ToDoItem(
+                    title: 'Gather feedback forms for the end of the tour',
+                    isChecked: false),
+              ],
+              type: 'Cultural',
+              referenceId:
+                  '6LMTLXQOloSsEWbIL1il' // Replace with the actual ID for the event.
+              )
+          .toMap());
     } catch (e) {
       debugPrint('Error adding Mount Apo Trekking Task to Firestore: $e');
       // Implement more error handling as necessary
     }
   }
-
 
   // Delete all
   Future<void> deleteAllTasks() async {
@@ -240,6 +265,4 @@ class TaskRepository {
       // You might want to handle errors more gracefully here
     }
   }
-
-  
 }

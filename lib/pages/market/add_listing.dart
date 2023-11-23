@@ -5,6 +5,7 @@ import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/data/models/task.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
+import 'package:cooptourism/data/repositories/task_repository.dart';
 import 'package:cooptourism/providers/home_page_provider.dart';
 import 'package:cooptourism/providers/market_page_provider.dart';
 import 'package:cooptourism/providers/user_provider.dart';
@@ -789,7 +790,7 @@ class _AddListingState extends ConsumerState<AddListing> {
                         ],
                       ),
                     ),
-                    if (tasks[taskIndex].owner != null)
+                    if (tasks[taskIndex].owner!.isNotEmpty)
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -798,7 +799,7 @@ class _AddListingState extends ConsumerState<AddListing> {
                         ),
                         child: ListView.builder(
                           shrinkWrap: true,
-                          itemCount: tasks.length,
+                          itemCount: tasks[taskIndex].owner!.length,
                           itemBuilder: (context, memberIndex) {
                             return Container(
                               margin: const EdgeInsets.only(left: 50),
@@ -845,7 +846,12 @@ class _AddListingState extends ConsumerState<AddListing> {
                 ),
                 onPressed: () {
                   setState(() {
-                    tasks.add(ToDoItem(title: "", isChecked: false));
+                    tasks.add(ToDoItem(
+                      title: "",
+                      isChecked: false,
+                      owner: [],
+                      type: "market",
+                    ));
                   });
                 },
                 child: Row(
@@ -883,6 +889,7 @@ class _AddListingState extends ConsumerState<AddListing> {
 
       case 5:
         ListingRepository listingRepository = ListingRepository();
+        TaskRepository taskRepository = TaskRepository();
         debugPrint(
             "this should be final ${ref.watch(marketAddListingProvider).toString()}");
         return Column(
@@ -896,11 +903,17 @@ class _AddListingState extends ConsumerState<AddListing> {
                   onPressed: () {
                     ref.read(marketAddListingProvider.notifier).setAddListing(
                         ref.watch(marketAddListingProvider)!.copyWith(
-                            owner: ref.watch(userModelProvider)!.uid,
-                            postDate: Timestamp.now()));
+                              owner: ref.watch(userModelProvider)!.uid,
+                              postDate: Timestamp.now(),
+                              isPublished: true,
+                            ));
                     listingRepository
                         .addListing(ref.watch(marketAddListingProvider)!);
                     uploadImage();
+                    for (var element
+                        in ref.watch(marketAddListingProvider)!.tasks!) {
+                      taskRepository.addToDoItem(element);
+                    }
                   },
                   child: const Text("Submit Listing")),
             )
