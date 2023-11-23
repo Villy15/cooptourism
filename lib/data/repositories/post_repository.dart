@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/poll.dart';
+import 'package:cooptourism/data/models/poll_posts.dart';
 import 'package:cooptourism/data/models/post.dart';
 import 'package:flutter/material.dart';
 
@@ -11,9 +12,16 @@ class PostRepository {
     return postsCollection.doc(postId).collection('polls');
   }
 
+  CollectionReference getPollPostSubCollection(String postId) {
+    return postsCollection.doc(postId).collection('poll_posts');
+  }
+
   // Get all posts from Firestore
   Stream<List<PostModel>> getAllPosts() {
-    return postsCollection.orderBy("timestamp", descending: true).snapshots().map((snapshot) {
+    return postsCollection
+        .orderBy("timestamp", descending: true)
+        .snapshots()
+        .map((snapshot) {
       return snapshot.docs.map((doc) {
         return PostModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
@@ -21,7 +29,11 @@ class PostRepository {
   }
 
   Stream<List<PostModel>> getSpecificPosts(String authorId) {
-    return postsCollection.where("authorId", isEqualTo: authorId).orderBy("timestamp", descending: true).snapshots().map((snapshot) {
+    return postsCollection
+        .where("authorId", isEqualTo: authorId)
+        .orderBy("timestamp", descending: true)
+        .snapshots()
+        .map((snapshot) {
       return snapshot.docs.map((doc) {
         return PostModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
@@ -29,12 +41,14 @@ class PostRepository {
   }
 
   // Add a post to Firestore
-  Future<void> addPost(PostModel post) async {
+  Future<String> addPost(PostModel post) async {
     try {
-      await postsCollection.add(post.toJson());
+      final docRef = await postsCollection.add(post.toJson());
+      return docRef.id;
     } catch (e) {
       debugPrint('Error adding post to Firestore: $e');
       // You might want to handle errors more gracefully here
+      rethrow;
     }
   }
 
@@ -69,7 +83,6 @@ class PostRepository {
       // You might want to handle errors more gracefully here
     }
   }
-
 
   // LIKES AND DISLIKES
 
@@ -131,40 +144,41 @@ class PostRepository {
 
   // Add dummy post
   Future<void> addDummyPost() async {
-  try {
-    // Add the post and get the reference
-    DocumentReference postRef = await postsCollection.add({
-      'author': 'Timothy Mendoza',  // fixed typo from 'author:' to 'author'
-      'authorId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
-      'authorType': 'member',
-      'comments': [],
-      'content': "I am timoy.",
-      'likes': [],
-      'dislikes': [],
-      'timestamp': DateTime.now(),
-    });
+    try {
+      // Add the post and get the reference
+      DocumentReference postRef = await postsCollection.add({
+        'author': 'Timothy Mendoza', // fixed typo from 'author:' to 'author'
+        'authorId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+        'authorType': 'member',
+        'comments': [],
+        'content': "I am timoy.",
+        'likes': [],
+        'dislikes': [],
+        'timestamp': DateTime.now(),
+      });
 
-    debugPrint('Dummy post added to Firestore');
+      debugPrint('Dummy post added to Firestore');
 
-    // Now use the postRef.id (which is the postId) to add a poll
+      // Now use the postRef.id (which is the postId) to add a poll
       List<Map<String, dynamic>> pollOptions = [
         {
           'optionText': 'Adrian Villanueva',
-          'optionId' : 'zBUyW0hYTZRrCkp8PIDNlPvdlBy2',  // added field
+          'optionId': 'zBUyW0hYTZRrCkp8PIDNlPvdlBy2', // added field
           'votes': 5,
           'voters': ['user1', 'user2', 'user3', 'user4', 'user5'],
-          'dateDeadline': DateTime.now().add(const Duration(days: 1)),  // added field
+          'dateDeadline':
+              DateTime.now().add(const Duration(days: 1)), // added field
         },
         {
           'optionText': 'Timothy Mendoza',
-          'optionId' : 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
+          'optionId': 'ewBh7JJqkpe0XwYRMiAsRwuw0in1',
           'votes': 3,
           'voters': ['user6', 'user7', 'user8'],
           'dateDeadline': DateTime.now().add(const Duration(days: 1)),
         },
         {
           'optionText': 'Anthony Paguio',
-          'optionId' : 'G5nugbNv6hh1fcbuLc1Uwf785ls1',
+          'optionId': 'G5nugbNv6hh1fcbuLc1Uwf785ls1',
           'votes': 4,
           'voters': ['user9', 'user10', 'user11', 'user12'],
           'dateDeadline': DateTime.now().add(const Duration(days: 1)),
@@ -174,15 +188,69 @@ class PostRepository {
       for (var option in pollOptions) {
         await getPollSubCollection(postRef.id).add(option);
       }
-
-  } catch (e) {
-    debugPrint('Error adding dummy post to Firestore: $e');
-    // You might want to handle errors more gracefully here
+    } catch (e) {
+      debugPrint('Error adding dummy post to Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
   }
-}
 
+  // POLL POST SUBCOLLECTION
+  // Stream all poll posts from a post
+  Stream<List<PollPostModel>> getAllPollPosts(String? postId) {
+    return getPollPostSubCollection(postId!).snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return PollPostModel.fromJson(
+            doc.id, doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
 
-  // POLL SUBCOLLECTION 
+  // Add a poll post to a post
+  Future<void> addPollPost(String? postId, PollPostModel pollPost) async {
+    try {
+      await getPollPostSubCollection(postId!).add(pollPost.toMap());
+    } catch (e) {
+      debugPrint('Error adding poll post to Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
+  }
+
+  // Read a poll post from a post
+  Future<PollPostModel> getPollPost(String? postId, String pollPostId) async {
+    try {
+      final doc = await getPollPostSubCollection(postId!).doc(pollPostId).get();
+      return PollPostModel.fromJson(doc.id, doc.data() as Map<String, dynamic>);
+    } catch (e) {
+      debugPrint('Error getting poll post from Firestore: $e');
+      // You might want to handle errors more gracefully here
+      rethrow;
+    }
+  }
+
+  // Update a poll post in a post
+  Future<void> updatePollPost(
+      String? postId, String? pollPostId, PollPostModel pollPost) async {
+    try {
+      await getPollPostSubCollection(postId!)
+          .doc(pollPostId)
+          .update(pollPost.toMap());
+    } catch (e) {
+      debugPrint('Error updating poll post in Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
+  }
+
+  // Delete a poll post from a post
+  Future<void> deletePollPost(String? postId, String pollPostId) async {
+    try {
+      await getPollPostSubCollection(postId!).doc(pollPostId).delete();
+    } catch (e) {
+      debugPrint('Error deleting poll post from Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
+  }
+
+  // POLL SUBCOLLECTION
   // Stream all polls from a post
   Stream<List<PollModel>> getAllPolls(String? postId) {
     return getPollSubCollection(postId!).snapshots().map((snapshot) {
@@ -215,7 +283,8 @@ class PostRepository {
   }
 
   // Update a poll in a post
-  Future<void> updatePoll(String? postId, String? pollId, PollModel poll) async {
+  Future<void> updatePoll(
+      String? postId, String? pollId, PollModel poll) async {
     try {
       await getPollSubCollection(postId!).doc(pollId).update(poll.toMap());
     } catch (e) {
