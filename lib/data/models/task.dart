@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // Dart Data Class Generator
 class TaskModel {
@@ -15,7 +14,6 @@ class TaskModel {
   String? referenceId;
   String? assignedMember;
   bool? isManagerApproved;
-
 
   TaskModel({
     this.uid,
@@ -39,7 +37,6 @@ class TaskModel {
     String? referenceId,
     String? assignedMember,
     bool? isManagerApproved,
-    
   }) {
     return TaskModel(
       uid: uid ?? this.uid,
@@ -85,7 +82,8 @@ class TaskModel {
 
   String toJson() => json.encode(toMap());
 
-  factory TaskModel.fromJson(String source) => TaskModel.fromMap('', json.decode(source) as Map<String, dynamic>);
+  factory TaskModel.fromJson(String source) =>
+      TaskModel.fromMap('', json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -94,31 +92,41 @@ class TaskModel {
 }
 
 class ToDoItem {
-  String? uid;
+  List<String>? owner;
+  String? description;
+  String? referenceId;
+  String? type;
   String title;
   bool isChecked;
   String? proof;
   Timestamp? date;
 
   ToDoItem({
-    this.uid,
+    this.owner,
+    this.description,
+    this.referenceId,
+    this.type,
     required this.title,
     required this.isChecked,
     this.proof,
     this.date,
   });
 
-  
-
   ToDoItem copyWith({
-    String? uid,
+    List<String>? owner,
+    String? description,
+    String? referenceId,
+    String? type,
     String? title,
     bool? isChecked,
     String? proof,
     Timestamp? date,
   }) {
     return ToDoItem(
-      uid: uid ?? this.uid,
+      owner: owner ?? this.owner,
+      description: description ?? this.description,
+      referenceId: referenceId ?? this.referenceId,
+      type: type ?? this.type,
       title: title ?? this.title,
       isChecked: isChecked ?? this.isChecked,
       proof: proof ?? this.proof,
@@ -128,7 +136,10 @@ class ToDoItem {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      // 'uid': uid,
+      'owner': owner,
+      'description': description,
+      'referenceId': referenceId,
+      'type': type,
       'title': title,
       'isChecked': isChecked,
       'proof': proof,
@@ -138,7 +149,10 @@ class ToDoItem {
 
   factory ToDoItem.fromMap(String id, Map<String, dynamic> map) {
     return ToDoItem(
-      uid: id,
+      owner: map['owner'] as List<String>,
+      description: map['description'] as String,
+      referenceId: map['referenceId'] as String,
+      type: map['type'] as String,
       title: map['title'] as String,
       isChecked: map['isChecked'] as bool,
       proof: map['proof'] as String?,
@@ -148,8 +162,10 @@ class ToDoItem {
 
   String toJson() => json.encode(toMap());
 
-  factory ToDoItem.fromJson(String source) => ToDoItem.fromMap('', json.decode(source) as Map<String, dynamic>);
+  factory ToDoItem.fromJson(String source) =>
+      ToDoItem.fromMap('', json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'ToDoItem(uid: $uid, title: $title, isChecked: $isChecked , proof: $proof , date: $date)';
+  String toString() =>
+      'ToDoItem(owner: $owner, description: $description, referenceId: $referenceId, type: $type, title: $title, isChecked: $isChecked , proof: $proof , date: $date)';
 }

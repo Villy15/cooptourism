@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/core/file_picker.dart';
 import 'package:cooptourism/data/models/listing.dart';
+import 'package:cooptourism/data/models/task.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/data/repositories/listing_repository.dart';
 import 'package:cooptourism/providers/home_page_provider.dart';
@@ -31,11 +32,10 @@ class _AddListingState extends ConsumerState<AddListing> {
   List<File> uploadedImages = [];
   List<String> fileNames = [];
   FilePickerUtility filePickerUtility = FilePickerUtility();
-  Map<String, dynamic> amenities = {};
+  Map<String, List<String>> roles = {};
   int roleCount = 0;
   int taskCount = 0;
-  Map<String, dynamic> tasks = {};
-  Map<String, dynamic> roleMemberPair = {};
+  List<ToDoItem> tasks = [];
   List<String> cooperativeNames = [];
   List<String> memberNames = [];
   List<String> selectedMemberName = [];
@@ -46,7 +46,7 @@ class _AddListingState extends ConsumerState<AddListing> {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController paxController = TextEditingController();
-  FocusNode titleFocus = FocusNode(canRequestFocus: false);
+  FocusNode titleFocus = FocusNode();
   FocusNode descriptionFocus = FocusNode();
   FocusNode priceFocus = FocusNode();
   FocusNode paxFocus = FocusNode();
@@ -114,11 +114,11 @@ class _AddListingState extends ConsumerState<AddListing> {
 
   uploadImage() async {
     final firebaseStorage = FirebaseStorage.instance.ref();
-    debugPrint(" test this ${uploadedImages.toString()}");
     if (ref.watch(marketAddListingProvider)!.images != null) {
       for (var image in uploadedImages) {
         await firebaseStorage
-            .child("${ref.watch(marketAddListingProvider)!.cooperativeOwned!}/listingImages/${path.basename(image.path)}")
+            .child(
+                "${ref.watch(marketAddListingProvider)!.cooperativeOwned!}/listingImages/${path.basename(image.path)}")
             .putFile(image);
       }
     }
@@ -206,9 +206,15 @@ class _AddListingState extends ConsumerState<AddListing> {
 
   Widget nextButton() {
     return SizedBox(
-      height: 50,
+      height: MediaQuery.sizeOf(context).height / 12.5,
       width: double.infinity,
       child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(15), // Adjust this value as needed
+          ),
+        ),
         onPressed: () {
           // Increment activeStep, when the next button is tapped. However, check for upper bound.
           if (activeStep < upperBound) {
@@ -337,7 +343,7 @@ class _AddListingState extends ConsumerState<AddListing> {
       case 3:
         final CooperativesRepository cooperativesRepository =
             CooperativesRepository();
-        Future<Map<String, dynamic>> getCooperativeMembersNames;
+        Future<List<String>> getCooperativeMembersNames;
         if (ref.watch(marketAddListingProvider)!.cooperativeOwned == null) {
           getCooperativeMembersNames =
               cooperativesRepository.getCooperativeMembersNames(
@@ -353,162 +359,236 @@ class _AddListingState extends ConsumerState<AddListing> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (roleCount > 0)
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: roleCount,
-                itemBuilder: (context, index) {
-                  selectedMemberName.add(
-                    "${ref.watch(userModelProvider)!.lastName} ${ref.watch(userModelProvider)!.firstName}",
-                  );
-                  roleFocus.add(FocusNode());
-                  roleFocus[index].addListener(() {
-                    _saveField(roleFocus[index], () {
-                      roleMemberPair.addAll({
-                        selectedMemberName[index]:
-                            roleController[index].value.text
-                      });
-                      ref.read(marketAddListingProvider.notifier).setAddListing(
-                            ref
-                                .watch(marketAddListingProvider)!
-                                .copyWith(roles: roleMemberPair),
-                          );
-                    });
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: roleCount,
+              itemBuilder: (context, roleIndex) {
+                /// All of this is used to prepare the textfield for input such as focusing on the textfield when it is created and then saving it when focus is lost
+                roleFocus.add(FocusNode());
+                roleFocus[roleIndex].addListener(() {
+                  _saveField(roleFocus[roleIndex], () {
+                    if (roles.containsKey(roleController[roleIndex].text) ==
+                        false) {
+                      roles.addAll({roleController[roleIndex].text: []});
+                    }
+                    ref.read(marketAddListingProvider.notifier).setAddListing(
+                          ref
+                              .watch(marketAddListingProvider)!
+                              .copyWith(roles: roles),
+                        );
                   });
-                  roleController.add(TextEditingController());
-                  return Container(
-                    height: 75,
-                    margin: const EdgeInsets.only(bottom: 5),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        FutureBuilder(
-                          future: getCooperativeMembersNames,
-                          builder: (BuildContext context,
-                              AsyncSnapshot<Map<String, dynamic>> snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const CircularProgressIndicator(); // show loader while waiting for data
-                            } else if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            } else {
-                              return Expanded(
-                                child: Container(
-                                  // width: MediaQuery.sizeOf(context).width / 1.5,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                        15), // Create a circular shape
-                                    border: Border.all(
-                                        color: Colors.grey,
-                                        width: 1), // Add a border
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10.0),
-                                    child: DropdownButtonFormField<String>(
-                                      decoration: const InputDecoration(
-                                        labelText: "Assigned To",
-                                        border: InputBorder.none,
-                                      ),
-                                      menuMaxHeight: 300,
-                                      alignment: Alignment.center,
-                                      value: selectedMemberName[index],
-                                      onChanged: (newValue) {
-                                        selectedMemberName[index] = newValue!;
-                                        roleMemberPair.addEntries(
-                                          {selectedMemberName[index]: ""}
-                                              .entries,
-                                        );
-                                      },
-                                      items: snapshot.data!.values
-                                          .map<DropdownMenuItem<String>>(
-                                              (dynamic value) {
-                                        return DropdownMenuItem<String>(
-                                          alignment: Alignment.centerLeft,
-                                          value: value,
-                                          child: DisplayText(
-                                            text: value,
-                                            lines: 2,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium!,
-                                          ),
-                                        );
-                                      }).toList(),
-                                      iconSize: 30.0,
-                                      isExpanded: true,
-                                    ),
-                                  ),
+                });
+                roleController.add(TextEditingController());
+                if (roleController[roleIndex].value.text.isEmpty) {
+                  roleFocus[roleIndex].requestFocus();
+                }
+
+                /// end
+                return Column(
+                  children: [
+                    const SizedBox(height: 5),
+                    Container(
+                      height: 75,
+                      margin: const EdgeInsets.only(bottom: 5),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Container(
+                            width: MediaQuery.sizeOf(context).width / 2,
+                            padding: const EdgeInsets.only(left: 15),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(color: Colors.grey, width: 1),
+                            ),
+                            child: Form(
+                              key: Key(roleCount.toString()),
+                              child: TextFormField(
+                                controller: roleController[roleIndex],
+                                focusNode: roleFocus[roleIndex],
+                                onTapOutside: (downEvent) {
+                                  FocusScope.of(context).unfocus();
+                                },
+                                maxLines: null,
+                                decoration: const InputDecoration(
+                                  label: Text("Role"),
+                                  border: InputBorder.none, // Removes underline
                                 ),
-                              );
-                            }
-                          },
-                        ),
-                        const SizedBox(width: 5),
-                        Container(
-                          width: MediaQuery.sizeOf(context).width / 3,
-                          padding: const EdgeInsets.only(left: 15),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(color: Colors.grey, width: 1),
-                          ),
-                          child: Form(
-                            key: Key(roleCount.toString()),
-                            child: TextFormField(
-                              controller: roleController[index],
-                              focusNode: roleFocus[index],
-                              onTapOutside: (downEvent) {
-                                FocusScope.of(context).unfocus();
-                              },
-                              maxLines: null,
-                              decoration: const InputDecoration(
-                                label: Text("Role"),
-                                border: InputBorder.none, // Removes underline
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a role name';
+                                  }
+                                  return null; // Return null if the entered value is valid
+                                },
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter a role name';
-                                }
-                                return null; // Return null if the entered value is valid
-                              },
                             ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 5),
+                          Expanded(
+                              child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    15), // Adjust this value as needed
+                              ),
+                            ),
+                            onPressed: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return SizedBox(
+                                    height: 350,
+                                    child: FutureBuilder(
+                                      future: getCooperativeMembersNames,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasError) {
+                                          return const Text(
+                                              'Error loading data');
+                                        }
+
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          // Return shirnk or no widget
+                                          return const SizedBox.shrink();
+                                        }
+
+                                        final members = snapshot.data;
+                                        return ListView.builder(
+                                            shrinkWrap: true,
+                                            itemCount: members?.length,
+                                            itemBuilder: (context, index) {
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0,
+                                                        vertical: 0.0),
+                                                child: Column(
+                                                  children: [
+                                                    ListTile(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          roles[roleController[
+                                                                      roleIndex]
+                                                                  .text]!
+                                                              .add(members[
+                                                                  index]);
+                                                        });
+                                                        Navigator.pop(context);
+                                                      },
+                                                      title: Text(
+                                                        members![index],
+                                                        style: TextStyle(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .colorScheme
+                                                                .primary,
+                                                            fontWeight: Theme
+                                                                    .of(context)
+                                                                .textTheme
+                                                                .bodySmall!
+                                                                .fontWeight),
+                                                      ),
+                                                    ),
+                                                    const Divider(
+                                                      thickness: 1,
+                                                      indent: 20,
+                                                      endIndent: 20,
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            });
+                                      },
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.add,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 5),
+                                const Text("Member"),
+                              ],
+                            ),
+                          )),
+                        ],
+                      ),
                     ),
-                  );
-                },
-              ),
-            const SizedBox(height: 10),
-            InkWell(
-              onTap: () {
-                setState(() {
-                  roleCount = roleCount + 1;
-                });
+                    if (roles[roleController[roleIndex].text] != null)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(color: Colors.grey, width: 1),
+                        ),
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount:
+                                roles[roleController[roleIndex].text]!.length,
+                            itemBuilder: (context, memberIndex) {
+                              return Container(
+                                margin: const EdgeInsets.only(left: 50),
+                                height: MediaQuery.sizeOf(context).height / 15,
+                                width: MediaQuery.sizeOf(context).width / 2,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      size: 20,
+                                      Icons.person,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    DisplayText(
+                                        text: roles[roleController[roleIndex]
+                                            .text]![memberIndex],
+                                        lines: 1,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!)
+                                  ],
+                                ),
+                              );
+                            }),
+                      ),
+                    const SizedBox(height: 10),
+                  ],
+                );
               },
-              child: Container(
-                height: MediaQuery.sizeOf(context).height / 10,
-                width: MediaQuery.sizeOf(context).width,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: Colors.grey, width: 1),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: MediaQuery.sizeOf(context).height / 12.5,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        15), // Adjust this value as needed
+                  ),
                 ),
+                onPressed: () {
+                  setState(() {
+                    roleCount = roleCount + 1;
+                  });
+                },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.people_outline_outlined,
-                      color: Colors.grey,
-                      size: 40,
+                    Icon(
+                      Icons.people_alt_outlined,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 30,
                     ),
                     const SizedBox(width: 20),
-                    DisplayText(
-                      text: "Add and Assign a Role",
-                      lines: 1,
-                      style: Theme.of(context).textTheme.bodyMedium!,
-                    ),
+                    const Text("Add and Assign a Role"),
                   ],
                 ),
               ),
@@ -524,10 +604,18 @@ class _AddListingState extends ConsumerState<AddListing> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 5),
                   DisplayText(
-                    text: "Roles will be used to designate tasks.",
+                    text:
+                        "Roles will be used to designate tasks. This will allow you to create groups.",
+                    lines: 3,
+                    style: Theme.of(context).textTheme.bodySmall!,
+                  ),
+                  const SizedBox(height: 5),
+                  DisplayText(
+                    text: "Roles are supposed to be uniquely named.",
                     lines: 3,
                     style: Theme.of(context).textTheme.bodySmall!,
                   ),
@@ -541,160 +629,235 @@ class _AddListingState extends ConsumerState<AddListing> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (taskCount > 0)
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: taskCount,
-                itemBuilder: (context, index) {
-                  taskRoleController.add(TextEditingController());
-                  selectedRole.add(ref
-                      .watch(marketAddListingProvider)!
-                      .roles!
-                      .entries
-                      .first
-                      .value);
-                  taskFocus.add(FocusNode());
-                  taskFocus[index].addListener(() {
-                    _saveField(taskFocus[index], () {
-                      tasks.addAll({
-                        taskRoleController[index].value.text:
-                            selectedRole[index]
-                      });
-                      ref.read(marketAddListingProvider.notifier).setAddListing(
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: tasks.length,
+              itemBuilder: (context, taskIndex) {
+                taskRoleController.add(TextEditingController());
+                taskFocus.add(FocusNode());
+                taskFocus[taskIndex].addListener(() {
+                  _saveField(taskFocus[taskIndex], () {
+                    // if (tasks.contains(taskRoleController[taskIndex].text) ==
+                    //     false) {
+                    //   roles.addAll({roleController[roleIndex].text: []});
+                    // }
+                    // tasks.add(ToDoItem(
+                    //     title: taskRoleController[taskIndex].text,
+                    //     isChecked: false));
+                    ref.read(marketAddListingProvider.notifier).setAddListing(
                           ref
                               .watch(marketAddListingProvider)!
-                              .copyWith(tasks: tasks));
-                    });
+                              .copyWith(tasks: tasks),
+                        );
                   });
-                  return Container(
-                    height: 75,
-                    margin: const EdgeInsets.only(bottom: 5),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Container(
-                          width: MediaQuery.sizeOf(context).width / 1.7,
-                          padding: const EdgeInsets.only(left: 15),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(color: Colors.grey, width: 1),
-                          ),
-                          child: Form(
-                            key: Key(taskCount.toString()),
-                            child: TextFormField(
-                              controller: taskRoleController[index],
-                              focusNode: taskFocus[index],
-                              onTapOutside: (downEvent) {
-                                FocusScope.of(context).unfocus();
-                              },
-                              maxLines: null,
-                              decoration: const InputDecoration(
-                                label: Text("Task"),
-                                border: InputBorder.none, // Removes underline
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter a task';
-                                }
-                                return null; // Return null if the entered value is valid
-                              },
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        Expanded(
-                          child: Container(
-                            // width: MediaQuery.sizeOf(context).width / 1.5,
+                });
+                if (taskRoleController[taskIndex].value.text.isEmpty) {
+                  taskFocus[taskIndex].requestFocus();
+                }
+                return Column(
+                  children: [
+                    Container(
+                      height: 75,
+                      margin: const EdgeInsets.only(bottom: 5),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Container(
+                            width: MediaQuery.sizeOf(context).width / 1.6,
+                            padding: const EdgeInsets.only(left: 15),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(
-                                  15), // Create a circular shape
-                              border: Border.all(
-                                  color: Colors.grey, width: 1), // Add a border
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(color: Colors.grey, width: 1),
                             ),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10.0),
-                              child: DropdownButtonFormField<String>(
-                                decoration: const InputDecoration(
-                                  labelText: "Assign to Role",
-                                  border: InputBorder.none,
-                                ),
-                                menuMaxHeight: 300,
-                                alignment: Alignment.center,
-                                value: selectedRole[0],
-                                onChanged: (newValue) {
-                                  selectedRole[index] = newValue!;
-                                  tasks.addAll({
-                                    taskRoleController[index].value.text:
-                                        selectedRole[index]
-                                  });
-                                  ref
-                                      .read(marketAddListingProvider.notifier)
-                                      .setAddListing(
-                                        ref
-                                            .watch(marketAddListingProvider)!
-                                            .copyWith(tasks: tasks),
-                                      );
+                            child: Form(
+                              key: Key(taskCount.toString()),
+                              child: TextFormField(
+                                controller: taskRoleController[taskIndex],
+                                focusNode: taskFocus[taskIndex],
+                                onTapOutside: (downEvent) {
+                                  FocusScope.of(context).unfocus();
                                 },
-                                items: ref
-                                    .watch(marketAddListingProvider)!
-                                    .roles!
-                                    .values
-                                    .map<DropdownMenuItem<String>>(
-                                        (dynamic value) {
-                                  return DropdownMenuItem<String>(
-                                    alignment: Alignment.centerLeft,
-                                    value: value,
-                                    child: DisplayText(
-                                      text: value,
-                                      lines: 2,
+                                maxLines: null,
+                                decoration: const InputDecoration(
+                                  label: Text("Task"),
+                                  border: InputBorder.none, // Removes underline
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a task';
+                                  }
+                                  return null; // Return null if the entered value is valid
+                                },
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      15), // Adjust this value as needed
+                                ),
+                              ),
+                              onPressed: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return SizedBox(
+                                      height: 350,
+                                      child: ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount: ref
+                                              .watch(marketAddListingProvider)!
+                                              .roles!
+                                              .keys
+                                              .length,
+                                          itemBuilder: (context, index) {
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8.0,
+                                                      vertical: 0.0),
+                                              child: Column(
+                                                children: [
+                                                  ListTile(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        tasks[taskIndex]
+                                                            .owner!
+                                                            .add(
+                                                              ref
+                                                                  .watch(
+                                                                      marketAddListingProvider)!
+                                                                  .roles!
+                                                                  .keys
+                                                                  .elementAt(
+                                                                      index),
+                                                            );
+                                                      });
+                                                      Navigator.pop(context);
+                                                    },
+                                                    title: Text(
+                                                      ref
+                                                          .watch(
+                                                              marketAddListingProvider)!
+                                                          .roles!
+                                                          .keys
+                                                          .elementAt(index),
+                                                      style: TextStyle(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                          fontWeight:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodySmall!
+                                                                  .fontWeight),
+                                                    ),
+                                                  ),
+                                                  const Divider(
+                                                    thickness: 1,
+                                                    indent: 20,
+                                                    endIndent: 20,
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          }),
+                                    );
+                                  },
+                                );
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.add,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 5),
+                                  const Text("Role"),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (tasks[taskIndex].owner != null)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(color: Colors.grey, width: 1),
+                        ),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: tasks.length,
+                          itemBuilder: (context, memberIndex) {
+                            return Container(
+                              margin: const EdgeInsets.only(left: 50),
+                              height: MediaQuery.sizeOf(context).height / 15,
+                              width: MediaQuery.sizeOf(context).width / 2,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    size: 20,
+                                    Icons.groups_outlined,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  DisplayText(
+                                      text:
+                                          tasks[taskIndex].owner![memberIndex],
+                                      lines: 1,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodySmall!,
-                                    ),
-                                  );
-                                }).toList(),
-                                iconSize: 30.0,
-                                isExpanded: true,
+                                          .bodyLarge!)
+                                ],
                               ),
-                            ),
-                          ),
+                            );
+                          },
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            const SizedBox(height: 10),
-            InkWell(
-              onTap: () {
-                setState(() {
-                  taskCount = taskCount + 1;
-                });
+                      ),
+                    const SizedBox(height: 10),
+                  ],
+                );
               },
-              child: Container(
-                height: MediaQuery.sizeOf(context).height / 10,
-                width: MediaQuery.sizeOf(context).width,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: Colors.grey, width: 1),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: MediaQuery.sizeOf(context).height / 12.5,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        15), // Adjust this value as needed
+                  ),
                 ),
+                onPressed: () {
+                  setState(() {
+                    tasks.add(ToDoItem(title: "", isChecked: false));
+                  });
+                },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.people_outline_outlined,
-                      color: Colors.grey,
-                      size: 40,
+                    Icon(
+                      Icons.task,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 30,
                     ),
                     const SizedBox(width: 20),
-                    DisplayText(
-                      text: "Add and Assign a Task",
-                      lines: 1,
-                      style: Theme.of(context).textTheme.bodyMedium!,
-                    ),
+                    const Text("Add and Assign a Task"),
                   ],
                 ),
               ),
@@ -733,7 +896,8 @@ class _AddListingState extends ConsumerState<AddListing> {
                   onPressed: () {
                     ref.read(marketAddListingProvider.notifier).setAddListing(
                         ref.watch(marketAddListingProvider)!.copyWith(
-                            owner: ref.watch(userModelProvider)!.uid, postDate: Timestamp.now()));
+                            owner: ref.watch(userModelProvider)!.uid,
+                            postDate: Timestamp.now()));
                     listingRepository
                         .addListing(ref.watch(marketAddListingProvider)!);
                     uploadImage();
@@ -1079,6 +1243,12 @@ class _AddListingState extends ConsumerState<AddListing> {
                 child: Column(
                   children: [
                     const SizedBox(height: 5),
+                    DisplayText(
+                      text:
+                          "Information you provide here will be used for the following steps. Please fill everything out.",
+                      lines: 3,
+                      style: Theme.of(context).textTheme.bodySmall!,
+                    ),
                     DisplayText(
                       text:
                           "Images should provide valuable information regarding the service to increase its popularity.",
