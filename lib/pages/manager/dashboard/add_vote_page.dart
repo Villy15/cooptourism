@@ -20,10 +20,13 @@ class AddVotePage extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _AddVotePageState();
 }
 
+enum Category { board, management }
+
 class _AddVotePageState extends ConsumerState<AddVotePage> {
   String? title = '';
   String? description = '';
   DateTime? selectedDate;
+  Category? selectedCategory;
   List<String> selectedMembers = [];
   List<String?> selectedMembersUId = [];
 
@@ -46,6 +49,8 @@ class _AddVotePageState extends ConsumerState<AddVotePage> {
             key: formKey,
             child: Column(
               children: [
+                // category add a dropdown menu
+                categoryDropdown(),
                 titleInput(),
                 descriptionInput(),
                 datePicker(context),
@@ -56,6 +61,25 @@ class _AddVotePageState extends ConsumerState<AddVotePage> {
           ),
         ),
       ),
+    );
+  }
+
+  DropdownButton<Category> categoryDropdown() {
+    return DropdownButton<Category>(
+      hint: const Text('Select a category'),
+      value: selectedCategory,
+      items: Category.values.map((Category category) {
+        return DropdownMenuItem<Category>(
+          value: category,
+          child: Text(
+              category == Category.board ? 'Board of Directors' : 'Management'),
+        );
+      }).toList(),
+      onChanged: (Category? newCategory) {
+        setState(() {
+          selectedCategory = newCategory;
+        });
+      },
     );
   }
 
@@ -193,6 +217,8 @@ class _AddVotePageState extends ConsumerState<AddVotePage> {
               title: title!,
               description: description!,
               date: selectedDate!,
+              category:
+                  selectedCategory == Category.board ? 'board' : 'management',
             ),
             polls,
           );

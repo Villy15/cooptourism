@@ -220,12 +220,13 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
               Padding(
                 padding: const EdgeInsets.only(top: 14.0),
                 child: DisplayText(
-                    text: listing.title!,
-                    lines: 2,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    )),
+                  text: listing.title!,
+                  lines: 2,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               // Padding(
               //   padding: const EdgeInsets.only(bottom: 10.0),
@@ -242,77 +243,86 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                     "Location: ${listing.province ?? ''}, ${listing.city ?? ''}",
                 lines: 4,
                 style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.labelLarge?.fontSize),
+                  fontSize: Theme.of(context).textTheme.labelLarge?.fontSize,
+                ),
               ),
               DisplayText(
                 text:
                     "${listing.pax ?? 1} guests · ${listing.type ?? ''} · ${listing.category ?? ''}",
                 lines: 1,
                 style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.labelLarge?.fontSize),
+                  fontSize: Theme.of(context).textTheme.labelLarge?.fontSize,
+                ),
               ),
 
               StreamBuilder(
-                  stream: reviews,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    }
+                stream: reviews,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  }
 
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const SizedBox.shrink();
-                    }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox.shrink();
+                  }
 
-                    final reviews = snapshot.data!;
-                    return Row(
-                      children: [
-                        Icon(Icons.star_rounded,
-                            color: Theme.of(context).colorScheme.primary),
-                        const SizedBox(width: 5),
-                        DisplayText(
-                          text: "${listing.rating ?? 0.00}",
-                          lines: 1,
-                          style: TextStyle(
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge
-                                  ?.fontSize),
-                        ),
-                        const SizedBox(width: 5),
-                        TextButton(
-                          onPressed: () {
-                            if (reviews.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text('No reviews'),
-                                  action: SnackBarAction(
-                                    label: 'Close',
-                                    onPressed: () {
-                                      ScaffoldMessenger.of(context)
-                                          .hideCurrentSnackBar();
-                                    },
-                                  ),
+                  final reviews = snapshot.data!;
+                  return Row(
+                    children: [
+                      Icon(
+                        Icons.star_rounded,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(width: 5),
+                      DisplayText(
+                        text: "${listing.rating ?? 0.00}",
+                        lines: 1,
+                        style: TextStyle(
+                            fontSize: Theme.of(context)
+                                .textTheme
+                                .labelLarge
+                                ?.fontSize),
+                      ),
+                      const SizedBox(width: 5),
+                      TextButton(
+                        onPressed: () {
+                          if (reviews.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text('No reviews'),
+                                action: SnackBarAction(
+                                  label: 'Close',
+                                  onPressed: () {
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                  },
                                 ),
-                              );
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ReviewsPage(
-                                        review: reviews, listing: listing)),
-                              );
-                            }
-                          },
-                          child: Text(
-                            '${reviews.length} reviews',
-                            style: const TextStyle(
-                                fontSize: 12,
-                                decoration: TextDecoration.underline),
+                              ),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ReviewsPage(
+                                  review: reviews,
+                                  listing: listing,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: Text(
+                          '${reviews.length} reviews',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            decoration: TextDecoration.underline,
                           ),
-                        )
-                      ],
-                    );
-                  }),
+                        ),
+                      )
+                    ],
+                  );
+                },
+              ),
 
               const Divider(),
 

@@ -43,10 +43,10 @@ class _MembersPageState extends State<MembersPage> {
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Column(
         children: [
-          SizedBox(
-            height: 40,
-            child: listViewFilter(),
-          ),
+          // SizedBox(
+          //   height: 40,
+          //   child: listViewFilter(),
+          // ),
           const SizedBox(height: 10),
           searchFilter(context),
           const SizedBox(height: 10),
@@ -316,9 +316,13 @@ class _MembersPageState extends State<MembersPage> {
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
       toolbarHeight: 70,
-      title: Text(title,
-          style: TextStyle(
-              fontSize: 28, color: Theme.of(context).colorScheme.primary)),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: 28,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ),
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       // actions: [
       //   Padding(
