@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:cooptourism/controller/post_provider.dart';
 import 'package:cooptourism/data/models/cooperatives.dart';
 import 'package:cooptourism/data/models/poll.dart';
+import 'package:cooptourism/data/models/poll_posts.dart';
 import 'package:cooptourism/data/models/post.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
@@ -43,9 +44,11 @@ class _PostCardState extends State<PostCard> {
     }
   }
 
+  User? user;
   @override
   void initState() {
     super.initState();
+    user = FirebaseAuth.instance.currentUser;
   }
 
   @override
@@ -134,6 +137,80 @@ class _PostCardState extends State<PostCard> {
                 }
               },
             ),
+
+            // StreamBuilder<List<PollPostModel>>(
+            //     stream: postRepository.getAllPollPosts(widget.postModel.uid),
+            //     builder: (context, snapshot) {
+            //       if (snapshot.connectionState == ConnectionState.waiting) {
+            //         return const CircularProgressIndicator();
+            //       } else if (snapshot.hasError) {
+            //         return Text('Error: ${snapshot.error}');
+            //       } else {
+            //         final pollPosts = snapshot.data!;
+
+            //         if (pollPosts.isEmpty) {
+            //           return const SizedBox.shrink(); // Returns an empty widget
+            //         }
+
+            //         return ListView.builder(
+            //           physics: const NeverScrollableScrollPhysics(),
+            //           padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            //           shrinkWrap:
+            //               true, // Makes the list view confined to its content
+            //           itemCount: pollPosts.length,
+            //           itemBuilder: (context, index) {
+            //             final String uid = user!.uid;
+            //             return Container(
+            //               decoration: BoxDecoration(
+            //                 borderRadius:
+            //                     BorderRadius.circular(8.0), // Rounded corners
+            //               ),
+            //               child: Column(
+            //                 children: [
+            //                   ListTile(
+            //                     title: Center(
+            //                       child: Text(pollPosts[index].title,
+            //                           style: const TextStyle()),
+            //                     ),
+            //                   ),
+            //                   for (var i = 0;
+            //                       i < pollPosts[index].options!.length;
+            //                       i++)
+            //                     CheckboxListTile(
+            //                       title: Text(pollPosts[index].options![i]),
+            //                       value: pollPosts[index]
+            //                               .votes
+            //                               ?.keys
+            //                               .contains(uid) ??
+            //                           false,
+            //                       onChanged: (bool? value) {
+            //                         setState(() {
+            //                           final option =
+            //                               pollPosts[index].options![i];
+
+            //                           if (value!) {
+            //                             debugPrint('i voted for $option');
+            //                             pollPosts[index]
+            //                                 .votes?[option]
+            //                                 ?.add(uid);
+            //                           } else {
+            //                             // pollPosts[index].votes[option]?.remove(user!.uid);
+            //                           }
+
+            //                           //   postRepository.updatePollPost(
+            //                           //       widget.postModel.uid,
+            //                           //       pollPosts[index].uid,
+            //                           //       pollPosts[index]);
+            //                         });
+            //                       },
+            //                     )
+            //                 ],
+            //               ),
+            //             );
+            //           },
+            //         );
+            //       }
+            //     }),
 
             ClipRRect(
               child: widget.postModel.images != null &&

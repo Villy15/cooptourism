@@ -114,7 +114,6 @@ class ToDoItem {
 
   ToDoItem copyWith({
     List<String>? owner,
-    String? description,
     String? referenceId,
     String? type,
     String? title,
@@ -124,7 +123,6 @@ class ToDoItem {
   }) {
     return ToDoItem(
       owner: owner ?? this.owner,
-      description: description ?? this.description,
       referenceId: referenceId ?? this.referenceId,
       type: type ?? this.type,
       title: title ?? this.title,
@@ -137,7 +135,6 @@ class ToDoItem {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'owner': owner,
-      'description': description,
       'referenceId': referenceId,
       'type': type,
       'title': title,
@@ -167,5 +164,5 @@ class ToDoItem {
 
   @override
   String toString() =>
-      'ToDoItem(owner: $owner, description: $description, referenceId: $referenceId, type: $type, title: $title, isChecked: $isChecked , proof: $proof , date: $date)';
+      'ToDoItem(owner: $owner, referenceId: $referenceId, type: $type, title: $title, isChecked: $isChecked , proof: $proof , date: $date)';
 }
