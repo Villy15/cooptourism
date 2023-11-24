@@ -1,15 +1,12 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
-import 'package:cooptourism/widgets/display_profile_picture.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-// import 'package:cooptourism/pages/manager/member_profile.dart';
-// import 'package:cooptourism/pages/profile/profile_page.dart';
+// import 'package:cooptourism/providers/user_provider.dart';
+import 'package:cooptourism/widgets/display_image.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shimmer/shimmer.dart';
 
 final CooperativesRepository cooperativesRepository = CooperativesRepository();
 
@@ -23,56 +20,76 @@ class MembersPage extends StatefulWidget {
 }
 
 class _MembersPageState extends State<MembersPage> {
-  final List<String> _tabTitles = ['Members', 'Features'];
+  TabController? _tabController;
 
-// Comment out muna for now to remove warnings
-  // final List<String> _featuredMember = [
-  //   'Bronze',
-  //   'Silver',
-  //   'Gold',
-  //   'Platinum',
-  //   'Diamond'
-  // ];
+  @override
+  void initState() {
+    super.initState();
+    // Other initializations...
+  }
 
-  int _selectedIndex = 0;
+  void _setTabController(TabController controller) {
+    setState(() {
+      _tabController = controller;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(context, "Members"),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      appBar: MembersAppBar(
+        title: 'Members',
+        onTabChange: (controller) {
+          _setTabController(controller);
+        },
+      ),
       body: Column(
         children: [
-          // SizedBox(
-          //   height: 40,
-          //   child: listViewFilter(),
-          // ),
-          const SizedBox(height: 10),
-          searchFilter(context),
           const SizedBox(height: 10),
           FutureBuilder(
             future: cooperativesRepository
-                .getCooperativeMembers("sslvO5tgDoCHGBO82kxq"),
-            // TODO add coop id
+                .getCooperativeMembers2("sslvO5tgDoCHGBO82kxq"),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return const Text('Error loading data');
               }
 
               if (snapshot.connectionState == ConnectionState.waiting) {
-                // Return shirnk or no widget
                 return const SizedBox.shrink();
               }
 
-              final members = snapshot.data as List<String>;
+              final members = snapshot.data!;
+
+              debugPrint("Members: ${members[1]}");
+
+              // Sort members by name
+              members.sort(
+                  (a, b) => (a.firstName ?? '').compareTo(b.firstName ?? ''));
+
+              final tabIndex = _tabController?.index ?? 0;
+
+              debugPrint('tabIndex: $tabIndex');
+
+              // Filter the votes based on the current tab index
+              final filteredMembers = members.where((member) {
+                if (tabIndex == 0) {
+                  debugPrint("member: ${member.position?.position}");
+                  return true;
+                } else if (tabIndex == 1) {
+                  return member.position?.position == 'management';
+                } else {
+                  return member.position?.position == 'board';
+                }
+              }).toList();
 
               return Expanded(
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: members.length,
+                  itemCount: filteredMembers.length,
                   itemBuilder: (context, index) {
                     return FutureBuilder<UserModel>(
-                      future: userRepository.getUser(members[index]),
+                      future: userRepository
+                          .getUser(filteredMembers[index].uid ?? ''),
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           return const Text('Error loading data');
@@ -80,60 +97,32 @@ class _MembersPageState extends State<MembersPage> {
 
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          // return shimmer();
                           return const SizedBox.shrink();
                         }
 
                         final user = snapshot.data!;
 
-                        // return inkWell(context, user);
                         return Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8.0, vertical: 0.0),
                           child: Column(
                             children: [
                               ListTile(
-                                onTap: () {
-                                  GoRouter.of(context)
-                                      .go('/members_page/${user.uid}');
-                                },
-                                leading: user.profilePicture == null ||
-                                        user.profilePicture!.isEmpty
-                                    ? Container(
-                                        width: 60,
-                                        height: 60,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.grey.shade200,
-                                        ),
-                                        child: Icon(
-                                          Icons.person,
-                                          size:
-                                              30, // Icon size reduced to look similar to the images
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                        ),
-                                      )
-                                    : DisplayProfilePicture(
-                                        storageRef:
-                                            FirebaseStorage.instance.ref(),
-                                        coopId: user.uid!,
-                                        data: user.profilePicture,
-                                        height:
-                                            60, // Updated to match the default icon size
-                                        width:
-                                            60, // Updated to match the default icon size
-                                      ),
+                                onTap: () =>
+                                    context.go('/members_page/${user.uid}'),
+                                leading: DisplayImage(
+                                  path:
+                                      'users/${user.email}/${user.profilePicture}',
+                                  width: 50,
+                                  height: 50,
+                                  radius: BorderRadius.circular(30),
+                                ),
                                 title: Text(
-                                  '${user.firstName} ${user.lastName}', // Your user's name
+                                  '${user.firstName} ${user.lastName}',
                                   style: const TextStyle(
-                                      fontWeight: FontWeight
-                                          .w500), // Adjust text styling as needed
+                                      fontWeight: FontWeight.w500),
                                 ),
                               ),
-
-                              // Add a divider widget below ListTile
                               const Divider(
                                 thickness: 1,
                                 indent: 20,
@@ -149,195 +138,85 @@ class _MembersPageState extends State<MembersPage> {
               );
             },
           ),
-
-          // getMembersGrid(),
         ],
       ),
     );
   }
+}
 
-  // InkWell inkWell(BuildContext context, UserModel user) {
-  //   return InkWell(
-  //                       onTap: () {
-  //                         GoRouter.of(context)
-  //                             .go('/members_page/${user.uid}');
-  //                       },
-  //                       child: Container(
-  //                         margin: const EdgeInsets.all(8.0),
-  //                         decoration: BoxDecoration(
-  //                           color: Theme.of(context).colorScheme.secondary,
-  //                           borderRadius: BorderRadius.circular(10),
-  //                         ),
-  //                         child: Column(
-  //                           children: [
-  //                             Padding(
-  //                               padding: const EdgeInsets.only(top: 24.0),
-  //                               child: user.profilePicture == null ||
-  //                                       user.profilePicture!.isEmpty
-  //                                   ? Container(
-  //                                       width: 60,
-  //                                       height: 60,
-  //                                       decoration: const BoxDecoration(
-  //                                           shape: BoxShape.circle,
-  //                                           color: Colors.white),
-  //                                       child: Icon(Icons.person,
-  //                                           size: 50,
-  //                                           color: Theme.of(context)
-  //                                               .colorScheme
-  //                                               .primary),
-  //                                     )
-  //                                   : DisplayProfilePicture(
-  //                                       storageRef:
-  //                                           FirebaseStorage.instance.ref(),
-  //                                       coopId: user.uid!,
-  //                                       data: user.profilePicture,
-  //                                       height: 60,
-  //                                       width: 60),
-  //                             ),
-  //                             const SizedBox(height: 15),
-  //                             Text(
-  //                               '${user.firstName} ${user.lastName}, ${user.uid}',
-  //                               style: const TextStyle(
-  //                                 fontSize: 19,
-  //                                 fontWeight: FontWeight.bold,
-  //                               ),
-  //                             ),
-  //                           ],
-  //                         ),
-  //                       ),
-  //                     );
-  // }
+class MembersAppBar extends ConsumerStatefulWidget
+    implements PreferredSizeWidget {
+  final String title;
+  final Function(TabController) onTabChange;
+  const MembersAppBar({
+    super.key,
+    required this.title,
+    required this.onTabChange,
+  });
 
-  Shimmer shimmer() {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
-      child: Container(
-        margin: const EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 15),
-            Container(
-              color: Colors.white,
-              height: 8.0,
-              width: double.infinity,
-            ),
-          ],
+  @override
+  ConsumerState<MembersAppBar> createState() => _MembersAppBarState();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 75);
+}
+
+class _MembersAppBarState extends ConsumerState<MembersAppBar>
+    with SingleTickerProviderStateMixin {
+  late TabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(length: 3, vsync: this);
+    tabController.addListener(() {
+      if (tabController.indexIsChanging) {
+        widget.onTabChange(tabController);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> tabs = [
+      const SizedBox(
+        child: Tab(
+          icon: Icon(Icons.person),
+          child: Flexible(child: Text('Members')),
         ),
       ),
-    );
-  }
-
-  ListView listViewFilter() {
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: _tabTitles.length,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: GestureDetector(
-            onTap: () => setState(() => _selectedIndex = index),
-            child: Container(
-              decoration: BoxDecoration(
-                color: _selectedIndex == index
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.background,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 28.0, vertical: 10.0),
-                child: Text(
-                  _tabTitles[index],
-                  style: TextStyle(
-                    color: _selectedIndex == index
-                        ? Theme.of(context).colorScheme.background
-                        : Theme.of(context).colorScheme.primary,
-                    fontWeight: _selectedIndex == index
-                        ? FontWeight.bold
-                        : FontWeight.w400,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Row searchFilter(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Search',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-          ),
+      const SizedBox(
+        child: Tab(
+          icon: Icon(Icons.manage_accounts),
+          child: Flexible(child: Text('Management')),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: ElevatedButton.icon(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            icon: const Icon(Icons.filter_list),
-            label: const Text('Filter'),
-          ),
+      ),
+      const SizedBox(
+        child: Tab(
+          icon: Icon(Icons.group),
+          child: Flexible(child: Text('Board of Directors')),
         ),
-      ],
-    );
-  }
+      ),
+    ];
 
-  AppBar _appBar(BuildContext context, String title) {
     return AppBar(
-      toolbarHeight: 70,
-      title: Text(
-        title,
-        style: TextStyle(
-          fontSize: 28,
-          color: Theme.of(context).colorScheme.primary,
-        ),
+      bottom: TabBar(
+        labelStyle: const TextStyle(fontSize: 13.0),
+        indicatorSize: TabBarIndicatorSize.tab,
+        controller: tabController,
+        tabs: tabs,
+        labelPadding: EdgeInsets.zero,
       ),
       iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
-      // actions: [
-      //   Padding(
-      //     padding: const EdgeInsets.only(right: 16.0),
-      //     child: CircleAvatar(
-      //       backgroundColor: Colors.grey.shade300,
-      //       child: IconButton(
-      //         onPressed: () {
-      //           // showAddPostPage(context);
-      //         },
-      //         icon: const Icon(Icons.add, color: Colors.white),
-      //       ),
-      //     ),
-      //   ),
-      // ],
+      toolbarHeight: 70,
+      title: Text(widget.title,
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
     );
   }
 }

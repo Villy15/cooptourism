@@ -58,6 +58,7 @@ class _RegisterPageState extends State<RegisterPage> {
           .set({
         'email': emailTextController.text,
         'first_name': 'Customer',
+        'last_name': 'Lakbay',
         'role': 'Customer',
         'date_joined': dateJoined,
         'emailStatus': 'Not Verified',
@@ -67,6 +68,8 @@ class _RegisterPageState extends State<RegisterPage> {
         'user_rating': "",
         'user_trust': ""
       });
+
+      // Send email verificationLeah
     } on FirebaseAuthException catch (e) {
       if (context.mounted) {
         Navigator.pop(context);

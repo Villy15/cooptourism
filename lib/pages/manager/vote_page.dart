@@ -138,7 +138,9 @@ class _VoteAppBarState extends ConsumerState<VoteAppBar>
     super.initState();
     tabController = TabController(length: 2, vsync: this);
     tabController.addListener(() {
-      widget.onTabChange(tabController);
+      if (tabController.indexIsChanging) {
+        widget.onTabChange(tabController);
+      }
     });
   }
 
@@ -167,73 +169,68 @@ class _VoteAppBarState extends ConsumerState<VoteAppBar>
       ),
     ];
 
-    return DefaultTabController(
-      length: tabs.length,
-      initialIndex: 0,
-      child: AppBar(
-        // Style the icons
-        bottom: TabBar(
-          controller: tabController,
-          tabs: tabs,
-        ),
-        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
-        toolbarHeight: 70,
-        title: Text(widget.title,
-            style: TextStyle(color: Theme.of(context).colorScheme.primary)),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: user?.role == 'Manager'
-                ? CircleAvatar(
-                    child: IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const AddVotePage()));
-                      },
-                      icon: const Icon(Icons.add),
-                    ),
-                  )
-                : Container(),
-          ),
-          Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: CircleAvatar(
-                child: IconButton(
-                  onPressed: () {
-                    // Show modal with info about the page
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text('Member Entitled to Vote'),
-                          content: const Text(
-                            'Any member who meets the following conditions is a member entitled to vote:\n'
-                            'a. Paid the membership fee and the value of the minimum shares required for membership;\n'
-                            'b. Not delinquent in the payment of his share capital subscriptions and other accounts or obligations;\n'
-                            'c. Not violated any provision of this By-laws, the terms and conditions of the subscription agreement; and the decisions, guidelines, rules and regulations promulgated by the Board of Directors and the general assembly;\n'
-                            'd. Completed the continuing education program prescribed by the Board of Directors; and\n'
-                            'e. Participated in the affairs of the Cooperative and patronized its businesses in accordance with cooperative’s policies and guidelines.\n'
-                            'Failure of the member to meet any of the above qualifications shall mean loss of right to vote as declared by the Board of Directors.',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.info),
-                ),
-              )),
-        ],
+    return AppBar(
+      bottom: TabBar(
+        controller: tabController,
+        tabs: tabs,
       ),
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
+      toolbarHeight: 70,
+      title: Text(widget.title,
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: user?.role == 'Manager'
+              ? CircleAvatar(
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AddVotePage()));
+                    },
+                    icon: const Icon(Icons.add),
+                  ),
+                )
+              : Container(),
+        ),
+        Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: CircleAvatar(
+              child: IconButton(
+                onPressed: () {
+                  // Show modal with info about the page
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Member Entitled to Vote'),
+                        content: const Text(
+                          'Any member who meets the following conditions is a member entitled to vote:\n'
+                          'a. Paid the membership fee and the value of the minimum shares required for membership;\n'
+                          'b. Not delinquent in the payment of his share capital subscriptions and other accounts or obligations;\n'
+                          'c. Not violated any provision of this By-laws, the terms and conditions of the subscription agreement; and the decisions, guidelines, rules and regulations promulgated by the Board of Directors and the general assembly;\n'
+                          'd. Completed the continuing education program prescribed by the Board of Directors; and\n'
+                          'e. Participated in the affairs of the Cooperative and patronized its businesses in accordance with cooperative’s policies and guidelines.\n'
+                          'Failure of the member to meet any of the above qualifications shall mean loss of right to vote as declared by the Board of Directors.',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                icon: const Icon(Icons.info),
+              ),
+            )),
+      ],
     );
   }
 }

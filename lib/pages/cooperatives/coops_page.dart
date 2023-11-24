@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooptourism/widgets/display_image.dart';
 // import 'package:cooptourism/widgets/list_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -68,31 +69,12 @@ class _CoopsPageState extends State<CoopsPage> {
                                   topLeft: Radius.circular(16.0),
                                   topRight: Radius.circular(16.0),
                                 ),
-                                child: FutureBuilder<String>(
-                                  future: storageRef
-                                      .child(
-                                          "${cooperatives[index].id}/images/${cooperatives[index].get('logo')}")
-                                      .getDownloadURL(), // Await here
-                                  builder: (context, urlSnapshot) {
-                                    if (urlSnapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    }
-
-                                    if (urlSnapshot.hasError) {
-                                      return Text(
-                                          'Error: ${urlSnapshot.error}');
-                                    }
-
-                                    final imageUrl = urlSnapshot.data;
-
-                                    return Image.network(
-                                      imageUrl!,
-                                      height: 107,
-                                      width: double.infinity,
-                                      fit: BoxFit.cover,
-                                    );
-                                  },
+                                child: DisplayImage(
+                                  path:
+                                      "${cooperatives[index].get('name')}/images/${cooperatives[index].get('logo')}",
+                                  width: 200,
+                                  height: 110,
+                                  radius: BorderRadius.circular(16.0),
                                 ),
                               ),
                               Padding(
