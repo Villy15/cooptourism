@@ -69,6 +69,7 @@ dependencies:
   syncfusion_flutter_charts: ^23.1.44
   syncfusion_flutter_datepicker: ^23.1.44
   url_launcher: ^6.2.1
+  uuid: ^4.2.1
 
 dev_dependencies:
   flutter_lints: ^2.0.0

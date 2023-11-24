@@ -57,6 +57,16 @@ class SalesRepository {
     });
   }
 
+  // add sale by customerId
+  Future<void> addSale(String id, SalesData sale) async {
+    try {
+      await salesCollection.doc(id).set(sale.toMap());
+    } catch (e) {
+      debugPrint('Error adding Listing to Firestore: $e');
+      // You might want to handle errors more gracefully here
+    }
+  }
+
   // Delete all
   Future<void> deleteAllSales() async {
     final batch = FirebaseFirestore.instance.batch();
@@ -66,8 +76,6 @@ class SalesRepository {
     }
     return batch.commit();
   }
-
-
 
   // Add manually a sale to Firestore
   Future<void> addSaleManually() async {
@@ -109,8 +117,7 @@ class SalesRepository {
         'customerid': 'customerid',
         'cooperativeId': 'cooperativeId',
         'ownerId': 'ownerId',
-        'listingId': 'listingId', 
-
+        'listingId': 'listingId',
       },
       {
         'date': DateTime(2023, 11, 5, 12, 30),

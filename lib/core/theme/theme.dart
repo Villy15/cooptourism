@@ -36,6 +36,7 @@ class Pallete {
     // Color Theme
     colorScheme: ColorScheme.fromSeed(
       seedColor: primaryColor,
+      outline: Colors.grey[300],
       brightness: Brightness.light,
     ),
 

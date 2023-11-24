@@ -141,7 +141,7 @@ class _SelectedAccommodationsPageState
                     ),
                   if (railIndex == 2)
                     ListingEdit(
-                      listingId: widget.listing.id!,
+                      listing: widget.listing,
                     ),
                   if (ref.watch(userModelProvider)!.role == "Manager" &&
                       names.contains(widget.listing.cooperativeOwned) == true)

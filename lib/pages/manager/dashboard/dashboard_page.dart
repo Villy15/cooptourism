@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:cooptourism/data/models/manager_dashboard.dart/sales.dart';
 import 'package:cooptourism/data/repositories/manager_dashboard/sales_repository.dart';
@@ -256,7 +257,7 @@ class _DashboardPageState extends State<DashboardPage> {
       return chartDataByCategory.entries.map((entry) {
         return LineSeries<SalesData, DateTime>(
           dataSource: entry.value,
-          xValueMapper: (SalesData sales, _) => sales.date,
+          xValueMapper: (SalesData sales, _) => sales.date.toDate(),
           yValueMapper: (SalesData sales, _) => sales.sales,
           name: entry.key, // Use the category name here.
           color: getColorForCategory(entry.key),
@@ -321,7 +322,7 @@ class _DashboardPageState extends State<DashboardPage> {
         PieSeries<SalesData, String>(
           dataSource: aggregatedChartData.entries.map((entry) {
             return SalesData(
-              date: DateTime.now(),
+              date: Timestamp.now(),
               sales: entry.value,
               category: entry.key,
             );
@@ -361,20 +362,20 @@ class _DashboardPageState extends State<DashboardPage> {
   bool filterDataBasedOnSelection(SalesData data) {
     switch (_selectedFilterType) {
       case 'Day':
-        return data.date.day == _selectedDate.day &&
-            data.date.month == _selectedDate.month &&
-            data.date.year == _selectedDate.year;
+        return data.date.toDate().day == _selectedDate.day &&
+            data.date.toDate().month == _selectedDate.month &&
+            data.date.toDate().year == _selectedDate.year;
       case 'Week':
         DateTime startWeek =
             _selectedDate.subtract(Duration(days: _selectedDate.weekday - 1));
         DateTime endWeek = startWeek.add(const Duration(days: 7));
-        return data.date.isAfter(startWeek) &&
-            data.date.isBefore(endWeek.add(const Duration(days: 1)));
+        return data.date.toDate().isAfter(startWeek) &&
+            data.date.toDate().isBefore(endWeek.add(const Duration(days: 1)));
       case 'Month':
-        return data.date.month == _selectedDate.month &&
-            data.date.year == _selectedDate.year;
+        return data.date.toDate().month == _selectedDate.month &&
+            data.date.toDate().year == _selectedDate.year;
       case 'Year':
-        return data.date.year == _selectedDate.year;
+        return data.date.toDate().year == _selectedDate.year;
       default:
         return true;
     }
