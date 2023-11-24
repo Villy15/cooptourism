@@ -157,26 +157,26 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 100),
 
                     // go to register page
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "To register as a cooperative, ",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        GestureDetector(
-                          onTap: widget.onCoopTap,
-                          child: Text(
-                            "click here",
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      decoration: TextDecoration.underline,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     Text(
+                    //       "To register as a cooperative, ",
+                    //       style: Theme.of(context).textTheme.bodySmall,
+                    //     ),
+                    //     GestureDetector(
+                    //       onTap: widget.onCoopTap,
+                    //       child: Text(
+                    //         "click here",
+                    //         style:
+                    //             Theme.of(context).textTheme.bodySmall?.copyWith(
+                    //                   decoration: TextDecoration.underline,
+                    //                   fontWeight: FontWeight.bold,
+                    //                 ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
               ),
