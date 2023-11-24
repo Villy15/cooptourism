@@ -147,6 +147,7 @@ class ToDoItem {
   factory ToDoItem.fromMap(String id, Map<String, dynamic> map) {
     return ToDoItem(
       owner: map['owner'] as List<String>?,
+      description: map['description'] as String?,
       referenceId: map['referenceId'] as String?,
       type: map['type'] as String?,
       title: map['title'] as String,

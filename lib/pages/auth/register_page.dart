@@ -58,6 +58,7 @@ class _RegisterPageState extends State<RegisterPage> {
           .set({
         'email': emailTextController.text,
         'first_name': 'Customer',
+        'last_name': 'Lakbay',
         'role': 'Customer',
         'date_joined': dateJoined,
         'emailStatus': 'Not Verified',
@@ -67,6 +68,8 @@ class _RegisterPageState extends State<RegisterPage> {
         'user_rating': "",
         'user_trust': ""
       });
+
+      // Send email verificationLeah
     } on FirebaseAuthException catch (e) {
       if (context.mounted) {
         Navigator.pop(context);
@@ -157,26 +160,26 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 100),
 
                     // go to register page
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "To register as a cooperative, ",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        GestureDetector(
-                          onTap: widget.onCoopTap,
-                          child: Text(
-                            "click here",
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      decoration: TextDecoration.underline,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     Text(
+                    //       "To register as a cooperative, ",
+                    //       style: Theme.of(context).textTheme.bodySmall,
+                    //     ),
+                    //     GestureDetector(
+                    //       onTap: widget.onCoopTap,
+                    //       child: Text(
+                    //         "click here",
+                    //         style:
+                    //             Theme.of(context).textTheme.bodySmall?.copyWith(
+                    //                   decoration: TextDecoration.underline,
+                    //                   fontWeight: FontWeight.bold,
+                    //                 ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
               ),

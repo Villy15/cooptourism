@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooptourism/data/models/cooperatives.dart';
+import 'package:cooptourism/data/models/user.dart';
 import 'package:flutter/material.dart';
 
 class CooperativesRepository {
@@ -69,6 +70,27 @@ class CooperativesRepository {
     }
   }
 
+  // Get members subcollection of a cooperative from Firestore as Future and get their UIDs
+  Future<List<UserModel>> getCooperativeMembers2(String coopId) async {
+    try {
+      final doc =
+          await cooperativesCollection.doc(coopId).collection('members').get();
+
+      List<UserModel> members = [];
+
+      for (var doc in doc.docs) {
+        var data = doc.data();
+        members.add(UserModel.fromJson(doc.id, data));
+      }
+
+      return members;
+    } catch (e) {
+      debugPrint('Error getting cooperative members from Firestore: $e');
+      // You might want to handle errors more gracefully here
+      rethrow;
+    }
+  }
+
   // get a specific member from the members subcollection of a cooperative from Firestore
   Future<DocumentSnapshot> getCooperativeMember(
       String coopId, String memberId) async {
@@ -114,13 +136,19 @@ class CooperativesRepository {
   }
 
   // add a member to the members subcollection of a cooperative from Firestore
-  Future<void> addCooperativeMember(String coopId, String memberId) async {
+  Future<void> addCooperativeMember(
+      String coopId, String memberId, UserModel user) async {
     try {
       await cooperativesCollection
           .doc(coopId)
           .collection('members')
           .doc(memberId)
-          .set({});
+          .set({
+        'first_name': user.firstName,
+        'last_name': user.lastName,
+        'email': user.email,
+        'role': user.role,
+      });
     } catch (e) {
       debugPrint('Error adding cooperative member to Firestore: $e');
       // You might want to handle errors more gracefully here
