@@ -70,14 +70,14 @@ class _MemberDashboardPageState extends ConsumerState<MemberDashboardPage> {
         final listings = snapshot.data!;
         final todayListings = listings
             .where((listing) =>
-                listing.startDate?.isBefore(DateTime.now()) == true &&
-                listing.endDate?.isAfter(DateTime.now()) == true)
+                listing.startDate?.toDate().isBefore(DateTime.now()) == true &&
+                listing.endDate?.toDate().isAfter(DateTime.now()) == true)
             .toList();
 
         final tomorrowListings = listings
             .where((listing) =>
-                listing.startDate?.isAfter(DateTime.now()) == true &&
-                listing.startDate?.isBefore(
+                listing.startDate?.toDate().isAfter(DateTime.now()) == true &&
+                listing.startDate?.toDate().isBefore(
                         DateTime.now().add(const Duration(days: 1))) ==
                     true)
             .toList();
@@ -88,29 +88,31 @@ class _MemberDashboardPageState extends ConsumerState<MemberDashboardPage> {
 
         final thisWeekListings = listings
             .where((listing) =>
-                listing.startDate?.isAfter(startOfWeek) == true &&
-                listing.startDate?.isBefore(endOfWeek) == true &&
-                listing.startDate?.isAfter(
-                        DateTime.now().add(const Duration(days: 1))) ==
+                listing.startDate?.toDate().isAfter(startOfWeek) == true &&
+                listing.startDate?.toDate().isBefore(endOfWeek) == true &&
+                listing.startDate
+                        ?.toDate()
+                        .isAfter(DateTime.now().add(const Duration(days: 1))) ==
                     true)
             .toList();
 
         final thisMonthListings = listings
             .where((listing) =>
-                listing.startDate?.isAfter(
-                        DateTime.now().add(const Duration(days: 7))) ==
+                listing.startDate
+                        ?.toDate()
+                        .isAfter(DateTime.now().add(const Duration(days: 7))) ==
                     true &&
-                listing.startDate?.isBefore(DateTime(
+                listing.startDate?.toDate().isBefore(DateTime(
                         DateTime.now().year, DateTime.now().month + 1, 1)) ==
                     true)
             .toList();
 
         final nextMonthListings = listings
             .where((listing) =>
-                listing.startDate?.isAfter(DateTime(
+                listing.startDate?.toDate().isAfter(DateTime(
                         DateTime.now().year, DateTime.now().month + 1, 1)) ==
                     true &&
-                listing.startDate?.isBefore(DateTime(
+                listing.startDate?.toDate().isBefore(DateTime(
                         DateTime.now().year, DateTime.now().month + 2, 1)) ==
                     true)
             .toList();
@@ -208,9 +210,9 @@ class _MemberDashboardPageState extends ConsumerState<MemberDashboardPage> {
       itemCount: listings.length,
       itemBuilder: (context, index) {
         final startDateFormatted =
-            DateFormat('MMMM d').format(listings[index].startDate!);
+            DateFormat('MMMM d').format(listings[index].startDate!.toDate());
         final endDateFormatted =
-            DateFormat('MMMM d').format(listings[index].endDate!);
+            DateFormat('MMMM d').format(listings[index].endDate!.toDate());
         final numberOfGuests = listings[index].numberOfGuests ?? 0;
 
         // Ensure that the listingId and customerId are not null

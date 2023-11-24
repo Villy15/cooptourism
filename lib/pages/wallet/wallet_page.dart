@@ -210,7 +210,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
       itemBuilder: (context, index) {
         final sale = sales[index];
         final formattedDate =
-            DateFormat('MMM dd yyyy | hh:mm a').format(sale.date);
+            DateFormat('MMM dd yyyy | hh:mm a').format(sale.date.toDate());
         return ListTile(
           leading: const Icon(Icons.payment),
           title: FutureBuilder(

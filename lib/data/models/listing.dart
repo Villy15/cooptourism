@@ -1,27 +1,28 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ListingModel {
-  String? id = "";
-  String? owner = "";
-  String? title = "";
-  String? description = "";
-  String? cooperativeOwned = "";
-  String? city = "";
-  String? province = "";
-  String? category = "";
-  num? rating = 0;
-  Map<String, dynamic>? roles = {};
-  List<dynamic>? tasks = [];
-  num? price = 0;
-  String? type = "";
-  Timestamp? postDate = Timestamp.now();
-  List<dynamic>? images = [];
-  num? pax = 0;
-  String? ownerMember = "";
-  bool? isPublished = false;
+  String? id;
+  String? owner;
+  String? title;
+  String? description;
+  String? cooperativeOwned;
+  String? city;
+  String? province;
+  String? category;
+  num? rating;
+  Map<String, dynamic>? roles;
+  List<dynamic>? tasks;
+  num? price;
+  String? type;
+  Timestamp? postDate;
+  List<dynamic>? images;
+  num? pax;
+  String? ownerMember;
+  bool? isPublished;
+
+  List<AvailableDateModel>? availableDates;
 
   ListingModel({
     this.id,
@@ -42,6 +43,7 @@ class ListingModel {
     this.pax,
     this.ownerMember,
     this.isPublished,
+    this.availableDates,
   });
 
   ListingModel copyWith({
@@ -54,7 +56,7 @@ class ListingModel {
     String? province,
     String? category,
     num? rating,
-    Map<String, List<String>>? roles,
+    Map<String, dynamic>? roles,
     List<dynamic>? tasks,
     num? price,
     String? type,
@@ -62,7 +64,8 @@ class ListingModel {
     List<dynamic>? images,
     num? pax,
     bool? isPublished,
-    // String? ownerMember,
+    List<AvailableDateModel>? availableDates,
+    List<AvailableTimeModel>? availableTimes,
   }) {
     return ListingModel(
       id: id ?? this.id,
@@ -82,7 +85,7 @@ class ListingModel {
       images: images ?? this.images,
       pax: pax ?? this.pax,
       isPublished: isPublished ?? this.isPublished,
-      // ownerMember: ownerMember ?? this.ownerMember,
+      availableDates: availableDates ?? this.availableDates,
     );
   }
 
@@ -98,100 +101,125 @@ class ListingModel {
       'category': category,
       'rating': rating,
       'roles': roles,
-      'tasks': tasks!.map((x) => x.toMap()).toList(),
+      'tasks': tasks?.map((x) => x.toMap()).toList(),
       'price': price,
       'type': type,
-      'postDate': postDate!.toDate(),
+      'postDate': postDate?.toDate(),
       'images': images,
-      'pax': pax!,
-      'isPublished': isPublished!,
-      // 'ownerMember': ownerMember,
+      'pax': pax,
+      'isPublished': isPublished,
+      'availableDates': availableDates,
     };
   }
 
   factory ListingModel.fromMap(String id, Map<String, dynamic> map) {
     return ListingModel(
       id: id,
-      owner: map['owner'] != null ? map['owner'] as String : null,
-      title: map['title'] != null ? map['title'] as String : null,
-      description:
-          map['description'] != null ? map['description'] as String : null,
-      cooperativeOwned: map['cooperativeOwned'] != null
-          ? map['cooperativeOwned'] as String
+      owner: map['owner'] as String?,
+      title: map['title'] as String?,
+      description: map['description'] as String?,
+      cooperativeOwned: map['cooperativeOwned'] as String?,
+      city: map['city'] as String?,
+      province: map['province'] as String?,
+      category: map['category'] as String?,
+      rating: map['rating'] as num?,
+      roles: map['roles'] as Map<String, dynamic>?,
+      tasks: List<dynamic>.from(map['tasks'] ?? const []),
+      price: map['price'] as num?,
+      type: map['type'] as String?,
+      postDate: map['postDate'] as Timestamp?,
+      images: List<dynamic>.from(map['images'] ?? const []),
+      pax: map['pax'] as num?,
+      isPublished: map['isPublished'] as bool?,
+      availableDates: map['availableDates'] != null
+          ? List<AvailableDateModel>.from(
+              (map['availableDates'] as List).map(
+                (item) =>
+                    AvailableDateModel.fromMap(item as Map<String, dynamic>),
+              ),
+            )
           : null,
-      city: map['city'] != null ? map['city'] as String : null,
-      province: map['province'] != null ? map['province'] as String : null,
-      category: map['category'] != null ? map['category'] as String : null,
-      rating: map['rating'] != null ? map['rating'] as num : null,
-      roles: map['roles'] != null
-          ? Map<String, dynamic>.from((map['roles'] as Map<String, dynamic>))
+      // availableDates: map['availableDates'] != null
+      //     ? List<AvailableDateModel>.from(map['availableDates'])
+      //         as List<AvailableDateModel>?
+      //     : [],
+    );
+  }
+
+  @override
+  String toString() {
+    return 'ListingModel(id: $id, owner: $owner, title: $title, description: $description, cooperativeOwned: $cooperativeOwned, city: $city, province: $province, category: $category, rating: $rating, roles: $roles, tasks: $tasks, price: $price, type: $type, postDate: $postDate, images: $images, pax: $pax, isPublished: $isPublished, availableDates: $availableDates)';
+  }
+}
+
+class AvailableDateModel {
+  Timestamp? date;
+  bool? available;
+  List<AvailableTimeModel>? availableTimes;
+
+  AvailableDateModel({this.date, this.available, this.availableTimes});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'date': date?.toDate(),
+      'available': available,
+      'availableTimes': availableTimes?.map((x) => x.toMap()).toList(),
+    };
+  }
+
+  factory AvailableDateModel.fromMap(Map<String, dynamic> map) {
+    return AvailableDateModel(
+      date: map['date'] as Timestamp?,
+      available: map['available'] as bool?,
+      availableTimes: map['availableTimes'] != null
+          ? List<AvailableTimeModel>.from(
+              (map['availableTimes'] as List).map(
+                (x) => AvailableTimeModel.fromMap(x as Map<String, dynamic>),
+              ),
+            )
           : null,
-      tasks: map['tasks'] != null
-          ? List<dynamic>.from((map['tasks'] as List<dynamic>))
-          : null,
-      price: map['price'] != null ? map['price'] as num : null,
-      type: map['type'] != null ? map['type'] as String : null,
-      postDate: map['postDate'] != null ? map['postDate'] as Timestamp : null,
-      images: map['images'] != null
-          ? List<dynamic>.from((map['images'] as List<dynamic>))
-          : null,
-      pax: map['pax'] != null ? map['pax'] as num : null,
-      isPublished:
-          map['isPublished'] != null ? map['isPublished'] as bool : null,
-      // ownerMember: map['ownerMember'] != null ? map['ownerMember'] as String : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory ListingModel.fromJson(String source) =>
-      ListingModel.fromMap("", json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() {
-    return 'ListingModel(id: $id, owner: $owner, title: $title, description: $description, cooperativeOwned: $cooperativeOwned, city: $city, province: $province, category: $category, rating: $rating, roles: $roles, tasks: $tasks ,price: $price, type: $type, postDate: $postDate, images: $images, pax: $pax, isPublished: $isPublished)'; //, ownerMember: $ownerMember)';
-  }
+  factory AvailableDateModel.fromJson(String source) =>
+      AvailableDateModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }
 
-// class RoleModel {
-//   String? roleName;
-//   List<String>? assigned;
-//   RoleModel({
-//     this.roleName,
-//     this.assigned,
-//   });
+class AvailableTimeModel {
+  String? time;
+  num? maxPax;
+  num? currentPax;
+  bool? available;
 
-//   RoleModel copyWith({
-//     String? roleName,
-//     List<String>? assigned,
-//   }) {
-//     return RoleModel(
-//       roleName: roleName ?? this.roleName,
-//       assigned: assigned ?? this.assigned,
-//     );
-//   }
+  AvailableTimeModel({
+    this.time,
+    this.maxPax,
+    this.currentPax,
+    this.available,
+  });
 
-//   Map<String, dynamic> toMap() {
-//     return <String, dynamic>{
-//       'roleName': roleName,
-//       'assigned': assigned,
-//     };
-//   }
+  Map<String, dynamic> toMap() {
+    return {
+      'time': time,
+      'maxPax': maxPax,
+      'currentPax': currentPax,
+      'available': available,
+    };
+  }
 
-//   factory RoleModel.fromMap(Map<String, dynamic> map) {
-//     return RoleModel(
-//       roleName: map['roleName'] != null ? map['roleName'] as String : null,
-//       assigned: map['assigned'] != null
-//           ? List<String>.from((map['assigned'] as List<String>))
-//           : null,
-//     );
-//   }
+  factory AvailableTimeModel.fromMap(Map<String, dynamic> map) {
+    return AvailableTimeModel(
+      time: map['time'] as String?,
+      maxPax: map['maxPax'] as num?,
+      currentPax: map['currentPax'] as num?,
+      available: map['available'] as bool?,
+    );
+  }
 
-//   String toJson() => json.encode(toMap());
+  String toJson() => json.encode(toMap());
 
-//   factory RoleModel.fromJson(String source) =>
-//       RoleModel.fromMap(json.decode(source) as Map<String, dynamic>);
-
-//   @override
-//   String toString() => 'RoleModel(roleName: $roleName, assigned: $assigned)';
-// }
+  factory AvailableTimeModel.fromJson(String source) =>
+      AvailableTimeModel.fromMap(json.decode(source) as Map<String, dynamic>);
+}

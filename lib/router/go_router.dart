@@ -256,13 +256,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                             },
                           ),
                         ]),
-                    GoRoute(
-                      path: 'listing_edit',
-                      builder: (BuildContext context, GoRouterState state) {
-                        return ListingEdit(
-                            listingId: state.pathParameters["listingId"]!);
-                      },
-                    ),
                   ],
                 ),
               ],
