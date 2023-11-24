@@ -413,7 +413,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Text('Enroll Now!',
                       style: TextStyle(
                         fontSize: 20,
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: Theme.of(context).colorScheme.background,
                         fontWeight: FontWeight.bold,
                       )),
                 ),
@@ -601,119 +601,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Column performanceSection(
-      BuildContext context, UserModel user, String userUID) {
-    final List<String> profileTiles = [
-      'Monthly Sales',
-      'Annual Profit',
-      'Total Sales',
-      'Trust Rating'
-    ];
-    final List<String> tempData = [
-      user.monthlySales!,
-      user.annualProfit!,
-      user.totalSales!,
-      user.userRating!
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 15.0),
-          child: Text(
-            'Performance',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        const SizedBox(height: 15),
-        GridView.builder(
-            shrinkWrap: true,
-            itemCount: profileTiles.length,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                mainAxisExtent: 300,
-                childAspectRatio: 1),
-            itemBuilder: (context, index) {
-              return Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      color: Theme.of(context).colorScheme.primary, width: 1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Column(
-                        children: [
-                          Text(profileTiles[index],
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              )),
-                          const SizedBox(height: 50),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: CircularPercentIndicator(
-                                radius: 40,
-                                lineWidth: 10,
-                                percent: 0.85,
-                                progressColor:
-                                    Theme.of(context).colorScheme.primary,
-                                center: const Text('85%')),
-                          ),
-                          const SizedBox(height: 15),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text('Current: '),
-                              Text(tempData[index],
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ))
-                            ],
-                          ),
-                          const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                                child: Text('Goal: '),
-                              ),
-                              Text('100,000',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ))
-                            ],
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              );
-            }),
-        Padding(
-          padding: const EdgeInsets.only(left: 15.0),
-          child: Text('Current Listings',
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary)),
-        ),
-      ],
-    );
-  }
 
   Container profileHeading(
       BuildContext context, UserModel user, String userUID) {

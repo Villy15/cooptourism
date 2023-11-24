@@ -50,7 +50,8 @@ class _ListingCardState extends ConsumerState<ListingCard> {
             ref
                 .read(listingModelProvider.notifier)
                 .setListing(widget.listingModel);
-            context.push('/market_page/${widget.listingModel.id}');
+            context.push('/market_page/${widget.listingModel.category}',
+                extra: widget.listingModel);
           },
           child: SizedBox(
               width: double.infinity,

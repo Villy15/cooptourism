@@ -101,28 +101,28 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                         ),
                         const SizedBox(height: 10), 
 
-                        SizedBox(
-                          height: 155,
-                          child: ListView.separated(
-                            shrinkWrap: true,
-                            itemCount: neededFiles.length,
-                            physics: const NeverScrollableScrollPhysics(),
-                            separatorBuilder: (context, index) {
-                              return const SizedBox(height: 8);
-                            },
-                            itemBuilder: (context, index) {
-                              return SizedBox(
-                                child: Text(
-                                  ' - ${neededFiles[index]}',
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    fontSize: 17,
-                                  )
-                                  ),
-                              );
-                            },                          
-                          ),
-                        ),
+                        Column(
+  mainAxisSize: MainAxisSize.min,
+  children: [
+    ListView.separated(
+      shrinkWrap: true,
+      itemCount: coop.memberRequirements!.length,
+      physics: const NeverScrollableScrollPhysics(),
+      separatorBuilder: (context, index) {
+        return const SizedBox(height: 8);
+      },
+      itemBuilder: (context, index) {
+        return Text(
+          ' - ${coop.memberRequirements?[index]}',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: 17,
+          ),
+        );
+      },
+    ),
+  ],
+),
 
                         const SizedBox(height: 15),
 

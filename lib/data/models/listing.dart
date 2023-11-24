@@ -2,8 +2,6 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:collection/collection.dart';
-import 'package:cooptourism/data/models/task.dart';
 
 class ListingModel {
   String? id = "";

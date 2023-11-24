@@ -18,6 +18,9 @@ import 'package:cooptourism/providers/user_provider.dart';
 import 'package:cooptourism/widgets/display_image.dart';
 import 'package:cooptourism/widgets/display_text.dart';
 import 'package:cooptourism/widgets/leading_back_button.dart';
+import 'package:cooptourism/widgets/listing_display_description.dart';
+import 'package:cooptourism/widgets/listing_image_slider.dart';
+import 'package:cooptourism/widgets/listing_manager_rail_menu.dart';
 // import 'package:dots_indicator/dots_indicator.dart';
 // import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -27,16 +30,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final UserRepository userRepository = UserRepository();
 
-class SelectedListingPage extends ConsumerStatefulWidget {
-  final String listingId;
-  const SelectedListingPage({super.key, required this.listingId});
+class SelectedAccommodationsPage extends ConsumerStatefulWidget {
+  final ListingModel listing;
+  const SelectedAccommodationsPage({super.key, required this.listing});
 
   @override
-  ConsumerState<SelectedListingPage> createState() =>
-      _SelectedListingPageState();
+  ConsumerState<SelectedAccommodationsPage> createState() =>
+      _SelectedAccommodationsPageState();
 }
 
-class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
+class _SelectedAccommodationsPageState
+    extends ConsumerState<SelectedAccommodationsPage> {
   String? role;
 
   @override
@@ -51,11 +55,9 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
   int railIndex = 0;
   @override
   Widget build(BuildContext context) {
-    final ListingRepository listingRepository = ListingRepository();
-
-    final Future<ListingModel> listings =
-        listingRepository.getSpecificListing(widget.listingId);
-
+    CooperativesRepository cooperativesRepository = CooperativesRepository();
+    Future<List<String>> cooperativeNames = cooperativesRepository
+        .getCooperativeNames(ref.watch(userModelProvider)!.cooperativesJoined!);
     final user = ref.watch(userModelProvider);
     role = user?.role ?? 'Customer';
 
@@ -112,85 +114,54 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
             toolbarHeight: 35,
             leading: LeadingBackButton(ref: ref)),
         extendBodyBehindAppBar: true,
-        body: FutureBuilder<ListingModel>(
-          future: listings,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Text("Error: ${snapshot.error}");
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            final listing = snapshot.data!;
-            CooperativesRepository cooperativesRepository =
-                CooperativesRepository();
-            Future<List<String>> cooperativeNames =
-                cooperativesRepository.getCooperativeNames(
-                    ref.watch(userModelProvider)!.cooperativesJoined!);
-            return FutureBuilder(
-                future: cooperativeNames,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Text("Error: ${snapshot.error}");
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  final names = snapshot.data!;
-                  return Stack(
-                    children: [
-                      if (railIndex == 0)
-                        viewListing(
-                          listing,
-                          context,
-                          showSnackBar,
-                          images,
-                          bedrooms,
-                          beds,
-                        ),
-                      if (railIndex == 1)
-                        ListingMessagesInbox(
-                          listingId: listing.id!,
-                        ),
-                      if (railIndex == 2)
-                        ListingEdit(
-                          listingId: listing.id!,
-                        ),
-                      if (ref.watch(userModelProvider)!.role == "Manager" &&
-                          names.contains(listing.cooperativeOwned) == true)
-                        ManagerMenu(
-                          railIndex: railIndex,
-                          onDestinationSelected: (index) {
-                            setState(() {
-                              railIndex = index;
-                            });
-                          },
-                          listingId: widget.listingId,
-                        ),
-                    ],
-                  );
-                });
-          },
-        ),
+        body: FutureBuilder(
+            future: cooperativeNames,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Text("Error: ${snapshot.error}");
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final names = snapshot.data!;
+              return Stack(
+                children: [
+                  if (railIndex == 0)
+                    viewListing(
+                      widget.listing,
+                      context,
+                      showSnackBar,
+                      images,
+                      bedrooms,
+                      beds,
+                    ),
+                  if (railIndex == 1)
+                    ListingMessagesInbox(
+                      listingId: widget.listing.id!,
+                    ),
+                  if (railIndex == 2)
+                    ListingEdit(
+                      listingId: widget.listing.id!,
+                    ),
+                  if (ref.watch(userModelProvider)!.role == "Manager" &&
+                      names.contains(widget.listing.cooperativeOwned) == true)
+                    ListingManagerRailMenu(
+                      railIndex: railIndex,
+                      onDestinationSelected: (index) {
+                        setState(() {
+                          railIndex = index;
+                        });
+                      },
+                      listingId: widget.listing.id!,
+                    ),
+                ],
+              );
+            }),
         bottomNavigationBar: railIndex == 0
             ? BottomAppBar(
                 surfaceTintColor: Colors.white,
                 height: 90,
-                child: FutureBuilder(
-                    future: listings,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Text("Error: ${snapshot.error}");
-                      }
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-
-                      final listing = snapshot.data!;
-                      return customerRow(listing);
-                    }),
-              )
+                child: customerRow(widget.listing))
             : null,
       ),
     );
@@ -206,12 +177,12 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
     final ReviewRepository reviewRepository = ReviewRepository();
 
     final Stream<List<ReviewModel>> reviews =
-        reviewRepository.getAllListingReviews(widget.listingId);
+        reviewRepository.getAllListingReviews(widget.listing.id!);
 
     return ListView(
       padding: const EdgeInsets.only(top: 0),
       children: [
-        ImageSlider(listing: listing),
+        ListingImageSlider(listing: listing),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14),
           child: Column(
@@ -338,7 +309,7 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                 height: 10,
               ),
 
-              descriptionText(listing, context),
+              listingDisplayDescription(listing, context),
 
               const Divider(),
 
@@ -559,76 +530,6 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
     );
   }
 
-  String addSpaces(String description) {
-    List<String> sentences = description.split('. ');
-    for (int i = 3; i < sentences.length; i += 4) {
-      sentences[i] = '\n\n\n${sentences[i]}';
-    }
-    return sentences.join('.');
-  }
-
-  Column descriptionText(ListingModel listing, BuildContext context) {
-    String descriptionWithSpaces = addSpaces(listing.description!);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: DisplayText(
-            text: descriptionWithSpaces,
-            lines: 5,
-            style: TextStyle(
-              fontSize: Theme.of(context).textTheme.labelLarge?.fontSize,
-            ),
-          ),
-        ),
-        TextButton(
-          onPressed: () {
-            showModalBottomSheet(
-              // show indicator drag
-              isScrollControlled: true,
-              enableDrag: true,
-              showDragHandle: true,
-              context: context,
-              builder: (context) {
-                return Container(
-                  height: MediaQuery.sizeOf(context).height * 0.7,
-                  padding: const EdgeInsets.all(16.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        DisplayText(
-                          text: 'About this Space',
-                          lines: 1,
-                          style: Theme.of(context).textTheme.titleLarge!,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          descriptionWithSpaces,
-                          style: TextStyle(
-                            fontSize: Theme.of(context)
-                                .textTheme
-                                .labelLarge
-                                ?.fontSize,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-          },
-          child: const Text('Show More'),
-        ),
-      ],
-    );
-  }
-
   Row customerRow(ListingModel listing) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -664,26 +565,29 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: FilledButton(
-            // Make it wider
-            style: ButtonStyle(
-              minimumSize: MaterialStateProperty.all<Size>(const Size(180, 45)),
-            ),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => listing.type ==
-                              // If service show book service page
-                              'Service'
-                          ? BookServicePage(listing: listing)
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FilledButton(
+              // Make it wider
+              style: ButtonStyle(
+                minimumSize:
+                    MaterialStateProperty.all<Size>(const Size(180, 45)),
+              ),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => listing.type ==
+                                // If service show book service page
+                                'Service'
+                            ? BookServicePage(listing: listing)
 
-                          // If product show buy product page
-                          : BookServicePage(listing: listing)));
-            },
-            child: const Text('Book Now'),
+                            // If product show buy product page
+                            : BookServicePage(listing: listing)));
+              },
+              child: const Text('Book Now'),
+            ),
           ),
         ),
       ],
@@ -755,229 +659,4 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
   //     ),
   //   );
   // }
-}
-
-class ImageSlider extends StatefulWidget {
-  final ListingModel listing;
-  const ImageSlider({super.key, required this.listing});
-
-  @override
-  State<ImageSlider> createState() => _ImageSliderState();
-}
-
-class _ImageSliderState extends State<ImageSlider> {
-  int currentImageIndex = 0;
-  @override
-  Widget build(BuildContext context) {
-    // final decorator = DotsDecorator(
-    //   activeColor: Colors.orange[700],
-    //   size: const Size.square(7.5),
-    //   activeSize: const Size.square(10.0),
-    //   activeShape: RoundedRectangleBorder(
-    //     borderRadius: BorderRadius.circular(20.0),
-    //   ),
-    //   spacing: const EdgeInsets.all(2.5),
-    // );
-    int maxImageIndex = widget.listing.images!.length;
-    CarouselController carouselController = CarouselController();
-
-    return Stack(
-      children: [
-        InkWell(
-          onTap: () {
-            showModalBottomSheet(
-              isScrollControlled: true,
-              context: context,
-              builder: (context) {
-                return FractionallySizedBox(
-                  heightFactor: 0.9,
-                  child: GridView.count(
-                    crossAxisCount: 1,
-                    children: widget.listing.images!
-                        .map<Widget>((e) => Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: DisplayImage(
-                                path:
-                                    "${widget.listing.cooperativeOwned}/listingImages/$e",
-                                height: 250,
-                                width: double.infinity,
-                                radius: BorderRadius.zero,
-                              ),
-                            ))
-                        .toList(),
-                  ),
-                );
-              },
-            );
-          },
-          child: SizedBox(
-            height: 250,
-            child: CarouselSlider(
-              carouselController: carouselController,
-              options: CarouselOptions(
-                viewportFraction: 1.0,
-                height: 250.0,
-                enlargeFactor: 0,
-                enlargeCenterPage: true,
-                enableInfiniteScroll: false,
-                onPageChanged: (index, reason) {
-                  setState(() {
-                    currentImageIndex = index;
-                  });
-                },
-              ),
-              items: widget.listing.images!
-                  .map<Widget>((e) => DisplayImage(
-                        path:
-                            "${widget.listing.cooperativeOwned}/listingImages/$e",
-                        height: 250,
-                        width: double.infinity,
-                        radius: BorderRadius.zero,
-                      ))
-                  .toList(),
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 10,
-          right: 10,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4),
-              child: Text(
-                '${currentImageIndex + 1} / $maxImageIndex',
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ),
-        // SizedBox(
-        //   height: 250,
-        //   child: Padding(
-        //     padding: const EdgeInsets.only(bottom: 10.0),
-        //     child: Align(
-        //       alignment: Alignment.bottomCenter,
-        //       child: Container(
-        //         decoration: BoxDecoration(
-        //             color: Colors.white,
-        //             borderRadius: BorderRadius.circular(25)),
-        //         child: Padding(
-        //           padding: const EdgeInsets.all(2.5),
-        //           child: DotsIndicator(
-        //             key: ValueKey(currentImageIndex),
-        //             dotsCount: maxImageIndex,
-        //             position: currentImageIndex,
-        //             decorator: decorator,
-        //           ),
-        //         ),
-        //       ),
-        //     ),
-        //   ),
-        // ),
-      ],
-    );
-  }
-}
-
-class ManagerMenu extends StatefulWidget {
-  final int railIndex;
-  final Function onDestinationSelected;
-  final String listingId;
-  const ManagerMenu({
-    super.key,
-    required this.railIndex,
-    required this.onDestinationSelected,
-    required this.listingId,
-  });
-
-  @override
-  State<ManagerMenu> createState() => _ManagerMenuState();
-}
-
-class _ManagerMenuState extends State<ManagerMenu> {
-  bool railVisibility = false;
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      right: 0,
-      child: SizedBox(
-        height: MediaQuery.sizeOf(context).height,
-        child: Row(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    bottomLeft: Radius.circular(20)),
-              ),
-              child: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      railVisibility = !railVisibility;
-                    });
-                  },
-                  icon: const Icon(Icons.settings_accessibility_rounded)),
-            ),
-            if (railVisibility == true)
-              Container(
-                height: MediaQuery.sizeOf(context).height,
-                decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        bottomLeft: Radius.circular(20))),
-                child: NavigationRail(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  minWidth: 56,
-                  selectedIndex: widget.railIndex,
-                  groupAlignment: 0,
-                  unselectedIconTheme: IconThemeData(
-                      color: Theme.of(context).colorScheme.background),
-                  onDestinationSelected: (int index) {
-                    widget.onDestinationSelected(index);
-                  },
-                  labelType: NavigationRailLabelType.none,
-                  destinations: const <NavigationRailDestination>[
-                    NavigationRailDestination(
-                      icon: Icon(Icons.remove_red_eye_rounded),
-                      selectedIcon: Icon(Icons.remove_red_eye_rounded),
-                      label: Text('View'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.message_rounded),
-                      selectedIcon: Icon(Icons.message_rounded),
-                      label: Text('Chat'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.edit_outlined),
-                      selectedIcon: Icon(Icons.edit_outlined),
-                      label: Text('Edit'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.task),
-                      selectedIcon: Icon(Icons.task),
-                      label: Text('Tasks'),
-                    ),
-                  ],
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
 }
