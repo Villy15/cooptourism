@@ -1,5 +1,6 @@
 // import 'package:cooptourism/pages/coaching/coaching_messaging.dart';
 // import 'package:cooptourism/pages/coaching/coaching_page.dart';
+import 'package:cooptourism/data/models/listing.dart';
 import 'package:cooptourism/pages/cooperatives/join_coop.dart';
 import 'package:cooptourism/pages/customer/city_page.dart';
 import 'package:cooptourism/pages/customer/enroll_coop_page.dart';
@@ -15,6 +16,10 @@ import 'package:cooptourism/pages/market/add_listing.dart';
 import 'package:cooptourism/pages/market/listing_edit.dart';
 import 'package:cooptourism/pages/market/listing_messages.dart';
 import 'package:cooptourism/pages/market/listing_messages_inbox.dart';
+import 'package:cooptourism/pages/market/selected_entertainment_page.dart';
+import 'package:cooptourism/pages/market/selected_foodservice_page.dart';
+import 'package:cooptourism/pages/market/selected_touring_page.dart';
+import 'package:cooptourism/pages/market/selected_transportation_page.dart';
 
 import 'package:cooptourism/pages/member/dashboard.dart';
 import 'package:cooptourism/pages/profile/edit_profile.dart';
@@ -36,7 +41,7 @@ import 'package:cooptourism/pages/manager/dashboard/dashboard_page.dart';
 import 'package:cooptourism/pages/manager/members_page.dart';
 import 'package:cooptourism/pages/manager/reports_page.dart';
 import 'package:cooptourism/pages/market/market_page.dart';
-import 'package:cooptourism/pages/market/selected_listing_page.dart';
+import 'package:cooptourism/pages/market/selected_accommodations_page.dart';
 import 'package:cooptourism/pages/menu_page.dart';
 import 'package:cooptourism/pages/profile/profile_page.dart';
 import 'package:cooptourism/pages/wallet/wallet_page.dart';
@@ -202,11 +207,35 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       return const AddListing();
                     }),
                 GoRoute(
-                  path: ':listingId',
+                  path: ':category',
                   builder: (BuildContext context, GoRouterState state) {
-                    return SelectedListingPage(
-                      listingId: state.pathParameters["listingId"]!,
-                    );
+                    ListingModel listing = state.extra as ListingModel;
+                    switch (state.pathParameters["category"]) {
+                      case "Accommodations":
+                        return SelectedAccommodationsPage(
+                          listing: listing,
+                        );
+                      case "Transportation":
+                        return SelectedTransportationPage(
+                          listing: listing,
+                        );
+                      case "Food Service":
+                        return SelectedFoodServicePage(
+                          listing: listing,
+                        );
+                      case "Entertainment":
+                        return SelectedEntertainmentPage(
+                          listing: listing,
+                        );
+                      case "Touring":
+                        return SelectedTouringPage(
+                          listing: listing,
+                        );
+                      default:
+                        return SelectedAccommodationsPage(
+                          listing: listing,
+                        );
+                    }
                   },
                   routes: [
                     GoRoute(

@@ -2,8 +2,6 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:collection/collection.dart';
-import 'package:cooptourism/data/models/task.dart';
 
 class ListingModel {
   String? id = "";
@@ -15,8 +13,8 @@ class ListingModel {
   String? province = "";
   String? category = "";
   num? rating = 0;
-  Map<String, List<String>>? roles = {};
-  List<ToDoItem>? tasks = [];
+  Map<String, dynamic>? roles = {};
+  List<dynamic>? tasks = [];
   num? price = 0;
   String? type = "";
   Timestamp? postDate = Timestamp.now();
@@ -57,7 +55,7 @@ class ListingModel {
     String? category,
     num? rating,
     Map<String, List<String>>? roles,
-    List<ToDoItem>? tasks,
+    List<dynamic>? tasks,
     num? price,
     String? type,
     Timestamp? postDate,
@@ -126,11 +124,10 @@ class ListingModel {
       category: map['category'] != null ? map['category'] as String : null,
       rating: map['rating'] != null ? map['rating'] as num : null,
       roles: map['roles'] != null
-          ? Map<String, List<String>>.from(
-              (map['roles'] as Map<String, List<String>>))
+          ? Map<String, dynamic>.from((map['roles'] as Map<String, dynamic>))
           : null,
       tasks: map['tasks'] != null
-          ? List<ToDoItem>.from((map['tasks'] as List<ToDoItem>))
+          ? List<dynamic>.from((map['tasks'] as List<dynamic>))
           : null,
       price: map['price'] != null ? map['price'] as num : null,
       type: map['type'] != null ? map['type'] as String : null,
