@@ -16,6 +16,23 @@ class UserRepository {
     });
   }
 
+  // get all users future
+  Future<List<UserModel>> getAllUsersFuture() async {
+    try {
+      final querySnapshot = await usersCollection.get();
+      final users = querySnapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        data['uid'] = doc.id; // include uid in the retrieved data
+        return UserModel.fromJson("", data);
+      }).toList();
+      return users;
+    } catch (e) {
+      debugPrint('Error getting users from Firestore: $e');
+      // You might want to handle errors more gracefully here
+      rethrow;
+    }
+  }
+
   // get users with role of Coach
   Stream<List<UserModel>> getAllCoaches() {
     return usersCollection

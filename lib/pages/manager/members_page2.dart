@@ -59,67 +59,67 @@ class _MembersPageState extends State<MembersPage> {
 
               final members = snapshot.data!;
 
+              debugPrint("Members: ${members[1]}");
+
               // Sort members by name
               members.sort(
                   (a, b) => (a.firstName ?? '').compareTo(b.firstName ?? ''));
 
               final tabIndex = _tabController?.index ?? 0;
 
-              // Filter members by cooperativePositions where positionType is Member
-              final filteredMembers = members.where((member) {
-                if (tabIndex == 0) {
-                  return member.cooperativePositions!.any((position) =>
-                      position.positionType == 'Member' &&
-                      position.cooperativeid == 'sslvO5tgDoCHGBO82kxq');
-                } else if (tabIndex == 1) {
-                  return member.cooperativePositions!.any((position) =>
-                      position.positionType == 'Manager' &&
-                      position.cooperativeid == 'sslvO5tgDoCHGBO82kxq');
-                } else {
-                  return member.cooperativePositions!.any((position) =>
-                      position.positionType == 'Board' &&
-                      position.cooperativeid == 'sslvO5tgDoCHGBO82kxq');
-                }
-              }).toList();
+              debugPrint('tabIndex: $tabIndex');
+
+              // Filter the votes based on the current tab index
 
               return Expanded(
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: filteredMembers.length,
+                  itemCount: members.length,
                   itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 0.0),
-                      child: Column(
-                        children: [
-                          ListTile(
-                            onTap: () => context.go(
-                              '/members_page/${filteredMembers[index].uid}',
-                            ),
-                            leading: DisplayImage(
-                              path:
-                                  'users/${filteredMembers[index].email}/${filteredMembers[index].profilePicture}',
-                              width: 50,
-                              height: 50,
-                              radius: BorderRadius.circular(30),
-                            ),
-                            title: Text(
-                              '${filteredMembers[index].firstName} ${filteredMembers[index].lastName}',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w500),
-                            ),
-                            subtitle: Text(
-                              '${filteredMembers[index].cooperativePositions!.firstWhere((position) => position.cooperativeid == 'sslvO5tgDoCHGBO82kxq').position}'
-                              ' ${filteredMembers[index].cooperativePositions!.firstWhere((position) => position.cooperativeid == 'sslvO5tgDoCHGBO82kxq').positionType == 'Board' ? '' : filteredMembers[index].cooperativePositions!.firstWhere((position) => position.cooperativeid == 'sslvO5tgDoCHGBO82kxq').positionType}',
-                            ),
+                    return FutureBuilder<UserModel>(
+                      future: userRepository.getUser(members[index].uid ?? ''),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return const Text('Error loading data');
+                        }
+
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const SizedBox.shrink();
+                        }
+
+                        final user = snapshot.data!;
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0, vertical: 0.0),
+                          child: Column(
+                            children: [
+                              ListTile(
+                                onTap: () =>
+                                    context.go('/members_page/${user.uid}'),
+                                leading: DisplayImage(
+                                  path:
+                                      'users/${user.email}/${user.profilePicture}',
+                                  width: 50,
+                                  height: 50,
+                                  radius: BorderRadius.circular(30),
+                                ),
+                                title: Text(
+                                  '${user.firstName} ${user.lastName}',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                              const Divider(
+                                thickness: 1,
+                                indent: 20,
+                                endIndent: 20,
+                              ),
+                            ],
                           ),
-                          const Divider(
-                            thickness: 1,
-                            indent: 20,
-                            endIndent: 20,
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     );
                   },
                 ),

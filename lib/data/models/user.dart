@@ -25,7 +25,7 @@ class UserModel {
   Timestamp? joinedAt;
   List<String>? cooperativesJoined;
   String? emailStatus;
-  Position? position;
+  List<CooperativePosition>? cooperativePositions;
 
   UserModel({
     this.uid,
@@ -48,7 +48,7 @@ class UserModel {
     this.joinedAt,
     this.cooperativesJoined,
     this.emailStatus,
-    this.position,
+    this.cooperativePositions,
   });
 
   factory UserModel.fromJson(String docId, Map<String, dynamic> json) {
@@ -79,9 +79,10 @@ class UserModel {
           ? List<String>.from(json['cooperativesJoined'])
           : [],
       emailStatus: json['emailStatus'] ?? '',
-      position: json['position'] != null
-          ? Position.fromMap(json['position'] as Map<String, dynamic>)
-          : null,
+      cooperativePositions: json['cooperativePositions'] != null
+          ? List<CooperativePosition>.from(json['cooperativePositions'].map(
+              (x) => CooperativePosition.fromMap(x as Map<String, dynamic>)))
+          : [],
     );
   }
 
@@ -106,7 +107,9 @@ class UserModel {
       'joinedAt': joinedAt,
       'cooperativesJoined': cooperativesJoined ?? [],
       'emailStatus': emailStatus ?? '',
-      'position': position?.toMap(),
+      'cooperativePositions': cooperativePositions != null
+          ? cooperativePositions!.map((x) => x.toMap()).toList()
+          : [],
     };
   }
 
@@ -134,70 +137,87 @@ class UserModel {
     currentListings = user.currentListings;
     joinedAt = user.joinedAt;
     cooperativesJoined = user.cooperativesJoined;
+    emailStatus = user.emailStatus;
+    cooperativePositions = user.cooperativePositions;
   }
 
   @override
   String toString() {
-    return 'UserModel(uid: $uid, email: $email, firstName: $firstName, lastName: $lastName, status: $status, userAccomplishment: $userAccomplishment, userRating: $userRating, userTrust: $userTrust, role: $role, profilePicture: $profilePicture, bio: $bio, location: $location, skills: $skills, featuredImgs: $featuredImgs, dateJoined: $dateJoined, memberType: $memberType, currentListings: $currentListings,  joinedAt: $joinedAt, cooperativesJoined: $cooperativesJoined, emailStatus: $emailStatus , position: $position)';
+    return 'UserModel(uid: $uid, email: $email, firstName: $firstName, lastName: $lastName, status: $status, userAccomplishment: $userAccomplishment, userRating: $userRating, userTrust: $userTrust, role: $role, profilePicture: $profilePicture, bio: $bio, location: $location, skills: $skills, featuredImgs: $featuredImgs, dateJoined: $dateJoined, memberType: $memberType, currentListings: $currentListings,  joinedAt: $joinedAt, cooperativesJoined: $cooperativesJoined, emailStatus: $emailStatus cooperativePositions: $cooperativePositions)';
   }
 }
 
-class Position {
+class CooperativePosition {
+  String? cooperativeid;
   String? coopName;
   String? position;
-  String? roleType;
-  Position({
+  String? positionType;
+  CooperativePosition({
+    this.cooperativeid,
     this.coopName,
     this.position,
-    this.roleType,
+    this.positionType,
   });
 
-  Position copyWith({
+  CooperativePosition copyWith({
+    String? cooperativeid,
     String? coopName,
     String? position,
-    String? roleType,
+    String? positionType,
   }) {
-    return Position(
+    return CooperativePosition(
+      cooperativeid: cooperativeid ?? this.cooperativeid,
       coopName: coopName ?? this.coopName,
       position: position ?? this.position,
-      roleType: roleType ?? this.roleType,
+      positionType: positionType ?? this.positionType,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'cooperativeid': cooperativeid,
       'coopName': coopName,
       'position': position,
-      'roleType': roleType,
+      'positionType': positionType,
     };
   }
 
-  factory Position.fromMap(Map<String, dynamic> map) {
-    return Position(
+  factory CooperativePosition.fromMap(Map<String, dynamic> map) {
+    return CooperativePosition(
+      cooperativeid:
+          map['cooperativeid'] != null ? map['cooperativeid'] as String : null,
       coopName: map['coopName'] != null ? map['coopName'] as String : null,
       position: map['position'] != null ? map['position'] as String : null,
-      roleType: map['roleType'] != null ? map['roleType'] as String : null,
+      positionType:
+          map['positionType'] != null ? map['positionType'] as String : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory Position.fromJson(String source) =>
-      Position.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory CooperativePosition.fromJson(String source) =>
+      CooperativePosition.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() =>
-      'Position(coopName: $coopName, position: $position, roleType: $roleType)';
-
-  @override
-  bool operator ==(covariant Position other) {
-    if (identical(this, other)) return true;
-
-    return other.coopName == coopName &&
-        other.position == position &&
-        other.roleType == roleType;
+  String toString() {
+    return 'CooperativePosition(cooperativeid: $cooperativeid, coopName: $coopName, position: $position, positionType: $positionType)';
   }
 
   @override
-  int get hashCode => coopName.hashCode ^ position.hashCode ^ roleType.hashCode;
+  bool operator ==(covariant CooperativePosition other) {
+    if (identical(this, other)) return true;
+
+    return other.cooperativeid == cooperativeid &&
+        other.coopName == coopName &&
+        other.position == position &&
+        other.positionType == positionType;
+  }
+
+  @override
+  int get hashCode {
+    return cooperativeid.hashCode ^
+        coopName.hashCode ^
+        position.hashCode ^
+        positionType.hashCode;
+  }
 }
