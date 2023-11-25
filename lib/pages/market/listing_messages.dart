@@ -181,8 +181,8 @@ class _ListingMessagesState extends ConsumerState<ListingMessages> {
                       ),
                     ],
                   ),
-                  bottomNavigationBar:
-                      BottomNavSelectedListing(listingId: widget.listingId),
+                  // bottomNavigationBar:
+                  //     BottomNavSelectedListing(listingId: widget.listingId),
                 );
               }));
         });

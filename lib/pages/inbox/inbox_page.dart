@@ -1,4 +1,5 @@
 import 'package:cooptourism/providers/home_page_provider.dart';
+import 'package:cooptourism/widgets/display_image.dart';
 // import 'package:cooptourism/providers/user_provider.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -73,12 +74,14 @@ class _InboxPageState extends ConsumerState<InboxPage> {
                           borderRadius: BorderRadius.circular(24)),
                       child: _users[index].profilePicture != null &&
                               _users[index].profilePicture!.isNotEmpty
-                          ? DisplayProfilePicture(
-                              storageRef: FirebaseStorage.instance.ref(),
-                              coopId: _users[index].uid!,
-                              data: _users[index].profilePicture,
-                              height: 50,
-                              width: 50)
+                          ? DisplayImage(
+                              path:
+                                  'users/${_users[index].email}/${_users[index].profilePicture}',
+                              height: 60,
+                              width: 60,
+                              radius:
+                                  const BorderRadius.all(Radius.circular(50.0)),
+                            )
                           : Icon(Icons.person,
                               size: 50,
                               color: Theme.of(context).colorScheme.primary),

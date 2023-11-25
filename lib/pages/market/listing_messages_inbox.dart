@@ -80,7 +80,8 @@ class _ListingMessagesInboxState extends ConsumerState<ListingMessagesInbox> {
                           }
                           final sender = snapshot.data!;
                           final path =
-                              "${sender.uid}/images/${sender.profilePicture}";
+                              "users/${sender.email}/${sender.profilePicture}";
+                          debugPrint('path: $path');
                           final time = TimeDifferenceCalculator(
                               messages.first.timeStamp!);
 

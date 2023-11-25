@@ -3,6 +3,7 @@
 import 'package:cooptourism/data/models/user.dart';
 import 'package:cooptourism/data/repositories/cooperative_repository.dart';
 import 'package:cooptourism/data/repositories/user_repository.dart';
+import 'package:cooptourism/widgets/display_image.dart';
 import 'package:cooptourism/widgets/display_profile_picture.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 // import 'package:cooptourism/pages/manager/member_profile.dart';
@@ -115,15 +116,13 @@ class _MembersPageState extends State<MembersPage> {
                                               .primary,
                                         ),
                                       )
-                                    : DisplayProfilePicture(
-                                        storageRef:
-                                            FirebaseStorage.instance.ref(),
-                                        coopId: user.uid!,
-                                        data: user.profilePicture,
-                                        height:
-                                            60, // Updated to match the default icon size
-                                        width:
-                                            60, // Updated to match the default icon size
+                                    : DisplayImage(
+                                        path:
+                                            'users/${user.email}/${user.profilePicture}',
+                                        height: 60,
+                                        width: 60,
+                                        radius: const BorderRadius.all(
+                                            Radius.circular(50.0)),
                                       ),
                                 title: Text(
                                   '${user.firstName} ${user.lastName}', // Your user's name

@@ -127,8 +127,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
   }
 
   GestureDetector profileCard(BuildContext context, UserModel? user) {
-
-    String imagePath = "${user?.uid}/images/${user?.profilePicture}";
+    String imagePath = 'users/${user?.email}/${user?.profilePicture}';
 
     return GestureDetector(
       onTap: () {
@@ -142,7 +141,11 @@ class _MenuPageState extends ConsumerState<MenuPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Create a profile picture circular, dont use network image, just use an icon
-              DisplayImage(path: imagePath, height: 50, width: 50, radius: BorderRadius.circular(30)),
+              DisplayImage(
+                  path: imagePath,
+                  height: 50,
+                  width: 50,
+                  radius: BorderRadius.circular(30)),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Row(

@@ -23,6 +23,7 @@ import 'package:cooptourism/widgets/leading_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 // import 'package:go_router/go_router.dart';
 
 final UserRepository userRepository = UserRepository();
@@ -207,6 +208,8 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
 
     final Stream<List<ReviewModel>> reviews =
         reviewRepository.getAllListingReviews(widget.listingId);
+
+    final user = ref.watch(userModelProvider);
 
     return ListView(
       padding: const EdgeInsets.only(top: 0),
@@ -486,6 +489,8 @@ class _SelectedListingPageState extends ConsumerState<SelectedListingPage> {
                   onPressed: () {
                     // Show snackbar with reviews
                     showSnackBar(context, 'Contact owner');
+                    context.push(
+                        '/market_page/${widget.listingId}/listing_messages_inbox/${user?.uid}');
                   },
                   icon: const Icon(Icons.message_rounded),
                 ),

@@ -178,7 +178,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       const SizedBox(height: 15),
                       postSection(context, profileId)
-                      
                     ],
                   );
                 } else if (selectedIndex == 2 && userData?.role == 'Member') {
@@ -192,10 +191,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: listViewFilter(userData),
                       ),
                       const SizedBox(height: 15),
-                      
                     ],
                   );
-                } 
+                }
                 // USER ROLE: MANAGER
                 else if (selectedIndex == 0 && userData?.role == 'Manager') {
                   return Column(children: [
@@ -555,7 +553,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: user.profilePicture != null &&
                         user.profilePicture!.isNotEmpty
                     ? DisplayImage(
-                        path: '$userUID/images/${user.profilePicture}',
+                        path: 'users/${user.email}/${user.profilePicture}',
                         height: 70,
                         width: 70,
                         radius: BorderRadius.circular(60))
@@ -820,7 +818,6 @@ class _ProfilePageState extends State<ProfilePage> {
     ]);
   }
 
-
   Column postSection(BuildContext context, String userUID) {
     return Column(
       children: [
@@ -832,7 +829,7 @@ class _ProfilePageState extends State<ProfilePage> {
               return ListView.builder(
                   itemCount: posts.length,
                   shrinkWrap: true,
-                  physics:const  NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   itemBuilder: ((context, index) {
                     final post = posts[index];
@@ -869,126 +866,127 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   FutureBuilder<String?> pendingAppForms() {
-  return FutureBuilder<String?>(
-    future: cooperativeRepository.isCooperativeManager(userUID),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.done) {
-        if (snapshot.data != null) {
-          String coopId = snapshot.data!;
-          return StreamBuilder<List<CooperativeAppFormModel>>(
-            stream: joinCooperativeRepository.getAllPendingCoopApplicationsByCoopId(coopId),
-            builder: (context, snapshot) {
-              final coopApplications = snapshot.data!;
-              if (coopApplications.isEmpty) {
-                return Column(
-                  children: [
-                    Center(
-                        child: Text(
-                      'No pending forms at the moment.',
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                          color: Theme.of(context).colorScheme.primary),
-                    )),
-                    const SizedBox(height: 15),
-                  ],
-                );
-              }
+    return FutureBuilder<String?>(
+      future: cooperativeRepository.isCooperativeManager(userUID),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.data != null) {
+            String coopId = snapshot.data!;
+            return StreamBuilder<List<CooperativeAppFormModel>>(
+              stream: joinCooperativeRepository
+                  .getAllPendingCoopApplicationsByCoopId(coopId),
+              builder: (context, snapshot) {
+                final coopApplications = snapshot.data!;
+                if (coopApplications.isEmpty) {
+                  return Column(
+                    children: [
+                      Center(
+                          child: Text(
+                        'No pending forms at the moment.',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: Theme.of(context).colorScheme.primary),
+                      )),
+                      const SizedBox(height: 15),
+                    ],
+                  );
+                }
 
-              
-              coopApplications.sort((a, b) => b.timestamp!.compareTo(a.timestamp!));
-              return ListView.separated(
-                  itemCount: coopApplications.length,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  separatorBuilder: (context, index) => const Divider(),
-                  itemBuilder: ((context, index) {
-                    final coopApplication = coopApplications[index];
-                    return InkWell(
-                      onTap: () {
-                        GoRouter.of(context).go(
-                            '/profile_page/${widget.profileId}/verify_form/${coopApplication.uid}');
-                      },
-                      child: SizedBox(
-                          height: 50,
-                          width: 50,
-                          child: Column(children: [
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: Container(
-                                    height: 40,
-                                    width: 40,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .secondary,
-                                            width: 2)),
-                                    child: Icon(
-                                      Icons.file_copy_outlined,
-                                      color: Theme.of(context).colorScheme.primary,
-                                      size: 24,
+                coopApplications
+                    .sort((a, b) => b.timestamp!.compareTo(a.timestamp!));
+                return ListView.separated(
+                    itemCount: coopApplications.length,
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    separatorBuilder: (context, index) => const Divider(),
+                    itemBuilder: ((context, index) {
+                      final coopApplication = coopApplications[index];
+                      return InkWell(
+                        onTap: () {
+                          GoRouter.of(context).go(
+                              '/profile_page/${widget.profileId}/verify_form/${coopApplication.uid}');
+                        },
+                        child: SizedBox(
+                            height: 50,
+                            width: 50,
+                            child: Column(children: [
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Container(
+                                      height: 40,
+                                      width: 40,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary,
+                                              width: 2)),
+                                      child: Icon(
+                                        Icons.file_copy_outlined,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        size: 24,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 10),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                        '${coopApplication.firstName} ${coopApplication.lastName}',
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary)),
-                                    Text('${coopApplication.coopName}',
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary))
-                                  ],
-                                ),
-                                Expanded(
-                                  child: Container(),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 12.0),
-                                  child: Icon(Icons.pending_actions,
-                                      size: 24,
-                                      color: Theme.of(context).colorScheme.primary),
-                                ),
-                              ],
-                            ),
-                          ])),
-                    );
-                  }));
-                },
-              );
-        } else {
-          return 
-              Text(
-                'There are no pending application forms at the moment.',
+                                  const SizedBox(width: 10),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                          '${coopApplication.firstName} ${coopApplication.lastName}',
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary)),
+                                      Text('${coopApplication.coopName}',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary))
+                                    ],
+                                  ),
+                                  Expanded(
+                                    child: Container(),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 12.0),
+                                    child: Icon(Icons.pending_actions,
+                                        size: 24,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary),
+                                  ),
+                                ],
+                              ),
+                            ])),
+                      );
+                    }));
+              },
+            );
+          } else {
+            return Text('There are no pending application forms at the moment.',
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 16
-                )
-          );
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 16));
+          }
+        } else {
+          return const CircularProgressIndicator();
         }
-      } else {
-        return const CircularProgressIndicator();
-      }
-    },
-  );
-}
-
-
+      },
+    );
+  }
 
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(

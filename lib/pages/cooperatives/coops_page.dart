@@ -100,6 +100,7 @@ class _CoopsPageState extends State<CoopsPage> {
                                 child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Text(
                                         "${cooperatives[index].get('name')}",
