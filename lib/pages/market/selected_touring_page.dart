@@ -318,7 +318,7 @@ class _SelectedTouringPageState extends ConsumerState<SelectedTouringPage> {
                     ListingEdit(
                       listing: widget.listing,
                     ),
-                  if (railIndex == 2)
+                  if (railIndex == 3)
                     ListingTasks(
                       listing: widget.listing,
                     ),
