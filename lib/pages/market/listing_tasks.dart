@@ -13,6 +13,7 @@ class ListingTasks extends StatefulWidget {
 class _ListingTasksState extends State<ListingTasks> {
   @override
   Widget build(BuildContext context) {
+    debugPrint("HELLOOO");
     TaskRepository taskRepository = TaskRepository();
     final listingTasks =
         taskRepository.getAllTasksByReferenceId(widget.listing.id);
