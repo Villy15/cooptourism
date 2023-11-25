@@ -2,7 +2,9 @@
 A cooperative platform for tourism cooperatives
 
 ## Description
-Lakbay is a comprehensive mobile application designed to revolutionize the operations of tourism cooperatives by enhancing communication, streamlining services, and facilitating sustainable practices. As a Flutter application, Lakbay offers cross-platform functionality, ensuring a seamless user experience for both Android and iOS users. It is tailored to support the intricate network of cooperative members, managers, and customers in the tourism sector. The application’s primary goal is to provide an integrated digital solution that enables tourism cooperatives to manage their operations, engage with customers, and collaborate on community-driven tourism projects. Lakbay allows cooperative members to access a suite of tools for service management, from showcasing tour packages to managing bookings and customer interactions. Financial decision-making is streamlined through its Finance & Accounting Module, which supports budgeting, financial reporting, and the transparent handling of transactions.
+Lakbay is a comprehensive mobile application designed to revolutionize the operations of tourism cooperatives by enhancing communication, streamlining services, and facilitating sustainable practices. As a Flutter application, Lakbay offers cross-platform functionality, ensuring a seamless user experience for both Android and iOS users. 
+
+It is tailored to support the intricate network of cooperative members, managers, and customers in the tourism sector. The application’s primary goal is to provide an integrated digital solution that enables tourism cooperatives to manage their operations, engage with customers, and collaborate on community-driven tourism projects. Lakbay allows cooperative members to access a suite of tools for service management, from showcasing tour packages to managing bookings and customer interactions. Financial decision-making is streamlined through its Finance & Accounting Module, which supports budgeting, financial reporting, and the transparent handling of transactions.
 
 ## Prerequisites
 Before you begin, ensure you have met the following requirements:
